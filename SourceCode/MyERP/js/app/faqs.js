@@ -1,0 +1,81 @@
+﻿'use strict';
+let date = new Date();
+let descargas = "FAQs_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '0';
+
+
+
+const faq = {
+
+
+    init: () => {
+
+
+        //faq.cargarItems();
+
+    },
+
+    cargarItems: () => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = sessionStorage.getItem("idusuario");
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../pages/web/FAQ.aspx/GetListaItemsPublic",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+                let html = '';
+                data.forEach((item, index) => {
+
+                    console.log(item, index);
+                    html += `
+                            <div>
+                                <div style="margin-top: 20px;">
+                                <strong>
+                                ${item.Pregunta}
+                                </strong>
+                            </div>
+                            <div>
+                                ${item.Respuesta}
+                            </div>
+                    `;
+
+                });
+
+                $('#faqs').html(html);
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+
+
+
+
+    },
+
+
+
+}
+
+window.addEventListener('load', () => {
+
+    faq.init();
+
+});
+
+

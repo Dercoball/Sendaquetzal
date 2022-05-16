@@ -1,0 +1,248 @@
+[
+  {
+    "outputFileName": "js/cp/departamentos.min.js",
+    "inputFiles": [
+      "js/cp/departamentos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/empleados.min.js",
+    "inputFiles": [
+      "js/cp/empleados.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/equipos.min.js",
+    "inputFiles": [
+      "js/cp/equipos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/general.min.js",
+    "inputFiles": [
+      "js/cp/general.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/usuarios.min.js",
+    "inputFiles": [
+      "js/cp/usuarios.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/ubicaciones.min.js",
+    "inputFiles": [
+      "js/cp/ubicaciones.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/tipos_usuario.min.js",
+    "inputFiles": [
+      "js/cp/tipos_usuario.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/statusproyectos.min.js",
+    "inputFiles": [
+      "js/cp/statusproyectos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/resumen_requisicion.min.js",
+    "inputFiles": [
+      "js/cp/resumen_requisicion.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/residentes.min.js",
+    "inputFiles": [
+      "js/cp/residentes.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/requisiciones.min.js",
+    "inputFiles": [
+      "js/cp/requisiciones.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/registro_fallas.min.js",
+    "inputFiles": [
+      "js/cp/registro_fallas.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/registro_diagnostico.min.js",
+    "inputFiles": [
+      "js/cp/registro_diagnostico.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/puestos.min.js",
+    "inputFiles": [
+      "js/cp/puestos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/proyectos.min.js",
+    "inputFiles": [
+      "js/cp/proyectos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/proveedores.min.js",
+    "inputFiles": [
+      "js/cp/proveedores.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/panel_upload.min.js",
+    "inputFiles": [
+      "js/cp/panel_upload.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/panel_registro_asistencia.min.js",
+    "inputFiles": [
+      "js/cp/panel_registro_asistencia.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/panel_refacciones.min.js",
+    "inputFiles": [
+      "js/cp/panel_refacciones.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/panel_aprobar_nomina.min.js",
+    "inputFiles": [
+      "js/cp/panel_aprobar_nomina.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/obras.min.js",
+    "inputFiles": [
+      "js/cp/obras.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/modelos.min.js",
+    "inputFiles": [
+      "js/cp/modelos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/marcas.min.js",
+    "inputFiles": [
+      "js/cp/marcas.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/login.min.js",
+    "inputFiles": [
+      "js/cp/login.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/insumos.min.js",
+    "inputFiles": [
+      "js/cp/insumos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/index.min.js",
+    "inputFiles": [
+      "js/cp/index.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/listado_fallasv2.min.js",
+    "inputFiles": [
+      "js/cp/listado_fallasv2.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/consulta_equipos.min.js",
+    "inputFiles": [
+      "js/cp/consulta_equipos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/entrega_combustible.min.js",
+    "inputFiles": [
+      "js/cp/entrega_combustible.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/consulta_equipos.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/consulta_equipos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/listado_fallasv2.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/listado_fallasv2.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/panel_refacciones.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/panel_refacciones.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/registro_diagnostico.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/registro_diagnostico.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/mantenimiento_dashboard_resumen.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/mantenimiento_dashboard_resumen.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/dashboard_resumen.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/dashboard_resumen.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/ots_encurso.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/ots_encurso.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/combustibles/combustibles_imagenes.min.js",
+    "inputFiles": [
+      "js/cp/combustibles/combustibles_imagenes.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/combustibles/combustibles_aprobacion.min.js",
+    "inputFiles": [
+      "js/cp/combustibles/combustibles_aprobacion.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/listado_fallas_historico.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/listado_fallas_historico.js"
+    ]
+  },
+  {
+    "outputFileName": "js/cp/mantenimiento/dashboard_resumen2.min.js",
+    "inputFiles": [
+      "js/cp/mantenimiento/dashboard_resumen2.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/catalogos/faq.min.js",
+    "inputFiles": [
+      "js/app/catalogos/faq.js"
+    ]
+  }
+]

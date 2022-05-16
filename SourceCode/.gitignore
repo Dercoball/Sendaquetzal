@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/MyERP/v15
+/MyERP/bin
+/.vs/PlataformaCobranzas/v15

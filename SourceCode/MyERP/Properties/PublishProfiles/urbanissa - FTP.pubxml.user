@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATBTGL1tSyUujBzWwPbxi/AAAAAACAAAAAAAQZgAAAAEAACAAAACg3YQLB0utTlQMLdRATqHwDwPf64pCTppiQIN6S5j+ZwAAAAAOgAAAAAIAACAAAAAlgDUbwOeQT//IInn/EILeCnHRxkE1Ebl2G6V30E5nfIAAAABf6JDJY9xykjH0eTx0HSqrkDfLHl/K5B4ygzUaJD9s8u2BVR/C0C79d5SOISetMkupDoUGMlV/nVWNZKNOOhzuvtai6iZ+h1SuAdchCSwPYdel7B6YqC7OEO1H0JCnL7rYpYEk5RblP820++yBeO/A4id6FIm8rxBBHulJVr+FGUAAAABSkJgFhvnYZqAqORF1Qkvngq8uT/sR97m/PeMltyC/G4nGCNZjPGH1peUV1nQ8BLVWAFLL8fLmyTphc+TWj4XR</EncryptedPassword>
+    <_PublishTargetUrl>ftp://ftp.gear.host/site/wwwroot</_PublishTargetUrl>
+    <History>False|2022-04-20T19:59:43.3217881Z;False|2022-01-20T22:42:58.0666309-06:00;False|2021-10-21T14:08:27.9018646-05:00;</History>
+  </PropertyGroup>
+</Project>

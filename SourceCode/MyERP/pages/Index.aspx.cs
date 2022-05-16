@@ -279,6 +279,49 @@ namespace Plataforma.pages
                 nav += "</ul> ";
                 nav += "</li> ";
             }
+            //
+
+            //........MENU Configuracion
+            //Agregar los numeros de paginas o permisos , de los tipo WEB
+            List<string> paginasConfiguracion = new List<string>
+                {
+                    "2",//tipos de clientes                                  
+                };
+
+
+            var esPagina_Configuracion = paginasConfiguracion.Find(x => x == pagina);
+            string active_Configuracion = esPagina_Configuracion != null ? "class = 'active' " : "";
+
+            string htmlItemsConfiguracion = "";
+            foreach (var permiso in listaPermisos)
+            {
+
+                if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_CONFIGURACION)//2
+                {
+                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
+
+                    htmlItemsConfiguracion += "<li> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.Nombre + "</a> " +
+                           " </li> ";
+
+                }
+
+            }
+
+            if (htmlItemsConfiguracion != "")
+            {
+
+                nav += "<li " + active_Configuracion + "><a href=\"#liConfiguracion\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
+                    " <i class=\"icon-interface-windows\"></i>Configuracion</a> " +
+                "  <ul id=\"liConfiguracion\" class=\"collapse list-unstyled\"> ";
+
+
+                nav += htmlItemsConfiguracion;
+
+                nav += "</ul> ";
+                nav += "</li> ";
+            }
+            //
 
 
             List<string> paginaCliente = new List<string>

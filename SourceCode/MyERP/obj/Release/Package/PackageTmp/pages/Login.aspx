@@ -15,14 +15,10 @@
 
 
 
-    <!-- Bootstrap Core CSS -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- MetisMenu CSS -->
-    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
-
-
     <link rel="stylesheet" href="../css/custom.css">
+    <link rel="stylesheet" href="../css/app/bootstrap.css">
+    <link rel="stylesheet" href="../css/app/spinelli.css">
+
 
     <!-- Custom Fonts -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -33,98 +29,138 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <meta name="theme-color" content="#7952b3">
 
 
 
 
-    <title>Plataforma</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
 
 </head>
 <body>
+    <header>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <img src="../img/sq.jpg" class="img-responsive" style="border-radius: 50%; width: 70px; height: 70px;" />
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li><a href="Home.aspx">Inicio</a></li>
+                        <li><a href="Aboutus.aspx">Nosotros</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right links2">
+                        <li class="active"><a href="Login.aspx">Iniciar sesión</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right redes">
+                        <li><a href="#">
+                            <img src="../img/facebook-logo-button.png" class="img-social" /></a></li>
+                        <li><a href="#">
+                            <img src="../img/i-twitter.png" class="img-social" /></a></li>
+                        <li><a href="#">
+                            <img src="../img/instagram.png" class="img-social" /></a></li>
+                        <li><a href="#">
+                            <img src="../img/mail.png" class="img-social" /></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
 
-    <div class="container">
-        <div class="row">
-            <div style="width: 50%; margin-left: auto; margin-right: auto; margin-top: 100px;">
-                <div class="login-panel panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Login</h3>
-                    </div>
-                    <div class="panel-body">
-
-                        <form id="frmLogin" role="form" name="frmLogin" data-toggle="validator">
-
-                            <div class="text-center">
-                            </div>
+    <img src="../img/brand.png" class="img-responsive  center-block" style="margin-top: 70px;" />
 
 
-                            <fieldset>
+    <section class="nosotros">
+        <div class="container">
+            <div class="row">
+                <div>
 
-                                <div class="form-group">
-                                    <label for="txtUsuario">Usuario</label>
-                                    <input type="text" class="form-control" id="txtUsuario"
-                                        placeholder="Nombre de usuario"
-                                        required data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
+                    <div class="panel panel-success" style="width: 400px; margin-left: auto; margin-right: auto;">
 
-                                    <small id="emailHelp" class="form-text text-muted"></small>
+                        <h3>Login</h3>
+
+                        <div class="panel-body">
+
+                            <form class="form-signin" id="form1" runat="server">
+
+                                <asp:HiddenField ID="txtPath" runat="server" ></asp:HiddenField>
+
+
+                                <div>
+
+                                    <div class="text-center mb-4">
+                                    </div>
+
+                                    <div class="form-label-group mb-1">
+                                        <asp:TextBox ID="inputEmail" runat="server" class="form-control"
+                                            placeholder="Usuario" required autofocus></asp:TextBox>
+                                    </div>
+
+                                    <div class="form-label-group mb-1">
+                                        <asp:TextBox ID="inputPassword" runat="server" class="form-control" placeholder="Contraseña" 
+                                             required TextMode="Password"></asp:TextBox>
+                                    </div>
+
+                                    <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary btn-block btnAzu" 
+                                        Text="Entrar" OnClick="Entrar_Click" UseSubmitBehavior="false" />
+
 
                                 </div>
-                                <div class="form-group">
-                                    <label for="txtPassword">Password</label>
-                                    <input type="password" class="form-control" id="txtPassword" placeholder="Password"
-                                        required data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
+
+                                <div class="alert alert-warning alert-dismissible" role="alert" id="alert-login-fail">
+                                    <span id="lblMensajes"></span>
+
                                 </div>
 
+                            </form>
 
-
-
-                                <div class="form-group">
-                                </div>
-                                <div class="form-group">
-
-                                    <!-- Change this to a button or input when using this as a form -->
-                                    <button id="btnLogin" class="btn btn-lg btn-primary btn-block">
-                                    <img src="../img/loading4.gif" style="width: 2em; height: 2em; display: none;"
-                                        id="imgLoading" />
-
-                                        Login</button>
-
-                                    
-                                </div>
-
-                            </fieldset>
-                        </form>
-
-                        <div class="alert alert-dismissible" role="alert" id="alert-operacion-fail">
-                            <strong>¡Información!</strong>
-                            <label id="lblMensajes"></label>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <footer>
+        <div class="container">
+
+            <div class="col-md-3 col-md-offset-3 text-center">
+                <h2>Acerca de...</h2>
+                <ul>
+
+                    <li><a href="apprestar.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Acerca de...</a></li>
+                    <li><a href="login.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Iniciar sesión</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 text-center">
+                <h2>Ayuda</h2>
+                <ul>
+
+                    <li><a href="faqs.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                    <li><a href="terminosycondiciones.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Términos y condiciones</a></li>
+                    <li><a href="avisodeprivacidad.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Aviso de privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
 
 
+    <script src="../js/app/jquery.min.js"></script>
+    <script src="../js/app/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/app/formValidation.js"></script>
 
-
-    <!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
 
 
     <script src="../js/validator.js"></script>
-    <script src="../js/cp/login.js"></script>
+    <script src="../js/app/login.js"></script>
 
 </body>
 </html>

@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Plataforma</title>
+    <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -22,7 +22,7 @@
     <!-- Custom Scrollbar-->
     <link rel="stylesheet" href="../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="../css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="../css/style.green.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="../css/custom.css">
     <!-- Favicon-->
@@ -78,6 +78,14 @@
 
 </head>
 <body>
+
+    <form class="form-signin" id="form1" runat="server">
+        <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
+    </form>
+
+
     <!-- Side Navbar -->
     <nav class="side-navbar">
         <div class="side-navbar-wrapper">
@@ -200,8 +208,8 @@
 
 
     <script src="../js/validator.js"></script>
-    <script src="../js/cp/index.js"></script>
-    <script src="../js/cp/general.js"></script>
+    <script src="../js/app/index.js"></script>
+    <script src="../js/app/general.js"></script>
 
     <!-- Toastr style -->
     <link href="../css/toastr.min.css" rel="stylesheet">

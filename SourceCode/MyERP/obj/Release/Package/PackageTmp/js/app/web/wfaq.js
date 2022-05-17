@@ -194,7 +194,6 @@ const faq = {
             var hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
 
             if (!hasErrors) {
-                $('#panelLoading').modal('show');
 
                 //  Objeto con los valores a enviar
                 let item =  {};
@@ -219,13 +218,6 @@ const faq = {
                     async: true,
                     success: function (msg) {
                         let resultado = parseInt(msg.d);
-
-                        $("#panelLoading").show("fast", function () {
-                            setTimeout(function () {
-                                $('#panelLoading').modal('hide');
-
-                            }, 500);
-                        });
 
                         if (resultado > 0) {
 

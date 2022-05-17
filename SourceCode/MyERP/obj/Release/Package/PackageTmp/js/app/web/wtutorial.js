@@ -1,7 +1,7 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "FAQ_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '2';
+let descargas = "Tutoriales_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '6';
 
 
 
@@ -28,7 +28,7 @@ const faq = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Web/WFAQ.aspx/GetListaItems",
+            url: "../../pages/Web/WTutoriales.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -50,9 +50,8 @@ const faq = {
                     columns: [
 
                         { data: 'Id' },
-                        { data: 'Pregunta' },
-                        { data: 'Respuesta' },
-                        { data: 'ActivoStr' },
+                        { data: 'Titulo' },
+                        { data: 'UrlVideo' },
                         { data: 'Accion' }
 
                     ],
@@ -121,7 +120,7 @@ const faq = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Web/WFAQ.aspx/GetItem",
+            url: "../../pages/Web/WTutoriales.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -131,8 +130,8 @@ const faq = {
                 var item = msg.d;
                 faq.idSeleccionado = item.Id;
 
-                $('#txtPregunta').val(item.Pregunta);
-                $('#txtRespuesta').val(item.Respuesta);
+                $('#txtTitulo').val(item.Titulo);
+                $('#txtUrlVideo').val(item.UrlVideo);
                 $('#chkActivo').prop('checked', item.Activo === 1);
 
                 $('#panelTabla').hide();
@@ -198,8 +197,8 @@ const faq = {
                 //  Objeto con los valores a enviar
                 let item =  {};
                 item.Id = faq.idSeleccionado;
-                item.Pregunta = $('#txtPregunta').val();
-                item.Respuesta = $('#txtRespuesta').val();
+                item.Titulo = $('#txtTitulo').val();
+                item.UrlVideo = $('#txtUrlVideo').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
@@ -211,13 +210,14 @@ const faq = {
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Web/WFAQ.aspx/Guardar",
+                    url: "../../pages/Web/WTutoriales.aspx/Guardar",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: true,
                     success: function (msg) {
                         let resultado = parseInt(msg.d);
+
 
                         if (resultado > 0) {
 
@@ -272,7 +272,7 @@ const faq = {
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Web/WFAQ.aspx/Eliminar",
+                url: "../../pages/Web/WTutoriales.aspx/Eliminar",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

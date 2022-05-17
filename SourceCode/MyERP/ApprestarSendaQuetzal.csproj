@@ -157,6 +157,9 @@
     <Content Include="js\app\termsandconditions.min.js">
       <DependentUpon>termsandconditions.js</DependentUpon>
     </Content>
+    <Content Include="js\app\web\faq.min - Copy %282%29.js">
+      <DependentUpon>wtutorial.js</DependentUpon>
+    </Content>
     <Content Include="js\app\web\faq.min - Copy - Copy - Copy.js">
       <DependentUpon>wnoticeofprivacy.js</DependentUpon>
     </Content>
@@ -175,6 +178,7 @@
       <DependentUpon>general.js</DependentUpon>
     </Content>
     <Content Include="js\app\jquery.min.js" />
+    <Content Include="js\app\web\wtutorial.js" />
     <Content Include="js\app\web\wnoticeofprivacy.js" />
     <Content Include="js\app\web\wtermsandconditions.js" />
     <Content Include="js\app\web\waboutus.js" />
@@ -359,6 +363,7 @@
     <Content Include="pages\Login.aspx" />
     <Content Include="pages\Config\PanelEquipos.aspx" />
     <Content Include="pages\Uploads\1_1.png" />
+    <Content Include="pages\Web\WTutoriales.aspx" />
     <Content Include="pages\Web\WNoticyOfPrivacy.aspx" />
     <Content Include="pages\Web\WTermsAndConditions.aspx" />
     <Content Include="pages\Web\WAboutUs.aspx" />
@@ -1208,6 +1213,7 @@
     <Compile Include="Clases\EquipoCatalogoRefaccion.cs" />
     <Compile Include="Clases\EquipoMini.cs" />
     <Compile Include="Clases\EquipoUsuario.cs" />
+    <Compile Include="Clases\Tutorial.cs" />
     <Compile Include="Clases\Status.cs" />
     <Compile Include="Clases\TipoCombustible.cs" />
     <Compile Include="Clases\PreguntaFrecuente.cs" />
@@ -1422,6 +1428,13 @@
     </Compile>
     <Compile Include="pages\Config\PanelEquipos.aspx.designer.cs">
       <DependentUpon>PanelEquipos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Web\WTutoriales.aspx.cs">
+      <DependentUpon>WTutoriales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Web\WTutoriales.aspx.designer.cs">
+      <DependentUpon>WTutoriales.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Web\WNoticyOfPrivacy.aspx.cs">
       <DependentUpon>WNoticyOfPrivacy.aspx</DependentUpon>

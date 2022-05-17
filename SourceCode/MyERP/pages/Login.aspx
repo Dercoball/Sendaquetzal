@@ -10,7 +10,7 @@
 
 
 
-    <link rel="shortcut icon" href="../img/favicon.ico">
+    <link rel="shortcut icon" href="../img/sq.jpg">
 
 
 
@@ -91,7 +91,7 @@
 
                             <form class="form-signin" id="form1" runat="server">
 
-                                <asp:HiddenField ID="txtPath" runat="server" ></asp:HiddenField>
+                                <asp:HiddenField ID="txtPath" runat="server"></asp:HiddenField>
 
 
                                 <div>
@@ -105,11 +105,11 @@
                                     </div>
 
                                     <div class="form-label-group mb-1">
-                                        <asp:TextBox ID="inputPassword" runat="server" class="form-control" placeholder="Contraseña" 
-                                             required TextMode="Password"></asp:TextBox>
+                                        <asp:TextBox ID="inputPassword" runat="server" class="form-control" placeholder="Contraseña"
+                                            required TextMode="Password"></asp:TextBox>
                                     </div>
 
-                                    <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary btn-block btnAzu" 
+                                    <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary btn-block btnAzu"
                                         Text="Entrar" OnClick="Entrar_Click" UseSubmitBehavior="false" />
 
 
@@ -129,28 +129,29 @@
         </div>
     </section>
 
-    <footer>
+
+       <footer>
         <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">
                 <h2>Acerca de...</h2>
                 <ul>
-
-                    <li><a href="apprestar.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Acerca de...</a></li>
-                    <li><a href="login.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Iniciar sesión</a></li>
+                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de...</a></li>
+                    <li><a href="../pages/Login.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Iniciar sesión</a></li>
                 </ul>
             </div>
             <div class="col-md-3 text-center">
                 <h2>Ayuda</h2>
                 <ul>
 
-                    <li><a href="faqs.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Preguntas frecuentes</a></li>
-                    <li><a href="terminosycondiciones.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Términos y condiciones</a></li>
-                    <li><a href="avisodeprivacidad.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Aviso de privacidad</a></li>
+                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
+                    <li><a href="../pages/NoticeOfPrivacy.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Aviso de privacidad</a></li>
                 </ul>
             </div>
         </div>
     </footer>
+
 
 
     <script src="../js/app/jquery.min.js"></script>

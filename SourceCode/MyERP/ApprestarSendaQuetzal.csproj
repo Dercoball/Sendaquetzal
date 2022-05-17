@@ -139,11 +139,32 @@
     <Content Include="img\sq.jpg" />
     <Content Include="img\user.png" />
     <Content Include="img\vuelta.jpg" />
+    <Content Include="js\app\aboutus.min.js">
+      <DependentUpon>aboutus.js</DependentUpon>
+    </Content>
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
+    <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\noticyofprivacy.js" />
+    <Content Include="js\app\noticyofprivacy.min.js">
+      <DependentUpon>noticyofprivacy.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\termsandconditions.js" />
     <Content Include="js\app\faqs.js" />
     <Content Include="js\app\faq.min.js">
       <DependentUpon>faqs.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\termsandconditions.min.js">
+      <DependentUpon>termsandconditions.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\web\faq.min - Copy - Copy - Copy.js">
+      <DependentUpon>wnoticeofprivacy.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\web\faq.min - Copy - Copy.js">
+      <DependentUpon>wtermsandconditions.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\web\faq.min - Copy.js">
+      <DependentUpon>waboutus.js</DependentUpon>
     </Content>
     <Content Include="js\app\web\faq.min.js">
       <DependentUpon>wfaq.js</DependentUpon>
@@ -154,6 +175,9 @@
       <DependentUpon>general.js</DependentUpon>
     </Content>
     <Content Include="js\app\jquery.min.js" />
+    <Content Include="js\app\web\wnoticeofprivacy.js" />
+    <Content Include="js\app\web\wtermsandconditions.js" />
+    <Content Include="js\app\web\waboutus.js" />
     <Content Include="js\charts-custom.js" />
     <Content Include="js\charts-home.js" />
     <Content Include="js\app\config\catalogo_puestos.js" />
@@ -311,6 +335,8 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\NoticeOfPrivacy.aspx" />
+    <Content Include="pages\TermsAndConditions.aspx" />
     <Content Include="pages\Config\Marcas.aspx" />
     <Content Include="pages\Config\Modelos.aspx" />
     <Content Include="pages\Config\Obras.aspx" />
@@ -324,6 +350,7 @@
     <Content Include="pages\Config\Departamentos.aspx" />
     <Content Include="pages\Descargas\05_BG_GSM_1366X768_WKS.jpg" />
     <Content Include="pages\Config\Empleados.aspx" />
+    <Content Include="pages\AboutUs.aspx" />
     <Content Include="pages\FAQS.aspx" />
     <Content Include="pages\Home.aspx" />
     <Content Include="pages\Index.aspx" />
@@ -332,7 +359,10 @@
     <Content Include="pages\Login.aspx" />
     <Content Include="pages\Config\PanelEquipos.aspx" />
     <Content Include="pages\Uploads\1_1.png" />
-    <Content Include="pages\Web\FAQ.aspx" />
+    <Content Include="pages\Web\WNoticyOfPrivacy.aspx" />
+    <Content Include="pages\Web\WTermsAndConditions.aspx" />
+    <Content Include="pages\Web\WAboutUs.aspx" />
+    <Content Include="pages\Web\WFAQ.aspx" />
     <Content Include="vendor\bootstrap5\css\bootstrap-grid.css" />
     <Content Include="vendor\bootstrap5\css\bootstrap-grid.min.css" />
     <Content Include="vendor\bootstrap5\css\bootstrap-grid.rtl.css" />
@@ -1041,6 +1071,131 @@
     <Content Include="vendor\popper.js\umd\popper.min.js" />
     <Content Include="vendor\raphael\raphael.js" />
     <Content Include="vendor\raphael\raphael.min.js" />
+    <Content Include="vendor\tinymce\changelog.txt" />
+    <Content Include="vendor\tinymce\jquery.tinymce.js" />
+    <Content Include="vendor\tinymce\jquery.tinymce.min.js" />
+    <Content Include="vendor\tinymce\license.txt" />
+    <Content Include="vendor\tinymce\plugins\advlist\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\advlist\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\anchor\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\anchor\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\autolink\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\autolink\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\autoresize\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\autoresize\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\autosave\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\autosave\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\bbcode\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\bbcode\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\charmap\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\charmap\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\codesample\css\prism.css" />
+    <Content Include="vendor\tinymce\plugins\codesample\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\codesample\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\code\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\code\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\colorpicker\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\colorpicker\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\contextmenu\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\contextmenu\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\directionality\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\directionality\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-cool.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-cry.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-embarassed.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-frown.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-innocent.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-kiss.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-laughing.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-money-mouth.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-sealed.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-smile.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-surprised.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-tongue-out.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-undecided.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-wink.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="vendor\tinymce\plugins\emoticons\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\emoticons\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\fullpage\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\fullpage\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\fullscreen\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\fullscreen\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\hr\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\hr\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\imagetools\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\imagetools\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\image\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\image\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\importcss\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\importcss\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\insertdatetime\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\insertdatetime\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\layer\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\layer\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\legacyoutput\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\legacyoutput\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\link\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\link\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\lists\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\lists\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\media\moxieplayer.swf" />
+    <Content Include="vendor\tinymce\plugins\media\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\media\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\nonbreaking\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\nonbreaking\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\noneditable\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\noneditable\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\pagebreak\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\pagebreak\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\paste\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\paste\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\preview\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\preview\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\print\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\print\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\save\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\save\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\searchreplace\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\searchreplace\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\spellchecker\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\spellchecker\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\tabfocus\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\tabfocus\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\table\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\table\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\template\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\template\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\textcolor\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\textcolor\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\textpattern\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\textpattern\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="vendor\tinymce\plugins\visualblocks\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\visualblocks\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\visualchars\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\visualchars\plugin.min.js" />
+    <Content Include="vendor\tinymce\plugins\wordcount\plugin.js" />
+    <Content Include="vendor\tinymce\plugins\wordcount\plugin.min.js" />
+    <Content Include="vendor\tinymce\skins\lightgray\content.inline.min.css" />
+    <Content Include="vendor\tinymce\skins\lightgray\content.min.css" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="vendor\tinymce\skins\lightgray\img\anchor.gif" />
+    <Content Include="vendor\tinymce\skins\lightgray\img\loader.gif" />
+    <Content Include="vendor\tinymce\skins\lightgray\img\object.gif" />
+    <Content Include="vendor\tinymce\skins\lightgray\img\trans.gif" />
+    <Content Include="vendor\tinymce\skins\lightgray\skin.ie7.min.css" />
+    <Content Include="vendor\tinymce\skins\lightgray\skin.min.css" />
+    <Content Include="vendor\tinymce\themes\inlite\theme.js" />
+    <Content Include="vendor\tinymce\themes\inlite\theme.min.js" />
+    <Content Include="vendor\tinymce\themes\modern\theme.js" />
+    <Content Include="vendor\tinymce\themes\modern\theme.min.js" />
+    <Content Include="vendor\tinymce\tinymce.jquery.js" />
+    <Content Include="vendor\tinymce\tinymce.jquery.min.js" />
+    <Content Include="vendor\tinymce\tinymce.js" />
+    <Content Include="vendor\tinymce\tinymce.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1105,6 +1260,20 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\NoticeOfPrivacy.aspx.cs">
+      <DependentUpon>NoticeOfPrivacy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\NoticeOfPrivacy.aspx.designer.cs">
+      <DependentUpon>NoticeOfPrivacy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\TermsAndConditions.aspx.cs">
+      <DependentUpon>TermsAndConditions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\TermsAndConditions.aspx.designer.cs">
+      <DependentUpon>TermsAndConditions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Config\Marcas.aspx.cs">
       <DependentUpon>Marcas.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1192,6 +1361,13 @@
     <Compile Include="pages\Config\Empleados.aspx.designer.cs">
       <DependentUpon>Empleados.aspx</DependentUpon>
     </Compile>
+    <Compile Include="pages\AboutUs.aspx.cs">
+      <DependentUpon>AboutUs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\AboutUs.aspx.designer.cs">
+      <DependentUpon>AboutUs.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\FAQS.aspx.cs">
       <DependentUpon>FAQS.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1247,12 +1423,33 @@
     <Compile Include="pages\Config\PanelEquipos.aspx.designer.cs">
       <DependentUpon>PanelEquipos.aspx</DependentUpon>
     </Compile>
-    <Compile Include="pages\Web\FAQ.aspx.cs">
-      <DependentUpon>FAQ.aspx</DependentUpon>
+    <Compile Include="pages\Web\WNoticyOfPrivacy.aspx.cs">
+      <DependentUpon>WNoticyOfPrivacy.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="pages\Web\FAQ.aspx.designer.cs">
-      <DependentUpon>FAQ.aspx</DependentUpon>
+    <Compile Include="pages\Web\WNoticyOfPrivacy.aspx.designer.cs">
+      <DependentUpon>WNoticyOfPrivacy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Web\WTermsAndConditions.aspx.cs">
+      <DependentUpon>WTermsAndConditions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Web\WTermsAndConditions.aspx.designer.cs">
+      <DependentUpon>WTermsAndConditions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Web\WAboutUs.aspx.cs">
+      <DependentUpon>WAboutUs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Web\WAboutUs.aspx.designer.cs">
+      <DependentUpon>WAboutUs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Web\WFAQ.aspx.cs">
+      <DependentUpon>WFAQ.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Web\WFAQ.aspx.designer.cs">
+      <DependentUpon>WFAQ.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -1406,6 +1603,16 @@
     <Content Include="vendor\bootstrap5\js\bootstrap.esm.min.js.map" />
     <Content Include="vendor\bootstrap5\js\bootstrap.js.map" />
     <Content Include="vendor\bootstrap5\js\bootstrap.min.js.map" />
+    <Content Include="vendor\tinymce\bower.json" />
+    <Content Include="vendor\tinymce\composer.json" />
+    <Content Include="vendor\tinymce\package.json" />
+    <Content Include="vendor\tinymce\readme.md" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.woff" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

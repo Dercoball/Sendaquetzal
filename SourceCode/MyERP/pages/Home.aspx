@@ -10,7 +10,7 @@
 
 
 
-    <link rel="shortcut icon" href="../img/favicon.ico">
+    <link rel="shortcut icon" href="../img/sq.jpg">
 
 
 
@@ -57,7 +57,7 @@
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="Home.aspx">Inicio</a></li>
-                        <li><a href="Aboutus.aspx">Nosotros</a></li>
+                        <li><a href="../pages/Aboutus.aspx">Nosotros</a></li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right links2">
@@ -66,13 +66,13 @@
 
                     <ul class="nav navbar-nav navbar-right redes">
                         <li><a href="#">
-                            <img src="../img/facebook-logo-button.png" class="img-social"/></a></li>
+                            <img src="../img/facebook-logo-button.png" class="img-social" /></a></li>
                         <li><a href="#">
-                            <img src="../img/i-twitter.png" class="img-social"/></a></li>
+                            <img src="../img/i-twitter.png" class="img-social" /></a></li>
                         <li><a href="#">
-                            <img src="../img/instagram.png" class="img-social"/></a></li>
+                            <img src="../img/instagram.png" class="img-social" /></a></li>
                         <li><a href="#">
-                            <img src="../img/mail.png" class="img-social"/></a></li>
+                            <img src="../img/mail.png" class="img-social" /></a></li>
                     </ul>
                 </div>
             </div>
@@ -230,29 +230,28 @@
         </div>
     </div>
 
-
     <footer>
         <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">
                 <h2>Acerca de...</h2>
                 <ul>
-
-                    <li><a href="pages/apprestar.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Acerca de...</a></li>
-                    <li><a href="pages/login.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Iniciar sesión</a></li>
+                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de...</a></li>
+                    <li><a href="../pages/Login.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Iniciar sesión</a></li>
                 </ul>
             </div>
             <div class="col-md-3 text-center">
                 <h2>Ayuda</h2>
                 <ul>
 
-                    <li><a href="pages/faqs.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Preguntas frecuentes</a></li>
-                    <li><a href="pages/terminosycondiciones.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Términos y condiciones</a></li>
-                    <li><a href="pages/avisodeprivacidad.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Aviso de privacidad</a></li>
+                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
+                    <li><a href="../pages/NoticeOfPrivacy.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Aviso de privacidad</a></li>
                 </ul>
             </div>
         </div>
     </footer>
+
 
     <!-- jQuery -->
     <script src="../js/app/jquery.min.js"></script>

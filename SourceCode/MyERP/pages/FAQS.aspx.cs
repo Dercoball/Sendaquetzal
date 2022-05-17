@@ -16,18 +16,11 @@ namespace Plataforma.pages
 {
     public partial class FAQS : System.Web.UI.Page
     {
-        public List<PreguntaFrecuente> itemsFaqs;
+        //public List<PreguntaFrecuente> itemsFaqs;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string usuario = (string)Session["usuario"];
-            string path = Dns.GetHostName();
 
-            //string host = Dns.GetHostByAddress;
-            string host = Request.UserHostAddress;
-
-
-            itemsFaqs = FAQ.GetListaItemsPublic(host);
 
         }
 

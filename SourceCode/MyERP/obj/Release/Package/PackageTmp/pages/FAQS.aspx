@@ -10,7 +10,7 @@
 
 
 
-    <link rel="shortcut icon" href="../img/favicon.ico">
+    <link rel="shortcut icon" href="../img/sq.jpg">
 
 
 
@@ -38,6 +38,8 @@
 
 </head>
 <body>
+
+
     <header>
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
@@ -75,10 +77,6 @@
     </header>
 
 
-    <%--    <div class="container" style="margin-top: 100px;">
-        <img src="../img/brand.png" class="img-responsive center-block" />
-    </div>--%>
-
 
     <section class="nosotros">
         <div class="container">
@@ -87,46 +85,30 @@
                 <h3>Preguntas frecuentes</h3>
 
 
-                <span id="faqs"></span>
+                <span id="loadItems"></span>
 
-                <% foreach (var item in itemsFaqs)
-                    { %>
-                <div>
-                    <div style="margin-top: 20px;">
-                        <strong>
-                            <%= item.Pregunta %>
-                        </strong>
-                    </div>
-                    <div>
-                        <%= item.Respuesta %>
-                    </div>
 
-                    <% } %>
-                    <!--End the for loop -->
-
-                </div>
             </div>
         </div>
     </section>
 
-    <footer>
+       <footer>
         <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">
                 <h2>Acerca de...</h2>
                 <ul>
-
-                    <li><a href="apprestar.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Acerca de...</a></li>
-                    <li><a href="login.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Iniciar sesión</a></li>
+                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de...</a></li>
+                    <li><a href="../pages/Login.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Iniciar sesión</a></li>
                 </ul>
             </div>
             <div class="col-md-3 text-center">
                 <h2>Ayuda</h2>
                 <ul>
 
-                    <li><a href="faqs.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Preguntas frecuentes</a></li>
-                    <li><a href="terminosycondiciones.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Términos y condiciones</a></li>
-                    <li><a href="avisodeprivacidad.aspx"><span class="glyphicon glyphicon-play-circle " aria-hidden="true"></span>Aviso de privacidad</a></li>
+                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
+                    <li><a href="../pages/NoticeOfPrivacy.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Aviso de privacidad</a></li>
                 </ul>
             </div>
         </div>

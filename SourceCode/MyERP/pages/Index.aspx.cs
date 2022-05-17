@@ -282,10 +282,10 @@ namespace Plataforma.pages
             //
 
             //........MENU Configuracion
-            //Agregar los numeros de paginas o permisos , de los tipo WEB
+            //Agregar los numeros de paginas o permisos , de los tipo Configuracion
             List<string> paginasConfiguracion = new List<string>
                 {
-                    "2",//tipos de clientes                                  
+                    "7",//tipos de clientes                                  
                 };
 
 
@@ -298,7 +298,7 @@ namespace Plataforma.pages
 
                 if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_CONFIGURACION)//2
                 {
-                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
+                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/config/") + permiso.NombreInterno;
 
                     htmlItemsConfiguracion += "<li> " +
                            " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.Nombre + "</a> " +

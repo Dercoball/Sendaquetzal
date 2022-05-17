@@ -244,5 +244,23 @@
     "inputFiles": [
       "js/app/catalogos/faq.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/termsandconditions.min.js",
+    "inputFiles": [
+      "js/app/termsandconditions.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/noticyofprivacy.min.js",
+    "inputFiles": [
+      "js/app/noticyofprivacy.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/aboutus.min.js",
+    "inputFiles": [
+      "js/app/aboutus.js"
+    ]
   }
 ]

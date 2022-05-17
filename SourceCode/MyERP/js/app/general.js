@@ -226,11 +226,11 @@ $(document).ready(function () {
 
     function controlLateral() {
 
-        if ($(window).outerWidth() > 992) {
-            $("nav.side-navbar").mCustomScrollbar({
-                scrollInertia: 200
-            });
-        }
+        //if ($(window).outerWidth() > 992) {
+        //    $("nav.side-navbar").mCustomScrollbar({
+        //        scrollInertia: 200
+        //    });
+        //}
 
         // Main Template Color
         var brandPrimary = '#33b35a';

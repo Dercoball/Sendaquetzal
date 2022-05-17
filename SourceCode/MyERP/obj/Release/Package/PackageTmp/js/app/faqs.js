@@ -1,8 +1,5 @@
 ﻿'use strict';
-let date = new Date();
-let descargas = "FAQs_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '0';
-
 
 
 const faq = {
@@ -10,8 +7,9 @@ const faq = {
 
     init: () => {
 
-
-        //faq.cargarItems();
+        console.log('Start');
+      
+        faq.cargarItems();
 
     },
 
@@ -24,7 +22,7 @@ const faq = {
 
         $.ajax({
             type: "POST",
-            url: "../pages/web/FAQ.aspx/GetListaItemsPublic",
+            url: "../pages/web/WFAQ.aspx/GetListaItemsPublic",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -35,7 +33,8 @@ const faq = {
                 let html = '';
                 data.forEach((item, index) => {
 
-                    console.log(item, index);
+                    //console.log(item, index);
+
                     html += `
                             <div>
                                 <div style="margin-top: 20px;">
@@ -50,7 +49,7 @@ const faq = {
 
                 });
 
-                $('#faqs').html(html);
+                $('#loadItems').html(html);
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {

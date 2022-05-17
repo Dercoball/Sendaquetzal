@@ -28,7 +28,7 @@ const faq = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Web/FAQ.aspx/GetListaItems",
+            url: "../../pages/Web/WFAQ.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -121,7 +121,7 @@ const faq = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Web/FAQ.aspx/GetItem",
+            url: "../../pages/Web/WFAQ.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -212,7 +212,7 @@ const faq = {
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Web/FAQ.aspx/Guardar",
+                    url: "../../pages/Web/WFAQ.aspx/Guardar",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -280,7 +280,7 @@ const faq = {
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Web/FAQ.aspx/Eliminar",
+                url: "../../pages/Web/WFAQ.aspx/Eliminar",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

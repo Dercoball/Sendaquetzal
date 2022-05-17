@@ -1,7 +1,7 @@
 /* your styles go here */
 
 
-.with-errors{
+.with-errors {
     color: tomato;
 }
 
@@ -20,24 +20,24 @@
     font-weight: bold;
 }
 
-.texto-grande{
-    height : 100px!important;
+.texto-grande {
+    height: 100px !important;
 }
 
-.texto-rojo{
-    color: tomato!important;
+.texto-rojo {
+    color: tomato !important;
 }
 
-.numero-dias, .numero-horas-extra, .dias{
+.numero-dias, .numero-horas-extra, .dias {
     font-size: .7rem;
 }
 
-.texto-hora{
+.texto-hora {
     font-size: 5.5em;
-    color:lightgreen;
+    color: lightgreen;
 }
 
-.fondo-negro{
+.fondo-negro {
     background-color: #000;
 }
 
@@ -85,8 +85,8 @@
     cursor: default;
 }
 
-.entregado{
-    background-color: darkgreen;    
+.entregado {
+    background-color: darkgreen;
 }
 
 
@@ -103,11 +103,15 @@
     color: white;
 }*/
 
-.img-social{
+.img-social {
     width: 40px;
 }
 
 
-.alto-textarea{
-    height: 100px!important;
+.alto-textarea {
+    height: 100px !important;
+}
+
+.margen-derecho {
+    margin-right: 2px;
 }

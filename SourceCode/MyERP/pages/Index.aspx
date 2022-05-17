@@ -22,11 +22,11 @@
     <!-- Custom Scrollbar-->
     <link rel="stylesheet" href="../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="../css/style.green.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="../css/style.sea.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="../css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="../img/favicon.ico">
+    <link rel="shortcut icon" href="../../img/sq.jpg">
     <!-- Tweaks for older IEs-->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -134,7 +134,7 @@
             <div class="container-fluid">
                 <div class="row d-flex align-items-md-stretch">
                     <div class="col-sm-12 text-center">
-                        <p class='nombre-empresa'></p>
+                        <p class='nombreempresa'></p>
                     </div>
                 </div>
             </div>

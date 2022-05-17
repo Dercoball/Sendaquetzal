@@ -8,17 +8,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
-
     <link rel="shortcut icon" href="../img/sq.jpg">
-
-
-
 
     <link rel="stylesheet" href="../css/custom.css">
     <link rel="stylesheet" href="../css/app/bootstrap.css">
     <link rel="stylesheet" href="../css/app/spinelli.css">
-
 
     <!-- Custom Fonts -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -30,7 +24,6 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <meta name="theme-color" content="#7952b3">
-
 
 
 

@@ -145,9 +145,9 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
-    <Content Include="js\app\noticyofprivacy.js" />
+    <Content Include="js\app\noticeofprivacy.js" />
     <Content Include="js\app\noticyofprivacy.min.js">
-      <DependentUpon>noticyofprivacy.js</DependentUpon>
+      <DependentUpon>noticeofprivacy.js</DependentUpon>
     </Content>
     <Content Include="js\app\termsandconditions.js" />
     <Content Include="js\app\faqs.js" />

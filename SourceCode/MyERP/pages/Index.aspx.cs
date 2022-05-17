@@ -361,8 +361,8 @@ namespace Plataforma.pages
             "                <ul class=\"nav-menu list-unstyled d-flex flex-md-row\"> " +
 
 
-            "                           <li class=\"nav-item\"><a href=\"#\" class=\"nav-link logout\" onclick=\"sessionStorage.removeItem('idusuario');    " +
-            "                                   sessionStorage.removeItem('nombreusuario'); " + " window.top.location.href = '" +
+            "                           <li class=\"nav-item\"><a href=\"#\" class=\"nav-link logout\" onclick=\"" +
+            "                                           window.top.location.href = '" +
                                                         HttpContext.Current.Server.UrlPathEncode("/pages/") +  "Login.aspx'\"><span class=\"d-none d-sm-inline-block\">Salir</span><i class=\"fa fa-sign-out\"></i></a></li>" +
 
             "                                   </li>   " +

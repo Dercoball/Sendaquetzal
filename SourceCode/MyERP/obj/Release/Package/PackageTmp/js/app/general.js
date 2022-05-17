@@ -5,11 +5,6 @@ var table;
 var usuario = '';
 
 
-const STATUS_REQUISICION_REPORTEFALLA = 1;
-const STATUS_REQUISICION_DIAGNOSTICO = 2;
-const STATUS_REQUISICION_ENVIADO = 3;
-const STATUS_REQUISICION_ENPROCESO = 4;
-const STATUS_REQUISICION_FINALIZADA = 5;
 
 let nombreUsuario = null;
 let idTipoUsuario = null;
@@ -101,13 +96,11 @@ var textosEsp =
 
 $(document).ready(function () {
 
-    usuario = sessionStorage.getItem("nombreusuario");
-
-    $('#nombreUsuario').text(usuario);
-
     nombreUsuario = document.getElementById('txtUsuario').value;
     idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
     idUsuario = document.getElementById('txtIdUsuario').value;
+
+    $('#nombreUsuario').text(nombreUsuario);
 
 
     let params = {};
@@ -140,13 +133,13 @@ $(document).ready(function () {
 
                     controlLateral();
 
-                    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//nombre empresa
+                    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//logo empresa
 
 
-                    cargarValoresConfiguracionNombreSistema('8');
+                    cargarValoresConfiguracionNombreSistema('8');// <title>
+
                     cargarValoresConfiguracionEmpresa('3', '.empresa-copy');//link y año
 
-                    //cargarValoresPM1('itemPM1');
 
                 });
 
@@ -165,15 +158,13 @@ $(document).ready(function () {
 
 
 
-    //} else {
-    //    window.location = "../../pages/Login.aspx";
-    //}
-
     function cargarValoresConfiguracionNombreSistema(id) {
-        var parametros = new Object();
+
+        let parametros = {};
         parametros.path = window.location.hostname;
         parametros.id = id;
         parametros = JSON.stringify(parametros);
+
         $.ajax({
             type: "POST",
             url: "../../pages/Index.aspx/GetItemConfiguracion",
@@ -184,14 +175,15 @@ $(document).ready(function () {
             success: function (msg) {
 
                 let valores = msg.d;
-                if (valores.valorCadena != null) {
+                
+                if (valores.ValorCadena != null) {
                     document.title = valores.ValorCadena;
                 } else {
-                    document.title = 'Plataforma';
+                    document.title = '';
                 }
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                document.title = 'Plataforma';
+                document.title = '';
 
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }

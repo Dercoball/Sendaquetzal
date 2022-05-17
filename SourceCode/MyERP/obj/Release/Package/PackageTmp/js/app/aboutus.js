@@ -1,14 +1,14 @@
 ﻿'use strict';
 let pagina = '0';
 
-const faq = {
+const aboutus = {
 
 
     init: () => {
 
-        console.log('Start');
+        //console.log('Start');
       
-        faq.cargarItems();
+        aboutus.cargarItems();
 
     },
 
@@ -17,11 +17,12 @@ const faq = {
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = sessionStorage.getItem("idusuario");
+        params.idTabla = "1";
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../pages/web/WFAQ.aspx/GetListaItemsPublic",
+            url: "../pages/web/WAboutUS.aspx/LoadContentPublic",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -29,26 +30,8 @@ const faq = {
             success: function (msg) {
 
                 let data = msg.d;
-                let html = '';
-                data.forEach((item, index) => {
 
-                    //console.log(item, index);
-
-                    html += `
-                            <div>
-                                <div style="margin-top: 20px;">
-                                <strong>
-                                ${item.Pregunta}
-                                </strong>
-                            </div>
-                            <div>
-                                ${item.Respuesta}
-                            </div>
-                    `;
-
-                });
-
-                $('#loadItems').html(html);
+                $('#loadItems').html(data);
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -72,7 +55,7 @@ const faq = {
 
 window.addEventListener('load', () => {
 
-    faq.init();
+    aboutus.init();
 
 });
 

@@ -2,14 +2,14 @@
 let pagina = '0';
 
 
-const termsandconditions = {
+const noticyofprivacy = {
 
 
     init: () => {
 
-        console.log('Start');
-      
-        termsandconditions.cargarItems();
+        //console.log('Start');
+
+        noticyofprivacy.cargarItems();
 
     },
 
@@ -18,7 +18,7 @@ const termsandconditions = {
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = sessionStorage.getItem("idusuario");
-        params.idTabla = "2";
+        params.idTabla = "3";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -56,7 +56,7 @@ const termsandconditions = {
 
 window.addEventListener('load', () => {
 
-    termsandconditions.init();
+    noticyofprivacy.init();
 
 });
 

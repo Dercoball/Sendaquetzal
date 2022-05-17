@@ -23,11 +23,11 @@
     <!-- Custom Scrollbar-->
     <link rel="stylesheet" href="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="../../css/style.green.css">
+    <link rel="stylesheet" href="../../css/style.sea.css">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="../../css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <link rel="shortcut icon" href="../../img/sq.jpg">
     <!-- Tweaks for older IEs-->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>

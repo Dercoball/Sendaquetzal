@@ -8,16 +8,18 @@ const faq = {
     init: () => {
 
         console.log('Start');
-      
+
         faq.cargarItems();
 
     },
+
 
     cargarItems: () => {
 
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = sessionStorage.getItem("idusuario");
+        params.idTabla = "1";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -29,11 +31,11 @@ const faq = {
             async: true,
             success: function (msg) {
 
+
                 let data = msg.d;
                 let html = '';
                 data.forEach((item, index) => {
 
-                    //console.log(item, index);
 
                     html += `
                             <div>
@@ -52,6 +54,7 @@ const faq = {
                 $('#loadItems').html(html);
 
 
+
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
 
@@ -66,7 +69,6 @@ const faq = {
 
 
     },
-
 
 
 }

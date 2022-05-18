@@ -1213,6 +1213,7 @@
     <Compile Include="Clases\EquipoCatalogoRefaccion.cs" />
     <Compile Include="Clases\EquipoMini.cs" />
     <Compile Include="Clases\EquipoUsuario.cs" />
+    <Compile Include="Clases\TipoCliente.cs" />
     <Compile Include="Clases\Tutorial.cs" />
     <Compile Include="Clases\Status.cs" />
     <Compile Include="Clases\TipoCombustible.cs" />

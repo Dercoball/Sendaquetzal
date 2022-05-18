@@ -1,4 +1,5 @@
-﻿using Plataforma.Clases;
+﻿using Newtonsoft.Json;
+using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,40 +14,59 @@ namespace Plataforma.pages
 {
     public partial class CustomerTypes : System.Web.UI.Page
     {
+        const string pagina = "7";
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            string usuario = (string)Session["usuario"];
+            string idTipoUsuario = (string)Session["id_tipo_usuario"];
+            string idUsuario = (string)Session["id_usuario"];
+            string path = (string)Session["path"];
 
 
+            txtUsuario.Value = usuario;
+            txtIdTipoUsuario.Value = idTipoUsuario;
+            txtIdUsuario.Value = idUsuario;
+
+            //  si no esta logueado
+            if (usuario == "")
+            {
+                Response.Redirect("Login.aspx");
+            }
 
         }
 
- 
-
-
 
         [WebMethod]
-        public static List<TipoUsuario> GetListaItems(string path, string idUsuario)
+        public static List<TipoCliente> GetListaItems(string path, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<TipoUsuario> items = new List<TipoUsuario>();
+            List<TipoCliente> items = new List<TipoCliente>();
+
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
 
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-
-                string esSuperUser = idUsuario != "1" ? "   where  id_tipo_usuario <> @usuarioSuperAdmin AND ISNull(eliminado, 0) = 0 " 
-                    : "  where ISNull(eliminado, 0) = 0 ";
-
-                string query = " SELECT id_tipo_usuario , nombre, ISNull(activo, 1) activo FROM  tipo_usuario " 
-                    + esSuperUser;
+                string query = @" SELECT id_tipo_cliente as id, tipo_cliente ,prestamo_inicial_maximo, porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
+                     fechas_pago, cantidad_para_renovar, semana_extra
+                     FROM tipo_cliente
+                     WHERE 
+                     ISNull(eliminado, 0) = 0
+                     ORDER BY id ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@usuarioSuperAdmin", Usuario.TIPO_USUARIO_SUPER_ADMIN);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -57,18 +77,22 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        TipoUsuario item = new TipoUsuario();
-                        item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());                        
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();                        
+                        TipoCliente item = new TipoCliente();
+                        item.IdTipoCliente = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        item.NombreTipoCliente = (ds.Tables[0].Rows[i]["tipo_cliente"].ToString());
+                        item.PrestamoInicialMaximo = float.Parse(ds.Tables[0].Rows[i]["prestamo_inicial_maximo"].ToString());
+                        item.PorcentajeSemanal = float.Parse(ds.Tables[0].Rows[i]["porcentaje_semanal"].ToString());
+                        item.SemanasAPrestar = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
+                        item.GarantiasPorMonto = float.Parse(ds.Tables[0].Rows[i]["garantias_por_monto"].ToString());
+                        item.FechasDePago = (ds.Tables[0].Rows[i]["fechas_pago"].ToString());
+                        item.CantidadParaRenovar = float.Parse(ds.Tables[0].Rows[i]["cantidad_para_renovar"].ToString());
+                        item.SemanasExtra = int.Parse(ds.Tables[0].Rows[i]["semana_extra"].ToString());
 
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
+                        item.ActivoSemanaExtra = (item.SemanasExtra == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                        string botones = "<button  onclick='tiposUsuario.editar(" + item.IdTipoUsuario + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='tiposUsuario.eliminar(" + item.IdTipoUsuario + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove'></span>Eliminar</button>";
-                        botones += "&nbsp; <button  onclick='tiposUsuario.permisos(" + item.IdTipoUsuario + ", \"" + item.Nombre  + "\")'   class='btn btn-outline-primary'> <span class='fa fa-key'></span> Permisos</button>";
+                        string botones = "<button  onclick='tipoCliente.editar(" + item.IdTipoCliente + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='tipoCliente.eliminar(" + item.IdTipoCliente + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 
@@ -95,103 +119,31 @@ namespace Plataforma.pages
 
         }
 
+
+
+        /**
+         * Sin importar los permisos
+         */
         [WebMethod]
-        public static object GuardarPermisosUsuario(string path, List<PermisoUsuario> listaPermisos, string idTipoUsuario)
-        {
-
-
-            Utils.Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            SqlConnection conn = new SqlConnection(strConexion);
-            SqlTransaction transaccion = null;
-
-            try
-            {
-
-
-                int r = 0;
-                conn.Open();
-                transaccion = conn.BeginTransaction();
-
-
-                string sqlborrar = "";
-
-                sqlborrar = " DELETE permisos_tipo_usuario " +
-                        " WHERE id_tipo_usuario = @id ";
-
-
-
-                SqlCommand cmd = new SqlCommand(sqlborrar, conn);
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", idTipoUsuario);
-                cmd.Transaction = transaccion;
-
-
-                r += cmd.ExecuteNonQuery();
-                Utils.Log("r = " + r);
-                Utils.Log("Eliminado -> OK ");
-
-
-                string sql = "";
-                foreach (var item in listaPermisos)
-                {
-                    sql = " INSERT INTO permisos_tipo_usuario (id_permiso, id_tipo_usuario) VALUES (@id_permiso, @id_tipo_usuario )";
-
-
-
-                    Utils.Log("\nMétodo-> " +
-                    System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
-
-                    SqlCommand cmd2 = new SqlCommand(sql, conn);
-                    cmd2.CommandType = CommandType.Text;
-
-                    cmd2.Parameters.AddWithValue("@id_permiso", item.IdPermiso);
-                    cmd2.Parameters.AddWithValue("@id_tipo_usuario", idTipoUsuario);
-
-                    cmd2.Transaction = transaccion;
-
-                    r += cmd2.ExecuteNonQuery();
-                    Utils.Log("Guardado -> OK ");
-                }
-
-                transaccion.Commit();
-
-                return r;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return -1;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-
-        }
-
-        [WebMethod]
-        public static List<PermisoUsuario> ObtenerListaPermisos(string path, string idTipoUsuario)
+        public static List<TipoCliente> GetListaItemsPublic(string path)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<PermisoUsuario> items = new List<PermisoUsuario>();
+            List<TipoCliente> items = new List<TipoCliente>();
 
-            List<PermisoUsuario> listaPermisosUsuario = ObtenerListaPermisosPorTipoUsuario(path, idTipoUsuario);
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = "SELECT id_permiso,  nombre, nombre_interno, tipo_permiso" +
-                    "  FROM permisos " +
-                    "  WHERE IsNull(activo, 0) = 1 ";
-
+                string query = @" SELECT id_tipo_cliente as id, tipo_cliente ,prestamo_inicial_maximo, porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
+                     fechas_pago, cantidad_para_renovar, semana_extra
+                     FROM tipo_cliente
+                     WHERE 
+                     ISNull(eliminado, 0) = 0
+                     ORDER BY id ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -199,96 +151,29 @@ namespace Plataforma.pages
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
-                
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        PermisoUsuario item = new PermisoUsuario();
-                        item.IdPermiso = int.Parse(ds.Tables[0].Rows[i]["id_permiso"].ToString());
+                        TipoCliente item = new TipoCliente();
+                        item.IdTipoCliente = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        item.NombreTipoCliente = (ds.Tables[0].Rows[i]["tipo_cliente"].ToString());
+                        item.PrestamoInicialMaximo = float.Parse(ds.Tables[0].Rows[i]["prestamo_inicial_maximo"].ToString());
+                        item.PorcentajeSemanal = float.Parse(ds.Tables[0].Rows[i]["porcentaje_semanal"].ToString());
+                        item.SemanasAPrestar = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
+                        item.GarantiasPorMonto = float.Parse(ds.Tables[0].Rows[i]["garantias_por_monto"].ToString());
+                        item.FechasDePago = (ds.Tables[0].Rows[i]["fechas_pago"].ToString());
+                        item.CantidadParaRenovar = float.Parse(ds.Tables[0].Rows[i]["cantidad_para_renovar"].ToString());
+                        item.SemanasExtra = int.Parse(ds.Tables[0].Rows[i]["semana_extra"].ToString());
 
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.NombreInterno = ds.Tables[0].Rows[i]["nombre_interno"].ToString();
-                        item.TipoPermiso = ds.Tables[0].Rows[i]["tipo_permiso"].ToString();
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-
-                HashSet<int> permisosIds = new HashSet<int>(listaPermisosUsuario.Select(x => x.IdPermiso));
-
-                items.RemoveAll(x => permisosIds.Contains(x.IdPermiso));
-
-             
+                        item.ActivoSemanaExtra = (item.SemanasExtra == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
+                        string botones = "<button  onclick='tipoCliente.editar(" + item.IdTipoCliente + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='tipoCliente.eliminar(" + item.IdTipoCliente + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
-            finally
-            {
-                conn.Close();
-            }
-
-        }
-
-
-        [WebMethod]
-        public static List<PermisoUsuario> ObtenerListaPermisosPorTipoUsuario(string path, string idTipoUsuario)
-        {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<PermisoUsuario> items = new List<PermisoUsuario>();
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = "  SELECT p.nombre, p.id_permiso, p.nombre_recurso, p.nombre_interno, p.tipo_permiso " +
-                    " from permisos_tipo_usuario rel_ptu join permisos p on (p.id_permiso = rel_ptu .id_permiso) " +
-                    " where rel_ptu.id_tipo_usuario  = @id_tipo_usuario " +
-                    " AND IsNull(p.activo, 0) = 1  ";
-
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                Utils.Log("idtipoUsuario =  " + idTipoUsuario);
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_tipo_usuario", idTipoUsuario);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-
-
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        PermisoUsuario item = new PermisoUsuario();
-                        item.IdPermiso = int.Parse(ds.Tables[0].Rows[i]["id_permiso"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.NombreInterno = ds.Tables[0].Rows[i]["nombre_interno"].ToString();
-                        item.TipoPermiso = ds.Tables[0].Rows[i]["tipo_permiso"].ToString();
-
-
+                        item.Accion = botones;
 
                         items.Add(item);
 
@@ -311,20 +196,24 @@ namespace Plataforma.pages
                 conn.Close();
             }
 
-
         }
 
 
+
         [WebMethod]
-        public static DatosSalida Guardar(string path, TipoUsuario item, string accion)
+        public static object Guardar(string path, TipoCliente item, string accion, string idUsuario)
         {
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-            DatosSalida salida = new DatosSalida();
-
-            int r = 0;
             try
             {
 
@@ -333,17 +222,23 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = " INSERT INTO tipo_usuario (nombre, activo, fecha_ultima_modificacion)    " +
-                          "   VALUES                                                                " +
-                          "   (@nombre, @activo, @fecha_ultima_modificacion)                 ";
+                    sql = @" INSERT INTO tipo_cliente(tipo_cliente, prestamo_inicial_maximo, porcentaje_semanal, 
+                    semanas_a_prestar, garantias_por_monto, fechas_pago, cantidad_para_renovar, semana_extra, eliminado) 
+                    VALUES (@tipo_cliente, @prestamo_inicial_maximo,@porcentaje_semanal,@semanas_a_prestar,@garantias_por_monto,@fechas_pago
+                    ,@cantidad_para_renovar,@semanas_extra, 0) ";
                 }
                 else
                 {
-                    sql = " UPDATE tipo_usuario SET     " +
-                          " nombre = @nombre,           " +
-                          "    activo = @activo,        " +
-                          "    fecha_ultima_modificacion = @fecha_ultima_modificacion " +
-                          "    WHERE id_tipo_usuario = @id_tipo_usuario   ";
+                    sql = " UPDATE tipo_cliente " +
+                          " SET tipo_cliente = @tipo_cliente, " +
+                          "     prestamo_inicial_maximo = @prestamo_inicial_maximo, " +
+                          "     porcentaje_semanal = @porcentaje_semanal,  " +
+                          "     semanas_a_prestar = @semanas_a_prestar,  " +
+                          "     garantias_por_monto = @garantias_por_monto,  " +
+                          "     fechas_pago = @fechas_pago,  " +
+                          "     cantidad_para_renovar = @cantidad_para_renovar,  " +
+                          "     semana_extra = @semanas_extra  " +
+                          " WHERE id_tipo_cliente = @id ";
 
                 }
 
@@ -353,29 +248,33 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@fecha_ultima_modificacion", DateTime.Now);
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@activo", item.Activo);
-                cmd.Parameters.AddWithValue("@id_tipo_usuario", item.IdTipoUsuario);
+                cmd.Parameters.AddWithValue("@tipo_cliente", item.NombreTipoCliente);
+                cmd.Parameters.AddWithValue("@prestamo_inicial_maximo", item.PrestamoInicialMaximo);
+                cmd.Parameters.AddWithValue("@porcentaje_semanal", item.PorcentajeSemanal);
+                cmd.Parameters.AddWithValue("@semanas_a_prestar", item.SemanasAPrestar);
+                cmd.Parameters.AddWithValue("@garantias_por_monto", item.GarantiasPorMonto);
+
+                cmd.Parameters.AddWithValue("@fechas_pago", item.FechasDePago);
+
+                cmd.Parameters.AddWithValue("@cantidad_para_renovar", item.CantidadParaRenovar);
+
+                cmd.Parameters.AddWithValue("@semanas_extra", item.SemanasExtra);
+
+                cmd.Parameters.AddWithValue("@id", item.IdTipoCliente);
 
 
-                r = cmd.ExecuteNonQuery();
-
+                int r = cmd.ExecuteNonQuery();
                 Utils.Log("Guardado -> OK ");
 
 
-                salida.MensajeError = "Guardado correctamente";
-                salida.CodigoError = 0;
-                
 
+                return r;
             }
             catch (Exception ex)
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                r = -1;
-                salida.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
-                salida.CodigoError = 1;
+                return -1; //Retornamos menos uno cuando se dió por alguna razón un error
             }
 
             finally
@@ -383,52 +282,58 @@ namespace Plataforma.pages
                 conn.Close();
             }
 
-            return salida;
-
-
         }
 
-        
 
 
-       
+
+
 
         [WebMethod]
-        public static DatosSalida EliminarTipoUsuario(string path, string id)
+        public static DatosSalida Eliminar(string path, string id, string idUsuario)
         {
+
+
+
             DatosSalida salida = new DatosSalida();
             salida.CodigoError = 0;
             salida.MensajeError = null;
 
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                salida.CodigoError = -1;
+                salida.MensajeError = "No se pudo eliminar el registro.";
+
+                return salida;
+
+            }
+
             Utils.Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
 
-            
             try
             {
 
-
                 conn.Open();
 
+                string sql = @" UPDATE tipo_cliente SET eliminado = 1  
+                                        WHERE id_tipo_cliente = @id ";
 
-                string sql = "";
-
-                sql = " UPDATE tipo_usuario set eliminado = 1" +
-                        " WHERE id_tipo_usuario = @id_tipo_usuario ";
-
+                Utils.Log("\n-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id_tipo_usuario", id);
-                
-
+                cmd.Parameters.AddWithValue("@id", id);
 
                 int r = cmd.ExecuteNonQuery();
-
-                
 
                 Utils.Log("r = " + r);
                 Utils.Log("Eliminado -> OK ");
@@ -442,7 +347,7 @@ namespace Plataforma.pages
             {
 
                 salida.CodigoError = -1;
-                salida.MensajeError = "No se pudo eliminar el TipoUsuario.";
+                salida.MensajeError = "No se pudo eliminar el registro.";
 
 
 
@@ -458,28 +363,29 @@ namespace Plataforma.pages
 
         }
 
-
         [WebMethod]
-        public static TipoUsuario GetItem(string path, string id)
+        public static TipoCliente GetItem(string path, string id)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            TipoUsuario item = new TipoUsuario();
+            TipoCliente item = new TipoCliente();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT id_tipo_usuario , nombre, ISNull(activo, 1) activo" +
-                    "  FROM  tipo_usuario where id_tipo_usuario =  @id_tipo_usuario ";
+                string query = @" SELECT id_tipo_cliente as id, tipo_cliente, prestamo_inicial_maximo, porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
+                     fechas_pago, cantidad_para_renovar, semana_extra
+                     FROM tipo_cliente
+                     WHERE id_tipo_cliente =  @id ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("id_tipo_usuario =  " + id);
+                Utils.Log("id_puesto =  " + id);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_tipo_usuario", id);
+                adp.SelectCommand.Parameters.AddWithValue("@id", id);
 
                 adp.Fill(ds);
 
@@ -488,20 +394,21 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item = new TipoUsuario();
+                        item = new TipoCliente();
 
-                        item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-
+                        item.IdTipoCliente = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        item.NombreTipoCliente = (ds.Tables[0].Rows[i]["tipo_cliente"].ToString());
+                        item.PrestamoInicialMaximo = float.Parse(ds.Tables[0].Rows[i]["prestamo_inicial_maximo"].ToString());
+                        item.PorcentajeSemanal = float.Parse(ds.Tables[0].Rows[i]["porcentaje_semanal"].ToString());
+                        item.SemanasAPrestar = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
+                        item.GarantiasPorMonto = float.Parse(ds.Tables[0].Rows[i]["garantias_por_monto"].ToString());
+                        item.FechasDePago = (ds.Tables[0].Rows[i]["fechas_pago"].ToString());
+                        item.CantidadParaRenovar = float.Parse(ds.Tables[0].Rows[i]["cantidad_para_renovar"].ToString());
+                        item.SemanasExtra = int.Parse(ds.Tables[0].Rows[i]["semana_extra"].ToString());
 
 
                     }
                 }
-
-
-
-
 
                 return item;
             }
@@ -518,8 +425,6 @@ namespace Plataforma.pages
             }
 
         }
-
-
 
 
 

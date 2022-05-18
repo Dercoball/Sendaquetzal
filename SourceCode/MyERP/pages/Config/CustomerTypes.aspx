@@ -97,10 +97,10 @@
                             <thead>
                                 <tr>
                                     <th>Tipo de cliente</th>
-                                    <th>Prestamo inicial maximo</th>
+                                    <th>Prestamo inicial máximo</th>
                                     <th>Porcentaje semanal a pagar</th>
                                     <th>Semanas a prestar</th>
-                                    <th>Garantias por monto</th>
+                                    <th>Garantías por monto</th>
                                     <th>Fechas de pago</th>
                                     <th>Cantidad para renovar</th>
                                     <th>Semanas extra</th>
@@ -146,7 +146,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtPrestamoInicialMaximo">
-                                            Prestamo inicial maximo
+                                            Prestamo inicial máximo
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtPrestamoInicialMaximo" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -185,7 +185,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtGarantiasPorMonto">
-                                            Garantias por monto
+                                            Garantías por monto
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtGarantiasPorMonto" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -206,7 +206,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtCantidadRenovar">
-                                            Cantidad maxima a renovar
+                                            Cantidad máxima a renovar
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtCantidadRenovar" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>

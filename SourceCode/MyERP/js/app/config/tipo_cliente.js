@@ -1,13 +1,11 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "TiposCliente" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let descargas = "TIPOCLIENTE_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '7';
 
-let idEquipoSeleccionado = -1;
 
 
-
-const tiposUsuario = {
+const tipoCliente = {
 
 
     init: () => {
@@ -15,28 +13,34 @@ const tiposUsuario = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        tiposUsuario.idSeleccionado = -1;
-        tiposUsuario.accion = '';
-        tiposUsuario.cargarItems();
+        tipoCliente.idSeleccionado = -1;
+        tipoCliente.accion = '';
+        tipoCliente.cargarItems();
 
     },
 
     cargarItems: () => {
 
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idUsuario = sessionStorage.getItem("idusuario");
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params = JSON.stringify(params);
 
-        let url = '../pages/TiposUsuario.aspx/GetListaItems';
-        
-        utils.postData(url, parametros)
-            .then(data => {
-                console.log(data); // JSON data parsed by `data.json()` call
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/CustomerTypes.aspx/GetListaItems",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
 
+                let data = msg.d;
 
-                data = data.d;
-
-
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
 
                 let table = $('#table').DataTable({
                     "destroy": true,
@@ -44,10 +48,17 @@ const tiposUsuario = {
                     "order": [],
                     data: data,
                     columns: [
-                        { data: 'IdTipoUsuario' },
-                        { data: 'Nombre' },
-                        { data: 'ActivoStr' },
+
+                        { data: 'NombreTipoCliente' },
+                        { data: 'PrestamoInicialMaximo' },
+                        { data: 'PorcentajeSemanal' },
+                        { data: 'SemanasAPrestar' },
+                        { data: 'GarantiasPorMonto' },
+                        { data: 'FechasDePago' },
+                        { data: 'CantidadParaRenovar' },
+                        { data: 'ActivoSemanaExtra' },
                         { data: 'Accion' }
+
 
                     ],
                     "language": textosEsp,
@@ -57,7 +68,7 @@ const tiposUsuario = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frtiplB',
+                    dom: 'frBtipl',
                     buttons: [
                         {
                             extend: 'excelHtml5',
@@ -73,8 +84,14 @@ const tiposUsuario = {
 
                 });
 
-            });
 
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
 
 
 
@@ -86,11 +103,14 @@ const tiposUsuario = {
 
     eliminar: (id) => {
 
-        tiposUsuario.idSeleccionado = id;
+        tipoCliente.idSeleccionado = id;
 
+
+        $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
         $('#panelEliminar').modal('show');
 
     },
+
 
 
 
@@ -99,37 +119,40 @@ const tiposUsuario = {
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
 
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.id = id;
-        parametros = JSON.stringify(parametros);
+        let params = {};
+        params.path = window.location.hostname;
+        params.id = id;
+        params = JSON.stringify(params);
+
         $.ajax({
             type: "POST",
-            url: "../pages/TiposUsuario.aspx/GetItem",
-            data: parametros,
+            url: "../../pages/Config/CustomerTypes.aspx/GetItem",
+            data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
                 var item = msg.d;
-                tiposUsuario.idSeleccionado = item.IdTipoUsuario;
+                tipoCliente.idSeleccionado = item.IdTipoCliente;
 
-                console.log('.');
-                $('#txtNombre').val(item.Nombre);
-                $('#chkActivo').prop('checked', item.Activo === 1);
+                $('#txtTipoCliente').val(item.NombreTipoCliente);
+                $('#txtPrestamoInicialMaximo').val(item.PrestamoInicialMaximo);
+                $('#txtPorcentajeSemanal').val(item.PorcentajeSemanal);
+                $('#txtSemanasAPrestar').val(item.SemanasAPrestar);
+                $('#txtGarantiasPorMonto').val(item.GarantiasPorMonto);
+                $('#txtFechasDePago').val(item.FechasDePago);
+                $('#txtCantidadRenovar').val(item.CantidadParaRenovar);
+
+                $('#chkSemanaExtra').prop('checked', item.SemanasExtra === 1);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
 
-                tiposUsuario.accion = "editar";
+                tipoCliente.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
-
-
-
-
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -139,7 +162,6 @@ const tiposUsuario = {
 
 
     },
-
 
 
     nuevo: () => {
@@ -149,288 +171,100 @@ const tiposUsuario = {
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
         $('#spnTituloForm').text('Nuevo');
-        $('#txtDescripcion').val('');
 
 
 
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        tiposUsuario.accion = "nuevo";
-        tiposUsuario.idSeleccionado = -1;
-        idEquipoSeleccionado = -1;
+        tipoCliente.accion = "nuevo";
+        tipoCliente.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
-        obtenerFechaHoraServidor('txtFechaCreacion');
 
 
-
-    },
-
-
-
-    permisos: (id, nombre) => {
-
-        tiposUsuario.idSeleccionado = id;
-        $('.spnNombreTipoUsuario').text(nombre);
-        
-
-
-        tiposUsuario.cargarListaPermisos(id);
-        tiposUsuario.cargarListaPermisosUsuario(id);
-
-        $('#panelPermisos').modal('show');
-
-    },
-
-    cargarListaPermisos: (idTipoUsuario) => {
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idTipoUsuario = idTipoUsuario;
-
-        parametros = JSON.stringify(parametros);
-        $.ajax({
-            type: "POST",
-            url: "../pages/TiposUsuario.aspx/ObtenerListaPermisos",
-            data: parametros,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-
-                var items = msg.d;
-                var opcion = "";
-
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
-
-                    opcion += '<option value="' + item.IdPermiso + '">' + item.Nombre + '</option>';
-
-                }
-
-                $('#listaPermisos').empty().append(opcion);
-
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
-
-        });
-
-    },
-
-    cargarListaPermisosUsuario: (id) => {
-
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idTipoUsuario = id;
-        parametros = JSON.stringify(parametros);
-        $.ajax({
-            type: "POST",
-            url: "../pages/TiposUsuario.aspx/ObtenerListaPermisosPorTipoUsuario",
-            data: parametros,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-                var items = msg.d;
-                var opcion = "";
-
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
-
-                    opcion += '<option value="' + item.IdPermiso + '">' + item.Nombre + '</option>';
-
-                }
-
-                $('#listaPermisosSeleccionados').empty().append(opcion);
-
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
-
-        });
 
     },
 
 
     accionesBotones: () => {
 
-
-        $("#listaPermisos").on("change",  (e) => {
-            e.preventDefault();
-
-            let args = e.currentTarget.selectedOptions;
-
-            if (args[0].value) {
-                let value = args[0].value;
-                let text = args[0].text;
-
-                let item = '<option value="' + value + '">' + text + "</option>";
-
-                $("#listaPermisosSeleccionados").append(item);
-                $("#listaPermisos option[value='" + value + "']").remove();
-            }
-        });
-
-        $("#listaPermisosSeleccionados").on("change", (e) =>  {
-            e.preventDefault();
-
-            let args = e.currentTarget.selectedOptions;
-
-            if (args[0].value) {
-                let value = args[0].value;
-                let text = args[0].text;
-
-                let item = '<option value="' + value + '">' + text + "</option>";
-
-                $("#listaPermisos").append(item);
-                $("#listaPermisosSeleccionados option[value='" + value + "']").remove();
-            }
-        });
-
-
-        $('#btnGuardarPermisos').on('click', (e) => {
-            console.log('Boton guardarP');
-
-            e.preventDefault();
-
-
-
-            var listaP = [];
-
-            $("#listaPermisosSeleccionados option").each(function () {
-
-                var item = new Object();
-                item.IdPermiso = $(this).val();
-                item.IdTipoUsuario = tiposUsuario.idSeleccionado;
-
-                listaP.push(item);
-            });
-
-
-            var parametros = new Object();
-            parametros.path = window.location.hostname;
-            parametros.listaPermisos = listaP;
-            parametros.idTipoUsuario = tiposUsuario.idSeleccionado;
-
-            parametros = JSON.stringify(parametros);
-            $.ajax({
-                type: "POST",
-                url: "TiposUsuario.aspx/GuardarPermisosUsuario",
-                data: parametros,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: true,
-                success: function (msg) {
-                    var resultado = parseInt(msg.d);
-
-                    if (resultado > 0) {
-
-                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
-
-
-
-                    } else {
-                        utils.toast(mensajesAlertas.errorGuardar, 'ok');
-
-
-                    }
-                    $('#listaPermisosSeleccionados').empty();
-
-                    $('#panelPermisos').modal('hide');
-
-
-                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
-                }
-
-            });
-
-
-        });
-
-
-
-
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            tiposUsuario.nuevo();
+            tipoCliente.nuevo();
 
         });
 
 
-        $('#btnGuardar').on('click', (e) => {
+        $('#btnGuardar').click(function (e) {
 
             e.preventDefault();
 
             var hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
 
+            if (!hasErrors) {
 
-            if (hasErrors) {
-                return;
-            }
+                //  Objeto con los valores a enviar
+                let item = {};
+                item.IdTipoCliente = tipoCliente.idSeleccionado;
+                item.NombreTipoCliente = $('#txtTipoCliente').val();
+                item.PrestamoInicialMaximo = $('#txtPrestamoInicialMaximo').val();
+                item.PorcentajeSemanal = $('#txtPorcentajeSemanal').val();
+                item.SemanasAPrestar = $('#txtSemanasAPrestar').val();
+                item.GarantiasPorMonto = $('#txtGarantiasPorMonto').val();
+                item.FechasDePago = $('#txtFechasDePago').val();
+                item.CantidadParaRenovar = $('#txtCantidadRenovar').val();
+
+                item.SemanasExtra = $('#chkSemanaExtra').prop('checked') ? 1 : 0;
+
+                let params = {};
+                params.path = window.location.hostname;
+                params.item = item;
+                params.accion = tipoCliente.accion;
+                params.idUsuario = document.getElementById('txtIdUsuario').value;
+                params = JSON.stringify(params);
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../pages/Config/CustomerTypes.aspx/Guardar",
+                    data: params,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        let resultado = parseInt(msg.d);
+
+                        if (resultado > 0) {
+
+                            utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
 
+                            $('#panelTabla').show();
+                            $('#panelForm').hide();
+
+                            tipoCliente.cargarItems();
 
 
-            var item = new Object();
-            item.IdTipoUsuario = tiposUsuario.idSeleccionado;
-            item.Activo = $('#chkActivo').prop('checked') == true ? 1 : 0;
-            item.NOmbre = $('#txtNombre').val();
+                        } else {
+
+                            utils.toast(mensajesAlertas.errorGuardar, 'fail');
 
 
+                        }
+
+                        $('#panelEdicion').modal('hide');
 
 
-            var parametros = new Object();
-            parametros.path = window.location.hostname;
-            parametros.item = item;
-            parametros.accion = tiposUsuario.accion;
-            parametros = JSON.stringify(parametros);
-            $.ajax({
-                type: "POST",
-                url: "../pages/TiposUsuario.aspx/Guardar",
-                data: parametros,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: true,
-                success: function (msg) {
-                    var valores = msg.d;
-
-
-
-                    if (valores.CodigoError == 0) {
-
-                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
-
-
-                        $('#panelTabla').show();
-                        $('#panelForm').hide();
-
-                        tiposUsuario.cargarItems();
-
-                    } else {
-
-                        utils.toast(mensajesAlertas.errorGuardar, 'error');
-
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus + ": " + XMLHttpRequest.responseText);
                     }
 
+                });
 
 
-                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-
-
-                    utils.toast(mensajesAlertas.errorGuardar, 'error');
-
-
-
-
-                }
-
-            });
+            }
 
         });
 
@@ -447,14 +281,16 @@ const tiposUsuario = {
 
         $('#btnEliminarAceptar').on('click', (e) => {
 
-            var parametros = new Object();
-            parametros.path = window.location.hostname;
-            parametros.id = tiposUsuario.idSeleccionado;
-            parametros = JSON.stringify(parametros);
+            let params = {};
+            params.path = window.location.hostname;
+            params.id = tipoCliente.idSeleccionado;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params = JSON.stringify(params);
+
             $.ajax({
                 type: "POST",
-                url: "../pages/TiposUsuario.aspx/EliminarTipoUsuario",
-                data: parametros,
+                url: "../../pages/Config/CustomerTypes.aspx/Eliminar",
+                data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
@@ -466,7 +302,7 @@ const tiposUsuario = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        tiposUsuario.cargarItems();
+                        tipoCliente.cargarItems();
 
                     } else {
 
@@ -492,9 +328,9 @@ const tiposUsuario = {
 
 window.addEventListener('load', () => {
 
-    tiposUsuario.init();
+    tipoCliente.init();
 
-    tiposUsuario.accionesBotones();
+    tipoCliente.accionesBotones();
 
 });
 

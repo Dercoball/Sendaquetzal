@@ -298,7 +298,7 @@ namespace Plataforma.pages
 
                 if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_CONFIGURACION)//2
                 {
-                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/config/") + permiso.NombreInterno;
+                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
 
                     htmlItemsConfiguracion += "<li> " +
                            " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.Nombre + "</a> " +

@@ -4,30 +4,30 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title></title>
-    <meta name="description" content="">
+    <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="all,follow">
+    <meta name="robots" content="all,follow" />
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css" />
     <!-- Font Awesome CSS-->
-    <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../vendor/font-awesome/css/font-awesome.min.css">
     <!-- Fontastic Custom icon font-->
-    <link rel="stylesheet" href="../css/fontastic.css">
+    <link rel="stylesheet" href="../../css/fontastic.css">
     <!-- Google fonts - Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
     <!-- jQuery Circle-->
-    <link rel="stylesheet" href="../css/grasp_mobile_progress_circle-1.0.0.min.css">
+    <link rel="stylesheet" href="../../css/grasp_mobile_progress_circle-1.0.0.min.css">
     <!-- Custom Scrollbar-->
-    <link rel="stylesheet" href="../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="../css/style.default.css">
+    <link rel="stylesheet" href="../../css/style.sea.css">
     <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="../css/custom.css">
+    <link rel="stylesheet" href="../../css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="../img/favicon.ico">
+    <link rel="shortcut icon" href="../../img/sq.jpg">
     <!-- Tweaks for older IEs-->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -35,6 +35,14 @@
 </head>
 
 <body>
+
+    <form class="form-signin" id="form1" runat="server">
+        <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
+    </form>
+
+
     <!-- Side Navbar -->
     <nav class="side-navbar">
         <div class="side-navbar-wrapper">
@@ -47,7 +55,7 @@
                     <span></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
-                <div class="sidenav-header-logo"><a href="Index.aspx" class="brand-small text-center"><strong>C</strong><strong class="text-primary">B</strong></a></div>
+                <div class="sidenav-header-logo"><a href="#" class="brand-small text-center"><strong>S</strong><strong class="text-primary">Q</strong></a></div>
             </div>
             <!-- Sidebar Navigation Menus-->
             <div class="main-menu">
@@ -61,18 +69,10 @@
         <!-- navbar-->
         <header class="header">
 
-
-
-
-
             <nav class="navbar">
                 <div class="container-fluid">
 
-
                     <span id="spnMenuSuperior"></span>
-
-
-                    <!-- Languages dropdown    -->
 
                 </div>
             </nav>
@@ -85,8 +85,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Panel tipos usuario</h1>
-
+                    <h1 class="h3 display">Tipos de cliente</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -96,14 +95,19 @@
 
 
                             <thead>
-
-                                <th>No.</th>
-                                <th>Nombre</th>
-                                <th>Activo</th>
-                                <th>
-                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus"></i>&nbsp;Nuevo</button>
-                                </th>
-
+                                <tr>
+                                    <th>Tipo de cliente</th>
+                                    <th>Prestamo inicial maximo</th>
+                                    <th>Porcentaje semanal a pagar</th>
+                                    <th>Semanas a prestar</th>
+                                    <th>Garantias por monto</th>
+                                    <th>Fechas de pago</th>
+                                    <th>Cantidad para renovar</th>
+                                    <th>Semanas extra</th>
+                                    <th>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
                             </tbody>
@@ -132,26 +136,89 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-8">
-                                        <label for="txtNombre">
-                                            Nombre tipo usuario
+                                    <div class="form-group col-md-6">
+                                        <label for="txtTipoCliente">
+                                            Tipo de cliente
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombre" 
-                                            required data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtTipoCliente" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtPrestamoInicialMaximo">
+                                            Prestamo inicial maximo
+                                        </label>
+                                        <input type="number" step="any" class="form-control" id="txtPrestamoInicialMaximo" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtPorcentajeSemanal">
+                                            Porcentaje semanal a pagar
+                                        </label>
+                                        <input type="number" step="any" class="form-control" id="txtPorcentajeSemanal" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtSemanasAPrestar">
+                                            Semanas a prestar
+                                        </label>
+                                        <input type="number" class="form-control" id="txtSemanasAPrestar" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+
+
+                                </div>
+
+
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtGarantiasPorMonto">
+                                            Garantias por monto
+                                        </label>
+                                        <input type="number" step="any" class="form-control" id="txtGarantiasPorMonto" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtFechasDePago">
+                                            Fechas de pago
+                                        </label>
+                                        <input type="text" class="form-control" id="txtFechasDePago" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+
                                 </div>
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-8">
-                                        <input id="chkActivo" checked class="form-control-sm" type="checkbox" />
-                                        <label for="chkActivo">Activo</label>
+                                    <div class="form-group col-md-6">
+                                        <label for="txtCantidadRenovar">
+                                            Cantidad maxima a renovar
+                                        </label>
+                                        <input type="number" step="any" class="form-control" id="txtCantidadRenovar" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-control-sm ml-2">
+                                        <label for="chkSemanaExtra">Semana extra</label>
+                                        <input id="chkSemanaExtra" class="form-control-sm" type="checkbox" />
 
                                     </div>
 
                                 </div>
-
 
                             </div>
                         </form>
@@ -159,16 +226,14 @@
 
 
 
-
-
                     <div class="row mt-3 mb-3">
 
                         <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>Listado</button>
+                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
                         </div>
 
                         <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save"></i>Guardar</button>
+                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                         </div>
 
                     </div>
@@ -236,87 +301,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>
-                        Se eliminará el registro seleccionado. ¿Desea continuar?                                                   
-                    </p>
+                    <span id="mensajeEliminar"></span>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnEliminarAceptar" class="btn btn-danger" data-dismiss="modal">Aceptar</button>
-                    <button id="btnEliminarCancelar" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                    <button id="btnEliminarAceptar" class="btn btn-warning" data-dismiss="modal">Eliminar</button>
+                    <button id="btnEliminarCancelar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
-    </div>
-
-     <div class="modal fade" id="panelPermisos" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-
-                    <h3 class="modal-title">Permisos del usuario <span class="spnNombreTipoUsuario"></span></h3>
-                    <span id="spnIdUsuario" style="display: none;"></span>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span></button>
-
-
-                </div>
-
-                <div class="modal-body form">
-                    <form role="form" id="frmUsuarioPermisos" name="frmUsuarioPermisos" data-toggle="validator">
-                        <div class="form-body">
-
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="listaPermisos">
-                                        Permisos
-                                    </label>
-                                    <select class="form-control" id="listaPermisos" multiple style="height: 300px;"></select>
-                                    <div class="help-block with-errors"></div>
-                                </div>
-
-                                <%--<div class="form-group col-md-4">--%>
-                                  <%--  &nbsp;
-                                               <button type="button" id="btnAgregar" class="btn btn-outline-primary form-control">Agregar ></button>
-                                    &nbsp;
-                                               <button type="button" id="btnAgregarTodos" class="btn btn-outline-primary form-control">Agregar Todos >></button>
-                                    &nbsp; 
-                                                 
-                                               <button type="button" id="btnQuitar" class=" btn btn-outline-primary form-control">< Quitar</button>
-                                    &nbsp;
-                                               <button type="button" id="btnQuitarTodos" class="btn btn-outline-primary form-control"><< Quitar Todos</button>
-                                    &nbsp;
-                                            
-                                            <div class="help-block with-errors"></div>--%>
-                                <%--</div>--%>
-
-
-                                <div class="form-group col-md-6">
-                                    <label>
-                                        Permisos para <span class="spnNombreTipoUsuario"></span>
-
-                                    </label>
-                                    <select class="form-control" id="listaPermisosSeleccionados" multiple style="height: 300px;"></select>
-                                    <span></span>
-                                </div>
-
-                            </div>
-
-
-
-
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="btnGuardarPermisos" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-
-        </div>
-
     </div>
 
     <div class="modal fade" id="panelLoading" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
@@ -338,43 +330,40 @@
 
 
     <!-- JavaScript files-->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/popper.js/umd/popper.min.js"> </script>
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
-    <script src="../vendor/jquery.cookie/jquery.cookie.js"> </script>
-    <script src="../vendor/jquery-validation/jquery.validate.min.js"></script>
-    <script src="../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
+    <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
-
-
-    <script src="../js/front.js"></script>
 
     <!-- DataTables JavaScript -->
-    <script src="../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../vendor/datatables/js/dataTables.bootstrap4.js"></script>
+    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
+    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
 
-    <link href="../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
-    <link href="../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
-    <link href="../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
 
-    <script src="../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
-
-
+    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
 
+    <script src="../../js/front.js"></script>
 
-    <script src="../js/validator.js"></script>
-    <script src="../js/cp/catalogos/tipo_cliente.js"></script>
-    <script src="../js/cp/general.js"></script>
+
+    <script src="../../js/validator.js"></script>
+    <script src="../../js/app/config/tipo_cliente.js"></script>
+    <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->
-    <link href="../css/toastr.min.css" rel="stylesheet">
-    <script src="../js/toastr.min.js"></script>
+    <link href="../../css/toastr.min.css" rel="stylesheet">
+    <script src="../../js/toastr.min.js"></script>
 
 </body>
 </html>

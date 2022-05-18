@@ -1,14 +1,8 @@
 ﻿'use strict';
 let date = new Date();
 let descargas = "Empleados_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '28';
+let pagina = '8';
 
-
-class Empleado {
-
-    
-
-}
 
 const empleado = {
 
@@ -22,28 +16,40 @@ const empleado = {
         empleado.accion = "";
 
 
-        empleado.cargarComboDepartamentos();
-        empleado.cargarComboPuestos();
+        empleado.loadComboPosicion();
+        empleado.loadComboPlaza();
+        empleado.loadComboModulo();
+        empleado.loadComboEmployeesByPosicion(POSICION_EJECUTIVO, '#comboEjecutivo');
+        empleado.loadComboEmployeesByPosicion(POSICION_SUPERVISOR, '#comboSupervisor');
         empleado.cargarItems();
+
+        $('.combo-supervisor').hide();
+        $('.combo-ejecutivo').hide();
 
     },
 
     cargarItems: () => {
 
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idUsuario = sessionStorage.getItem("idusuario");
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params = JSON.stringify(params);
 
-        let url = '../pages/Empleados.aspx/GetListaItems';
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Employees.aspx/GetListaItems",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
 
-        
-        utils.postData(url, parametros)
-            .then(data => {
-                
+                let data = msg.d;
 
-                data = data.d;
-
-
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
 
                 let table = $('#table').DataTable({
                     "destroy": true,
@@ -51,14 +57,13 @@ const empleado = {
                     "order": [],
                     data: data,
                     columns: [
-                        //{ data: 'IdEmpleado' },
-                        { data: 'Clave' },
-                        { data: 'Nombre' },
-                        { data: 'APaterno' },
-                        { data: 'AMaterno' },
-                        { data: 'NombrePuesto' },
-                        { data: 'NombreDepartamento' },
-                        { data: 'ActivoStr' },
+                        { data: 'IdEmpleado' },
+                        { data: 'NombreCompleto' },
+                        { data: 'NombreUsuario' },
+                        { data: 'NombreModulo' },
+                        { data: 'NombreTipoUsuario' },
+                        { data: 'NombrePlaza' },
+                        { data: 'FechaIngreso' },
                         { data: 'Accion' }
 
                     ],
@@ -85,12 +90,14 @@ const empleado = {
 
                 });
 
-            });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
 
 
+            }
 
-
-
+        });
 
 
     },
@@ -117,7 +124,7 @@ const empleado = {
         parametros = JSON.stringify(parametros);
         $.ajax({
             type: "POST",
-            url: "../pages/Empleados.aspx/GetItem",
+            url: "../../pages/Config/Employees.aspx/GetItem",
             data: parametros,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -152,7 +159,7 @@ const empleado = {
                 parametros = JSON.stringify(parametros);
                 $.ajax({
                     type: "POST",
-                    url: "../pages/Empleados.aspx/GetFoto",
+                    url: "../../pages/Config/Employees.aspx/GetFoto",
                     data: parametros,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -192,9 +199,6 @@ const empleado = {
         $('#spnTituloForm').text('Nuevo');
         $('#txtDescripcion').val('');
 
-
-
-
         $('#panelTabla').hide();
         $('#panelForm').show();
         empleado.acccion = "nuevo";
@@ -202,75 +206,144 @@ const empleado = {
 
         $('.deshabilitable').prop('disabled', false);
 
-        obtenerFechaHoraServidor('txtFechaCreacion');
-        $('#img_').attr('src', `../img/logo_small.jpg`);
-
+        $('.combo-supervisor').hide();
+        $('.combo-ejecutivo').hide();
 
 
     },
 
-    cargarComboDepartamentos: () => {
 
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros = JSON.stringify(parametros);
+    loadComboEmployeesByPosicion: (idTipoEmpleado, control) => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params.idTipoEmpleado = idTipoEmpleado;
+        params = JSON.stringify(params);
+
         $.ajax({
             type: "POST",
-            url: "../pages/Empleados.aspx/GetListaItemsDepartamentos",
-            data: parametros,
+            url: "../../pages/Config/Employees.aspx/GetListaItemsEmpleadoByPosicion",
+            data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
-                var items = msg.d;
-                var opcion = "";
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
 
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
 
-                    opcion += '<option value="' + item.IdDepartamento + '">' + item.Nombre + '</option>';
+                    opcion += `<option value='${item.IdEmpleado}'>${item.Nombre}</option>`;
 
                 }
 
-                $('#comboDepartamento').empty().append(opcion);
+                $(`${control}`).html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
 
         });
-
-
-
-
-    
     },
 
-    cargarComboPuestos: () => {
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros = JSON.stringify(parametros);
+
+    loadComboPosicion: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
         $.ajax({
             type: "POST",
-            url: "../pages/Empleados.aspx/GetListaItemsPuestos",
-            data: parametros,
+            url: "../../pages/Config/Employees.aspx/GetListaItemsPosiciones",
+            data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
-                var items = msg.d;
-                var opcion = "";
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
 
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
 
-                    opcion += '<option value="' + item.IdPuesto + '">' + item.Nombre + '</option>';
+                    opcion += `<option value='${item.IdPosicion}'>${item.Nombre}</option>`;
 
                 }
 
-                $('#comboPuesto').empty().append(opcion);
+                $('#comboPosicion').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+    loadComboPlaza: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Employees.aspx/GetListaItemsPlazas",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value='${item.IdPlaza}'>${item.Nombre}</option>`;
+
+                }
+
+                $('#comboPlaza').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+
+    loadComboModulo: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Employees.aspx/GetListaItemsModulos",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value='${item.IdModulo}'>${item.Nombre}</option>`;
+
+                }
+
+                $('#comboComisionInicial').html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -299,38 +372,55 @@ const empleado = {
 
             e.preventDefault();
 
-            var hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
-
+            let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
 
             if (hasErrors) {
                 return;
             }
 
+            let dataEmployee = {};
+            dataEmployee.IdEmpleado = empleado.idSeleccionado;
+            dataEmployee.FechaIngreso = $('#txtFechaIngreso').val();
+            dataEmployee.IdPosicion = $('#comboPosicion').val();
+            dataEmployee.IdSupervisor = $('#comboSupervisor').val();
+            dataEmployee.IdEjecutivo = $('#comboEjecutivo').val();
+            dataEmployee.CURP = $('#txtCURP').val();
+            dataEmployee.FechaNacimiento = $('#txtFechaNacimiento').val();
+            dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();
+            dataEmployee.SegundoApellido = $('#txtSegundoApellido').val();
+            dataEmployee.Nombre = $('#txtNombre').val();
+
+            dataEmployee.IdDepartamento = $('#comboDepartamento').val();
+            dataEmployee.IdPlaza= $('#comboPlaza').val();
+            
+            dataEmployee.Clave = $('#txtClave').val();
+
+
+            //let dataEmployee = {};
+            //dataEmployee.IdEmpleado = empleado.idSeleccionado;
+            //dataEmployee.Nombre = $('#txtNombre').val();
+            //dataEmployee.IdDepartamento = $('#comboDepartamento').val();
+            //dataEmployee.IdPosicion = $('#comboPosicion').val();
+            //dataEmployee.IdPlaza = $('#comboPlaza').val();
+            //dataEmployee.IdSupervisor = $('#comboSupervisor').val();
+            //dataEmployee.IdEjecutivo = $('#comboEjecutivo').val();
+            //dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();
+            //dataEmployee.SegundoApellido = $('#txtSegundoApellido').val();
+            //dataEmployee.Clave = $('#txtClave').val();
 
 
 
-            var item = new Object();
-            item.IdEmpleado = empleado.idSeleccionado;
-            item.Activo = $('#chkActivo').prop('checked') == true ? 1 : 0;
-            item.Nombre = $('#txtNombre').val();
-            item.IdDepartamento = $('#comboDepartamento').val();
-            item.IdPuesto = $('#comboPuesto').val();
-            item.APaterno = $('#txtAPaterno').val();
-            item.AMaterno= $('#txtAMaterno').val();
-            item.Clave = $('#txtClave').val();
+            let params = {};
+            params.path = window.location.hostname;
+            params.item = dataEmployee;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.accion = empleado.acccion;
+            params = JSON.stringify(params);
 
-
-
-
-            var parametros = new Object();
-            parametros.path = window.location.hostname;
-            parametros.item = item;
-            parametros.accion = empleado.acccion;
-            parametros = JSON.stringify(parametros);
             $.ajax({
                 type: "POST",
-                url: "../pages/Empleados.aspx/Guardar",
-                data: parametros,
+                url: "../../pages/Config/Employees.aspx/Save",
+                data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
@@ -408,7 +498,7 @@ const empleado = {
                         parametros = JSON.stringify(parametros);
                         $.ajax({
                             type: "POST",
-                            url: "../pages/Empleados.aspx/GetFoto",
+                            url: "../../pages/Config/Employees.aspx/GetFoto",
                             data: parametros,
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
@@ -434,6 +524,29 @@ const empleado = {
 
         });
 
+        $('#comboPosicion').on('change', (e) => {
+            e.preventDefault();
+
+            //console.log('Change comboPosicion');
+            let value = $('#comboPosicion').val();
+            //console.log(`Value = ${value}`);
+
+            if (Number(value) === Number(POSICION_PROMOTOR)) {
+                $('.combo-supervisor').show();
+                $('.combo-ejecutivo').hide();
+            }
+            else if (Number(value) === Number(POSICION_SUPERVISOR)) {
+                $('.combo-supervisor').hide();
+                $('.combo-ejecutivo').show();
+            } else {
+                $('.combo-supervisor').hide();
+                $('.combo-ejecutivo').hide();
+            }
+
+        });
+
+
+
 
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
@@ -452,7 +565,7 @@ const empleado = {
             parametros = JSON.stringify(parametros);
             $.ajax({
                 type: "POST",
-                url: "../pages/Empleados.aspx/Eliminar",
+                url: "../../pages/Config/Employees.aspx/Eliminar",
                 data: parametros,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

@@ -8,21 +8,24 @@ namespace Plataforma.Clases
     public class Empleado{ 
 
         public int IdEmpleado;
-        public int IdPrenomina;
         public String Nombre;
+        public String SegundoApellido;
+        public String AMaterno;
         public String Clave;
-        public String ClavePuesto;
-        public String ClaveDepartamento;
+        public String PrimerApellido;
         public String APaterno;
         public String NombreCompleto;
+        public String FechaIngreso;
         public String FechaAlta;
-        public String SalarioMensual;
-        public String AMaterno;
-        public String NombreDepartamento;
-        public String NombrePuesto;
+        public String NombreModulo;
+        public String NombreUsuario;
+        public String NombreTipoUsuario;
+        public int IdModulo;
+        public int IdPosicion;
         public int IdDepartamento;
-        public int IdArea;
         public int IdPuesto;
+        public int IdTipoUsuario;
+        public string SalarioMensual;
         public int Activo;
         public string Accion;
         public string ActivoStr;

@@ -49,9 +49,6 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Intelligencia.UrlRewriter">
-      <HintPath>..\Intelligencia.UrlRewriter.dll</HintPath>
-    </Reference>
     <Reference Include="itextsharp, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13.2\lib\itextsharp.dll</HintPath>
     </Reference>
@@ -212,7 +209,7 @@
       <DependentUpon>departamentos.js</DependentUpon>
     </Content>
     <Content Include="js\app\config\empleados.min.js">
-      <DependentUpon>empleados.js</DependentUpon>
+      <DependentUpon>employees.js</DependentUpon>
     </Content>
     <Content Include="js\cp\mantenimiento\consulta_equipos.js" />
     <Content Include="js\app\config\equipos.min.js">
@@ -292,7 +289,7 @@
     </Content>
     <Content Include="js\app\web\wfaq.js" />
     <Content Include="js\cp\nomina\panel_upload.js" />
-    <Content Include="js\app\config\empleados.js" />
+    <Content Include="js\app\config\employees.js" />
     <Content Include="js\cp\mantenimiento\panel_refacciones.js" />
     <Content Include="js\cp\mantenimiento\registro_diagnostico.js" />
     <Content Include="js\cp\mantenimiento\DESUSO_resumen_requisicion.js" />
@@ -353,7 +350,7 @@
     <Content Include="pages\Config\Usuarios.aspx" />
     <Content Include="pages\Config\Departamentos.aspx" />
     <Content Include="pages\Descargas\05_BG_GSM_1366X768_WKS.jpg" />
-    <Content Include="pages\Config\Empleados.aspx" />
+    <Content Include="pages\Config\Employees.aspx" />
     <Content Include="pages\AboutUs.aspx" />
     <Content Include="pages\FAQS.aspx" />
     <Content Include="pages\Home.aspx" />
@@ -1213,6 +1210,9 @@
     <Compile Include="Clases\EquipoCatalogoRefaccion.cs" />
     <Compile Include="Clases\EquipoMini.cs" />
     <Compile Include="Clases\EquipoUsuario.cs" />
+    <Compile Include="Clases\Plaza.cs" />
+    <Compile Include="Clases\Modulo.cs" />
+    <Compile Include="Clases\Posicion.cs" />
     <Compile Include="Clases\Tutorial.cs" />
     <Compile Include="Clases\Status.cs" />
     <Compile Include="Clases\TipoCombustible.cs" />
@@ -1226,7 +1226,6 @@
     <Compile Include="Clases\Equipo.cs" />
     <Compile Include="Clases\UsuarioDiagnostico.cs" />
     <Compile Include="Clases\Refaccion.cs" />
-    <Compile Include="Clases\CompraCombustible.cs" />
     <Compile Include="Clases\SolicitudCombustible.cs" />
     <Compile Include="Clases\Requisicion.cs" />
     <Compile Include="Clases\Ubicacion.cs" />
@@ -1360,12 +1359,12 @@
     <Compile Include="pages\Download.ashx.cs">
       <DependentUpon>Download.ashx</DependentUpon>
     </Compile>
-    <Compile Include="pages\Config\Empleados.aspx.cs">
-      <DependentUpon>Empleados.aspx</DependentUpon>
+    <Compile Include="pages\Config\Employees.aspx.cs">
+      <DependentUpon>Employees.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="pages\Config\Empleados.aspx.designer.cs">
-      <DependentUpon>Empleados.aspx</DependentUpon>
+    <Compile Include="pages\Config\Employees.aspx.designer.cs">
+      <DependentUpon>Employees.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\AboutUs.aspx.cs">
       <DependentUpon>AboutUs.aspx</DependentUpon>

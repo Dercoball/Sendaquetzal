@@ -130,8 +130,8 @@ namespace Plataforma.pages
                         Empleado item = new Empleado();
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.APaterno = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
-                        item.AMaterno = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
+                        item.SegundoApellido  = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
                         item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
                         item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
 

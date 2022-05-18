@@ -11,16 +11,33 @@ using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
-    public partial class Empleados : System.Web.UI.Page
+    public partial class Employees : System.Web.UI.Page
     {
+        const string pagina = "8";
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            string usuario = (string)Session["usuario"];
+            string idTipoUsuario = (string)Session["id_tipo_usuario"];
+            string idUsuario = (string)Session["id_usuario"];
+            string path = (string)Session["path"];
 
+
+            txtUsuario.Value = usuario;
+            txtIdTipoUsuario.Value = idTipoUsuario;
+            txtIdUsuario.Value = idUsuario;
+
+            //  si no esta logueado
+            if (usuario == "")
+            {
+                Response.Redirect("Login.aspx");
+            }
 
 
         }
 
- 
+
 
 
 
@@ -30,6 +47,14 @@ namespace Plataforma.pages
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
             SqlConnection conn = new SqlConnection(strConexion);
             List<Empleado> items = new List<Empleado>();
 
@@ -37,14 +62,16 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT e.id_empleado , e.nombre, e.apellido_materno, e.apellido_paterno, e.clave, " +
-                    " ISNull(e.activo, 1) activo, " +
-                    " d.nombre nombre_departamento,  " +
-                    " p.nombre nombre_puesto  " +
-                    " FROM  empleado e " +
-                    " JOIN puesto p ON (p.id_puesto = e.id_puesto) " +
-                    " JOIN departamento d ON (d.id_departamento= e.id_departamento)" +
-                    " where isnull(e.eliminado, 0) != 1 ";
+                string query = @" SELECT e.id_empleado , e.nombre, e.primer_apellido, e.segundo_apellido, 
+                     concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_completo,
+                     ISNull(e.activo, 1) activo, '' as nombre_usuario,
+                     m.nombre nombre_modulo,  
+                     t.nombre nombre_tipo_usuario
+                     FROM empleado e 
+                     JOIN modulo m ON (m.id_modulo = e.id_modulo) 
+                     JOIN tipo_usuario t ON (t.id_tipo_usuario = e.id_tipo_usuario)
+                     WHERE isnull(e.eliminado, 0) != 1 
+                    ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -58,13 +85,14 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         Empleado item = new Empleado();
-                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());                        
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();                        
-                        item.APaterno = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();                        
-                        item.AMaterno    = ds.Tables[0].Rows[i]["apellido_materno"].ToString();                        
-                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();                        
-                        item.NombreDepartamento = ds.Tables[0].Rows[i]["nombre_departamento"].ToString();                        
-                        item.NombrePuesto     = ds.Tables[0].Rows[i]["nombre_puesto"].ToString();                        
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
+                        //item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
+                        item.NombreUsuario = ds.Tables[0].Rows[i]["nombre_usuario"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
+                        item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
@@ -99,14 +127,21 @@ namespace Plataforma.pages
 
         }
 
-      
+
 
         [WebMethod]
-        public static DatosSalida Guardar(string path, Empleado item, string accion)
+        public static DatosSalida Save(string path, Empleado item, string accion, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
 
             DatosSalida salida = new DatosSalida();
 
@@ -147,10 +182,10 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@fecha_ultima_modificacion", DateTime.Now);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@apellido_paterno", item.APaterno);
-                cmd.Parameters.AddWithValue("@apellido_materno", item.AMaterno);
-                cmd.Parameters.AddWithValue("@id_departamento", item.IdDepartamento);
-                cmd.Parameters.AddWithValue("@id_puesto", item.IdPuesto);
+                cmd.Parameters.AddWithValue("@apellido_paterno", item.PrimerApellido);
+                cmd.Parameters.AddWithValue("@apellido_materno", item.SegundoApellido);
+                cmd.Parameters.AddWithValue("@id_departamento", item.IdModulo);
+                cmd.Parameters.AddWithValue("@id_puesto", item.IdPosicion);
                 cmd.Parameters.AddWithValue("@clave", item.Clave);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
                 cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
@@ -163,7 +198,7 @@ namespace Plataforma.pages
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
-                salida.IdItem = r.ToString ();
+                salida.IdItem = r.ToString();
 
             }
             catch (Exception ex)
@@ -295,7 +330,7 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
 
 
-            
+
             try
             {
 
@@ -313,12 +348,12 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id_empleado", id);
-                
+
 
 
                 int r = cmd.ExecuteNonQuery();
 
-                
+
 
                 Utils.Log("r = " + r);
                 Utils.Log("Eliminado -> OK ");
@@ -349,21 +384,22 @@ namespace Plataforma.pages
         }
 
 
+       
+
         [WebMethod]
-        public static List<Departamento> GetListaItemsDepartamentos(string path)
+        public static List<Posicion> GetListaItemsPosiciones(string path)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Departamento> items = new List<Departamento>();
+            List<Posicion> items = new List<Posicion>();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT id_departamento , nombre, clave, ISNull(activo, 1) activo" +
-                    " FROM  departamento ";
+                string query = @" SELECT id_posicion, nombre FROM  posicion WHERE ISNull(activo, 1) = 1  ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -376,15 +412,119 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Departamento item = new Departamento();
-                        item.IdDepartamento = int.Parse(ds.Tables[0].Rows[i]["id_departamento"].ToString());
+                        Posicion item = new Posicion();
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
 
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+                        items.Add(item);
 
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+
+        [WebMethod]
+        public static List<Empleado> GetListaItemsEmpleadoByPosicion(string path, string idTipoEmpleado)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Empleado> items = new List<Empleado>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_empleado,
+                                    concat( nombre ,  ' ' , primer_apellido , ' ' ,  segundo_apellido) AS nombre_completo
+                                    FROM empleado WHERE ISNull(activo, 1) = 1  AND id_posicion = @id_posicion ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_posicion", idTipoEmpleado);
+
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Empleado item = new Empleado();
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+
+        [WebMethod]
+        public static List<Plaza> GetListaItemsPlazas(string path)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Plaza> items = new List<Plaza>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE ISNull(activo, 1) = 1  ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Plaza item = new Plaza();
+                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
 
                         items.Add(item);
 
@@ -410,19 +550,19 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static List<Puesto> GetListaItemsPuestos(string path)
+        public static List<Modulo> GetListaItemsModulos(string path)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Puesto> items = new List<Puesto>();
+            List<Modulo> items = new List<Modulo>();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT id_puesto , nombre, clave, ISNull(activo, 1) activo FROM  puesto ";
+                string query = @" SELECT id_modulo, nombre FROM  modulo WHERE ISNull(activo, 1) = 1  ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -435,15 +575,9 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Puesto item = new Puesto();
-                        item.IdPuesto = int.Parse(ds.Tables[0].Rows[i]["id_puesto"].ToString());
+                        Modulo item = new Modulo();
+                        item.IdModulo = int.Parse(ds.Tables[0].Rows[i]["id_modulo"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
-
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
-
 
                         items.Add(item);
 
@@ -501,13 +635,12 @@ namespace Plataforma.pages
                         item = new Empleado();
 
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-                        item.IdPuesto = int.Parse(ds.Tables[0].Rows[i]["id_puesto"].ToString());
-                        item.IdDepartamento = int.Parse(ds.Tables[0].Rows[i]["id_departamento"].ToString());
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_puesto"].ToString());
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
 
-                        item.APaterno = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
-                        item.AMaterno = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
                         item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
 
 

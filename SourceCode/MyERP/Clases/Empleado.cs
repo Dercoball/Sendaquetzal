@@ -20,6 +20,7 @@ namespace Plataforma.Clases
 
 
         public String AMaterno;
+        public String Login;
         
         public String APaterno;
         public String NombreCompleto;
@@ -27,6 +28,7 @@ namespace Plataforma.Clases
         public String FechaNacimiento;
         public String Telefono;
         public String NombreModulo;
+        public String NombrePlaza;
         public String NombreUsuario;
         public String Password;
         public String NombreTipoUsuario;

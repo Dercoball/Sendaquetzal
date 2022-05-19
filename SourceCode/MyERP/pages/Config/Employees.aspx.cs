@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
@@ -71,11 +72,15 @@ namespace Plataforma.pages
                 DataSet ds = new DataSet();
                 string query = @" SELECT e.id_empleado , e.nombre, e.primer_apellido, e.segundo_apellido, 
                      concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_completo,
-                     ISNull(e.activo, 1) activo, '' as nombre_usuario,
+                     ISNull(e.activo, 1) activo, FORMAT(e.fecha_ingreso, 'dd/MM/yyyy') fecha_ingreso,
+                     u.login ,
                      m.nombre nombre_modulo,  
-                     t.nombre nombre_tipo_usuario
+                     t.nombre nombre_tipo_usuario,
+                     p.nombre nombre_plaza
                      FROM empleado e 
+                     JOIN usuario u ON (u.id_empleado = e.id_empleado) 
                      JOIN modulo m ON (m.id_modulo = e.id_comision_inicial) 
+                     JOIN plaza p ON (p.id_plaza = e.id_plaza) 
                      JOIN tipo_usuario t ON (t.id_tipo_usuario = e.id_tipo_usuario)
                      WHERE isnull(e.eliminado, 0) != 1 
                     ";
@@ -96,10 +101,12 @@ namespace Plataforma.pages
                         item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
                         item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
-                        //item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
-                        item.NombreUsuario = ds.Tables[0].Rows[i]["nombre_usuario"].ToString();
+                        item.Login = ds.Tables[0].Rows[i]["login"].ToString();
                         item.Nombre = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
                         item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
+                        item.NombreModulo= ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
+                        item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
+                        item.FechaIngreso = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
@@ -282,10 +289,13 @@ namespace Plataforma.pages
                 SqlCommand cmdInsertUsuario = new SqlCommand(sql, conn);
                 cmdInsertUsuario.CommandType = CommandType.Text;
 
+                MD5 md5Hash = MD5.Create();
+                string hash = Usuarios.GetMd5Hash(md5Hash, itemUser.Password);
+
                 cmdInsertUsuario.Parameters.AddWithValue("@id_empleado", idGenerado);
                 cmdInsertUsuario.Parameters.AddWithValue("@id_tipo_usuario", itemUser.IdTipoUsuario);
                 cmdInsertUsuario.Parameters.AddWithValue("@login", itemUser.Login);
-                cmdInsertUsuario.Parameters.AddWithValue("@password", itemUser.Password);
+                cmdInsertUsuario.Parameters.AddWithValue("@password", hash);
                 cmdInsertUsuario.Transaction = transaccion;
 
                 r += cmdInsertUsuario.ExecuteNonQuery();

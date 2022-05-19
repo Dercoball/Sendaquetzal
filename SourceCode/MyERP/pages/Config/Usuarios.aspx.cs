@@ -207,8 +207,8 @@ namespace Plataforma.pages
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.APaterno = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
                         item.AMaterno = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
-                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
-                        item.NombreCompleto = item.Clave + " - " + item.Nombre + " " + item.APaterno + " " + item.AMaterno;
+                        //item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
+                        //item.NombreCompleto = item.Clave + " - " + item.Nombre + " " + item.APaterno + " " + item.AMaterno;
 
 
 
@@ -359,7 +359,7 @@ namespace Plataforma.pages
 
         }
 
-        static string GetMd5Hash(MD5 md5Hash, string input)
+        public static string GetMd5Hash(MD5 md5Hash, string input)
         {
 
             // Convert the input string to a byte array and compute the hash.

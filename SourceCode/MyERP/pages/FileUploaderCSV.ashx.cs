@@ -545,7 +545,7 @@ namespace Plataforma.pages
                         item.Nombre = ds.Tables[0].Rows[j]["nombre"].ToString();
                         item.APaterno = ds.Tables[0].Rows[j]["apellido_paterno"].ToString();
                         item.AMaterno = ds.Tables[0].Rows[j]["apellido_materno"].ToString();
-                        item.Clave = ds.Tables[0].Rows[j]["clave"].ToString();
+                        //item.Clave = ds.Tables[0].Rows[j]["clave"].ToString();
                         //item.ClavePuesto = ds.Tables[0].Rows[j]["clave_puesto"].ToString();
                         //item.ClaveDepartamento = ds.Tables[0].Rows[j]["clave_departamento"].ToString();
                         item.IdDepartamento = int.Parse(ds.Tables[0].Rows[j]["id_departamento"].ToString());
@@ -1054,7 +1054,7 @@ namespace Plataforma.pages
                 //Armar datos de empleado e insertarlo
                 Empleado nuevoEmpleado = new Empleado();
                 
-                nuevoEmpleado.Clave = insert.parts[0];
+                //nuevoEmpleado.Clave = insert.parts[0];
                 nuevoEmpleado.Nombre = insert.parts[1];
                 nuevoEmpleado.APaterno = insert.parts[2];
                 nuevoEmpleado.AMaterno = insert.parts[3];
@@ -1073,7 +1073,7 @@ namespace Plataforma.pages
                     nuevoEmpleado.IdDepartamento = 0;
 
 
-                nuevoEmpleado.FechaAlta = insert.parts[10];
+                //nuevoEmpleado.FechaAlta = insert.parts[10];
                 nuevoEmpleado.SalarioMensual = insert.parts[11];
 
 
@@ -1091,13 +1091,13 @@ namespace Plataforma.pages
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.CommandType = CommandType.Text;
                     cmd.Transaction = transaction;
-                    cmd.Parameters.AddWithValue("@clave", nuevoEmpleado.Clave);
+                    //cmd.Parameters.AddWithValue("@clave", nuevoEmpleado.Clave);
                     cmd.Parameters.AddWithValue("@nombre", nuevoEmpleado.Nombre);
                     cmd.Parameters.AddWithValue("@apellido_paterno", nuevoEmpleado.APaterno);
                     cmd.Parameters.AddWithValue("@apellido_materno", nuevoEmpleado.AMaterno);
                     cmd.Parameters.AddWithValue("@id_puesto", nuevoEmpleado.IdPuesto);
                     cmd.Parameters.AddWithValue("@id_departamento", nuevoEmpleado.IdDepartamento);
-                    cmd.Parameters.AddWithValue("@fecha_alta", nuevoEmpleado.FechaAlta);
+                    //cmd.Parameters.AddWithValue("@fecha_alta", nuevoEmpleado.FechaAlta);
                     cmd.Parameters.AddWithValue("@salario_mensual", nuevoEmpleado.SalarioMensual);
                     cmd.Parameters.AddWithValue("@activo", 1);
 

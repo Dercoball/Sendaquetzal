@@ -1207,12 +1207,14 @@
     <Compile Include="Clases\CatalogoRefaccion.cs" />
     <Compile Include="Clases\Departamento.cs" />
     <Compile Include="Clases\CentroCosto.cs" />
+    <Compile Include="Clases\Direccion.cs" />
     <Compile Include="Clases\EquipoCatalogoRefaccion.cs" />
     <Compile Include="Clases\EquipoMini.cs" />
     <Compile Include="Clases\EquipoUsuario.cs" />
     <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\Modulo.cs" />
     <Compile Include="Clases\Posicion.cs" />
+    <Compile Include="Clases\TipoCliente.cs" />
     <Compile Include="Clases\Tutorial.cs" />
     <Compile Include="Clases\Status.cs" />
     <Compile Include="Clases\TipoCombustible.cs" />

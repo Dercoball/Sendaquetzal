@@ -16,6 +16,13 @@ namespace Plataforma.pages
         const string pagina = "8";
 
 
+        const int POSICION_DIRECTOR = 1;
+        const int POSICION_COORDINADOR = 2;
+        const int POSICION_EJECUTIVO = 3;
+        const int POSICION_SUPERVISOR = 4;
+        const int POSICION_PROMOTOR = 5;
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string usuario = (string)Session["usuario"];
@@ -68,7 +75,7 @@ namespace Plataforma.pages
                      m.nombre nombre_modulo,  
                      t.nombre nombre_tipo_usuario
                      FROM empleado e 
-                     JOIN modulo m ON (m.id_modulo = e.id_modulo) 
+                     JOIN modulo m ON (m.id_modulo = e.id_comision_inicial) 
                      JOIN tipo_usuario t ON (t.id_tipo_usuario = e.id_tipo_usuario)
                      WHERE isnull(e.eliminado, 0) != 1 
                     ";
@@ -87,8 +94,8 @@ namespace Plataforma.pages
                         Empleado item = new Empleado();
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-                        item.PrimerApellido = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
-                        item.SegundoApellido = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
                         //item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
                         item.NombreUsuario = ds.Tables[0].Rows[i]["nombre_usuario"].ToString();
                         item.Nombre = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
@@ -130,7 +137,8 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida Save(string path, Empleado item, string accion, string idUsuario)
+        public static DatosSalida Save(string path, Empleado item, Direccion itemAddress, Direccion itemAddressAval, 
+                    Usuario itemUser, string accion, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -144,56 +152,149 @@ namespace Plataforma.pages
             }
 
             DatosSalida salida = new DatosSalida();
+            SqlTransaction transaccion = null;
 
             int r = 0;
             try
             {
 
-
                 conn.Open();
-                string sql = "";
-                if (accion == "nuevo")
-                {
-                    sql = " INSERT INTO empleado (nombre, apellido_paterno, apellido_materno, " +
-                        " clave, activo, id_departamento, id_puesto)    " +
-                          "   VALUES                                                                " +
-                          "   (@nombre, @apellido_paterno, @apellido_materno, @clave, @activo, " +
-                          " @id_departamento, @id_puesto)                 ";
-                }
-                else
-                {
-                    sql = " UPDATE empleado SET     " +
-                          " nombre = @nombre,           " +
-                          " apellido_paterno = @apellido_paterno,           " +
-                          " apellido_materno = @apellido_materno,           " +
-                          " id_departamento = @id_departamento,           " +
-                          " id_puesto = @id_puesto,           " +
-                          " clave = @clave,           " +
-                          "    activo = @activo        " +
-                          "    WHERE id_empleado = @id_empleado   ";
 
-                }
+                transaccion = conn.BeginTransaction();
+
 
                 Utils.Log("\nMétodo-> " +
-               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+               System.Reflection.MethodBase.GetCurrentMethod().Name  + "\n");
+
+
+                string sql = "";
+
+                sql = @"  INSERT INTO empleado
+                                (id_tipo_usuario, id_comision_inicial, id_posicion, id_plaza, curp, nombre, primer_apellido,
+                                    segundo_apellido, telefono, fecha_nacimiento, fecha_ingreso,
+                                    id_supervisor, id_ejecutivo, 
+                                    curp_aval, nombre_aval, primer_apellido_aval, segundo_apellido_aval,
+                                    eliminado, activo)
+                             
+                                OUTPUT INSERTED.id_empleado
+                                
+                                VALUES (@id_tipo_usuario, @id_comision_inicial, @id_posicion, @id_plaza, @curp, @nombre, @primer_apellido,
+                                    @segundo_apellido, @telefono, @fecha_nacimiento, @fecha_ingreso,
+                                    @id_supervisor, @id_ejecutivo,
+                                    @curp_aval, @nombre_aval, @primer_apellido_aval, @segundo_apellido_aval,
+                                    0, 1)";
+
+
+                Utils.Log("insert employee" + sql);
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@fecha_ultima_modificacion", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_tipo_usuario", item.IdPosicion);   // resolver si tipo empleado sera lo mismo que tipo usuario
+                cmd.Parameters.AddWithValue("@id_comision_inicial", item.IdComisionInicial);
+                cmd.Parameters.AddWithValue("@id_posicion", item.IdPosicion);       //  puesto
+                cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza);
+                
+
+                cmd.Parameters.AddWithValue("@id_supervisor", item.IdPosicion == POSICION_PROMOTOR ?  item.IdSupervisor : 0);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", item.IdPosicion == POSICION_SUPERVISOR ?  item.IdEjecutivo : 0);
+
+                cmd.Parameters.AddWithValue("@curp", item.CURP);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@apellido_paterno", item.PrimerApellido);
-                cmd.Parameters.AddWithValue("@apellido_materno", item.SegundoApellido);
-                cmd.Parameters.AddWithValue("@id_departamento", item.IdModulo);
-                cmd.Parameters.AddWithValue("@id_puesto", item.IdPosicion);
-                cmd.Parameters.AddWithValue("@clave", item.Clave);
-                cmd.Parameters.AddWithValue("@activo", item.Activo);
+                cmd.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
+                cmd.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
+
+                cmd.Parameters.AddWithValue("@curp_aval", item.CURPAval);
+                cmd.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
+                cmd.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
+                cmd.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
+
+                cmd.Parameters.AddWithValue("@telefono", item.Telefono);
+                cmd.Parameters.AddWithValue("@fecha_nacimiento", item.FechaNacimiento);
+                cmd.Parameters.AddWithValue("@fecha_ingreso", item.FechaIngreso);
                 cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                cmd.Transaction = transaccion;
+
+                int idGenerado = (int)cmd.ExecuteScalar();
+
+                //  Guardar direccion empleado
+                sql = @"  INSERT INTO direccion
+                            (id_empleado, calleyno, colonia, municipio, estado,
+                                codigo_postal, activo, aval)
+                            VALUES
+                                (@id_empleado, @calleyno, @colonia, @municipio, @estado,
+                                @codigo_postal, 1, 0);
+                        ";
 
 
-                r = cmd.ExecuteNonQuery();
+                Utils.Log("insert employee" + sql);
+
+                SqlCommand cmdAddressEmployee = new SqlCommand(sql, conn);
+                cmdAddressEmployee.CommandType = CommandType.Text;
+
+                cmdAddressEmployee.Parameters.AddWithValue("@id_empleado", idGenerado);   
+                cmdAddressEmployee.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
+                cmdAddressEmployee.Parameters.AddWithValue("@colonia", itemAddress.Colonia);       
+                cmdAddressEmployee.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
+                cmdAddressEmployee.Parameters.AddWithValue("@estado", itemAddress.Estado);
+                cmdAddressEmployee.Parameters.AddWithValue("@codigo_postal", itemAddress.CP);
+                cmdAddressEmployee.Transaction = transaccion;
+
+                r = cmdAddressEmployee.ExecuteNonQuery();
+
+
+                //  Guardar direccion aval
+                sql = @"  INSERT INTO direccion
+                            (id_empleado, calleyno, colonia, municipio, estado,
+                                codigo_postal, activo, aval)
+                            VALUES
+                                (@id_empleado, @calleyno, @colonia, @municipio, @estado,
+                                @codigo_postal, 1, 1);
+                        ";
+
+
+                Utils.Log("insert employee aval" + sql);
+
+                SqlCommand cmdAddressEmployeeAval = new SqlCommand(sql, conn);
+                cmdAddressEmployeeAval.CommandType = CommandType.Text;
+
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@id_empleado", idGenerado);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@calleyno", itemAddressAval.Calle);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CP);
+                cmdAddressEmployeeAval.Transaction = transaccion;
+
+                r += cmdAddressEmployeeAval.ExecuteNonQuery();
+
+
+                //  Guardar usuario
+                sql = @"  INSERT INTO usuario
+                            (id_empleado, login, password, id_tipo_usuario, eliminado)
+                            VALUES
+                            (@id_empleado, @login, @password, @id_tipo_usuario, 1);
+                        ";
+
+
+                Utils.Log("insert usuario " + sql);
+
+                SqlCommand cmdInsertUsuario = new SqlCommand(sql, conn);
+                cmdInsertUsuario.CommandType = CommandType.Text;
+
+                cmdInsertUsuario.Parameters.AddWithValue("@id_empleado", idGenerado);
+                cmdInsertUsuario.Parameters.AddWithValue("@id_tipo_usuario", itemUser.IdTipoUsuario);
+                cmdInsertUsuario.Parameters.AddWithValue("@login", itemUser.Login);
+                cmdInsertUsuario.Parameters.AddWithValue("@password", itemUser.Password);
+                cmdInsertUsuario.Transaction = transaccion;
+
+                r += cmdInsertUsuario.ExecuteNonQuery();
+
 
                 Utils.Log("Guardado -> OK ");
+
+
+                transaccion.Commit();
 
 
                 salida.MensajeError = "Guardado correctamente";
@@ -384,7 +485,7 @@ namespace Plataforma.pages
         }
 
 
-       
+
 
         [WebMethod]
         public static List<Posicion> GetListaItemsPosiciones(string path)
@@ -614,8 +715,8 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT id_empleado , nombre, apellido_materno," +
-                    " apellido_paterno,  clave, ISNull(activo, 1) activo, id_departamento, id_puesto " +
+                string query = " SELECT id_empleado , nombre, segundo_apellido," +
+                    " primer_apellido,  clave, ISNull(activo, 1) activo, id_departamento, id_puesto " +
                     "  FROM  empleado where id_empleado =  @id_empleado ";
 
                 Utils.Log("\nMétodo-> " +
@@ -639,9 +740,9 @@ namespace Plataforma.pages
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
 
-                        item.PrimerApellido = ds.Tables[0].Rows[i]["apellido_paterno"].ToString();
-                        item.SegundoApellido = ds.Tables[0].Rows[i]["apellido_materno"].ToString();
-                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        //item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
 
 
 

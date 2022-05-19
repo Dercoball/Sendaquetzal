@@ -148,7 +148,7 @@
                                         <label for="txtFechaIngreso">
                                             Fecha de ingreso
                                         </label>
-                                        <input type="date" class="form-control" id="txtFechaIngreso"
+                                        <input type="date" class="form-control campo-date" id="txtFechaIngreso"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -157,7 +157,7 @@
                                         <label for="comboPosicion">
                                             Posición
                                         </label>
-                                        <select class="form-control" id="comboPosicion" required="required" data-required-error='Requerido'>
+                                        <select class="form-control campo-combo" id="comboPosicion" required="required" data-required-error='Requerido'>
                                         </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -167,7 +167,7 @@
                                             <label for="comboSupervisor">
                                                 Supervisor
                                             </label>
-                                            <select class="form-control" id="comboSupervisor" required="required" data-required-error='Requerido'>
+                                            <select class="form-control campo-combo" id="comboSupervisor">
                                             </select>
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -176,7 +176,7 @@
                                             <label for="comboEjecutivo">
                                                 Ejecutivo
                                             </label>
-                                            <select class="form-control" id="comboEjecutivo" required="required" data-required-error='Requerido'>
+                                            <select class="form-control campo-combo" id="comboEjecutivo">
                                             </select>
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -203,7 +203,7 @@
                                         <label for="txtCURP">
                                             CURP
                                         </label>
-                                        <input type="text" class="form-control" id="txtCURP"
+                                        <input type="text" class="form-control campo-input" id="txtCURP"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -212,7 +212,7 @@
                                         <label for="txtFechaNacimiento">
                                             Fecha de nacimiento
                                         </label>
-                                        <input type="date" class="form-control" id="txtFechaNacimiento"
+                                        <input type="date" class="form-control campo-date" id="txtFechaNacimiento"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -227,7 +227,7 @@
                                         <label for="txtAPaterno">
                                             Primer apellido
                                         </label>
-                                        <input type="text" class="form-control" id="txtPrimerApellido"
+                                        <input type="text" class="form-control campo-input" id="txtPrimerApellido"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -236,7 +236,7 @@
                                         <label for="txtAMaterno">
                                             Segundo apellido
                                         </label>
-                                        <input type="text" class="form-control" id="txtSegundoApellido"
+                                        <input type="text" class="form-control campo-input" id="txtSegundoApellido"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -245,7 +245,7 @@
                                         <label for="txtNombre">
                                             Nombre(s)
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombre"
+                                        <input type="text" class="form-control campo-input" id="txtNombre"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -258,7 +258,7 @@
                                         <label for="txtCalle">
                                             Calle y número
                                         </label>
-                                        <input type="text" class="form-control" id="txtCalle"
+                                        <input type="text" class="form-control campo-input" id="txtCalle"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -267,7 +267,7 @@
                                         <label for="txtColonia">
                                             Colonia
                                         </label>
-                                        <input type="text" class="form-control" id="txtColonia"
+                                        <input type="text" class="form-control campo-input" id="txtColonia"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -276,7 +276,7 @@
                                         <label for="txtMunicipio">
                                             Municipio
                                         </label>
-                                        <input type="text" class="form-control" id="txtMunicipio"
+                                        <input type="text" class="form-control campo-input" id="txtMunicipio"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -289,7 +289,7 @@
                                         <label for="txtEstado">
                                             Estado
                                         </label>
-                                        <input type="text" class="form-control" id="txtEstado"
+                                        <input type="text" class="form-control campo-input" id="txtEstado"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -298,7 +298,7 @@
                                         <label for="txtCP">
                                             Código postal
                                         </label>
-                                        <input type="text" class="form-control" id="txtCP"
+                                        <input type="text" class="form-control campo-input" id="txtCP"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -307,7 +307,7 @@
                                         <label for="txtTelefono">
                                             Teléfono
                                         </label>
-                                        <input type="text" class="form-control" id="txtTelefono"
+                                        <input type="text" class="form-control campo-input" id="txtTelefono"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -323,7 +323,7 @@
                                         <label for="comboPlaza">
                                             Plaza
                                         </label>
-                                        <select class="form-control" id="comboPlaza" required="required" data-required-error='Requerido'>
+                                        <select class="form-control campo-combo" id="comboPlaza" required="required" data-required-error='Requerido'>
                                         </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -333,7 +333,7 @@
                                         <label for="txtMontoLimiteInicial">
                                             Monto límite inicial
                                         </label>
-                                        <input type="text" class="form-control" id="txtMontoLimiteInicial"
+                                        <input type="text" class="form-control campo-input" id="txtMontoLimiteInicial"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -343,7 +343,7 @@
                                         <label for="comboComisionInicial">
                                             Comisión inicial
                                         </label>
-                                        <select class="form-control" id="comboComisionInicial" required="required" data-required-error='Requerido'>
+                                        <select class="form-control campo-combo" id="comboComisionInicial" required="required" data-required-error='Requerido'>
                                         </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -358,7 +358,7 @@
                                         <label for="txtNombreUsuario">
                                             Usuario
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombreUsuario"
+                                        <input type="text" class="form-control campo-input" id="txtNombreUsuario"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -367,7 +367,7 @@
                                         <label for="txtPassword">
                                             Contraseña
                                         </label>
-                                        <input type="text" class="form-control" id="txtPassword"
+                                        <input type="text" class="form-control campo-input" id="txtPassword"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -383,7 +383,7 @@
                                             Fotografía
                                         </label>
 
-                                        <input type="file" class="form-control file-fotografia documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-fotografia documentos-colaborador" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -393,7 +393,7 @@
                                             Identificación frente
                                         </label>
 
-                                        <input type="file" class="form-control file-identificacion-frente documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -404,7 +404,7 @@
                                             Identificación reverso
                                         </label>
 
-                                        <input type="file" class="form-control file-identificacion-reverso documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -461,7 +461,7 @@
                                             Comprobante de domicilio
                                         </label>
 
-                                        <input type="file" class="form-control file-comprobante-domicilio documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -471,7 +471,7 @@
                                             Carta no antecedentes penales
                                         </label>
 
-                                        <input type="file" class="form-control file-carta-no-antecedentes documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-carta-no-antecedentes documentos-colaborador" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -522,10 +522,10 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtCURP">
+                                        <label for="txtCURPAval">
                                             CURP
                                         </label>
-                                        <input type="text" class="form-control" id="txtCURP_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtCURPAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -537,28 +537,28 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtAPaterno">
+                                        <label for="txtPrimerApellidoAval">
                                             Primer apellido
                                         </label>
-                                        <input type="text" class="form-control" id="txtPrimerApellido_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtPrimerApellidoAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtAMaterno">
+                                        <label for="txtSegundoApellidoAval">
                                             Segundo apellido
                                         </label>
-                                        <input type="text" class="form-control" id="txtSegundoApellido_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtNombre">
+                                        <label for="txtNombreAval">
                                             Nombre(s)
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombre_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtNombreAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -568,28 +568,28 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtCalle">
+                                        <label for="txtCalleAval">
                                             Calle y número
                                         </label>
-                                        <input type="text" class="form-control" id="txtCalle_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtCalleAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtColonia">
+                                        <label for="txtColoniaAval">
                                             Colonia
                                         </label>
-                                        <input type="text" class="form-control" id="txtColonia_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtColoniaAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtMunicipio">
+                                        <label for="txtMunicipioAval">
                                             Municipio
                                         </label>
-                                        <input type="text" class="form-control" id="txtMunicipio_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtMunicipioAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -599,28 +599,28 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtEstado">
+                                        <label for="txtEstadoAval">
                                             Estado
                                         </label>
-                                        <input type="text" class="form-control" id="txtEstado_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtEstadoAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtCP">
+                                        <label for="txtCPAval">
                                             Código postal
                                         </label>
-                                        <input type="text" class="form-control" id="txtCP_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtCPAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtTelefono">
+                                        <label for="txtTelefonoAval">
                                             Teléfono
                                         </label>
-                                        <input type="text" class="form-control" id="txtTelefono_Aval"
+                                        <input type="text" class="form-control campo-input" id="txtTelefonoAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -639,7 +639,7 @@
                                             Identificación frente
                                         </label>
 
-                                        <input type="file" class="form-control file-identificacion-frente documentos-aval" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -650,7 +650,7 @@
                                             Identificación reverso
                                         </label>
 
-                                        <input type="file" class="form-control file-identificacion-reverso documentos-aval" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -660,7 +660,7 @@
                                             Comprobante de domicilio
                                         </label>
 
-                                        <input type="file" class="form-control file-comprobante-domicilio documentos-aval" />
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 

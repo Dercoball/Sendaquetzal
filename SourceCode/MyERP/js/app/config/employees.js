@@ -4,7 +4,7 @@ let descargas = "Empleados_" + date.getFullYear() + "_" + date.getMonth() + "_" 
 let pagina = '8';
 
 
-const empleado = {
+const employee = {
 
 
     init: () => {
@@ -12,16 +12,16 @@ const empleado = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        empleado.idSeleccionado = "-1";
-        empleado.accion = "";
+        employee.idSeleccionado = "-1";
+        employee.accion = "";
 
 
-        empleado.loadComboPosicion();
-        empleado.loadComboPlaza();
-        empleado.loadComboModulo();
-        empleado.loadComboEmployeesByPosicion(POSICION_EJECUTIVO, '#comboEjecutivo');
-        empleado.loadComboEmployeesByPosicion(POSICION_SUPERVISOR, '#comboSupervisor');
-        empleado.cargarItems();
+        employee.loadComboPosicion();
+        employee.loadComboPlaza();
+        employee.loadComboModulo();
+        employee.loadComboEmployeesByPosicion(POSICION_EJECUTIVO, '#comboEjecutivo');
+        employee.loadComboEmployeesByPosicion(POSICION_SUPERVISOR, '#comboSupervisor');
+        employee.cargarItems();
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
@@ -59,7 +59,7 @@ const empleado = {
                     columns: [
                         { data: 'IdEmpleado' },
                         { data: 'NombreCompleto' },
-                        { data: 'NombreUsuario' },
+                        { data: 'Login' },
                         { data: 'NombreModulo' },
                         { data: 'NombreTipoUsuario' },
                         { data: 'NombrePlaza' },
@@ -105,7 +105,7 @@ const empleado = {
 
     eliminar: (id) => {
 
-        empleado.idSeleccionado = id;
+        employee.idSeleccionado = id;
 
         $('#panelEliminar').modal('show');
 
@@ -132,7 +132,7 @@ const empleado = {
             success: function (msg) {
 
                 var item = msg.d;
-                empleado.idSeleccionado = item.IdEmpleado;
+                employee.idSeleccionado = item.IdEmpleado;
 
                 console.log('.');
                 $('#txtNombre').val(item.Nombre);
@@ -147,7 +147,7 @@ const empleado = {
                 $('#panelForm').show();
 
 
-                empleado.acccion = "editar";
+                employee.acccion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
                 $('#img_').attr('src', `../img/logo_small.jpg`);
@@ -155,7 +155,7 @@ const empleado = {
 
                 var parametros = new Object();
                 parametros.path = window.location.hostname;
-                parametros.idEmpleado = empleado.idSeleccionado;
+                parametros.idEmpleado = employee.idSeleccionado;
                 parametros = JSON.stringify(parametros);
                 $.ajax({
                     type: "POST",
@@ -201,17 +201,27 @@ const empleado = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        empleado.acccion = "nuevo";
-        empleado.idSeleccionado = -1;
+        employee.acccion = "nuevo";
+        employee.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
 
+        employee.testData();
+
 
     },
 
+    testData() {
+        $('.campo-combo').val(2);
+        $('.campo-date').val('2022-01-01');
+        $('.campo-input').val(7);
+
+        //$('#txtFechaNacimiento').val('2000-01-01');
+
+    },
 
     loadComboEmployeesByPosicion: (idTipoEmpleado, control) => {
 
@@ -363,13 +373,12 @@ const empleado = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            empleado.nuevo();
+            employee.nuevo();
 
         });
 
 
         $('#btnGuardar').on('click', (e) => {
-
             e.preventDefault();
 
             let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
@@ -378,43 +387,84 @@ const empleado = {
                 return;
             }
 
+
+            let valuePosition = $('#comboPosicion').val();
+            if (Number(valuePosition) === Number(POSICION_PROMOTOR)) {
+                let id = $('#comboSupervisor').val();
+                if (!id) {
+                    utils.toast(mensajesAlertas.errorSeleccionarSupervisor, 'error');
+
+                    return;
+                }
+
+            }
+
+            if (Number(valuePosition) === Number(POSICION_SUPERVISOR)) {
+                let id = $('#comboEjecutivo').val();
+                if (!id) {
+                    utils.toast(mensajesAlertas.errorSeleccionarEjecutivo, 'error');
+
+                    return;
+                }
+            }
+
             let dataEmployee = {};
-            dataEmployee.IdEmpleado = empleado.idSeleccionado;
+            dataEmployee.IdEmpleado = employee.idSeleccionado;
             dataEmployee.FechaIngreso = $('#txtFechaIngreso').val();
             dataEmployee.IdPosicion = $('#comboPosicion').val();
-            dataEmployee.IdSupervisor = $('#comboSupervisor').val();
-            dataEmployee.IdEjecutivo = $('#comboEjecutivo').val();
+            dataEmployee.IdSupervisor = $('#comboSupervisor').val() == null ? 0 : $('#comboSupervisor').val();
+            dataEmployee.IdEjecutivo = $('#comboEjecutivo').val() == null ? 0 : $('#comboEjecutivo').val();
             dataEmployee.CURP = $('#txtCURP').val();
             dataEmployee.FechaNacimiento = $('#txtFechaNacimiento').val();
-            dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();
+            dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();                       
             dataEmployee.SegundoApellido = $('#txtSegundoApellido').val();
             dataEmployee.Nombre = $('#txtNombre').val();
 
-            dataEmployee.IdDepartamento = $('#comboDepartamento').val();
-            dataEmployee.IdPlaza= $('#comboPlaza').val();
-            
-            dataEmployee.Clave = $('#txtClave').val();
+            dataEmployee.CURPAval = $('#txtCURPAval').val();
+            dataEmployee.PrimerApellidoAval = $('#txtPrimerApellidoAval').val();
+            dataEmployee.SegundoApellidoAval = $('#txtSegundoApellidoAval').val();
+            dataEmployee.NombreAval = $('#txtNombreAval').val();
 
 
-            //let dataEmployee = {};
-            //dataEmployee.IdEmpleado = empleado.idSeleccionado;
-            //dataEmployee.Nombre = $('#txtNombre').val();
-            //dataEmployee.IdDepartamento = $('#comboDepartamento').val();
-            //dataEmployee.IdPosicion = $('#comboPosicion').val();
-            //dataEmployee.IdPlaza = $('#comboPlaza').val();
-            //dataEmployee.IdSupervisor = $('#comboSupervisor').val();
-            //dataEmployee.IdEjecutivo = $('#comboEjecutivo').val();
-            //dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();
-            //dataEmployee.SegundoApellido = $('#txtSegundoApellido').val();
-            //dataEmployee.Clave = $('#txtClave').val();
+            dataEmployee.IdPlaza = $('#comboPlaza').val();
+            dataEmployee.IdComisionInicial = $('#comboComisionInicial').val();
+            dataEmployee.Telefono = $('#txtTelefono').val();
+            dataEmployee.MontoLimiteInicial = $('#txtMontoLimiteInicial').val();
 
+
+            let dataAddressEmployee = {};
+            dataAddressEmployee.IdEmpleado = employee.idSeleccionado;
+            dataAddressEmployee.Calle = $('#txtCalle').val();
+            dataAddressEmployee.Aval = 0;
+            dataAddressEmployee.Colonia = $('#txtColonia').val();
+            dataAddressEmployee.Municipio = $('#txtMunicipio').val();
+            dataAddressEmployee.Estado = $('#txtEstado').val();
+            dataAddressEmployee.CP = $('#txtCP').val();
+
+            let dataAddressAval = {};
+            dataAddressAval.IdEmpleado = employee.idSeleccionado;
+            dataAddressAval.Calle = $('#txtCalleAval').val();
+            dataAddressAval.Aval = 1;
+            dataAddressAval.Colonia = $('#txtColoniaAval').val();
+            dataAddressAval.Municipio = $('#txtMunicipioAval').val();
+            dataAddressAval.Estado = $('#txtEstadoAval').val();
+            dataAddressAval.CP = $('#txtCPAval').val();
+
+            let dataUser = {};
+            dataUser.IdEmpleado = employee.idSeleccionado;
+            dataUser.Login = $('#txtNombreUsuario').val();
+            dataUser.Password = $('#txtPassword').val();
+            dataUser.IdTipoUsuario = $('#comboPosicion').val();
 
 
             let params = {};
             params.path = window.location.hostname;
             params.item = dataEmployee;
+            params.itemAddress = dataAddressEmployee;
+            params.itemAddressAval = dataAddressAval;
+            params.itemUser = dataUser;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
-            params.accion = empleado.acccion;
+            params.accion = employee.acccion;
             params = JSON.stringify(params);
 
             $.ajax({
@@ -433,16 +483,16 @@ const empleado = {
 
                         if (accion === 'nuevo') {
                             //guardar documentos
-                            $('.file-fotografia').each(function (documento) {
+                            //$('.file-fotografia').each(function (documento) {
 
-                                let file;
-                                if (file = this.files[0]) {
+                            //    let file;
+                            //    if (file = this.files[0]) {
 
-                                    utils.sendFile(file, 'fotografia_empleado', valores.IdItem, 'fotografia_empleado');
+                            //        utils.sendFile(file, 'fotografia_empleado', valores.IdItem, 'fotografia_empleado');
 
-                                }
+                            //    }
 
-                            });
+                            //});
                         }
 
 
@@ -452,7 +502,7 @@ const empleado = {
                         $('#panelTabla').show();
                         $('#panelForm').hide();
 
-                        empleado.cargarItems();
+                        employee.cargarItems();
 
                     } else {
 
@@ -480,21 +530,21 @@ const empleado = {
         $('.file-fotografia').on('change', function (e) {
             e.preventDefault();
 
-            if (empleado.idSeleccionado !== "-1") {
+            if (employee.idSeleccionado !== "-1") {
 
 
                 //debugger;
                 let file;
                 if (file = this.files[0]) {
 
-                    utils.sendFile(file, 'fotografia_empleado', empleado.idSeleccionado, 'fotografia_empleado');
+                    utils.sendFile(file, 'fotografia_empleado', employee.idSeleccionado, 'fotografia_empleado');
 
                     setTimeout(function () {
 
                         //  Mostrar la imagen que se acaba de subir...
                         var parametros = new Object();
                         parametros.path = window.location.hostname;
-                        parametros.idEmpleado = empleado.idSeleccionado;
+                        parametros.idEmpleado = employee.idSeleccionado;
                         parametros = JSON.stringify(parametros);
                         $.ajax({
                             type: "POST",
@@ -561,7 +611,7 @@ const empleado = {
 
             var parametros = new Object();
             parametros.path = window.location.hostname;
-            parametros.id = empleado.idSeleccionado;
+            parametros.id = employee.idSeleccionado;
             parametros = JSON.stringify(parametros);
             $.ajax({
                 type: "POST",
@@ -578,7 +628,7 @@ const empleado = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        empleado.cargarItems();
+                        employee.cargarItems();
 
                     } else {
 
@@ -604,9 +654,9 @@ const empleado = {
 
 window.addEventListener('load', () => {
 
-    empleado.init();
+    employee.init();
 
-    empleado.accionesBotones();
+    employee.accionesBotones();
 
 });
 

@@ -21,6 +21,8 @@ var mensajesAlertas = {
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
     errorGuardar: 'Se ha producido un error al almacenar los datos. Los datos no fueron almacenados.',
     exitoGuardar: 'Los datos se almacenaron correctamente.',
+    errorSeleccionarSupervisor: 'Debe seleccionar un supervisor para poder continuar.',
+    errorSeleccionarEjecutivo: 'Debe seleccionar un ejecutivo para poder continuar.',
     errorInesperado: 'Se ha producido un error inesperado. Por favor intente de nuevo.',
     exitoEliminar: 'El registro se eliminó correctamente.',
     exitoCancelarRefaccion: 'La solicitud de refacción se canceló correctamente.',

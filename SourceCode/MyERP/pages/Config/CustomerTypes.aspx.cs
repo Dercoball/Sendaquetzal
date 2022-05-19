@@ -201,7 +201,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static object Guardar(string path, TipoCliente item, string accion, string idUsuario)
+        public static object Save(string path, TipoCliente item, string accion, string idUsuario)
         {
 
             // verificar que tenga permisos para usar esta pagina
@@ -229,16 +229,16 @@ namespace Plataforma.pages
                 }
                 else
                 {
-                    sql = " UPDATE tipo_cliente " +
-                          " SET tipo_cliente = @tipo_cliente, " +
-                          "     prestamo_inicial_maximo = @prestamo_inicial_maximo, " +
-                          "     porcentaje_semanal = @porcentaje_semanal,  " +
-                          "     semanas_a_prestar = @semanas_a_prestar,  " +
-                          "     garantias_por_monto = @garantias_por_monto,  " +
-                          "     fechas_pago = @fechas_pago,  " +
-                          "     cantidad_para_renovar = @cantidad_para_renovar,  " +
-                          "     semana_extra = @semanas_extra  " +
-                          " WHERE id_tipo_cliente = @id ";
+                    sql = @" UPDATE tipo_cliente 
+                           SET tipo_cliente = @tipo_cliente, 
+                               prestamo_inicial_maximo = @prestamo_inicial_maximo,  
+                               porcentaje_semanal = @porcentaje_semanal,   
+                               semanas_a_prestar = @semanas_a_prestar,   
+                               garantias_por_monto = @garantias_por_monto,   
+                               fechas_pago = @fechas_pago,   
+                               cantidad_para_renovar = @cantidad_para_renovar,   
+                               semana_extra = @semanas_extra   
+                           WHERE id_tipo_cliente = @id ";
 
                 }
 
@@ -290,7 +290,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida Eliminar(string path, string id, string idUsuario)
+        public static DatosSalida Delete(string path, string id, string idUsuario)
         {
 
 

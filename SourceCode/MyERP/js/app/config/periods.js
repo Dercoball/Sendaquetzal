@@ -1,11 +1,12 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "TIPOCLIENTE_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '7';
+let descargas = "PERIODOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '44';
 
 
 
-const tipoCliente = {
+
+const period = {
 
 
     init: () => {
@@ -13,13 +14,15 @@ const tipoCliente = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        tipoCliente.idSeleccionado = -1;
-        tipoCliente.accion = '';
-        tipoCliente.cargarItems();
+        period.idSeleccionado = -1;
+        period.accion = '';
+
+        period.loadContent();
+        
 
     },
 
-    cargarItems: () => {
+    loadContent() {
 
         let params = {};
         params.path = window.location.hostname;
@@ -28,7 +31,7 @@ const tipoCliente = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/CustomerTypes.aspx/GetListaItems",
+            url: "../../pages/Config/Periods.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -49,17 +52,12 @@ const tipoCliente = {
                     data: data,
                     columns: [
 
-                        { data: 'NombreTipoCliente' },
-                        { data: 'PrestamoInicialMaximo' },
-                        { data: 'PorcentajeSemanal' },
-                        { data: 'SemanasAPrestar' },
-                        { data: 'GarantiasPorMonto' },
-                        { data: 'FechasDePago' },
-                        { data: 'CantidadParaRenovar' },
-                        { data: 'ActivoSemanaExtra' },
+                        { data: 'IdPeriodo' },
+                        { data: 'Nombre' },
+                        { data: 'ActivoStr' },
                         { data: 'Accion' }
 
-
+                        
                     ],
                     "language": textosEsp,
                     "columnDefs": [
@@ -95,15 +93,11 @@ const tipoCliente = {
 
 
 
-
-
-
     },
 
+    delete: (id) => {
 
-    eliminar: (id) => {
-
-        tipoCliente.idSeleccionado = id;
+        period.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -114,7 +108,7 @@ const tipoCliente = {
 
 
 
-    editar: (id) => {
+    edit: (id) => {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
@@ -126,7 +120,7 @@ const tipoCliente = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/CustomerTypes.aspx/GetItem",
+            url: "../../pages/Config/Periods.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -134,23 +128,17 @@ const tipoCliente = {
             success: function (msg) {
 
                 var item = msg.d;
-                tipoCliente.idSeleccionado = item.IdTipoCliente;
+                period.idSeleccionado = item.IdPeriodo;
 
-                $('#txtTipoCliente').val(item.NombreTipoCliente);
-                $('#txtPrestamoInicialMaximo').val(item.PrestamoInicialMaximo);
-                $('#txtPorcentajeSemanal').val(item.PorcentajeSemanal);
-                $('#txtSemanasAPrestar').val(item.SemanasAPrestar);
-                $('#txtGarantiasPorMonto').val(item.GarantiasPorMonto);
-                $('#txtFechasDePago').val(item.FechasDePago);
-                $('#txtCantidadRenovar').val(item.CantidadParaRenovar);
+                $('#txtNombrePeriodo').val(item.Nombre);
 
-                $('#chkSemanaExtra').prop('checked', item.SemanasExtra === 1);
+                $('#chkActivo').prop('checked', item.Activo === 1);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
 
-                tipoCliente.accion = "editar";
+                period.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -177,8 +165,8 @@ const tipoCliente = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        tipoCliente.accion = "nuevo";
-        tipoCliente.idSeleccionado = -1;
+        period.accion = "nuevo";
+        period.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -193,8 +181,7 @@ const tipoCliente = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-
-            tipoCliente.nuevo();
+            period.nuevo();
 
         });
 
@@ -209,27 +196,20 @@ const tipoCliente = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdTipoCliente = tipoCliente.idSeleccionado;
-                item.NombreTipoCliente = $('#txtTipoCliente').val();
-                item.PrestamoInicialMaximo = $('#txtPrestamoInicialMaximo').val();
-                item.PorcentajeSemanal = $('#txtPorcentajeSemanal').val();
-                item.SemanasAPrestar = $('#txtSemanasAPrestar').val();
-                item.GarantiasPorMonto = $('#txtGarantiasPorMonto').val();
-                item.FechasDePago = $('#txtFechasDePago').val();
-                item.CantidadParaRenovar = $('#txtCantidadRenovar').val();
-
-                item.SemanasExtra = $('#chkSemanaExtra').prop('checked') ? 1 : 0;
+                item.IdPeriodo = period.idSeleccionado;
+                item.Nombre = $('#txtNombrePeriodo').val();
+                item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = tipoCliente.accion;
+                params.accion = period.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/CustomerTypes.aspx/Save",
+                    url: "../../pages/Config/Periods.aspx/Save",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -245,7 +225,7 @@ const tipoCliente = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            tipoCliente.cargarItems();
+                            period.loadContent();
 
 
                         } else {
@@ -284,13 +264,13 @@ const tipoCliente = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = tipoCliente.idSeleccionado;
+            params.id = period.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/CustomerTypes.aspx/Delete",
+                url: "../../pages/Config/Periods.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -303,7 +283,7 @@ const tipoCliente = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        tipoCliente.cargarItems();
+                        period.loadContent();
 
                     } else {
 
@@ -325,13 +305,14 @@ const tipoCliente = {
     }
 
 
+
 }
 
 window.addEventListener('load', () => {
 
-    tipoCliente.init();
+    period.init();
 
-    tipoCliente.accionesBotones();
+    period.accionesBotones();
 
 });
 

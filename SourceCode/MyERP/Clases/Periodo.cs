@@ -5,10 +5,10 @@ using System.Web;
 
 namespace Plataforma.Clases
 {
-    public class Plaza
+    public class Periodo
     {
 
-        public int IdPlaza;
+        public int IdPeriodo;
         public string Nombre;
 
         public int Activo;

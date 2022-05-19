@@ -193,6 +193,7 @@ const tipoCliente = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
+
             tipoCliente.nuevo();
 
         });

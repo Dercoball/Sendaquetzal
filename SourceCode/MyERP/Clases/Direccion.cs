@@ -13,7 +13,7 @@ namespace Plataforma.Clases
         public String Colonia;
         public String Municipio;
         public String Estado;
-        public String CP;
+        public String CodigoPostal;
         public int Activo;
         public string Accion;
         public string ActivoStr;

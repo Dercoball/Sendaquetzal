@@ -63,7 +63,7 @@ const employee = {
                         { data: 'NombreModulo' },
                         { data: 'NombreTipoUsuario' },
                         { data: 'NombrePlaza' },
-                        { data: 'FechaIngreso' },
+                        { data: 'FechaIngresoMx' },
                         { data: 'Accion' }
 
                     ],
@@ -103,7 +103,7 @@ const employee = {
     },
 
 
-    eliminar: (id) => {
+    delete: (id) => {
 
         employee.idSeleccionado = id;
 
@@ -113,69 +113,88 @@ const employee = {
 
 
 
-    editar: (id) => {
+    edit: (id) => {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
+        $('#frm')[0].reset();
 
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.id = id;
-        parametros = JSON.stringify(parametros);
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.id = id;
+        params = JSON.stringify(params);
+
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Employees.aspx/GetItem",
-            data: parametros,
+            url: "../../pages/Config/Employees.aspx/GetDataEmployee",
+            data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
                 var item = msg.d;
+                //console.log(`${JSON.stringify(item.IdPlaza)}`);
+
                 employee.idSeleccionado = item.IdEmpleado;
 
-                console.log('.');
+                //  empleado
                 $('#txtNombre').val(item.Nombre);
-                $('#txtAPaterno').val(item.APaterno);
-                $('#txtAMaterno').val(item.AMaterno);
-                $('#comboDepartamento').val(item.IdDepartamento);
-                $('#comboPuesto').val(item.IdPuesto);
-                $('#txtClave').val(item.Clave);
-                $('#chkActivo').prop('checked', item.Activo === 1);
+                $('#txtPrimerApellido').val(item.PrimerApellido);
+                $('#txtSegundoApellido').val(item.SegundoApellido);
+                $('#txtCURP').val(item.CURP);
+                $('#txtFechaIngreso').val(item.FechaIngreso);
+                $('#txtFechaNacimiento').val(item.FechaNacimiento);
+                $('#txtTelefono').val(item.Telefono);
+                $('#txtMontoLimiteInicial').val(item.MontoLimiteInicial);
+                $('#comboComisionInicial').val(item.IdComisionInicial);
+                $('#comboPosicion').val(item.IdPosicion);
+                $('#comboPlaza').val(item.IdPlaza);
+
+                //  dirección empleado
+                $('#txtCalle').val(item.direccion.Calle);
+                $('#txtColonia').val(item.direccion.Colonia);
+                $('#txtMunicipio').val(item.direccion.Municipio);
+                $('#txtEstado').val(item.direccion.Estado);
+                $('#txtCodigoPostal').val(item.direccion.CodigoPostal);
+
+
+                //datos aval
+                $('#txtNombreAval').val(item.NombreAval);
+                $('#txtPrimerApellidoAval').val(item.PrimerApellidoAval);
+                $('#txtSegundoApellidoAval').val(item.SegundoApellidoAval);
+                $('#txtCURPAval').val(item.CURPAval);
+                $('#txtTelefonoAval').val(item.TelefonoAval);
+
+                //  dirección aval
+                $('#txtCalleAval').val(item.direccionAval.Calle);
+                $('#txtColoniaAval').val(item.direccionAval.Colonia);
+                $('#txtMunicipioAval').val(item.direccionAval.Municipio);
+                $('#txtEstadoAval').val(item.direccionAval.Estado);
+                $('#txtCodigoPostalAval').val(item.direccionAval.CodigoPostal);
+
+
+                $('#txtNombreUsuario').val(item.usuario.Login);
+                $('#txtPassword').val("0000000000");
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
 
-                employee.acccion = "editar";
+                employee.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
-                $('#img_').attr('src', `../img/logo_small.jpg`);
 
 
-                var parametros = new Object();
-                parametros.path = window.location.hostname;
-                parametros.idEmpleado = employee.idSeleccionado;
-                parametros = JSON.stringify(parametros);
-                $.ajax({
-                    type: "POST",
-                    url: "../../pages/Config/Employees.aspx/GetFoto",
-                    data: parametros,
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    async: true,
-                    success: function (foto) {
-
-                        let strFoto = foto.d;
-                        if (strFoto != '') {
-                            $('#img_').attr('src', `data:image/jpg;base64,${strFoto}`);
-                        }
-
-                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(textStatus + ": " + XMLHttpRequest.responseText);
-                    }
-
-                });
+                employee.getDocument(employee.idSeleccionado, 1, '#img_1');
+                employee.getDocument(employee.idSeleccionado, 2, '#img_2');
+                employee.getDocument(employee.idSeleccionado, 3, '#img_3');
+                employee.getDocument(employee.idSeleccionado, 4, '#img_4');
+                employee.getDocument(employee.idSeleccionado, 5, '#img_5');
+                employee.getDocument(employee.idSeleccionado, 6, '#img_6');
+                employee.getDocument(employee.idSeleccionado, 7, '#img_7');
+                employee.getDocument(employee.idSeleccionado, 8, '#img_8');
 
 
 
@@ -188,6 +207,39 @@ const employee = {
 
     },
 
+    getDocument(idEmpleado, idTipoDocumento, idControl) {
+
+        let parametros = new Object();
+        parametros.path = window.location.hostname;
+        parametros.idEmpleado = idEmpleado;
+        parametros.idTipoDocumento = idTipoDocumento;
+        parametros = JSON.stringify(parametros);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Employees.aspx/GetDocument",
+            data: parametros,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (foto) {
+
+                let doc = foto.d;
+                if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                    $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
+                } else if (doc.Extension === 'pdf') {
+                    $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
+                } else {
+                    //$(`${idControl}`).attr('src', '../../img/ico_doc.png');
+                }
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+
+    },
 
 
     nuevo: () => {
@@ -201,7 +253,7 @@ const employee = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        employee.acccion = "nuevo";
+        employee.accion = "nuevo";
         employee.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
@@ -245,11 +297,11 @@ const employee = {
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
 
-                    opcion += `<option value='${item.IdEmpleado}'>${item.Nombre}</option>`;
+                    opcion += `<option value = '${item.IdEmpleado}' > ${item.Nombre}</option > `;
 
                 }
 
-                $(`${control}`).html(opcion);
+                $(`${control} `).html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -280,9 +332,11 @@ const employee = {
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
 
-                    opcion += `<option value='${item.IdPosicion}'>${item.Nombre}</option>`;
+                    opcion += `<option value = '${item.IdPosicion}' > ${item.Nombre}</option > `;
 
                 }
+
+                console.log('loadComboPosicion');
 
                 $('#comboPosicion').html(opcion);
 
@@ -314,7 +368,7 @@ const employee = {
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
 
-                    opcion += `<option value='${item.IdPlaza}'>${item.Nombre}</option>`;
+                    opcion += `<option value = '${item.IdPlaza}' > ${item.Nombre}</option > `;
 
                 }
 
@@ -349,7 +403,7 @@ const employee = {
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
 
-                    opcion += `<option value='${item.IdModulo}'>${item.Nombre}</option>`;
+                    opcion += `<option value = '${item.IdModulo}' > ${item.Nombre}</option > `;
 
                 }
 
@@ -365,10 +419,41 @@ const employee = {
 
     accionesBotones: () => {
 
+        $('.img-document').on('click', function (e) {
+            e.preventDefault();
 
+            let idTipoDocumento = e.currentTarget.dataset['tipo'];
 
+            if (employee.accion !== 'nuevo') {
 
+                let params = new Object();
+                params.path = window.location.hostname;
+                params.idEmpleado = employee.idSeleccionado;
+                params.idTipoDocumento = idTipoDocumento;
+                params = JSON.stringify(params);
 
+                $.ajax({
+                    type: "POST",
+                    url: "../../pages/Config/Employees.aspx/GetDocument",
+                    data: params,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (foto) {
+
+                        let doc = foto.d;
+
+                        if (doc.Contenido) {
+                            window.open(`data:image/jpg;base64,${doc.Contenido}`);
+                        }
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    }
+
+                });
+            }
+
+        });
 
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
@@ -376,6 +461,7 @@ const employee = {
             employee.nuevo();
 
         });
+
 
 
         $('#btnGuardar').on('click', (e) => {
@@ -416,7 +502,7 @@ const employee = {
             dataEmployee.IdEjecutivo = $('#comboEjecutivo').val() == null ? 0 : $('#comboEjecutivo').val();
             dataEmployee.CURP = $('#txtCURP').val();
             dataEmployee.FechaNacimiento = $('#txtFechaNacimiento').val();
-            dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();                       
+            dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();
             dataEmployee.SegundoApellido = $('#txtSegundoApellido').val();
             dataEmployee.Nombre = $('#txtNombre').val();
 
@@ -424,6 +510,7 @@ const employee = {
             dataEmployee.PrimerApellidoAval = $('#txtPrimerApellidoAval').val();
             dataEmployee.SegundoApellidoAval = $('#txtSegundoApellidoAval').val();
             dataEmployee.NombreAval = $('#txtNombreAval').val();
+            dataEmployee.TelefonoAval = $('#txtTelefonoAval').val();
 
 
             dataEmployee.IdPlaza = $('#comboPlaza').val();
@@ -439,7 +526,7 @@ const employee = {
             dataAddressEmployee.Colonia = $('#txtColonia').val();
             dataAddressEmployee.Municipio = $('#txtMunicipio').val();
             dataAddressEmployee.Estado = $('#txtEstado').val();
-            dataAddressEmployee.CP = $('#txtCP').val();
+            dataAddressEmployee.CodigoPostal = $('#txtCodigoPostal').val();
 
             let dataAddressAval = {};
             dataAddressAval.IdEmpleado = employee.idSeleccionado;
@@ -448,7 +535,7 @@ const employee = {
             dataAddressAval.Colonia = $('#txtColoniaAval').val();
             dataAddressAval.Municipio = $('#txtMunicipioAval').val();
             dataAddressAval.Estado = $('#txtEstadoAval').val();
-            dataAddressAval.CP = $('#txtCPAval').val();
+            dataAddressAval.CodigoPostal = $('#txtCodigoPostalAval').val();
 
             let dataUser = {};
             dataUser.IdEmpleado = employee.idSeleccionado;
@@ -464,7 +551,7 @@ const employee = {
             params.itemAddressAval = dataAddressAval;
             params.itemUser = dataUser;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
-            params.accion = employee.acccion;
+            params.accion = employee.accion;
             params = JSON.stringify(params);
 
             $.ajax({
@@ -478,21 +565,26 @@ const employee = {
                     var valores = msg.d;
 
 
-
+                    //debugger;
                     if (valores.CodigoError == 0) {
 
-                        if (accion === 'nuevo') {
+                        if (employee.accion === 'nuevo') {
+
                             //guardar documentos
-                            //$('.file-fotografia').each(function (documento) {
+                            $('.campo-imagen').each(function (i, item) {
 
-                            //    let file;
-                            //    if (file = this.files[0]) {
+                                let idTipoDocumento = item.dataset['tipo']
 
-                            //        utils.sendFile(file, 'fotografia_empleado', valores.IdItem, 'fotografia_empleado');
+                                let file;
+                                if (file = this.files[0]) {
 
-                            //    }
+                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento);
 
-                            //});
+                                }
+
+                            });
+
+
                         }
 
 
@@ -530,7 +622,7 @@ const employee = {
         $('.file-fotografia').on('change', function (e) {
             e.preventDefault();
 
-            if (employee.idSeleccionado !== "-1") {
+            if (employee.idSeleccionado !== "-1" && employee.accion !== 'nuevo') {
 
 
                 //debugger;
@@ -557,7 +649,7 @@ const employee = {
 
                                 let strFoto = foto.d;
                                 if (strFoto != '') {
-                                    $('#img_').attr('src', `data:image/jpg;base64,${strFoto}`);
+                                    $('#img_').attr('src', `data: image / jpg; base64, ${strFoto} `);
                                 }
 
                             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -579,7 +671,7 @@ const employee = {
 
             //console.log('Change comboPosicion');
             let value = $('#comboPosicion').val();
-            //console.log(`Value = ${value}`);
+            //console.log(`Value = ${ value } `);
 
             if (Number(value) === Number(POSICION_PROMOTOR)) {
                 $('.combo-supervisor').show();

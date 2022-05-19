@@ -107,6 +107,9 @@
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
     <Content Include="icons-reference\styles.css" />
+    <Content Include="img\ico_doc.png" />
+    <Content Include="img\ico_pdf.png" />
+    <Content Include="img\pfg.png" />
     <Content Include="img\aprobacion.jpg" />
     <Content Include="img\avatar-0.jpg" />
     <Content Include="img\brand.png" />
@@ -1244,7 +1247,7 @@
     <Compile Include="Clases\Campo.cs" />
     <Compile Include="Clases\Empleado.cs" />
     <Compile Include="Clases\Impuesto.cs" />
-    <Compile Include="Clases\Area.cs" />
+    <Compile Include="Clases\Documento.cs" />
     <Compile Include="Clases\Entidad.cs" />
     <Compile Include="Clases\Cliente.cs" />
     <Compile Include="Clases\Infraccion.cs" />

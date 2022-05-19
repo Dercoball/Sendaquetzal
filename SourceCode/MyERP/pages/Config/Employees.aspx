@@ -129,7 +129,7 @@
 
 
 
-                <div id="panelForm">
+                <div id="panelForm" style="overflow-y: auto;">
                     <form role="form" id="frm" name="frm">
 
                         <%--Datos de ingreso--%>
@@ -224,7 +224,7 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtAPaterno">
+                                        <label for="txtPrimerApellido">
                                             Primer apellido
                                         </label>
                                         <input type="text" class="form-control campo-input" id="txtPrimerApellido"
@@ -233,7 +233,7 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtAMaterno">
+                                        <label for="txtSegundoApellido">
                                             Segundo apellido
                                         </label>
                                         <input type="text" class="form-control campo-input" id="txtSegundoApellido"
@@ -295,10 +295,10 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtCP">
+                                        <label for="txtCodigoPostal">
                                             Código postal
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtCP"
+                                        <input type="text" class="form-control campo-input" id="txtCodigoPostal"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -367,7 +367,7 @@
                                         <label for="txtPassword">
                                             Contraseña
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtPassword"
+                                        <input type="password" class="form-control campo-input" id="txtPassword"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -383,7 +383,7 @@
                                             Fotografía
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-fotografia documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-fotografia documentos-colaborador" data-tipo="1" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -393,7 +393,7 @@
                                             Identificación frente
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -404,7 +404,7 @@
                                             Identificación reverso
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -418,8 +418,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_fotografia" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="1">
+                                                    <img src="../../img/user.png" id="img_1" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -429,8 +429,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_identificacion_frente" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="2">
+                                                    <img src="../../img/user.png" id="img_2" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -440,8 +440,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_identificacion_reveso" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="3">
+                                                    <img src="../../img/user.png" id="img_3" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -461,7 +461,7 @@
                                             Comprobante de domicilio
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -471,7 +471,7 @@
                                             Carta no antecedentes penales
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-carta-no-antecedentes documentos-colaborador" />
+                                        <input type="file" class="form-control campo-imagen file-carta-no-antecedentes documentos-colaborador" data-tipo="5" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -484,8 +484,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_comprobante_domicilio" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="4">
+                                                    <img src="../../img/user.png" id="img_4" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -495,8 +495,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_carta_no_antecedentes" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="5">
+                                                    <img src="../../img/user.png" id="img_5" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -608,10 +608,10 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtCPAval">
+                                        <label for="txtCodigoPostalAval">
                                             Código postal
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtCPAval"
+                                        <input type="text" class="form-control campo-input" id="txtCodigoPostalAval"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -639,7 +639,7 @@
                                             Identificación frente
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" data-tipo="6" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -650,7 +650,7 @@
                                             Identificación reverso
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" data-tipo="7" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -660,7 +660,7 @@
                                             Comprobante de domicilio
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" />
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" data-tipo="8" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -671,8 +671,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_fotografia_aval" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="6">
+                                                    <img src="../../img/user.png" id="img_6" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -682,8 +682,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_identificacion_frente_aval" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="7">
+                                                    <img src="../../img/user.png" id="img_7" class="img-fluid" />
                                                 </a>
 
                                             </div>
@@ -693,8 +693,8 @@
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
                                             <div class="card-body text-center">
-                                                <a href="#">
-                                                    <img src="../../img/user.png" id="img_identificacion_reveso_aval" class="img-fluid" />
+                                                <a href="#" class="img-document" data-tipo="8">
+                                                    <img src="../../img/user.png" id="img_8" class="img-fluid" />
                                                 </a>
 
                                             </div>

@@ -17,6 +17,7 @@ namespace Plataforma.Clases
         public String NombreAval;
         public String PrimerApellidoAval;
         public String SegundoApellidoAval;
+        public String TelefonoAval;
 
 
         public String AMaterno;
@@ -24,8 +25,14 @@ namespace Plataforma.Clases
         
         public String APaterno;
         public String NombreCompleto;
+        public String NombreCompletoAval;
         public String FechaIngreso;
         public String FechaNacimiento;
+        
+        //  fechas dd/mm/aaaa
+        public String FechaIngresoMx;
+        public String FechaNacimientoMx;
+
         public String Telefono;
         public String NombreModulo;
         public String NombrePlaza;
@@ -46,8 +53,10 @@ namespace Plataforma.Clases
         public int Activo;
         public string Accion;
         public string ActivoStr;
-       
 
+        public Direccion direccion;
+        public Direccion direccionAval;
+        public Usuario usuario;
 
     }
 }

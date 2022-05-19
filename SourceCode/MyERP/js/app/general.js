@@ -459,7 +459,7 @@ var utils = {
     },
 
 
-    sendFile: (file, nombreArchivo, idItem, tipo) => {
+    sendFileEmployee: (file, nombreArchivo, idItem, tipo) => {
 
 
         var files = file;
@@ -472,19 +472,20 @@ var utils = {
 
         var formData = new FormData();
         formData.append('file', file);
-        formData.append('id', idItem);//
+        formData.append('id', idItem);//0
         formData.append('pagina', window.location.pathname);//
         formData.append('path', window.location.hostname);//
         formData.append('extension', extension);//
         formData.append('descripcion', fileName);//
-        formData.append('tipo', tipo);//
+        formData.append('tipo', tipo);//5
         formData.append('idUsuario', idUsuario);//
-        formData.append('nombreArchivo', nombreArchivo)
+        formData.append('nombreArchivo', nombreArchivo)//7
+        formData.append('id_cliente', 0)//8
 
 
         $.ajax({
             type: 'post',
-            url: '../pages/fileUploader.ashx',
+            url: '../../pages/FileUploader.ashx',
             data: formData,
             success: function (status) {
                 if (status != 'error') {

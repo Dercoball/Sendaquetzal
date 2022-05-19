@@ -105,73 +105,7 @@ namespace Plataforma.pages
             }
 
         }
-
-        [WebMethod]
-        public static List<Proveedor> GetListaProveedores(string path, string idUsuario)
-        {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Proveedor> items = new List<Proveedor>();
-
-
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = " SELECT id_proveedor, nombre, domicilio, telefono, celular, correo" +
-                               " FROM proveedor where IsNull(activo, 1) <> 0 order by id_proveedor ";
-
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-                //string salida = "";
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Proveedor item = new Proveedor();
-                        item.IdProveedor = int.Parse(ds.Tables[0].Rows[i]["id_proveedor"].ToString());
-
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.Domicilio = ds.Tables[0].Rows[i]["domicilio"].ToString();
-                        item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
-                        item.Celular = ds.Tables[0].Rows[i]["celular"].ToString();
-                        item.Correo = ds.Tables[0].Rows[i]["correo"].ToString();
-
-
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-        }
-
-        [WebMethod]
+       [WebMethod]
         public static string GetListaEmpleados(string path, string idUsuario, string like)
         {
 
@@ -307,7 +241,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT id_usuario, id_tipo_usuario, IsNull(id_proveedor, 0) id_proveedor," +
+                string query = " SELECT id_usuario, id_tipo_usuario," +
                                " IsNull(id_empleado, 0) id_empleado, nombre, login, password, email, telefono " +
                                " FROM usuario " +
                                " WHERE id_usuario = @id ";

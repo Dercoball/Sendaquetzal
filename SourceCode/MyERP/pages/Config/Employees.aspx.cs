@@ -104,17 +104,17 @@ namespace Plataforma.pages
                         item.Login = ds.Tables[0].Rows[i]["login"].ToString();
                         item.Nombre = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
                         item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
-                        item.NombreModulo= ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
+                        item.NombreModulo = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
                         item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
-                        item.FechaIngreso = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
+                        item.FechaIngresoMx = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                        string botones = "<button  onclick='empleado.editar(" + item.IdEmpleado + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='empleado.eliminar(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove'></span>Eliminar</button>";
+                        string botones = "<button  onclick='employee.edit(" + item.IdEmpleado + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='employee.delete(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove'></span>Eliminar</button>";
 
                         item.Accion = botones;
 
@@ -144,7 +144,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida Save(string path, Empleado item, Direccion itemAddress, Direccion itemAddressAval, 
+        public static DatosSalida Save(string path, Empleado item, Direccion itemAddress, Direccion itemAddressAval,
                     Usuario itemUser, string accion, string idUsuario)
         {
 
@@ -171,7 +171,7 @@ namespace Plataforma.pages
 
 
                 Utils.Log("\nMétodo-> " +
-               System.Reflection.MethodBase.GetCurrentMethod().Name  + "\n");
+               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
 
                 string sql = "";
@@ -179,16 +179,16 @@ namespace Plataforma.pages
                 sql = @"  INSERT INTO empleado
                                 (id_tipo_usuario, id_comision_inicial, id_posicion, id_plaza, curp, nombre, primer_apellido,
                                     segundo_apellido, telefono, fecha_nacimiento, fecha_ingreso,
-                                    id_supervisor, id_ejecutivo, 
-                                    curp_aval, nombre_aval, primer_apellido_aval, segundo_apellido_aval,
+                                    id_supervisor, id_ejecutivo, monto_limite_inicial,
+                                    curp_aval, nombre_aval, primer_apellido_aval, segundo_apellido_aval, telefono_aval,
                                     eliminado, activo)
                              
                                 OUTPUT INSERTED.id_empleado
                                 
                                 VALUES (@id_tipo_usuario, @id_comision_inicial, @id_posicion, @id_plaza, @curp, @nombre, @primer_apellido,
                                     @segundo_apellido, @telefono, @fecha_nacimiento, @fecha_ingreso,
-                                    @id_supervisor, @id_ejecutivo,
-                                    @curp_aval, @nombre_aval, @primer_apellido_aval, @segundo_apellido_aval,
+                                    @id_supervisor, @id_ejecutivo, @monto_limite_inicial,
+                                    @curp_aval, @nombre_aval, @primer_apellido_aval, @segundo_apellido_aval, @telefono_aval,
                                     0, 1)";
 
 
@@ -201,20 +201,22 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_comision_inicial", item.IdComisionInicial);
                 cmd.Parameters.AddWithValue("@id_posicion", item.IdPosicion);       //  puesto
                 cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza);
-                
 
-                cmd.Parameters.AddWithValue("@id_supervisor", item.IdPosicion == POSICION_PROMOTOR ?  item.IdSupervisor : 0);
-                cmd.Parameters.AddWithValue("@id_ejecutivo", item.IdPosicion == POSICION_SUPERVISOR ?  item.IdEjecutivo : 0);
+
+                cmd.Parameters.AddWithValue("@id_supervisor", item.IdPosicion == POSICION_PROMOTOR ? item.IdSupervisor : 0);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", item.IdPosicion == POSICION_SUPERVISOR ? item.IdEjecutivo : 0);
 
                 cmd.Parameters.AddWithValue("@curp", item.CURP);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
                 cmd.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
+                cmd.Parameters.AddWithValue("@monto_limite_inicial", item.MontoLimiteInicial);
 
                 cmd.Parameters.AddWithValue("@curp_aval", item.CURPAval);
                 cmd.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
                 cmd.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
                 cmd.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
+                cmd.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
 
                 cmd.Parameters.AddWithValue("@telefono", item.Telefono);
                 cmd.Parameters.AddWithValue("@fecha_nacimiento", item.FechaNacimiento);
@@ -239,12 +241,12 @@ namespace Plataforma.pages
                 SqlCommand cmdAddressEmployee = new SqlCommand(sql, conn);
                 cmdAddressEmployee.CommandType = CommandType.Text;
 
-                cmdAddressEmployee.Parameters.AddWithValue("@id_empleado", idGenerado);   
+                cmdAddressEmployee.Parameters.AddWithValue("@id_empleado", idGenerado);
                 cmdAddressEmployee.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
-                cmdAddressEmployee.Parameters.AddWithValue("@colonia", itemAddress.Colonia);       
+                cmdAddressEmployee.Parameters.AddWithValue("@colonia", itemAddress.Colonia);
                 cmdAddressEmployee.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
                 cmdAddressEmployee.Parameters.AddWithValue("@estado", itemAddress.Estado);
-                cmdAddressEmployee.Parameters.AddWithValue("@codigo_postal", itemAddress.CP);
+                cmdAddressEmployee.Parameters.AddWithValue("@codigo_postal", itemAddress.CodigoPostal);
                 cmdAddressEmployee.Transaction = transaccion;
 
                 r = cmdAddressEmployee.ExecuteNonQuery();
@@ -270,7 +272,7 @@ namespace Plataforma.pages
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CP);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CodigoPostal);
                 cmdAddressEmployeeAval.Transaction = transaccion;
 
                 r += cmdAddressEmployeeAval.ExecuteNonQuery();
@@ -309,7 +311,7 @@ namespace Plataforma.pages
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
-                salida.IdItem = r.ToString();
+                salida.IdItem = idGenerado.ToString();
 
             }
             catch (Exception ex)
@@ -332,35 +334,39 @@ namespace Plataforma.pages
         }
 
 
-
-
         [WebMethod]
-        public static string GetFoto(string path, string idEmpleado)
+        public static Documento GetDocument(string path, string idEmpleado, string idTipoDocumento)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            string item = "";
+            Documento item = new Documento();
+
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT fotografia_b64 FROM empleado WHERE id_empleado = @id ";
+                string query = @" SELECT contenido, extension 
+                                  FROM documento    
+                                  WHERE id_empleado = @id AND id_tipo_documento = @id_tipo_documento ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("Id =  " + idEmpleado);
+                Utils.Log("idEmpleado =  " + idEmpleado);
+                Utils.Log("idTipoDocumento =  " + idTipoDocumento);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", idEmpleado);
+                adp.SelectCommand.Parameters.AddWithValue("@id_tipo_documento", idTipoDocumento);
 
                 adp.Fill(ds);
 
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-                    item = ds.Tables[0].Rows[0]["fotografia_b64"].ToString();
+                    item.Contenido = ds.Tables[0].Rows[0]["contenido"].ToString();
+                    item.Extension = ds.Tables[0].Rows[0]["extension"].ToString();
                 }
 
                 return item;
@@ -713,21 +719,129 @@ namespace Plataforma.pages
 
         }
 
-        [WebMethod]
-        public static Empleado GetItem(string path, string id)
-        {
 
+
+        [WebMethod]
+        public static Empleado GetDataEmployee(string path, string id)
+        {
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
             Empleado item = new Empleado();
             SqlConnection conn = new SqlConnection(strConexion);
+
+
+            try
+            {
+                conn.Open();
+
+
+                item = GetItemEmployee(path, id, conn, strConexion);
+                item.direccion = GetAddress(path, id, 0, conn, strConexion);
+                item.direccionAval = GetAddress(path, id, 1, conn, strConexion);
+                item.usuario = GetUsuario(path, id, conn, strConexion);
+
+                return item;
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        [WebMethod]
+        public static Usuario GetUsuario(string path, string id, SqlConnection conn, string strconexion)
+        {
+
+            Usuario item = new Usuario();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = " SELECT id_empleado , nombre, segundo_apellido," +
-                    " primer_apellido,  clave, ISNull(activo, 1) activo, id_departamento, id_puesto " +
-                    "  FROM  empleado where id_empleado =  @id_empleado ";
+                string query = @" SELECT id_usuario, id_tipo_usuario,
+                                IsNull(id_empleado, 0) id_empleado, nombre, login, password, email, telefono 
+                                FROM usuario 
+                                WHERE id_empleado = @id ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("Id =  " + id);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", id);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item.Id_Usuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
+
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.Login = ds.Tables[0].Rows[i]["login"].ToString();
+                        item.Password = ds.Tables[0].Rows[i]["password"].ToString();
+                        item.Email = ds.Tables[0].Rows[i]["email"].ToString();
+
+
+
+
+                    }
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+
+        [WebMethod]
+        public static Empleado GetItemEmployee(string path, string id, SqlConnection conn, string strconexion)
+        {
+
+            Empleado item = new Empleado();
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_empleado, id_tipo_usuario, id_comision_inicial, id_posicion, id_plaza, curp, email, 
+                                    nombre, primer_apellido, segundo_apellido, telefono, eliminado, 
+                                    activo, id_supervisor, id_ejecutivo, FORMAT(fecha_ingreso, 'yyyy-MM-dd') fecha_ingreso, 
+                                    FORMAT(fecha_nacimiento, 'yyyy-MM-dd') fecha_nacimiento,
+                                    monto_limite_inicial,
+                                    nombre_aval, primer_apellido_aval, segundo_apellido_aval, curp_aval, telefono_aval,
+                                    concat(nombre ,  ' ' , primer_apellido , ' ' , segundo_apellido) AS nombre_completo,
+                                    concat(nombre_aval ,  ' ' , primer_apellido_aval , ' ' , segundo_apellido_aval) AS nombre_completo_aval
+                                FROM empleado
+                                WHERE id_empleado =  @id_empleado 
+                                ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -746,13 +860,37 @@ namespace Plataforma.pages
                         item = new Empleado();
 
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_puesto"].ToString());
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
+                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        item.IdComisionInicial = int.Parse(ds.Tables[0].Rows[i]["id_comision_inicial"].ToString());
+                        item.IdSupervisor = int.Parse(ds.Tables[0].Rows[i]["id_supervisor"].ToString());
+                        item.IdEjecutivo = int.Parse(ds.Tables[0].Rows[i]["id_ejecutivo"].ToString());
 
+                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+
+                        item.CURP = ds.Tables[0].Rows[i]["curp"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
                         item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
-                        //item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
+                        item.MontoLimiteInicial = float.Parse(ds.Tables[0].Rows[i]["monto_limite_inicial"].ToString());
+                        item.FechaIngreso = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
+                        item.FechaNacimiento = ds.Tables[0].Rows[i]["fecha_nacimiento"].ToString();
+
+                        item.CURPAval = ds.Tables[0].Rows[i]["curp_aval"].ToString();
+                        item.NombreAval = ds.Tables[0].Rows[i]["nombre_aval"].ToString();
+                        item.NombreCompletoAval = ds.Tables[0].Rows[i]["nombre_completo_aval"].ToString();
+                        item.PrimerApellidoAval = ds.Tables[0].Rows[i]["primer_apellido_aval"].ToString();
+                        item.SegundoApellidoAval = ds.Tables[0].Rows[i]["segundo_apellido_aval"].ToString();
+                        item.TelefonoAval = ds.Tables[0].Rows[i]["telefono_aval"].ToString();
+
+
+
+                        //item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
+                        //item.NombreModulo = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
+                        //item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
 
 
 
@@ -779,6 +917,72 @@ namespace Plataforma.pages
 
         }
 
+
+        [WebMethod]
+        public static Direccion GetAddress(string path, string idEmpleado, int aval, SqlConnection conn, string strconexion)
+        {
+
+            Direccion item = new Direccion();
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_direccion, id_empleado, id_aval, calleyno, colonia, municipio, estado, 
+                                    codigo_postal, id_municipio, id_estado, activo, ISNULL(aval, 0) aval
+                                    FROM direccion
+                                    WHERE id_empleado =  @id_empleado AND aval = @aval
+                                ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("id_empleado =  " + idEmpleado);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_empleado", idEmpleado);
+                adp.SelectCommand.Parameters.AddWithValue("@aval", aval);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item = new Direccion();
+
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Aval = int.Parse(ds.Tables[0].Rows[i]["aval"].ToString());
+                        item.Calle = ds.Tables[0].Rows[i]["calleyno"].ToString();
+                        item.Colonia = ds.Tables[0].Rows[i]["colonia"].ToString();
+                        item.Municipio = ds.Tables[0].Rows[i]["municipio"].ToString();
+                        item.Estado = ds.Tables[0].Rows[i]["estado"].ToString();
+                        item.CodigoPostal = ds.Tables[0].Rows[i]["codigo_postal"].ToString();
+
+
+
+
+                    }
+                }
+
+
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
 
 
 

@@ -11,7 +11,9 @@ namespace Plataforma.Clases
         public int IdDocumento;
         public String Nombre;
         public String Descripcion;
+        public String Contenido;
         public String Url;
+        public String Extension;
         public String Fecha;
 
         public string UltimaModificacionStr;

@@ -142,6 +142,14 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\config\faq.min - Copy - Copia.js">
+      <DependentUpon>periods.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\faq.min - Copy.js">
+      <DependentUpon>plazas.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\periods.js" />
+    <Content Include="js\app\config\plazas.js" />
     <Content Include="js\app\noticeofprivacy.js" />
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
@@ -336,6 +344,8 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Config\Periods.aspx" />
+    <Content Include="pages\Config\Plazas.aspx" />
     <Content Include="pages\NoticeOfPrivacy.aspx" />
     <Content Include="pages\TermsAndConditions.aspx" />
     <Content Include="pages\Config\Marcas.aspx" />
@@ -1204,6 +1214,8 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\Periodo.cs" />
+    <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\CatalogoRefaccion.cs" />
     <Compile Include="Clases\Departamento.cs" />
     <Compile Include="Clases\CentroCosto.cs" />
@@ -1267,6 +1279,20 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Config\Periods.aspx.cs">
+      <DependentUpon>Periods.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Config\Periods.aspx.designer.cs">
+      <DependentUpon>Periods.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Config\Plazas.aspx.cs">
+      <DependentUpon>Plazas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Config\Plazas.aspx.designer.cs">
+      <DependentUpon>Plazas.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\NoticeOfPrivacy.aspx.cs">
       <DependentUpon>NoticeOfPrivacy.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -228,7 +228,7 @@ const tipoCliente = {
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/CustomerTypes.aspx/Guardar",
+                    url: "../../pages/Config/CustomerTypes.aspx/Save",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -289,7 +289,7 @@ const tipoCliente = {
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/CustomerTypes.aspx/Eliminar",
+                url: "../../pages/Config/CustomerTypes.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

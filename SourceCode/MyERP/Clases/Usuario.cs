@@ -24,12 +24,8 @@ namespace Plataforma.Clases
         public float TotalDias;
         public float Factor;
 
-        public const int TIPO_USUARIO_SUPER_ADMIN = 1;
-        public const int TIPO_USUARIO_PROVEEDOR = 2;
-        public const int TIPO_USUARIO_ADMIN = 3;
-        public const int TIPO_USUARIO_DEPTO_OPERACIONES = 4;
-        public const int TIPO_USUARIO_DEPTO_MANTENIMIENTO = 5;
-
+        public const int TIPO_USUARIO_SUPER_ADMIN = 6;
+        
 
     }
 

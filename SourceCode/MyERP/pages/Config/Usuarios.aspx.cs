@@ -344,11 +344,7 @@ namespace Plataforma.pages
                 }
                 else
                 {
-                    string proveedorSql = "";
-                    if (usuario.IdTipoUsuario == Usuario.TIPO_USUARIO_PROVEEDOR)
-                        proveedorSql = ", id_proveedor = @id_proveedor  ";
-                    else
-                        proveedorSql = " , id_empleado = @id_empleado ";
+                    string proveedorSql = " , id_empleado = @id_empleado ";
 
                     sql = " UPDATE usuario " +
                           " SET id_tipo_usuario = @id_tipo_usuario, nombre = @nombre, login = @login, " +
@@ -366,17 +362,10 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@telefono",  usuario.Telefono);
                 cmd.Parameters.AddWithValue("@id",  usuario.IdUsuario);
 
-                if (usuario.IdTipoUsuario == Usuario.TIPO_USUARIO_PROVEEDOR)
-                {
-                    cmd.Parameters.AddWithValue("@id_proveedor", usuario.IdProveedor);
-                    cmd.Parameters.AddWithValue("@id_empleado", DBNull.Value);
-
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@id_empleado",usuario.IdEmpleado);
-                    cmd.Parameters.AddWithValue("@id_proveedor", DBNull.Value);
-                }
+          
+                cmd.Parameters.AddWithValue("@id_empleado",usuario.IdEmpleado);
+                cmd.Parameters.AddWithValue("@id_proveedor", DBNull.Value);
+                
 
 
 
@@ -537,10 +526,11 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = "  SELECT p.nombre, p.id_permiso, p.nombre_recurso, p.nombre_interno, p.tipo_permiso " +
-                    " from permisos_tipo_usuario rel_ptu join permisos p on (p.id_permiso = rel_ptu .id_permiso) " +
-                    " where rel_ptu.id_tipo_usuario  = @id_tipo_usuario " +
-                    " AND IsNull(p.activo, 0) = 1 ORDER BY p.nombre ";
+                string query = @"  SELECT p.nombre, p.id_permiso, p.nombre_recurso, p.nombre_interno, p.tipo_permiso 
+                                     from permisos_tipo_usuario rel_ptu 
+                                     join permisos p on (p.id_permiso = rel_ptu .id_permiso) 
+                                        where rel_ptu.id_tipo_usuario  = @id_tipo_usuario 
+                                        AND IsNull(p.activo, 0) = 1 ORDER BY p.nombre ";
 
 
                 Utils.Log("idtipoUsuario =  " + idTipoUsuario);
@@ -563,6 +553,7 @@ namespace Plataforma.pages
                         item.IdPermiso = int.Parse(ds.Tables[0].Rows[i]["id_permiso"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.NombreInterno = ds.Tables[0].Rows[i]["nombre_interno"].ToString();
+                        item.NombreRecurso = ds.Tables[0].Rows[i]["nombre_recurso"].ToString();
                         item.TipoPermiso = ds.Tables[0].Rows[i]["tipo_permiso"].ToString();
 
 
@@ -821,91 +812,91 @@ namespace Plataforma.pages
 
         }
 
-        [WebMethod]
-        public static object GuardarEquiposUsuario(string path, List<EquipoUsuario> listaEquipos, string idUsuario)
-        {
+        //[WebMethod]
+        //public static object GuardarEquiposUsuario(string path, List<EquipoUsuario> listaEquipos, string idUsuario)
+        //{
 
 
-            Utils.Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            SqlConnection conn = new SqlConnection(strConexion);
+        //    Utils.Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+        //    string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+        //    SqlConnection conn = new SqlConnection(strConexion);
 
-            SqlTransaction transaccion = null;
+        //    SqlTransaction transaccion = null;
 
-            try
-            {
+        //    try
+        //    {
 
-                int r = 0;
+        //        int r = 0;
 
-                conn.Open();
-                transaccion = conn.BeginTransaction();
-
-
-                string sqlborrar = "";
-
-                sqlborrar = @" DELETE equipos_usuario  WHERE id_usuario =  @id ";
+        //        conn.Open();
+        //        transaccion = conn.BeginTransaction();
 
 
+        //        string sqlborrar = "";
 
-                SqlCommand cmd = new SqlCommand(sqlborrar, conn);
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", idUsuario);
-                cmd.Transaction = transaccion;
+        //        sqlborrar = @" DELETE equipos_usuario  WHERE id_usuario =  @id ";
 
 
-                r += cmd.ExecuteNonQuery();
-                Utils.Log("r = " + r);
-                Utils.Log("Eliminado -> OK ");
+
+        //        SqlCommand cmd = new SqlCommand(sqlborrar, conn);
+        //        cmd.CommandType = CommandType.Text;
+        //        cmd.Parameters.AddWithValue("@id", idUsuario);
+        //        cmd.Transaction = transaccion;
 
 
-                string sql = "";
-                foreach (var item in listaEquipos)
-                {
-                    sql = " INSERT INTO equipos_usuario (id_equipo, id_usuario) VALUES (@id_equipo, @id_usuario )";
-
-                    Utils.Log("\nMétodo-> " +
-                    System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
-
-                    SqlCommand cmd2 = new SqlCommand(sql, conn);
-                    cmd2.CommandType = CommandType.Text;
-                    cmd2.Parameters.AddWithValue("@id_equipo", item.IdEquipo);
-                    cmd2.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
-                    cmd2.Transaction = transaccion;
+        //        r += cmd.ExecuteNonQuery();
+        //        Utils.Log("r = " + r);
+        //        Utils.Log("Eliminado -> OK ");
 
 
-                    r += cmd2.ExecuteNonQuery();
-                    Utils.Log("Guardado -> OK ");
-                }
+        //        string sql = "";
+        //        foreach (var item in listaEquipos)
+        //        {
+        //            sql = " INSERT INTO equipos_usuario (id_equipo, id_usuario) VALUES (@id_equipo, @id_usuario )";
 
-                transaccion.Commit();
+        //            Utils.Log("\nMétodo-> " +
+        //            System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
-                return r;
-            }
-            catch (Exception ex)
-            {
-
-                try
-                {
-                    transaccion.Rollback();
-                }
-                catch (Exception ex2)
-                {
-                    Utils.Log("Error ... " + ex2.Message);
-                    Utils.Log(ex2.StackTrace);
-                }
-
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return -1;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
+        //            SqlCommand cmd2 = new SqlCommand(sql, conn);
+        //            cmd2.CommandType = CommandType.Text;
+        //            cmd2.Parameters.AddWithValue("@id_equipo", item.IdEquipo);
+        //            cmd2.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
+        //            cmd2.Transaction = transaccion;
 
 
-        }
+        //            r += cmd2.ExecuteNonQuery();
+        //            Utils.Log("Guardado -> OK ");
+        //        }
+
+        //        transaccion.Commit();
+
+        //        return r;
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        try
+        //        {
+        //            transaccion.Rollback();
+        //        }
+        //        catch (Exception ex2)
+        //        {
+        //            Utils.Log("Error ... " + ex2.Message);
+        //            Utils.Log(ex2.StackTrace);
+        //        }
+
+        //        Utils.Log("Error ... " + ex.Message);
+        //        Utils.Log(ex.StackTrace);
+        //        return -1;
+        //    }
+
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
+
+
+        //}
 
         [WebMethod]
         public static object GuardarPermisosUsuario(string path, List<PermisoUsuario> listaPermisos, string idUsuario)
@@ -1048,143 +1039,143 @@ namespace Plataforma.pages
         }
 
 
-        [WebMethod]
-        public static List<Equipo> GetListaEquiposPorUsuario(string path, string idUsuario)
-        {
+        //[WebMethod]
+        //public static List<Equipo> GetListaEquiposPorUsuario(string path, string idUsuario)
+        //{
 
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+        //    string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Equipo> items = new List<Equipo>();
+        //    SqlConnection conn = new SqlConnection(strConexion);
+        //    List<Equipo> items = new List<Equipo>();
 
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" 
-                                     SELECT e.id_equipo, e.nombre, e.numero_economico
-                                     FROM equipo e
-                                     JOIN equipos_usuario rel ON  (rel.id_equipo = e.id_equipo) 
-                                     WHERE rel.id_usuario = @id_usuario
-                                ";
+        //    try
+        //    {
+        //        conn.Open();
+        //        DataSet ds = new DataSet();
+        //        string query = @" 
+        //                             SELECT e.id_equipo, e.nombre, e.numero_economico
+        //                             FROM equipo e
+        //                             JOIN equipos_usuario rel ON  (rel.id_equipo = e.id_equipo) 
+        //                             WHERE rel.id_usuario = @id_usuario
+        //                        ";
 
-                Utils.Log("idtipoUsidUsuariouario =  " + idUsuario);
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
+        //        Utils.Log("idtipoUsidUsuariouario =  " + idUsuario);
+        //        SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+        //        adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
 
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-
-
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Equipo item = new Equipo();
-
-                        item.IdEquipo = int.Parse(ds.Tables[0].Rows[i]["id_equipo"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.NumeroEconomico = ds.Tables[0].Rows[i]["numero_economico"].ToString();
-
-                        items.Add(item);
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-
-        }
-
-
-        [WebMethod]
-        public static List<Equipo> GetListaEquipos(string path, string idUsuario)
-        {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Equipo> items = new List<Equipo>();
-
-            List<Equipo> listaEquiposUsuario = GetListaEquiposPorUsuario(path, idUsuario);
-
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" 
-                                     SELECT e.id_equipo, e.nombre, e.numero_economico
-                                     FROM equipo e
-                                     WHERE isNull(e.eliminado, 0) =  0 
-                                ";
-
-                Utils.Log("idtipoUsidUsuariouario =  " + idUsuario);
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+        //        Utils.Log("\nMétodo-> " +
+        //        System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
 
 
-                adp.Fill(ds);
+        //        adp.Fill(ds);
 
 
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Equipo item = new Equipo();
+        //        if (ds.Tables[0].Rows.Count > 0)
+        //        {
+        //            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+        //            {
+        //                Equipo item = new Equipo();
 
-                        item.IdEquipo = int.Parse(ds.Tables[0].Rows[i]["id_equipo"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.NumeroEconomico = ds.Tables[0].Rows[i]["numero_economico"].ToString();
+        //                item.IdEquipo = int.Parse(ds.Tables[0].Rows[i]["id_equipo"].ToString());
+        //                item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+        //                item.NumeroEconomico = ds.Tables[0].Rows[i]["numero_economico"].ToString();
 
-                        items.Add(item);
+        //                items.Add(item);
 
-                    }
-                }
-
-                //  quitar de la lista total de equipos los equipos que ya tiene asignados
-                HashSet<int> equiposIds = new HashSet<int>(listaEquiposUsuario.Select(x => x.IdEquipo));
-                items.RemoveAll(x => equiposIds.Contains(x.IdEquipo));
+        //            }
+        //        }
 
 
+        //        return items;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Utils.Log("Error ... " + ex.Message);
+        //        Utils.Log(ex.StackTrace);
+        //        return items;
+        //    }
 
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
 
 
-        }
+        //}
+
+
+        //[WebMethod]
+        //public static List<Equipo> GetListaEquipos(string path, string idUsuario)
+        //{
+
+        //    string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+        //    SqlConnection conn = new SqlConnection(strConexion);
+        //    List<Equipo> items = new List<Equipo>();
+
+        //    List<Equipo> listaEquiposUsuario = GetListaEquiposPorUsuario(path, idUsuario);
+
+
+        //    try
+        //    {
+        //        conn.Open();
+        //        DataSet ds = new DataSet();
+        //        string query = @" 
+        //                             SELECT e.id_equipo, e.nombre, e.numero_economico
+        //                             FROM equipo e
+        //                             WHERE isNull(e.eliminado, 0) =  0 
+        //                        ";
+
+        //        Utils.Log("idtipoUsidUsuariouario =  " + idUsuario);
+        //        SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+        //        adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
+
+        //        Utils.Log("\nMétodo-> " +
+        //        System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+
+
+        //        adp.Fill(ds);
+
+
+        //        if (ds.Tables[0].Rows.Count > 0)
+        //        {
+        //            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+        //            {
+        //                Equipo item = new Equipo();
+
+        //                item.IdEquipo = int.Parse(ds.Tables[0].Rows[i]["id_equipo"].ToString());
+        //                item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+        //                item.NumeroEconomico = ds.Tables[0].Rows[i]["numero_economico"].ToString();
+
+        //                items.Add(item);
+
+        //            }
+        //        }
+
+        //        //  quitar de la lista total de equipos los equipos que ya tiene asignados
+        //        HashSet<int> equiposIds = new HashSet<int>(listaEquiposUsuario.Select(x => x.IdEquipo));
+        //        items.RemoveAll(x => equiposIds.Contains(x.IdEquipo));
+
+
+
+        //        return items;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Utils.Log("Error ... " + ex.Message);
+        //        Utils.Log(ex.StackTrace);
+        //        return items;
+        //    }
+
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
+
+
+        //}
 
 
 

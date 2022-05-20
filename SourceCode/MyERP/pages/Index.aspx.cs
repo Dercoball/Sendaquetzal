@@ -259,7 +259,7 @@ namespace Plataforma.pages
                     permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
 
                     htmlItemsWeb += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.Nombre + "</a> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.NombreRecurso + "</a> " +
                            " </li> ";
 
                 }
@@ -285,7 +285,11 @@ namespace Plataforma.pages
             //Agregar los numeros de paginas o permisos , de los tipo Configuracion
             List<string> paginasConfiguracion = new List<string>
                 {
-                    "7",//tipos de clientes                                  
+                    "7",//tipos de clientes     ,                             
+                    "44",//tipos de clientes     ,                             
+                    "45",//tipos de clientes     ,                             
+                    "8",
+                    "10",
                 };
 
 
@@ -301,7 +305,7 @@ namespace Plataforma.pages
                     permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
 
                     htmlItemsConfiguracion += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.Nombre + "</a> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.NombreRecurso + "</a> " +
                            " </li> ";
 
                 }

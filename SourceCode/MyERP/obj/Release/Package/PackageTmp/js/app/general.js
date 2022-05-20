@@ -11,10 +11,18 @@ let idTipoUsuario = null;
 let idUsuario = null;
 
 
+const POSICION_DIRECTOR = 1;
+const POSICION_COORDINADOR = 2;
+const POSICION_EJECUTIVO = 3;
+const POSICION_SUPERVISOR = 4;
+const POSICION_PROMOTOR = 5;
+
 var mensajesAlertas = {
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
     errorGuardar: 'Se ha producido un error al almacenar los datos. Los datos no fueron almacenados.',
     exitoGuardar: 'Los datos se almacenaron correctamente.',
+    errorSeleccionarSupervisor: 'Debe seleccionar un supervisor para poder continuar.',
+    errorSeleccionarEjecutivo: 'Debe seleccionar un ejecutivo para poder continuar.',
     errorInesperado: 'Se ha producido un error inesperado. Por favor intente de nuevo.',
     exitoEliminar: 'El registro se eliminó correctamente.',
     exitoCancelarRefaccion: 'La solicitud de refacción se canceló correctamente.',
@@ -451,7 +459,7 @@ var utils = {
     },
 
 
-    sendFile: (file, nombreArchivo, idItem, tipo) => {
+    sendFileEmployee: (file, nombreArchivo, idItem, tipo) => {
 
 
         var files = file;
@@ -464,19 +472,20 @@ var utils = {
 
         var formData = new FormData();
         formData.append('file', file);
-        formData.append('id', idItem);//
+        formData.append('id', idItem);//0
         formData.append('pagina', window.location.pathname);//
         formData.append('path', window.location.hostname);//
         formData.append('extension', extension);//
         formData.append('descripcion', fileName);//
-        formData.append('tipo', tipo);//
+        formData.append('tipo', tipo);//5
         formData.append('idUsuario', idUsuario);//
-        formData.append('nombreArchivo', nombreArchivo)
+        formData.append('nombreArchivo', nombreArchivo)//7
+        formData.append('id_cliente', 0)//8
 
 
         $.ajax({
             type: 'post',
-            url: '../pages/fileUploader.ashx',
+            url: '../../pages/FileUploader.ashx',
             data: formData,
             success: function (status) {
                 if (status != 'error') {

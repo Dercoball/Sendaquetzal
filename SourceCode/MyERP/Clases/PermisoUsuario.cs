@@ -8,8 +8,9 @@ namespace Plataforma.Clases
     public class PermisoUsuario
     {
         public int IdPermiso;
-        public string Nombre;//Nombre completo
-        public string NombreInterno;//nombre sin espacios
+        public string Nombre;//Nombre completo todo el path
+        public string NombreInterno;//todo el path + extension
+        public string NombreRecurso;//Solo el nombre
         public string TipoPermiso;
         public string IdUsuario;
         public string IdTipoUsuario;

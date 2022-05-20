@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CustomerTypes.aspx.cs" Inherits="Plataforma.pages.CustomerTypes" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Periods.aspx.cs" Inherits="Plataforma.pages.Periods" %>
 
 <!DOCTYPE html>
 
@@ -85,7 +85,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Tipos de cliente</h1>
+                    <h1 class="h3 display">Periodos</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -96,14 +96,9 @@
 
                             <thead>
                                 <tr>
-                                    <th>Tipo de cliente</th>
-                                    <th>Prestamo inicial máximo</th>
-                                    <th>Porcentaje semanal a pagar</th>
-                                    <th>Semanas a prestar</th>
-                                    <th>Garantías por monto</th>
-                                    <th>Fechas de pago</th>
-                                    <th>Cantidad para renovar</th>
-                                    <th>Semanas extra</th>
+                                    <th>No.</th>
+                                    <th>Nombre</th>
+                                    <th>Activo</th>
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
                                     </th>
@@ -137,88 +132,26 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-6">
-                                        <label for="txtTipoCliente">
-                                            Tipo de cliente
+                                        <label for="txtNombrePlaza">
+                                            Nombre
                                         </label>
-                                        <input type="text" class="form-control" id="txtTipoCliente" required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtNombrePeriodo" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    <div class="form-group col-md-6">
-                                        <label for="txtPrestamoInicialMaximo">
-                                            Prestamo inicial máximo
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtPrestamoInicialMaximo" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
+                                     <div class="form-control-sm ml-2">
+                                        <label for="chkActivo">Activo</label>
+                                        <input id="chkActivo" class="form-control-sm" type="checkbox" />
+
                                     </div>
 
-
-
-                                </div>
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtPorcentajeSemanal">
-                                            Porcentaje semanal a pagar
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtPorcentajeSemanal" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtSemanasAPrestar">
-                                            Semanas a prestar
-                                        </label>
-                                        <input type="number" class="form-control" id="txtSemanasAPrestar" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
+                                   
 
                                 </div>
 
 
 
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtGarantiasPorMonto">
-                                            Garantías por monto
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtGarantiasPorMonto" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFechasDePago">
-                                            Fechas de pago
-                                        </label>
-                                        <input type="text" class="form-control" id="txtFechasDePago" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtCantidadRenovar">
-                                            Cantidad máxima a renovar
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtCantidadRenovar" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-control-sm ml-2">
-                                        <label for="chkSemanaExtra">Semana extra</label>
-                                        <input id="chkSemanaExtra" class="form-control-sm" type="checkbox" />
-
-                                    </div>
-
-                                </div>
+                                
 
                             </div>
                         </form>
@@ -358,7 +291,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/tipo_cliente.js"></script>
+    <script src="../../js/app/config/periods.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

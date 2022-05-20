@@ -1,15 +1,15 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CustomerTypes.aspx.cs" Inherits="Plataforma.pages.CustomerTypes" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Positions.aspx.cs" Inherits="Plataforma.pages.Positions" %>
 
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
-    <meta name="description" content="" />
+    <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="all,follow" />
+    <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css" />
     <!-- Font Awesome CSS-->
@@ -36,12 +36,11 @@
 
 <body>
 
-    <form class="form-signin" id="form1" runat="server">
+     <form class="form-signin" id="form1" runat="server">
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
     </form>
-
 
     <!-- Side Navbar -->
     <nav class="side-navbar">
@@ -55,7 +54,7 @@
                     <span></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
-                <div class="sidenav-header-logo"><a href="#" class="brand-small text-center"><strong>S</strong><strong class="text-primary">Q</strong></a></div>
+                <div class="sidenav-header-logo"><a href="Index.aspx" class="brand-small text-center"><strong>C</strong><strong class="text-primary">B</strong></a></div>
             </div>
             <!-- Sidebar Navigation Menus-->
             <div class="main-menu">
@@ -69,10 +68,18 @@
         <!-- navbar-->
         <header class="header">
 
+
+
+
+
             <nav class="navbar">
                 <div class="container-fluid">
 
+
                     <span id="spnMenuSuperior"></span>
+
+
+                    <!-- Languages dropdown    -->
 
                 </div>
             </nav>
@@ -85,7 +92,8 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Tipos de cliente</h1>
+                    <h1 class="h3 display">Tipos usuario</h1>
+
                 </header>
 
                 <div id="panelTabla">
@@ -95,19 +103,14 @@
 
 
                             <thead>
-                                <tr>
-                                    <th>Tipo de cliente</th>
-                                    <th>Prestamo inicial máximo</th>
-                                    <th>Porcentaje semanal a pagar</th>
-                                    <th>Semanas a prestar</th>
-                                    <th>Garantías por monto</th>
-                                    <th>Fechas de pago</th>
-                                    <th>Cantidad para renovar</th>
-                                    <th>Semanas extra</th>
-                                    <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
-                                    </th>
-                                </tr>
+
+                                <th>No.</th>
+                                <th>Nombre</th>
+                                <th>Activo</th>
+                                <th>
+                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus"></i>&nbsp;Nuevo</button>
+                                </th>
+
                             </thead>
                             <tbody>
                             </tbody>
@@ -136,89 +139,26 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
-                                        <label for="txtTipoCliente">
-                                            Tipo de cliente
+                                    <div class="form-group col-md-8">
+                                        <label for="txtNombre">
+                                            Nombre tipo usuario
                                         </label>
-                                        <input type="text" class="form-control" id="txtTipoCliente" required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtNombre"
+                                            required data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtPrestamoInicialMaximo">
-                                            Prestamo inicial máximo
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtPrestamoInicialMaximo" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-
-                                </div>
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtPorcentajeSemanal">
-                                            Porcentaje semanal a pagar
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtPorcentajeSemanal" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtSemanasAPrestar">
-                                            Semanas a prestar
-                                        </label>
-                                        <input type="number" class="form-control" id="txtSemanasAPrestar" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-
-                                </div>
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtGarantiasPorMonto">
-                                            Garantías por monto
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtGarantiasPorMonto" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFechasDePago">
-                                            Fechas de pago
-                                        </label>
-                                        <input type="text" class="form-control" id="txtFechasDePago" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
                                 </div>
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
-                                        <label for="txtCantidadRenovar">
-                                            Cantidad máxima a renovar
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtCantidadRenovar" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-control-sm ml-2">
-                                        <label for="chkSemanaExtra">Semana extra</label>
-                                        <input id="chkSemanaExtra" class="form-control-sm" type="checkbox" />
+                                    <div class="form-group col-md-8">
+                                        <input id="chkActivo" checked class="form-control-sm" type="checkbox" />
+                                        <label for="chkActivo">Activo</label>
 
                                     </div>
 
                                 </div>
+
 
                             </div>
                         </form>
@@ -226,14 +166,16 @@
 
 
 
+
+
                     <div class="row mt-3 mb-3">
 
                         <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>Listado</button>
                         </div>
 
                         <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save"></i>Guardar</button>
                         </div>
 
                     </div>
@@ -301,14 +243,74 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <span id="mensajeEliminar"></span>
+                    <p>
+                        Se eliminará el registro seleccionado. ¿Desea continuar?                                                   
+                    </p>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnEliminarAceptar" class="btn btn-warning" data-dismiss="modal">Eliminar</button>
-                    <button id="btnEliminarCancelar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button id="btnEliminarAceptar" class="btn btn-danger" data-dismiss="modal">Aceptar</button>
+                    <button id="btnEliminarCancelar" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="modal fade" id="panelPermisos" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h3 class="modal-title">Permisos del usuario <span class="spnNombreTipoUsuario"></span></h3>
+                    <span id="spnIdUsuario" style="display: none;"></span>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+
+
+                </div>
+
+                <div class="modal-body form">
+                    <form role="form" id="frmUsuarioPermisos" name="frmUsuarioPermisos" data-toggle="validator">
+                        <div class="form-body">
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="listaPermisos">
+                                        Permisos
+                                    </label>
+                                    <select class="form-control" id="listaPermisos" multiple style="height: 300px;"></select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+
+
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        Permisos para <span class="spnNombreTipoUsuario"></span>
+
+                                    </label>
+                                    <select class="form-control" id="listaPermisosSeleccionados" multiple style="height: 300px;"></select>
+                                    <span></span>
+                                </div>
+
+                            </div>
+
+
+
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnGuardarPermisos" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
     <div class="modal fade" id="panelLoading" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
@@ -354,16 +356,15 @@
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
 
-    <script src="../../js/front.js"></script>
 
 
-    <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/tipo_cliente.js"></script>
+    <script src="../js/validator.js"></script>
+    <script src="../../js/app/config/positions.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->
-    <link href="../../css/toastr.min.css" rel="stylesheet">
-    <script src="../../js/toastr.min.js"></script>
+    <link href="../css/toastr.min.css" rel="stylesheet">
+    <script src="../js/toastr.min.js"></script>
 
 </body>
 </html>

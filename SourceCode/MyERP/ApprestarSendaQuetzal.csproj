@@ -153,6 +153,7 @@
     </Content>
     <Content Include="js\app\config\periods.js" />
     <Content Include="js\app\config\plazas.js" />
+    <Content Include="js\app\config\positions.js" />
     <Content Include="js\app\noticeofprivacy.js" />
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
@@ -197,86 +198,18 @@
     <Content Include="js\app\config\puestos.min.js">
       <DependentUpon>configuracion.js</DependentUpon>
     </Content>
-    <Content Include="js\cp\combustibles\combustibles_aprobacion.js" />
-    <Content Include="js\cp\combustibles\combustibles_aprobacion.min.js">
-      <DependentUpon>combustibles_aprobacion.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\combustibles\combustibles_imagenes.min.js">
-      <DependentUpon>combustibles_imagenes.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\combustibles\combustibles_reporte.js" />
-    <Content Include="js\cp\combustibles\combustibles_imagenes.js" />
-    <Content Include="js\cp\mantenimiento\dashboard_resumen2.js" />
-    <Content Include="js\cp\mantenimiento\colaboracion.js" />
-    <Content Include="js\cp\mantenimiento\consulta_equipos.min.js">
-      <DependentUpon>consulta_equipos.js</DependentUpon>
-    </Content>
     <Content Include="js\app\config\empleados.min.js">
       <DependentUpon>employees.js</DependentUpon>
     </Content>
-    <Content Include="js\cp\mantenimiento\consulta_equipos.js" />
     <Content Include="js\app\index.min.js">
       <DependentUpon>index.js</DependentUpon>
     </Content>
-    <Content Include="js\cp\mantenimiento\dashboard_resumen.min.js">
-      <DependentUpon>dashboard_resumen.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\mantenimiento\dashboard_resumen2.min.js">
-      <DependentUpon>dashboard_resumen2.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\mantenimiento\datos_equipo.js" />
-    <Content Include="js\cp\mantenimiento\dashboard_resumen.js" />
     <Content Include="js\app\login.min.js">
       <DependentUpon>login.js</DependentUpon>
     </Content>
-    <Content Include="js\cp\mantenimiento\listado_fallas_historico.min.js">
-      <DependentUpon>listado_fallas_historico.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\mantenimiento\ots_encurso.js" />
-    <Content Include="js\cp\mantenimiento\ots_encurso.min.js">
-      <DependentUpon>ots_encurso.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\mantenimiento\requisicionesek.js" />
-    <Content Include="js\cp\nomina\panel_aprobar_nomina.js" />
-    <Content Include="js\cp\nomina\panel_aprobar_nomina.min.js">
-      <DependentUpon>panel_aprobar_nomina.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\mantenimiento\panel_refacciones.min.js">
-      <DependentUpon>panel_refacciones.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\nomina\panel_registro_asistencia.js" />
-    <Content Include="js\cp\nomina\panel_registro_asistencia.min.js">
-      <DependentUpon>panel_registro_asistencia.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\nomina\panel_upload.min.js">
-      <DependentUpon>panel_upload.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\combustibles\proveedores_combustible.js" />
-    <Content Include="js\cp\mantenimiento\registro_diagnostico.min.js">
-      <DependentUpon>registro_diagnostico.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\combustibles\registro_compra_combustible.js" />
-    <Content Include="js\cp\combustibles\combustibles_entrega.js" />
-    <Content Include="js\cp\combustibles\combustibles_solicitud.js" />
-    <Content Include="js\cp\mantenimiento\registro_fallas.min.js">
-      <DependentUpon>registro_fallas.js</DependentUpon>
-    </Content>
-    <Content Include="js\cp\mantenimiento\listado_fallas_historico.js" />
-    <Content Include="js\cp\mantenimiento\requisiciones.min.js">
-      <DependentUpon>DESUSO_requisiciones.js</DependentUpon>
-    </Content>
     <Content Include="js\app\web\wfaq.js" />
-    <Content Include="js\cp\nomina\panel_upload.js" />
     <Content Include="js\app\config\employees.js" />
-    <Content Include="js\cp\mantenimiento\panel_refacciones.js" />
-    <Content Include="js\cp\mantenimiento\registro_diagnostico.js" />
-    <Content Include="js\cp\mantenimiento\DESUSO_resumen_requisicion.js" />
-    <Content Include="js\cp\mantenimiento\resumen_requisicion.min.js">
-      <DependentUpon>DESUSO_resumen_requisicion.js</DependentUpon>
-    </Content>
     <Content Include="js\app\config\tipo_cliente.js" />
-    <Content Include="js\cp\mantenimiento\registro_fallas.js" />
-    <Content Include="js\cp\mantenimiento\DESUSO_requisiciones.js" />
     <Content Include="js\app\config\tipos_usuario.min.js">
       <DependentUpon>tipo_cliente.js</DependentUpon>
     </Content>
@@ -304,7 +237,7 @@
     <Content Include="pages\TermsAndConditions.aspx" />
     <Content Include="pages\Config\Puestos.aspx" />
     <Content Include="pages\Config\CustomerTypes.aspx" />
-    <Content Include="pages\Config\TiposUsuario.aspx" />
+    <Content Include="pages\Config\Positions.aspx" />
     <Content Include="pages\Config\Usuarios.aspx" />
     <Content Include="pages\Descargas\05_BG_GSM_1366X768_WKS.jpg" />
     <Content Include="pages\Config\Employees.aspx" />
@@ -312,10 +245,7 @@
     <Content Include="pages\FAQS.aspx" />
     <Content Include="pages\Home.aspx" />
     <Content Include="pages\Index.aspx" />
-    <Content Include="pages\Loans\Solicitud.aspx" />
-    <Content Include="pages\Request\Loan.aspx" />
     <Content Include="pages\Login.aspx" />
-    <Content Include="pages\Config\PanelEquipos.aspx" />
     <Content Include="pages\Uploads\1_1.png" />
     <Content Include="pages\Web\WTutoriales.aspx" />
     <Content Include="pages\Web\WNoticyOfPrivacy.aspx" />
@@ -1163,66 +1093,26 @@
   <ItemGroup>
     <Compile Include="Clases\Periodo.cs" />
     <Compile Include="Clases\Plaza.cs" />
-    <Compile Include="Clases\CatalogoRefaccion.cs" />
-    <Compile Include="Clases\Departamento.cs" />
-    <Compile Include="Clases\CentroCosto.cs" />
     <Compile Include="Clases\Direccion.cs" />
-    <Compile Include="Clases\EquipoCatalogoRefaccion.cs" />
-    <Compile Include="Clases\EquipoMini.cs" />
-    <Compile Include="Clases\EquipoUsuario.cs" />
     <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\Modulo.cs" />
     <Compile Include="Clases\Posicion.cs" />
     <Compile Include="Clases\TipoCliente.cs" />
     <Compile Include="Clases\Tutorial.cs" />
     <Compile Include="Clases\Status.cs" />
-    <Compile Include="Clases\TipoCombustible.cs" />
     <Compile Include="Clases\PreguntaFrecuente.cs" />
     <Compile Include="Clases\Unidad.cs" />
-    <Compile Include="Clases\Prenomina.cs" />
-    <Compile Include="Clases\LineaPrenomina.cs" />
     <Compile Include="Clases\Puesto.cs" />
     <Compile Include="Clases\Categoria.cs" />
-    <Compile Include="Clases\CerrarProyecto.cs" />
-    <Compile Include="Clases\Equipo.cs" />
-    <Compile Include="Clases\UsuarioDiagnostico.cs" />
-    <Compile Include="Clases\Refaccion.cs" />
-    <Compile Include="Clases\SolicitudCombustible.cs" />
-    <Compile Include="Clases\Requisicion.cs" />
     <Compile Include="Clases\Ubicacion.cs" />
-    <Compile Include="Clases\Obra.cs" />
-    <Compile Include="Clases\Auto.cs" />
     <Compile Include="Clases\Configuracion.cs" />
-    <Compile Include="Clases\EntregarProyecto.cs" />
-    <Compile Include="Clases\Proveedor.cs" />
-    <Compile Include="Clases\Proyecto.cs" />
-    <Compile Include="Clases\Resolucion.cs" />
-    <Compile Include="Clases\Descargo.cs" />
-    <Compile Include="Clases\DatosCampo.cs" />
     <Compile Include="Clases\DatosSalida.cs" />
-    <Compile Include="Clases\Campo.cs" />
     <Compile Include="Clases\Empleado.cs" />
-    <Compile Include="Clases\Impuesto.cs" />
     <Compile Include="Clases\Documento.cs" />
     <Compile Include="Clases\Entidad.cs" />
     <Compile Include="Clases\Cliente.cs" />
-    <Compile Include="Clases\Infraccion.cs" />
-    <Compile Include="Clases\FormaPago.cs" />
-    <Compile Include="Clases\Marca.cs" />
-    <Compile Include="Clases\Modelo.cs" />
     <Compile Include="Clases\NumeroSemana.cs" />
     <Compile Include="Clases\PermisoUsuario.cs" />
-    <Compile Include="Clases\Producto.cs" />
-    <Compile Include="Clases\StatusProyecto.cs" />
-    <Compile Include="Clases\StatusResolucion.cs" />
-    <Compile Include="Clases\StatusInfraccion.cs" />
-    <Compile Include="Clases\RelObraResidente.cs" />
-    <Compile Include="Clases\TipoReparacion.cs" />
-    <Compile Include="Clases\TipoResolucion.cs" />
-    <Compile Include="Clases\TipoDescargo.cs" />
-    <Compile Include="Clases\StatusDescargo.cs" />
-    <Compile Include="Clases\StatusPago.cs" />
-    <Compile Include="Clases\TipoSolicitud.cs" />
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
@@ -1268,12 +1158,12 @@
     <Compile Include="pages\Config\CustomerTypes.aspx.designer.cs">
       <DependentUpon>CustomerTypes.aspx</DependentUpon>
     </Compile>
-    <Compile Include="pages\Config\TiposUsuario.aspx.cs">
-      <DependentUpon>TiposUsuario.aspx</DependentUpon>
+    <Compile Include="pages\Config\Positions.aspx.cs">
+      <DependentUpon>Positions.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="pages\Config\TiposUsuario.aspx.designer.cs">
-      <DependentUpon>TiposUsuario.aspx</DependentUpon>
+    <Compile Include="pages\Config\Positions.aspx.designer.cs">
+      <DependentUpon>Positions.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Config\Usuarios.aspx.cs">
       <DependentUpon>Usuarios.aspx</DependentUpon>
@@ -1281,9 +1171,6 @@
     </Compile>
     <Compile Include="pages\Config\Usuarios.aspx.designer.cs">
       <DependentUpon>Usuarios.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Download.ashx.cs">
-      <DependentUpon>Download.ashx</DependentUpon>
     </Compile>
     <Compile Include="pages\Config\Employees.aspx.cs">
       <DependentUpon>Employees.aspx</DependentUpon>
@@ -1309,9 +1196,6 @@
     <Compile Include="pages\FileUploader.ashx.cs">
       <DependentUpon>FileUploader.ashx</DependentUpon>
     </Compile>
-    <Compile Include="pages\FileUploaderCSV.ashx.cs">
-      <DependentUpon>FileUploaderCSV.ashx</DependentUpon>
-    </Compile>
     <Compile Include="pages\Home.aspx.cs">
       <DependentUpon>Home.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1326,33 +1210,12 @@
     <Compile Include="pages\Index.aspx.designer.cs">
       <DependentUpon>Index.aspx</DependentUpon>
     </Compile>
-    <Compile Include="pages\Loans\Solicitud.aspx.cs">
-      <DependentUpon>Solicitud.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Loans\Solicitud.aspx.designer.cs">
-      <DependentUpon>Solicitud.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Request\Loan.aspx.cs">
-      <DependentUpon>Loan.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Request\Loan.aspx.designer.cs">
-      <DependentUpon>Loan.aspx</DependentUpon>
-    </Compile>
     <Compile Include="pages\Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="pages\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Config\PanelEquipos.aspx.cs">
-      <DependentUpon>PanelEquipos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\PanelEquipos.aspx.designer.cs">
-      <DependentUpon>PanelEquipos.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Web\WTutoriales.aspx.cs">
       <DependentUpon>WTutoriales.aspx</DependentUpon>
@@ -1463,9 +1326,7 @@
     <Content Include="vendor\jquery.cookie\component.json" />
     <Content Include="vendor\jquery.cookie\cookie.jquery.json" />
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
-    <Content Include="pages\Download.ashx" />
     <Content Include="pages\FileUploader.ashx" />
-    <Content Include="pages\FileUploaderCSV.ashx" />
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\urbanissa - FTP.pubxml" />
@@ -1561,6 +1422,8 @@
   <ItemGroup>
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
+    <Folder Include="pages\Loans\" />
+    <Folder Include="pages\Request\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <PropertyGroup>

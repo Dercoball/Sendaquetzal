@@ -287,7 +287,7 @@
                         <div class="form-body">
 
                             <div class="form-group">
-                                <label class="control-label  col-md-3">Login</label>
+                                <label class="control-label  col-md-3">Usuario</label>
                                 <div class="col-md-8">
                                     <input id="txtLoginP" readonly="true" placeholder="Login" class="form-control" type="text" />
                                     <div class="help-block with-errors"></div>

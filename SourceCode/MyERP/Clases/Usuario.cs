@@ -7,7 +7,6 @@ namespace Plataforma.Clases
 {
     public class Usuario
     {
-        public int Id_Usuario;
         public int IdUsuario;
         public int IdTipoUsuario;
         public int IdProveedor;        

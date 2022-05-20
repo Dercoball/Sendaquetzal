@@ -81,7 +81,7 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item.Id_Usuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        //item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
@@ -118,7 +118,7 @@ namespace Plataforma.pages
 
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@id_usuario", item.Id_Usuario);
+                    cmd.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
                     cmd.Parameters.AddWithValue("@fecha_hora", now);
                     cmd.Parameters.AddWithValue("@ip",  IP);
                     cmd.Parameters.AddWithValue("@comentario",  "Usuario : " + item.Login );
@@ -131,7 +131,7 @@ namespace Plataforma.pages
                     Session["id_usuario"] = item.IdUsuario.ToString();
                     Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
 
-                    Response.Redirect("Index.aspx");
+                    Response.Redirect("../pages/Config/Employees.aspx");
 
                 }
 

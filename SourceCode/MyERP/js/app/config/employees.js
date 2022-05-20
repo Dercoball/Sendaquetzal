@@ -13,6 +13,8 @@ const employee = {
         $('#panelForm').hide();
 
         employee.idSeleccionado = "-1";
+        employee.idTipoUsuario = "-1";
+        employee.login = "-1";
         employee.accion = "";
 
 
@@ -111,6 +113,29 @@ const employee = {
 
     },
 
+
+
+    /**
+     * 
+     * @param {any} idEmpleado
+     * @param {any} idPosicion  - Tipo usuario / Puesto
+     * @param {any} login       - Nombre de usuario
+     */
+    changePassword: (idEmpleado, idPosicion, login) => {
+
+        $('.form-group').removeClass('has-error');
+        $('.help-block').empty();
+        
+        $('#txtLoginP').val(login);
+        $('#txtPassP').val('');
+        employee.idSeleccionado = idEmpleado;
+        employee.idTipoUsuario = idPosicion;        
+        employee.login = login;
+        accion = "changePassword";
+
+        $('#panelEdicionPass').modal('show');
+
+    },
 
 
     edit: (id) => {
@@ -224,16 +249,16 @@ const employee = {
 
     getDocument(idEmpleado, idTipoDocumento, idControl) {
 
-        let parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idEmpleado = idEmpleado;
-        parametros.idTipoDocumento = idTipoDocumento;
-        parametros = JSON.stringify(parametros);
+        let params = {};
+        params.path = window.location.hostname;
+        params.idEmpleado = idEmpleado;
+        params.idTipoDocumento = idTipoDocumento;
+        params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
             url: "../../pages/Config/Employees.aspx/GetDocument",
-            data: parametros,
+            data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
@@ -442,7 +467,7 @@ const employee = {
 
             if (employee.accion !== 'nuevo') {
 
-                let params = new Object();
+                let params = {};
                 params.path = window.location.hostname;
                 params.idEmpleado = employee.idSeleccionado;
                 params.idTipoDocumento = idTipoDocumento;
@@ -704,14 +729,15 @@ const employee = {
 
         $('#btnEliminarAceptar').on('click', (e) => {
 
-            var parametros = new Object();
-            parametros.path = window.location.hostname;
-            parametros.id = employee.idSeleccionado;
-            parametros = JSON.stringify(parametros);
+            let params = {};
+            params.path = window.location.hostname;
+            params.id = employee.idSeleccionado;
+            params = JSON.stringify(params);
+
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Employees.aspx/Eliminar",
-                data: parametros,
+                url: "../../pages/Config/Employees.aspx/Delete",
+                data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
@@ -738,6 +764,63 @@ const employee = {
                 }
 
             });
+
+        });
+
+
+        $('#btnGuardarPassword').click(function (e) {
+            e.preventDefault();
+
+
+            let hasErrors = $('form[name="frmUsuarioP"]').validator('validate').has('.has-error').length;
+
+
+            if (!hasErrors) {
+
+
+                let params = {};
+                params.path = window.location.hostname;
+                params.newPassword = $('#txtPassP').val();
+                params.idEmpleado = employee.idSeleccionado;
+                params.login = employee.login;
+                params.idUsuario = document.getElementById('txtIdUsuario').value;
+                params.accion = accion;
+                params = JSON.stringify(params);
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../pages/Config/Employees.aspx/ChangePassword",
+                    data: params,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        var resultado = parseInt(msg.d);
+
+                        if (resultado > 0) {
+
+                            utils.toast(mensajesAlertas.exitoPasswordModificada, 'ok');
+
+                            employee.cargarItems();
+
+                        } else {
+
+                            utils.toast(mensajesAlertas.errorInesperado, 'fail');
+
+                        }
+
+                        $('#panelEdicionPass').modal('hide');
+
+
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    }
+
+                });
+
+
+            }
+
 
         });
 

@@ -66,7 +66,7 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         Usuario item = new Usuario();
-                        item.Id_Usuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
@@ -75,10 +75,10 @@ namespace Plataforma.pages
                         item.Email = ds.Tables[0].Rows[i]["email"].ToString();
                         item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
 
-                        string botones = "<button  title=\"Editar\" onclick='editar(" + item.Id_Usuario + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += " &nbsp; <button  title=\"Eliminar\" onclick='eliminar(" + item.Id_Usuario + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-                        botones += " &nbsp; <button  title=\"Asignar contraseña\" onclick='editarP(" + item.Id_Usuario + ")'   class='btn btn-outline-primary'> <span class='fa fa-lock mr-1'></span>Contraseña</button>";
-                        botones += " &nbsp; <button  title=\"Asignar equipos\" onclick='asignarEquipos(" + item.Id_Usuario + ", \"" + item.Nombre + "\")'   class='btn btn-outline-primary'> <span class='fa fa-car mr-1'></span>Equipos</button>";
+                        string botones = "<button  title=\"Editar\" onclick='editar(" + item.IdUsuario + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += " &nbsp; <button  title=\"Eliminar\" onclick='eliminar(" + item.IdUsuario + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        botones += " &nbsp; <button  title=\"Asignar contraseña\" onclick='editarP(" + item.IdUsuario + ")'   class='btn btn-outline-primary'> <span class='fa fa-lock mr-1'></span>Contraseña</button>";
+                        botones += " &nbsp; <button  title=\"Asignar equipos\" onclick='asignarEquipos(" + item.IdUsuario + ", \"" + item.Nombre + "\")'   class='btn btn-outline-primary'> <span class='fa fa-car mr-1'></span>Equipos</button>";
                         //botones += " &nbsp; <button  title=\"Asignar permisos\" onclick='permisos(" + item.Id_Usuario + ",\"" + item.Nombre + "\")'   class='btn btn-outline-primary'> <span class='fa fa-key'></span>Permisos</button>";
 
                         item.Accion = botones;
@@ -203,7 +203,7 @@ namespace Plataforma.pages
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@password", SqlDbType.VarChar).Value = hash;
-                cmd.Parameters.Add("@id", SqlDbType.VarChar).Value = usuario.Id_Usuario;
+                cmd.Parameters.Add("@id", SqlDbType.VarChar).Value = usuario.IdUsuario;
 
 
 
@@ -260,7 +260,7 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item.Id_Usuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
                         item.IdProveedor= int.Parse(ds.Tables[0].Rows[i]["id_proveedor"].ToString());
                         item.IdEmpleado= int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
@@ -364,7 +364,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@login",  usuario.Login);
                 cmd.Parameters.AddWithValue("@email",  usuario.Email);
                 cmd.Parameters.AddWithValue("@telefono",  usuario.Telefono);
-                cmd.Parameters.AddWithValue("@id",  usuario.Id_Usuario);
+                cmd.Parameters.AddWithValue("@id",  usuario.IdUsuario);
 
                 if (usuario.IdTipoUsuario == Usuario.TIPO_USUARIO_PROVEEDOR)
                 {

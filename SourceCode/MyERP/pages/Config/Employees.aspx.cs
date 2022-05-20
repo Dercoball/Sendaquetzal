@@ -73,7 +73,7 @@ namespace Plataforma.pages
                 string query = @" SELECT e.id_empleado , e.nombre, e.primer_apellido, e.segundo_apellido, 
                      concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_completo,
                      ISNull(e.activo, 1) activo, FORMAT(e.fecha_ingreso, 'dd/MM/yyyy') fecha_ingreso,
-                     u.login ,
+                     u.login , e.id_posicion,
                      m.nombre nombre_modulo,  
                      pos.nombre nombre_tipo_usuario,
                      p.nombre nombre_plaza
@@ -98,6 +98,7 @@ namespace Plataforma.pages
                     {
                         Empleado item = new Empleado();
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
                         item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
                         item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
@@ -115,6 +116,10 @@ namespace Plataforma.pages
 
                         string botones = "<button  onclick='employee.edit(" + item.IdEmpleado + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
                         botones += "&nbsp; <button  onclick='employee.delete(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        
+                        botones += " &nbsp; <button  title='Asignar contraseña' " +
+                            " onclick='employee.changePassword(" + item.IdEmpleado + "," + item.IdPosicion  + ",\"" + item.Login + "\")'   class='btn btn-outline-primary'> <span class='fa fa-lock mr-1'></span>Contraseña</button> " + 
+                            "";
 
                         item.Accion = botones;
 
@@ -467,7 +472,7 @@ namespace Plataforma.pages
 
                 //  Guardar usuario
                 sql = @"  UPDATE usuario
-                            SET login = @login, id_tipo_usuario = @id_tipo_usuario
+                            SET login = @login
                             WHERE 
                             id_empleado = @id_empleado AND id_tipo_usuario = @id_tipo_usuario
                         ";
@@ -516,6 +521,78 @@ namespace Plataforma.pages
             }
 
             return salida;
+
+
+        }
+
+
+        [WebMethod]
+        public static object ChangePassword(string path, string idEmpleado, string newPassword, string idUsuario, string login)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            DatosSalida salida = new DatosSalida();
+
+            int r = 0;
+            try
+            {
+
+                conn.Open();
+
+                Utils.Log("\nMétodo-> " +
+               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+
+                string sql = "";
+                //  Guardar usuario
+                sql = @"  UPDATE usuario
+                            SET password = @password
+                            WHERE 
+                            id_empleado = @id_empleado AND login = @login
+                        ";
+
+
+                Utils.Log("UPDATE usuario " + sql);
+
+                SqlCommand cmdUpdate = new SqlCommand(sql, conn);
+                cmdUpdate.CommandType = CommandType.Text;
+
+                MD5 md5Hash = MD5.Create();
+                string hash = Usuarios.GetMd5Hash(md5Hash, newPassword);
+
+                cmdUpdate.Parameters.AddWithValue("@id_empleado", idEmpleado);
+                cmdUpdate.Parameters.AddWithValue("@login", login);
+                cmdUpdate.Parameters.AddWithValue("@password", hash);
+
+                r += cmdUpdate.ExecuteNonQuery();
+
+
+                Utils.Log("Guardado -> OK ");
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return r;
 
 
         }
@@ -623,7 +700,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida Eliminar(string path, string id)
+        public static DatosSalida Delete(string path, string id)
         {
             DatosSalida salida = new DatosSalida();
             salida.CodigoError = 0;
@@ -633,19 +710,15 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-
-
             try
             {
-
 
                 conn.Open();
 
 
                 string sql = "";
 
-                sql = " UPDATE empleado set eliminado = 1" +
-                        " WHERE id_empleado = @id_empleado ";
+                sql = @" UPDATE empleado set eliminado = 1 WHERE id_empleado = @id_empleado ";
 
 
 
@@ -925,7 +998,7 @@ namespace Plataforma.pages
                 item = GetItemEmployee(path, id, conn, strConexion);
                 item.direccion = GetAddress(path, id, 0, conn, strConexion);
                 item.direccionAval = GetAddress(path, id, 1, conn, strConexion);
-                item.usuario = GetUsuario(path, id, conn, strConexion);
+                item.usuario = GetUser(path, id, conn, strConexion);
 
                 return item;
 
@@ -945,7 +1018,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static Usuario GetUsuario(string path, string id, SqlConnection conn, string strconexion)
+        public static Usuario GetUser(string path, string id, SqlConnection conn, string strconexion)
         {
 
             Usuario item = new Usuario();
@@ -973,7 +1046,7 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item.Id_Usuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
 
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());

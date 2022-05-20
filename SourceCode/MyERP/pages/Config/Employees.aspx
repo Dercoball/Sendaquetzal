@@ -236,7 +236,7 @@
                                         <label for="txtSegundoApellido">
                                             Segundo apellido
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtSegundoApellido"/>
+                                        <input type="text" class="form-control campo-input" id="txtSegundoApellido" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -745,6 +745,58 @@
     </div>
 
 
+
+    <div class="modal fade" id="panelEdicionPass" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3 class="modal-title">Asignar nueva contraseña</h3>
+
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body form">
+                    <form role="form" id="frmUsuarioP" name="frmUsuarioP" data-toggle="validator">
+                        <div class="form-body">
+
+                            <div class="form-group">
+                                <label class="control-label">Login</label>
+                                <div class="col-md-8">
+                                    <input id="txtLoginP" readonly="true" placeholder="Login" class="form-control" type="text" />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="control-label">Nueva contraseña</label>
+                                <div class="col-md-8">
+                                    <input id="txtPassP" placeholder="Ingrese la nueva contraseña" class="form-control" type="password"
+                                        required data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+
+
+
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+                    <button type="button" id="btnGuardarPassword" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
     <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog">

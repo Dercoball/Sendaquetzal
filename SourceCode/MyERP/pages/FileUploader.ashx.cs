@@ -48,19 +48,37 @@ namespace Plataforma
                     var url = Path.Combine("/pages/Uploads/") + idItem + "_" + tipo + "_" + descripcionArchivo;
                     var urlThumb = Path.Combine("/pages/Uploads/thumb_") + idItem + "_" + tipo + "_" + descripcionArchivo;
 
+                    //for thumbnail
+                    var thumb = "thumb_" + idItem + "_" + tipo;
+                    SaveThumbnail(file, context, idItem + "_" + tipo, thumb);
 
                     if (nombreArchivo == "documento")
                     {
-
-
-                        //for thumbnail
-                        var thumb = "thumb_" + idItem + "_" + tipo;
-
-                        SaveThumbnail(file, context, idItem + "_" + tipo, thumb);
-
-
-                        InsertarDocumento(path_server, idItem, idCliente, base64String, descripcionArchivo, tipo, urlThumb, extension);
+                        InsertDocument(path_server, idItem, idCliente, base64String, descripcionArchivo, tipo, urlThumb, extension);
                     }
+                    else if (nombreArchivo == "update_document_employee")
+                    {
+
+                        int r = UpdateDocumentEmployee(path_server, idItem, base64String, descripcionArchivo, tipo, urlThumb, extension);
+
+                        if (r == 0)
+                        {
+                            InsertDocument(path_server, idItem, idCliente, base64String, descripcionArchivo, tipo, urlThumb, extension);
+                        }
+
+                    }
+                    else if (nombreArchivo == "update_document_customer")
+                    {
+
+                        int r = UpdateDocumentCustomer(path_server, idItem, base64String, descripcionArchivo, tipo, urlThumb, extension);
+
+                        if (r == 0)
+                        {
+                            InsertDocument(path_server, idItem, idCliente, base64String, descripcionArchivo, tipo, urlThumb, extension);
+                        }
+
+                    }
+
 
                     context.Response.Write(str_image);
 
@@ -112,7 +130,7 @@ namespace Plataforma
 
         }
 
-        public int InsertarDocumento(string path, string idEmpleado, string idCliente, string b64Contenido, string nombre, string tipo, string urlThumbnail, string extension)
+        public int InsertDocument(string path, string idEmpleado, string idCliente, string b64Contenido, string nombre, string tipo, string urlThumbnail, string extension)
         {
 
             Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
@@ -155,6 +173,128 @@ namespace Plataforma
 
                 Log("Guardado -> OK " + r);
 
+
+
+            }
+            catch (Exception ex)
+            {
+                Log("Error " + ex.Message);
+                Log(ex.StackTrace);
+
+                r = -1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+            return r;
+
+
+        }
+
+        public int UpdateDocumentEmployee(string path, string idEmpleado, string b64Contenido, string nombre, string tipo, string urlThumbnail, string extension)
+        {
+
+            Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+
+            int r = 0;
+            try
+            {
+
+                conn.Open();
+
+                string sql = "";
+
+                sql = @" UPDATE documento 
+                                     SET contenido = @contenido, nombre = @nombre, fecha_ingreso = @fecha_ingreso, url = @url, extension = @extension
+                                     WHERE 
+                                     id_tipo_documento = @id_tipo_documento AND id_empleado = @id_empleado ";
+
+                Log("sql = " + sql);
+
+                SqlCommand cmdGrupo = new SqlCommand(sql, conn);
+                cmdGrupo.CommandType = CommandType.Text;
+                cmdGrupo.Parameters.AddWithValue("@id_empleado", idEmpleado);
+                cmdGrupo.Parameters.AddWithValue("@fecha_ingreso", DateTime.Now);
+                cmdGrupo.Parameters.AddWithValue("@contenido", b64Contenido);
+                cmdGrupo.Parameters.AddWithValue("@nombre", nombre);
+                cmdGrupo.Parameters.AddWithValue("@id_tipo_documento", tipo);
+                cmdGrupo.Parameters.AddWithValue("@url", urlThumbnail);
+                cmdGrupo.Parameters.AddWithValue("@extension", extension);
+
+
+                r = (int)cmdGrupo.ExecuteNonQuery();
+
+
+
+                Log("Guardado -> OK " + r);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Log("Error " + ex.Message);
+                Log(ex.StackTrace);
+
+                r = -1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+            return r;
+
+
+        }
+
+
+        public int UpdateDocumentCustomer(string path, string idCliente, string b64Contenido, string nombre, string tipo, string urlThumbnail, string extension)
+        {
+
+            Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+
+            int r = 0;
+            try
+            {
+
+                conn.Open();
+
+                string sql = "";
+
+                sql = @" UPDATE documento 
+                                     SET contenido = @contenido, nombre = @nombre, fecha_ingreso = @fecha_ingreso, url = @url, extension = @extension
+                                     WHERE 
+                                     id_tipo_documento = @id_tipo_documento AND id_empleado = @id_empleado ";
+
+                Log("sql = " + sql);
+
+                SqlCommand cmdGrupo = new SqlCommand(sql, conn);
+                cmdGrupo.CommandType = CommandType.Text;
+                cmdGrupo.Parameters.AddWithValue("@id_cliente", idCliente);
+                cmdGrupo.Parameters.AddWithValue("@fecha_ingreso", DateTime.Now);
+                cmdGrupo.Parameters.AddWithValue("@contenido", b64Contenido);
+                cmdGrupo.Parameters.AddWithValue("@nombre", nombre);
+                cmdGrupo.Parameters.AddWithValue("@id_tipo_documento", tipo);
+                cmdGrupo.Parameters.AddWithValue("@url", urlThumbnail);
+                cmdGrupo.Parameters.AddWithValue("@extension", extension);
+
+
+                r = (int)cmdGrupo.ExecuteNonQuery();
+
+
+
+                Log("Guardado -> OK " + r);
 
 
             }
@@ -289,7 +429,7 @@ namespace Plataforma
 
         }
 
-     
+
         public bool IsReusable
         {
             get

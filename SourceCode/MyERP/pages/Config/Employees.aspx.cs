@@ -75,13 +75,13 @@ namespace Plataforma.pages
                      ISNull(e.activo, 1) activo, FORMAT(e.fecha_ingreso, 'dd/MM/yyyy') fecha_ingreso,
                      u.login ,
                      m.nombre nombre_modulo,  
-                     t.nombre nombre_tipo_usuario,
+                     pos.nombre nombre_tipo_usuario,
                      p.nombre nombre_plaza
                      FROM empleado e 
                      JOIN usuario u ON (u.id_empleado = e.id_empleado) 
                      JOIN modulo m ON (m.id_modulo = e.id_comision_inicial) 
                      JOIN plaza p ON (p.id_plaza = e.id_plaza) 
-                     JOIN tipo_usuario t ON (t.id_tipo_usuario = e.id_tipo_usuario)
+                     JOIN posicion pos ON (pos.id_posicion = e.id_posicion)
                      WHERE isnull(e.eliminado, 0) != 1 
                     ";
 
@@ -113,8 +113,8 @@ namespace Plataforma.pages
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                        string botones = "<button  onclick='employee.edit(" + item.IdEmpleado + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='employee.delete(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove'></span>Eliminar</button>";
+                        string botones = "<button  onclick='employee.edit(" + item.IdEmpleado + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='employee.delete(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 
@@ -320,6 +320,193 @@ namespace Plataforma.pages
                 Utils.Log(ex.StackTrace);
                 r = -1;
                 salida.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
+                salida.CodigoError = 1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return salida;
+
+
+        }
+
+
+
+        [WebMethod]
+        public static DatosSalida Update(string path, Empleado item, Direccion itemAddress, Direccion itemAddressAval,
+                    Usuario itemUser, string accion, string idUsuario)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            DatosSalida salida = new DatosSalida();
+            SqlTransaction transaccion = null;
+
+            int r = 0;
+            try
+            {
+
+                conn.Open();
+
+                transaccion = conn.BeginTransaction();
+
+
+                Utils.Log("\nMétodo-> " +
+               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+
+                string sql = "";
+
+                sql = @"  UPDATE empleado
+                                SET id_tipo_usuario = @id_tipo_usuario, id_comision_inicial = @id_comision_inicial, 
+                                    id_posicion = @id_posicion, id_plaza = @id_plaza, curp = @curp, 
+                                    nombre = @nombre, primer_apellido = @primer_apellido,
+                                    segundo_apellido = @segundo_apellido, telefono = @telefono, 
+                                    fecha_nacimiento = @fecha_nacimiento, fecha_ingreso = @fecha_ingreso,
+                                    id_supervisor = @id_supervisor, id_ejecutivo = @id_ejecutivo, 
+                                    monto_limite_inicial = @monto_limite_inicial,
+                                    curp_aval = @curp_aval, nombre_aval = @nombre_aval, primer_apellido_aval = @primer_apellido_aval, 
+                                    segundo_apellido_aval = @segundo_apellido_aval, telefono_aval = @telefono_aval
+                                    
+                                WHERE
+                                id_empleado = @id_empleado ";
+
+
+                Utils.Log("update employee" + sql);
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@id_tipo_usuario", item.IdPosicion);   // resolver si tipo empleado sera lo mismo que tipo usuario
+                cmd.Parameters.AddWithValue("@id_comision_inicial", item.IdComisionInicial);
+                cmd.Parameters.AddWithValue("@id_posicion", item.IdPosicion);       //  puesto
+                cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza);
+
+
+                cmd.Parameters.AddWithValue("@id_supervisor", item.IdPosicion == POSICION_PROMOTOR ? item.IdSupervisor : 0);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", item.IdPosicion == POSICION_SUPERVISOR ? item.IdEjecutivo : 0);
+
+                cmd.Parameters.AddWithValue("@curp", item.CURP);
+                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                cmd.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
+                cmd.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
+                cmd.Parameters.AddWithValue("@monto_limite_inicial", item.MontoLimiteInicial);
+
+                cmd.Parameters.AddWithValue("@curp_aval", item.CURPAval);
+                cmd.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
+                cmd.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
+                cmd.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
+                cmd.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
+
+                cmd.Parameters.AddWithValue("@telefono", item.Telefono);
+                cmd.Parameters.AddWithValue("@fecha_nacimiento", item.FechaNacimiento);
+                cmd.Parameters.AddWithValue("@fecha_ingreso", item.FechaIngreso);
+                cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                cmd.Transaction = transaccion;
+
+                r += cmd.ExecuteNonQuery();
+
+                //  Guardar direccion empleado
+                sql = @"  UPDATE direccion
+                             SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
+                                codigo_postal = @codigo_postal
+                            WHERE id_empleado = @id_empleado AND ISNULL(aval, 0) = 0
+                        ";
+
+
+                Utils.Log("update employee" + sql);
+
+                SqlCommand cmdAddressEmployee = new SqlCommand(sql, conn);
+                cmdAddressEmployee.CommandType = CommandType.Text;
+
+                cmdAddressEmployee.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                cmdAddressEmployee.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
+                cmdAddressEmployee.Parameters.AddWithValue("@colonia", itemAddress.Colonia);
+                cmdAddressEmployee.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
+                cmdAddressEmployee.Parameters.AddWithValue("@estado", itemAddress.Estado);
+                cmdAddressEmployee.Parameters.AddWithValue("@codigo_postal", itemAddress.CodigoPostal);
+                cmdAddressEmployee.Transaction = transaccion;
+
+                r = cmdAddressEmployee.ExecuteNonQuery();
+
+
+                //  Guardar direccion aval
+                sql = @"  UPDATE direccion
+                             SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
+                                codigo_postal = @codigo_postal
+                            WHERE id_empleado = @id_empleado AND ISNULL(aval, 0) = 1
+                        ";
+
+
+
+                Utils.Log("update employee aval" + sql);
+
+                SqlCommand cmdAddressEmployeeAval = new SqlCommand(sql, conn);
+                cmdAddressEmployeeAval.CommandType = CommandType.Text;
+
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@calleyno", itemAddressAval.Calle);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CodigoPostal);
+                cmdAddressEmployeeAval.Transaction = transaccion;
+
+                r += cmdAddressEmployeeAval.ExecuteNonQuery();
+
+                //  Guardar usuario
+                sql = @"  UPDATE usuario
+                            SET login = @login, id_tipo_usuario = @id_tipo_usuario
+                            WHERE 
+                            id_empleado = @id_empleado AND id_tipo_usuario = @id_tipo_usuario
+                        ";
+
+
+                Utils.Log("UPDATE usuario " + sql);
+
+                SqlCommand cmdInsertUsuario = new SqlCommand(sql, conn);
+                cmdInsertUsuario.CommandType = CommandType.Text;
+
+                //MD5 md5Hash = MD5.Create();
+                //string hash = Usuarios.GetMd5Hash(md5Hash, itemUser.Password);
+
+                cmdInsertUsuario.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                cmdInsertUsuario.Parameters.AddWithValue("@id_tipo_usuario", itemUser.IdTipoUsuario);
+                cmdInsertUsuario.Parameters.AddWithValue("@login", itemUser.Login);
+                //cmdInsertUsuario.Parameters.AddWithValue("@password", hash);
+                cmdInsertUsuario.Transaction = transaccion;
+
+                r += cmdInsertUsuario.ExecuteNonQuery();
+
+
+                Utils.Log("Guardado -> OK ");
+
+
+                transaccion.Commit();
+
+
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
+                salida.IdItem = item.IdEmpleado.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+                salida.MensajeError = "Se ha generado un error.";
                 salida.CodigoError = 1;
             }
 

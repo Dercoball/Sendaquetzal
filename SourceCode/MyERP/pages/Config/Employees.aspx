@@ -236,8 +236,7 @@
                                         <label for="txtSegundoApellido">
                                             Segundo apellido
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtSegundoApellido"
-                                            required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control campo-input" id="txtSegundoApellido"/>
                                         <div class="help-block with-errors"></div>
                                     </div>
 

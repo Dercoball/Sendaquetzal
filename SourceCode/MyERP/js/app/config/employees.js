@@ -151,6 +151,8 @@ const employee = {
                 $('#comboComisionInicial').val(item.IdComisionInicial);
                 $('#comboPosicion').val(item.IdPosicion);
                 $('#comboPlaza').val(item.IdPlaza);
+                $('#comboEjecutivo').val(item.IdEjecutivo);
+                $('#comboSupervisor').val(item.IdSupervisor);
 
                 //  dirección empleado
                 $('#txtCalle').val(item.direccion.Calle);
@@ -177,6 +179,7 @@ const employee = {
 
                 $('#txtNombreUsuario').val(item.usuario.Login);
                 $('#txtPassword').val("0000000000");
+                $('#txtPassword').prop('disabled', true);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -184,7 +187,19 @@ const employee = {
 
                 employee.accion = "editar";
                 $('#spnTituloForm').text('Editar');
-                $('.deshabilitable').prop('disabled', false);
+
+
+                if (Number(item.IdPosicion) === Number(POSICION_PROMOTOR)) {
+                    $('.combo-supervisor').show();
+                    $('.combo-ejecutivo').hide();
+                }
+                else if (Number(item.IdPosicion) === Number(POSICION_SUPERVISOR)) {
+                    $('.combo-supervisor').hide();
+                    $('.combo-ejecutivo').show();
+                } else {
+                    $('.combo-supervisor').hide();
+                    $('.combo-ejecutivo').hide();
+                }
 
 
                 employee.getDocument(employee.idSeleccionado, 1, '#img_1');
@@ -260,6 +275,7 @@ const employee = {
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
+        $('#txtPassword').prop('disabled', false);
 
         employee.testData();
 
@@ -512,6 +528,8 @@ const employee = {
             dataEmployee.NombreAval = $('#txtNombreAval').val();
             dataEmployee.TelefonoAval = $('#txtTelefonoAval').val();
 
+            if (!dataEmployee.IdSupervisor) dataEmployee.IdSupervisor = 0;
+            if (!dataEmployee.IdEjecutivo) dataEmployee.IdEjecutivo = 0;
 
             dataEmployee.IdPlaza = $('#comboPlaza').val();
             dataEmployee.IdComisionInicial = $('#comboComisionInicial').val();
@@ -554,9 +572,11 @@ const employee = {
             params.accion = employee.accion;
             params = JSON.stringify(params);
 
+            let urlService = (employee.accion === 'nuevo') ? "Save" : "Update";
+
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Employees.aspx/Save",
+                url: `../../pages/Config/Employees.aspx/${urlService}`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -573,7 +593,7 @@ const employee = {
                             //guardar documentos
                             $('.campo-imagen').each(function (i, item) {
 
-                                let idTipoDocumento = item.dataset['tipo']
+                                let idTipoDocumento = item.dataset['tipo'];
 
                                 let file;
                                 if (file = this.files[0]) {
@@ -587,14 +607,18 @@ const employee = {
 
                         }
 
+                        let time_ = employee.accion === 'nuevo' ? 5000 : 100;
 
-                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+                        setTimeout(function () {
+
+                            utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
 
-                        $('#panelTabla').show();
-                        $('#panelForm').hide();
+                            employee.init();
 
-                        employee.cargarItems();
+
+                        }, time_);
+
 
                     } else {
 
@@ -619,44 +643,23 @@ const employee = {
         });
 
 
-        $('.file-fotografia').on('change', function (e) {
+        $('.campo-imagen').on('change', function (e) {
             e.preventDefault();
+
+            let idTipoDocumento = e.currentTarget.dataset['tipo'];
 
             if (employee.idSeleccionado !== "-1" && employee.accion !== 'nuevo') {
 
 
-                //debugger;
                 let file;
                 if (file = this.files[0]) {
 
-                    utils.sendFile(file, 'fotografia_empleado', employee.idSeleccionado, 'fotografia_empleado');
+                    utils.sendFileEmployee(file, 'update_document_employee', employee.idSeleccionado, idTipoDocumento);
 
                     setTimeout(function () {
 
                         //  Mostrar la imagen que se acaba de subir...
-                        var parametros = new Object();
-                        parametros.path = window.location.hostname;
-                        parametros.idEmpleado = employee.idSeleccionado;
-                        parametros = JSON.stringify(parametros);
-                        $.ajax({
-                            type: "POST",
-                            url: "../../pages/Config/Employees.aspx/GetFoto",
-                            data: parametros,
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            async: true,
-                            success: function (foto) {
-
-                                let strFoto = foto.d;
-                                if (strFoto != '') {
-                                    $('#img_').attr('src', `data: image / jpg; base64, ${strFoto} `);
-                                }
-
-                            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-                            }
-
-                        });
+                        employee.getDocument(employee.idSeleccionado, idTipoDocumento, `#img_${idTipoDocumento}`);
 
                     }, 5000);
 

@@ -20,10 +20,6 @@ namespace Plataforma.pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            string usuario = (string)Session["usuario"];
-            string path = (string)Session["path"];
-
             
 
         }

@@ -233,6 +233,7 @@
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\Periods.aspx" />
     <Content Include="pages\Config\Plazas.aspx" />
+    <Content Include="pages\Logout.aspx" />
     <Content Include="pages\NoticeOfPrivacy.aspx" />
     <Content Include="pages\TermsAndConditions.aspx" />
     <Content Include="pages\Config\Puestos.aspx" />
@@ -1129,6 +1130,13 @@
     </Compile>
     <Compile Include="pages\Config\Plazas.aspx.designer.cs">
       <DependentUpon>Plazas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Logout.aspx.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Logout.aspx.designer.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\NoticeOfPrivacy.aspx.cs">
       <DependentUpon>NoticeOfPrivacy.aspx</DependentUpon>

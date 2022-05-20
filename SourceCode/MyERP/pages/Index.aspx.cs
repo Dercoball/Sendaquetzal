@@ -43,6 +43,7 @@ namespace Plataforma.pages
         {
             public string BarraLateral;
             public string BarraSuperior;
+            public string Url = "";
 
 
         }
@@ -50,7 +51,10 @@ namespace Plataforma.pages
         [WebMethod]
         public static bool TienePermisoPagina(string pagina, string path, string idUsuario)
         {
-            List<PermisoUsuario> listaPermisos = Usuarios.ObtenerListaPermisosPorTipoUsuario(path, idUsuario);
+
+            Usuario usuario = Usuarios.GetUsuario(path, idUsuario);
+
+            List<PermisoUsuario> listaPermisos = Usuarios.ObtenerListaPermisosPorTipoUsuario(path, usuario.IdTipoUsuario.ToString());
 
             if (pagina != "0")
             {
@@ -191,6 +195,11 @@ namespace Plataforma.pages
 
             ElementosInterfaz elementos = new ElementosInterfaz();
 
+            if (idTipoUsuario == "")
+            {
+                elementos.Url = "../../pages/Login.aspx";
+                return elementos;
+            }
 
             List<PermisoUsuario> listaPermisos = Usuarios.ObtenerListaPermisosPorTipoUsuario(path, idTipoUsuario);
 
@@ -212,7 +221,8 @@ namespace Plataforma.pages
                 {
                     //no tiene permisos para usar esta pagina
 
-                    return null;
+                    elementos.Url = "../../pages/Index.aspx";
+                    return elementos;
 
                 }
             }
@@ -367,7 +377,7 @@ namespace Plataforma.pages
 
             "                           <li class=\"nav-item\"><a href=\"#\" class=\"nav-link logout\" onclick=\"" +
             "                                           window.top.location.href = '" +
-                                                        HttpContext.Current.Server.UrlPathEncode("/pages/") +  "Login.aspx'\"><span class=\"d-none d-sm-inline-block\">Salir</span><i class=\"fa fa-sign-out\"></i></a></li>" +
+                                                        HttpContext.Current.Server.UrlPathEncode("/pages/") + "Logout.aspx'\"><span class=\"d-none d-sm-inline-block\">Salir</span><i class=\"fa fa-sign-out\"></i></a></li>" +
 
             "                                   </li>   " +
             "                 </ul>   " +

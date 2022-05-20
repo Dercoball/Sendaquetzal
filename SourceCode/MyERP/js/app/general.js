@@ -131,8 +131,11 @@ $(document).ready(function () {
 
             const elementosInterfaz = msg.d;
 
-            if (elementosInterfaz == null && pagina !== '0') {
-                window.location = "../../pages/Index.aspx";
+            if (elementosInterfaz != null && elementosInterfaz.Url !== '') {
+
+                console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
+
+                window.location = elementosInterfaz.Url;
             } else {
 
 
@@ -183,7 +186,7 @@ $(document).ready(function () {
             success: function (msg) {
 
                 let valores = msg.d;
-                
+
                 if (valores.ValorCadena != null) {
                     document.title = valores.ValorCadena;
                 } else {

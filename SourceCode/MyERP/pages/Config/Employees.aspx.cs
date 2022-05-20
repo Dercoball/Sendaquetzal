@@ -472,9 +472,9 @@ namespace Plataforma.pages
 
                 //  Guardar usuario
                 sql = @"  UPDATE usuario
-                            SET login = @login
+                            SET login = @login, id_tipo_usuario = @id_tipo_usuario
                             WHERE 
-                            id_empleado = @id_empleado AND id_tipo_usuario = @id_tipo_usuario
+                            id_empleado = @id_empleado
                         ";
 
 

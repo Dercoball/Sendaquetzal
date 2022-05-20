@@ -194,14 +194,9 @@
     <Content Include="js\charts-home.js" />
     <Content Include="js\app\config\catalogo_puestos.js" />
     <Content Include="js\app\config\configuracion.js" />
-    <Content Include="js\app\config\listado_fallasv2 - Copy - Copy.min - Copy.js">
-      <DependentUpon>manuales.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\manuales.js" />
     <Content Include="js\app\config\puestos.min.js">
       <DependentUpon>configuracion.js</DependentUpon>
     </Content>
-    <Content Include="js\app\config\refacciones.js" />
     <Content Include="js\cp\combustibles\combustibles_aprobacion.js" />
     <Content Include="js\cp\combustibles\combustibles_aprobacion.min.js">
       <DependentUpon>combustibles_aprobacion.js</DependentUpon>
@@ -216,21 +211,12 @@
     <Content Include="js\cp\mantenimiento\consulta_equipos.min.js">
       <DependentUpon>consulta_equipos.js</DependentUpon>
     </Content>
-    <Content Include="js\app\config\departamentos.min.js">
-      <DependentUpon>departamentos.js</DependentUpon>
-    </Content>
     <Content Include="js\app\config\empleados.min.js">
       <DependentUpon>employees.js</DependentUpon>
     </Content>
     <Content Include="js\cp\mantenimiento\consulta_equipos.js" />
-    <Content Include="js\app\config\equipos.min.js">
-      <DependentUpon>equipos.js</DependentUpon>
-    </Content>
     <Content Include="js\app\index.min.js">
       <DependentUpon>index.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\insumos.min.js">
-      <DependentUpon>insumos.js</DependentUpon>
     </Content>
     <Content Include="js\cp\mantenimiento\dashboard_resumen.min.js">
       <DependentUpon>dashboard_resumen.js</DependentUpon>
@@ -239,11 +225,7 @@
       <DependentUpon>dashboard_resumen2.js</DependentUpon>
     </Content>
     <Content Include="js\cp\mantenimiento\datos_equipo.js" />
-    <Content Include="js\app\config\listado_fallasv2 - Copy - Copy.min.js">
-      <DependentUpon>otreset.js</DependentUpon>
-    </Content>
     <Content Include="js\cp\mantenimiento\dashboard_resumen.js" />
-    <Content Include="js\app\config\otreset.js" />
     <Content Include="js\app\login.min.js">
       <DependentUpon>login.js</DependentUpon>
     </Content>
@@ -255,15 +237,6 @@
       <DependentUpon>ots_encurso.js</DependentUpon>
     </Content>
     <Content Include="js\cp\mantenimiento\requisicionesek.js" />
-    <Content Include="js\app\config\marcas.min.js">
-      <DependentUpon>marcas.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\modelos.min.js">
-      <DependentUpon>modelos.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\obras.min.js">
-      <DependentUpon>obras.js</DependentUpon>
-    </Content>
     <Content Include="js\cp\nomina\panel_aprobar_nomina.js" />
     <Content Include="js\cp\nomina\panel_aprobar_nomina.min.js">
       <DependentUpon>panel_aprobar_nomina.js</DependentUpon>
@@ -279,12 +252,6 @@
       <DependentUpon>panel_upload.js</DependentUpon>
     </Content>
     <Content Include="js\cp\combustibles\proveedores_combustible.js" />
-    <Content Include="js\app\config\proveedores.min.js">
-      <DependentUpon>proveedores.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\proyectos.min.js">
-      <DependentUpon>proyectos.js</DependentUpon>
-    </Content>
     <Content Include="js\cp\mantenimiento\registro_diagnostico.min.js">
       <DependentUpon>registro_diagnostico.js</DependentUpon>
     </Content>
@@ -304,33 +271,17 @@
     <Content Include="js\cp\mantenimiento\panel_refacciones.js" />
     <Content Include="js\cp\mantenimiento\registro_diagnostico.js" />
     <Content Include="js\cp\mantenimiento\DESUSO_resumen_requisicion.js" />
-    <Content Include="js\app\config\departamentos.js" />
     <Content Include="js\cp\mantenimiento\resumen_requisicion.min.js">
       <DependentUpon>DESUSO_resumen_requisicion.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\statusproyectos.min.js">
-      <DependentUpon>statusproyectos.js</DependentUpon>
     </Content>
     <Content Include="js\app\config\tipo_cliente.js" />
     <Content Include="js\cp\mantenimiento\registro_fallas.js" />
     <Content Include="js\cp\mantenimiento\DESUSO_requisiciones.js" />
-    <Content Include="js\app\config\equipos.js" />
     <Content Include="js\app\config\tipos_usuario.min.js">
       <DependentUpon>tipo_cliente.js</DependentUpon>
     </Content>
-    <Content Include="js\app\config\ubicaciones.js" />
-    <Content Include="js\app\config\obras.js" />
-    <Content Include="js\app\config\proyectos.js" />
-    <Content Include="js\app\config\marcas.js" />
-    <Content Include="js\app\config\modelos.js" />
-    <Content Include="js\app\config\proveedores.js" />
-    <Content Include="js\app\config\statusproyectos.js" />
     <Content Include="js\app\index.js" />
-    <Content Include="js\app\config\insumos.js" />
     <Content Include="js\app\login.js" />
-    <Content Include="js\app\config\ubicaciones.min.js">
-      <DependentUpon>ubicaciones.js</DependentUpon>
-    </Content>
     <Content Include="js\app\config\usuarios.js" />
     <Content Include="js\app\config\usuarios.min.js">
       <DependentUpon>usuarios.js</DependentUpon>
@@ -351,17 +302,10 @@
     <Content Include="pages\Config\Plazas.aspx" />
     <Content Include="pages\NoticeOfPrivacy.aspx" />
     <Content Include="pages\TermsAndConditions.aspx" />
-    <Content Include="pages\Config\Marcas.aspx" />
-    <Content Include="pages\Config\Modelos.aspx" />
-    <Content Include="pages\Config\Obras.aspx" />
     <Content Include="pages\Config\Puestos.aspx" />
-    <Content Include="pages\Config\StatusProyectos.aspx" />
-    <Content Include="pages\Config\TiposResolucion.aspx" />
     <Content Include="pages\Config\CustomerTypes.aspx" />
     <Content Include="pages\Config\TiposUsuario.aspx" />
-    <Content Include="pages\Config\Ubicaciones.aspx" />
     <Content Include="pages\Config\Usuarios.aspx" />
-    <Content Include="pages\Config\Departamentos.aspx" />
     <Content Include="pages\Descargas\05_BG_GSM_1366X768_WKS.jpg" />
     <Content Include="pages\Config\Employees.aspx" />
     <Content Include="pages\AboutUs.aspx" />
@@ -1310,47 +1254,12 @@
     <Compile Include="pages\TermsAndConditions.aspx.designer.cs">
       <DependentUpon>TermsAndConditions.aspx</DependentUpon>
     </Compile>
-    <Compile Include="pages\Config\Marcas.aspx.cs">
-      <DependentUpon>Marcas.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\Marcas.aspx.designer.cs">
-      <DependentUpon>Marcas.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Config\Modelos.aspx.cs">
-      <DependentUpon>Modelos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\Modelos.aspx.designer.cs">
-      <DependentUpon>Modelos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Config\Obras.aspx.cs">
-      <DependentUpon>Obras.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\Obras.aspx.designer.cs">
-      <DependentUpon>Obras.aspx</DependentUpon>
-    </Compile>
     <Compile Include="pages\Config\Puestos.aspx.cs">
       <DependentUpon>Puestos.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="pages\Config\Puestos.aspx.designer.cs">
       <DependentUpon>Puestos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Config\StatusProyectos.aspx.cs">
-      <DependentUpon>StatusProyectos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\StatusProyectos.aspx.designer.cs">
-      <DependentUpon>StatusProyectos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Config\TiposResolucion.aspx.cs">
-      <DependentUpon>TiposResolucion.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\TiposResolucion.aspx.designer.cs">
-      <DependentUpon>TiposResolucion.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Config\CustomerTypes.aspx.cs">
       <DependentUpon>CustomerTypes.aspx</DependentUpon>
@@ -1366,26 +1275,12 @@
     <Compile Include="pages\Config\TiposUsuario.aspx.designer.cs">
       <DependentUpon>TiposUsuario.aspx</DependentUpon>
     </Compile>
-    <Compile Include="pages\Config\Ubicaciones.aspx.cs">
-      <DependentUpon>Ubicaciones.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\Ubicaciones.aspx.designer.cs">
-      <DependentUpon>Ubicaciones.aspx</DependentUpon>
-    </Compile>
     <Compile Include="pages\Config\Usuarios.aspx.cs">
       <DependentUpon>Usuarios.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="pages\Config\Usuarios.aspx.designer.cs">
       <DependentUpon>Usuarios.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Config\Departamentos.aspx.cs">
-      <DependentUpon>Departamentos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Config\Departamentos.aspx.designer.cs">
-      <DependentUpon>Departamentos.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Download.ashx.cs">
       <DependentUpon>Download.ashx</DependentUpon>

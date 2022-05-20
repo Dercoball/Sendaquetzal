@@ -776,7 +776,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_posicion, nombre FROM  posicion WHERE ISNull(activo, 1) = 1  ";
+                string query = @" SELECT id_posicion, nombre FROM  posicion WHERE ISNull(eliminado, 0) = 0  ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -886,7 +886,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE ISNull(activo, 1) = 1  ";
+                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE  ISNull(eliminado, 0) = 0   ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -939,7 +939,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_modulo, nombre FROM  modulo WHERE ISNull(activo, 1) = 1  ";
+                string query = @" SELECT id_modulo, nombre FROM  modulo WHERE  ISNull(eliminado, 0) = 0   ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 

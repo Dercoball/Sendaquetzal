@@ -111,6 +111,12 @@ $(document).ready(function () {
     $('#nombreUsuario').text(nombreUsuario);
 
 
+    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//logo empresa
+    cargarValoresConfiguracionEmpresa('2', '#systemName');
+    cargarValoresConfiguracionNombreSistema('8');// <title>
+    cargarValoresConfiguracionEmpresa('3', '.empresa-copy');//link y año
+
+
     let params = {};
     params.path = window.location.hostname;
     params.pagina = pagina;
@@ -138,22 +144,7 @@ $(document).ready(function () {
                 window.location = elementosInterfaz.Url;
             } else {
 
-
-                $('#spnMenuSuperior').empty().html(elementosInterfaz.BarraSuperior).promise().done(function () {
-
-
-                    controlLateral();
-
-                    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//logo empresa
-
-
-                    cargarValoresConfiguracionNombreSistema('8');// <title>
-
-                    cargarValoresConfiguracionEmpresa('3', '.empresa-copy');//link y año
-
-
-                });
-
+                controlLateral();
 
                 $('#side-main-menu').html(elementosInterfaz.BarraLateral);
 

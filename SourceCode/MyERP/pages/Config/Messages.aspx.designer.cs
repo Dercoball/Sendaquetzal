@@ -11,7 +11,7 @@ namespace Plataforma.pages
 {
 
 
-    public partial class Periods
+    public partial class Messages
     {
 
         /// <summary>

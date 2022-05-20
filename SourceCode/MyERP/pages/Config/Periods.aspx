@@ -69,10 +69,24 @@
         <!-- navbar-->
         <header class="header">
 
+
             <nav class="navbar">
                 <div class="container-fluid">
 
-                    <span id="spnMenuSuperior"></span>
+                    <div class="navbar-header">
+                        <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a>
+                        <a href="Index.aspx" class="navbar-brand">
+                            <div class="brand-text d-none d-md-inline-block">
+                                <span></span><strong class="text-primary"><span id="systemName" /></strong>
+                            </div>
+                        </a>
+                    </div>
+                    <ul class="nav-menu list-unstyled d-flex flex-md-row">
+                        <li class="nav-item"><a href="#" class="nav-link logout" onclick="window.top.location.href = '/pages/Logout.aspx'">
+                            <span class="d-none d-sm-inline-block">Salir</span><i class="fa fa-sign-out"></i></a>
+                        </li>
+                    </ul>
+
 
                 </div>
             </nav>
@@ -139,19 +153,19 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                     <div class="form-control-sm ml-2">
+                                    <div class="form-control-sm ml-2">
                                         <label for="chkActivo">Activo</label>
                                         <input id="chkActivo" class="form-control-sm" type="checkbox" />
 
                                     </div>
 
-                                   
+
 
                                 </div>
 
 
 
-                                
+
 
                             </div>
                         </form>

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Employees.aspx.cs" Inherits="Plataforma.pages.Employees" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Messages.aspx.cs" Inherits="Plataforma.pages.Messages" %>
 
 <!DOCTYPE html>
 
@@ -69,7 +69,7 @@
     </nav>
     <div class="page">
         <!-- navbar-->
-        <header class="header">
+         <header class="header">
 
 
             <nav class="navbar">

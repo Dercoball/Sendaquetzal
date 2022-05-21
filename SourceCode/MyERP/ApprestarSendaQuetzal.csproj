@@ -145,15 +145,36 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
-    <Content Include="js\app\config\faq.min - Copy - Copia.js">
-      <DependentUpon>periods.js</DependentUpon>
+    <Content Include="js\app\config\catalogo_puestos.min.js">
+      <DependentUpon>catalogo_puestos.js</DependentUpon>
     </Content>
-    <Content Include="js\app\config\faq.min - Copy.js">
-      <DependentUpon>plazas.js</DependentUpon>
+    <Content Include="js\app\config\configuracion.min.js">
+      <DependentUpon>configuracion.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\employees.min.js">
+      <DependentUpon>employees.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\messages.min.js">
+      <DependentUpon>messages.js</DependentUpon>
     </Content>
     <Content Include="js\app\config\periods.js" />
+    <Content Include="js\app\config\periods.min.js">
+      <DependentUpon>periods.js</DependentUpon>
+    </Content>
     <Content Include="js\app\config\plazas.js" />
+    <Content Include="js\app\config\plazas.min.js">
+      <DependentUpon>plazas.js</DependentUpon>
+    </Content>
     <Content Include="js\app\config\positions.js" />
+    <Content Include="js\app\config\positions.min.js">
+      <DependentUpon>positions.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\tipo_cliente.min.js">
+      <DependentUpon>tipo_cliente.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\usuarios.min.js">
+      <DependentUpon>usuarios.js</DependentUpon>
+    </Content>
     <Content Include="js\app\noticeofprivacy.js" />
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
@@ -187,6 +208,7 @@
       <DependentUpon>general.js</DependentUpon>
     </Content>
     <Content Include="js\app\jquery.min.js" />
+    <Content Include="js\app\config\messages.js" />
     <Content Include="js\app\web\wtutorial.js" />
     <Content Include="js\app\web\wnoticeofprivacy.js" />
     <Content Include="js\app\web\wtermsandconditions.js" />
@@ -195,12 +217,6 @@
     <Content Include="js\charts-home.js" />
     <Content Include="js\app\config\catalogo_puestos.js" />
     <Content Include="js\app\config\configuracion.js" />
-    <Content Include="js\app\config\puestos.min.js">
-      <DependentUpon>configuracion.js</DependentUpon>
-    </Content>
-    <Content Include="js\app\config\empleados.min.js">
-      <DependentUpon>employees.js</DependentUpon>
-    </Content>
     <Content Include="js\app\index.min.js">
       <DependentUpon>index.js</DependentUpon>
     </Content>
@@ -210,15 +226,9 @@
     <Content Include="js\app\web\wfaq.js" />
     <Content Include="js\app\config\employees.js" />
     <Content Include="js\app\config\tipo_cliente.js" />
-    <Content Include="js\app\config\tipos_usuario.min.js">
-      <DependentUpon>tipo_cliente.js</DependentUpon>
-    </Content>
     <Content Include="js\app\index.js" />
     <Content Include="js\app\login.js" />
     <Content Include="js\app\config\usuarios.js" />
-    <Content Include="js\app\config\usuarios.min.js">
-      <DependentUpon>usuarios.js</DependentUpon>
-    </Content>
     <Content Include="js\front.js" />
     <Content Include="js\grasp_mobile_progress_circle-1.0.0.min.js" />
     <Content Include="js\html2canvas.min.js" />
@@ -1093,6 +1103,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\Plantilla.cs" />
     <Compile Include="Clases\Periodo.cs" />
     <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\Direccion.cs" />

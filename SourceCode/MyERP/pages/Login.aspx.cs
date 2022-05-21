@@ -127,7 +127,7 @@ namespace Plataforma.pages
                     Session["id_usuario"] = item.IdUsuario.ToString();
                     Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
 
-                    Response.Redirect("../pages/Config/Employees.aspx");
+                    Response.Redirect("Index.aspx");
 
                 }
 

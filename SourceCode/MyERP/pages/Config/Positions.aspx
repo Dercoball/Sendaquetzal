@@ -369,8 +369,8 @@
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->
-    <link href="../css/toastr.min.css" rel="stylesheet">
-    <script src="../js/toastr.min.js"></script>
+    <link href="../../css/toastr.min.css" rel="stylesheet">
+    <script src="../../js/toastr.min.js"></script>
 
 </body>
 </html>

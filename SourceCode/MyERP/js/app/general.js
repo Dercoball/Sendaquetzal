@@ -11,11 +11,6 @@ let idTipoUsuario = null;
 let idUsuario = null;
 
 
-const POSICION_DIRECTOR = 1;
-const POSICION_COORDINADOR = 2;
-const POSICION_EJECUTIVO = 3;
-const POSICION_SUPERVISOR = 4;
-const POSICION_PROMOTOR = 5;
 
 var mensajesAlertas = {
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
@@ -133,14 +128,15 @@ $(document).ready(function () {
         dataType: "json",
         async: true,
         success: function (msg) {
-            //console.log(msg.d);
 
             const elementosInterfaz = msg.d;
 
+            //console.log(JSON.stringify(elementosInterfaz));
+            console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
+
             if (elementosInterfaz != null && elementosInterfaz.Url !== '') {
 
-                console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
-
+                //debugger;
                 window.location = elementosInterfaz.Url;
             } else {
 

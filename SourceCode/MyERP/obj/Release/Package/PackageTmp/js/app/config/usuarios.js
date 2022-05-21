@@ -13,10 +13,12 @@ $(document).ready(function () {
 
     cargarItems();
     function cargarItems() {
+
         var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idUsuario = sessionStorage.getItem("idusuario");
+        parametros.path = window.location.hostname;        
+        parametros.idUsuario = document.getElementById('txtIdUsuario').value;
         parametros = JSON.stringify(parametros);
+
         $.ajax({
             type: "POST",
             url: "../pages/Usuarios.aspx/GetListaUsuarios",
@@ -345,10 +347,12 @@ $(document).ready(function () {
 
 
     function cargarProveedores() {
+
         var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idUsuario = sessionStorage.getItem("idusuario");
+        parametros.path = window.location.hostname;        
+        parametros.idUsuario = document.getElementById('txtIdUsuario').value;
         parametros = JSON.stringify(parametros);
+
         $.ajax({
             type: "POST",
             url: "../pages/Usuarios.aspx/GetListaProveedores",

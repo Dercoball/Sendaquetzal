@@ -195,7 +195,7 @@ namespace Plataforma.pages
 
             ElementosInterfaz elementos = new ElementosInterfaz();
 
-            if (idTipoUsuario == "")
+            if (idTipoUsuario == string.Empty)
             {
                 elementos.Url = "../../pages/Login.aspx";
                 return elementos;

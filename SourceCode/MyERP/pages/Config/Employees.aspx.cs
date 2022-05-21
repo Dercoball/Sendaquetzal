@@ -37,7 +37,7 @@ namespace Plataforma.pages
             txtIdUsuario.Value = idUsuario;
 
             //  si no esta logueado
-            if (usuario == "")
+            if (usuario == string.Empty)
             {
                 Response.Redirect("Login.aspx");
             }

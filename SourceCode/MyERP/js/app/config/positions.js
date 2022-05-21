@@ -24,7 +24,7 @@ const tiposUsuario = {
 
         var parametros = new Object();
         parametros.path = window.location.hostname;
-        parametros.idUsuario = sessionStorage.getItem("idusuario");
+        parametros.idUsuario = document.getElementById('txtIdUsuario').value;
 
         let url = '../../pages/Config/Positions.aspx/GetListaItems';
         

@@ -262,5 +262,65 @@
     "inputFiles": [
       "js/app/aboutus.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/config/catalogo_puestos.min.js",
+    "inputFiles": [
+      "js/app/config/catalogo_puestos.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/configuracion.min.js",
+    "inputFiles": [
+      "js/app/config/configuracion.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/employees.min.js",
+    "inputFiles": [
+      "js/app/config/employees.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/periods.min.js",
+    "inputFiles": [
+      "js/app/config/periods.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/plazas.min.js",
+    "inputFiles": [
+      "js/app/config/plazas.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/positions.min.js",
+    "inputFiles": [
+      "js/app/config/positions.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/tipo_cliente.min.js",
+    "inputFiles": [
+      "js/app/config/tipo_cliente.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/usuarios.min.js",
+    "inputFiles": [
+      "js/app/config/usuarios.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/templates.min.js",
+    "inputFiles": [
+      "js/app/config/templates.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/messages.min.js",
+    "inputFiles": [
+      "js/app/config/messages.js"
+    ]
   }
 ]

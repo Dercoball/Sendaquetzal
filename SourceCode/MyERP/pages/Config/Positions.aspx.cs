@@ -46,6 +46,9 @@ namespace Plataforma.pages
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
+            Usuario usuario = Usuarios.GetUsuario(path, idUsuario);
+
+
             SqlConnection conn = new SqlConnection(strConexion);
             List<Posicion> items = new List<Posicion>();
 
@@ -55,7 +58,7 @@ namespace Plataforma.pages
                 conn.Open();
                 DataSet ds = new DataSet();
 
-                string esSuperUser = idUsuario != "1" ? "   where  id_posicion <> @usuarioSuperAdmin AND ISNull(eliminado, 0) = 0 "
+                string esSuperUser = usuario.IdTipoUsuario != 6 ? "   where  id_posicion <> @usuarioSuperAdmin AND ISNull(eliminado, 0) = 0 "
                     : "  where ISNull(eliminado, 0) = 0 ";
 
                 //esSuperUser = "";

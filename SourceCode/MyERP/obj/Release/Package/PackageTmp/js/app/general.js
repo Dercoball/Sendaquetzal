@@ -11,11 +11,6 @@ let idTipoUsuario = null;
 let idUsuario = null;
 
 
-const POSICION_DIRECTOR = 1;
-const POSICION_COORDINADOR = 2;
-const POSICION_EJECUTIVO = 3;
-const POSICION_SUPERVISOR = 4;
-const POSICION_PROMOTOR = 5;
 
 var mensajesAlertas = {
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
@@ -111,6 +106,12 @@ $(document).ready(function () {
     $('#nombreUsuario').text(nombreUsuario);
 
 
+    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//logo empresa
+    cargarValoresConfiguracionEmpresa('2', '#systemName');
+    cargarValoresConfiguracionNombreSistema('8');// <title>
+    cargarValoresConfiguracionEmpresa('3', '.empresa-copy');//link y año
+
+
     let params = {};
     params.path = window.location.hostname;
     params.pagina = pagina;
@@ -127,30 +128,19 @@ $(document).ready(function () {
         dataType: "json",
         async: true,
         success: function (msg) {
-            //console.log(msg.d);
 
             const elementosInterfaz = msg.d;
 
-            if (elementosInterfaz == null && pagina !== '0') {
-                window.location = "../../pages/Index.aspx";
+            //console.log(JSON.stringify(elementosInterfaz));
+            console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
+
+            if (elementosInterfaz != null && elementosInterfaz.Url !== '') {
+
+                //debugger;
+                window.location = elementosInterfaz.Url;
             } else {
 
-
-                $('#spnMenuSuperior').empty().html(elementosInterfaz.BarraSuperior).promise().done(function () {
-
-
-                    controlLateral();
-
-                    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//logo empresa
-
-
-                    cargarValoresConfiguracionNombreSistema('8');// <title>
-
-                    cargarValoresConfiguracionEmpresa('3', '.empresa-copy');//link y año
-
-
-                });
-
+                controlLateral();
 
                 $('#side-main-menu').html(elementosInterfaz.BarraLateral);
 
@@ -183,7 +173,7 @@ $(document).ready(function () {
             success: function (msg) {
 
                 let valores = msg.d;
-                
+
                 if (valores.ValorCadena != null) {
                     document.title = valores.ValorCadena;
                 } else {

@@ -35,6 +35,14 @@
 </head>
 
 <body>
+
+    
+    <form class="form-signin" id="form1" runat="server">
+        <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
+    </form>
+
     <!-- Side Navbar -->
     <nav class="side-navbar">
         <div class="side-navbar-wrapper">

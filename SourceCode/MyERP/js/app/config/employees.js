@@ -4,6 +4,12 @@ let descargas = "Empleados_" + date.getFullYear() + "_" + date.getMonth() + "_" 
 let pagina = '8';
 
 
+const POSICION_DIRECTOR = 1;
+const POSICION_COORDINADOR = 2;
+const POSICION_EJECUTIVO = 3;
+const POSICION_SUPERVISOR = 4;
+const POSICION_PROMOTOR = 5;
+
 const employee = {
 
 
@@ -131,7 +137,7 @@ const employee = {
         employee.idSeleccionado = idEmpleado;
         employee.idTipoUsuario = idPosicion;        
         employee.login = login;
-        accion = "changePassword";
+        employee.accion = "changePassword";
 
         $('#panelEdicionPass').modal('show');
 

@@ -146,7 +146,7 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-6">
-                                        <label for="txtNombrePlaza">
+                                        <label for="txtNombrePeriodo">
                                             Nombre
                                         </label>
                                         <input type="text" class="form-control" id="txtNombrePeriodo" required="required" data-required-error='Requerido' />

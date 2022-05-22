@@ -322,5 +322,23 @@
     "inputFiles": [
       "js/app/config/messages.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/config/calendars.min.js",
+    "inputFiles": [
+      "js/app/config/calendars.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/consumable_categories.min.js",
+    "inputFiles": [
+      "js/app/config/consumable_categories.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/config/categories.min.js",
+    "inputFiles": [
+      "js/app/config/categories.js"
+    ]
   }
 ]

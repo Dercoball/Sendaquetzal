@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Periods.aspx.cs" Inherits="Plataforma.pages.Periods" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Categories.aspx.cs" Inherits="Plataforma.pages.Categories" %>
 
 <!DOCTYPE html>
 
@@ -99,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Periodos</h1>
+                    <h1 class="h3 display">Categorías</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -146,10 +146,10 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-6">
-                                        <label for="txtNombrePeriodo">
-                                            Nombre
+                                        <label for="txtNombre">
+                                            Nombre categoría
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombrePeriodo" required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -305,7 +305,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/periods.js"></script>
+    <script src="../../js/app/config/categories.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

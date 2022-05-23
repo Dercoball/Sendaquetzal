@@ -554,8 +554,7 @@
                                         <label for="txtSegundoApellidoAval">
                                             Segundo apellido
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval"
-                                            required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval"/>
                                         <div class="help-block with-errors"></div>
                                     </div>
 

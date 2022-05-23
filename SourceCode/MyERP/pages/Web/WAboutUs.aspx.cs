@@ -116,11 +116,11 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static Plantilla GetItem(string path, string idItem, string idUsuario)
+        public static string LoadContent(string path, string idTabla, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            Plantilla item = new Plantilla();
+            PreguntaFrecuente item = new PreguntaFrecuente();
             SqlConnection conn = new SqlConnection(strConexion);
             string content = "";
 
@@ -132,7 +132,7 @@ namespace Plataforma.pages
             }
 
 
-            //string tableName = GetTableName(idTabla);
+            string tableName = GetTableName(idTabla);
 
 
             try
@@ -141,32 +141,30 @@ namespace Plataforma.pages
                 DataSet ds = new DataSet();
 
                 string query = @" SELECT id, info
-                     FROM plantilla WHERE id =  @id_item ";
+                     FROM  " + tableName + " WHERE id =  1 ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("id_item", idItem);
 
                 adp.Fill(ds);
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
 
-                    item.Contenido = ds.Tables[0].Rows[0]["contenido"].ToString();
-                    item.Nombre = ds.Tables[0].Rows[0]["nombre"].ToString();
+                    content = ds.Tables[0].Rows[0]["info"].ToString();
 
                 }
 
 
-                return item;
+                return content;
             }
             catch (Exception ex)
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return item;
+                return content;
             }
 
             finally

@@ -338,19 +338,19 @@ namespace Plataforma.pages
             //
 
 
-            List<string> paginaCliente = new List<string>
-                {
-                    "83"
-                };
-            var esPagina_Cliente = paginaCliente.Find(x => x == pagina);
-            string active_Cliente = esPagina_Cliente != null ? "class = 'active' " : "";
+            //List<string> paginaCliente = new List<string>
+            //    {
+            //        "83"
+            //    };
+            //var esPagina_Cliente = paginaCliente.Find(x => x == pagina);
+            //string active_Cliente = esPagina_Cliente != null ? "class = 'active' " : "";
 
 
-            nav += "<li " + active_Cliente +
-                " id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + "Customers.aspx\" aria-expanded=\"false\"> " +
-                " <i class=\"icon-interface-windows\"></i>Clientes</a>   ";
+            //nav += "<li " + active_Cliente +
+            //    " id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + "Customers.aspx\" aria-expanded=\"false\"> " +
+            //    " <i class=\"icon-interface-windows\"></i>Clientes</a>   ";
 
-            nav += "</li> ";
+            //nav += "</li> ";
 
 
 

@@ -5,18 +5,93 @@ let pagina = '11';
 
 
 
-const faq = {
+const messages = {
 
 
     init: () => {
 
         $('#panelTabla').show();
         $('#panelForm').hide();
+        messages.loadComboTipoPlantilla();
+        messages.loadComboFrecuenciaEnvio();
+        messages.idSeleccionado = -1;
+        messages.accion = '';
+        messages.cargarItems();
 
-        faq.idSeleccionado = -1;
-        faq.accion = '';
-        faq.cargarItems();
+    },
 
+
+    loadComboTipoPlantilla: () => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Messages.aspx/GetListaItemsTipoPlantilla",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdTipoPlantilla}' > ${item.Nombre}</option > `;
+
+                }
+
+                //console.log('loadComboPosicion');
+
+                $('#comboTipoPlantilla').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+
+    loadComboFrecuenciaEnvio: () => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Messages.aspx/GetListaItemsFrecuenciaEnvio",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdFrecuenciaEnvio}' > ${item.Nombre}</option > `;
+
+                }
+
+                //console.log('loadComboPosicion');
+
+                $('#comboFrecuenciaEnvio').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
     },
 
     cargarItems: () => {
@@ -28,7 +103,7 @@ const faq = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Messsages.aspx/GetListaItems",
+            url: "../../pages/Config/Messages.aspx/GetItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -49,8 +124,9 @@ const faq = {
                     data: data,
                     columns: [
 
-                        { data: 'IdPlantilla' },
+                        { data: 'IdMensaje' },
                         { data: 'Nombre' },
+                        { data: 'NombreTipoPlantilla' },
                         { data: 'Accion' }
 
                     ],
@@ -94,9 +170,9 @@ const faq = {
     },
 
 
-    eliminar: (id) => {
+    delete: (id) => {
 
-        faq.idSeleccionado = id;
+        messages.idSeleccionado = id;
 
         
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -107,7 +183,7 @@ const faq = {
 
 
 
-    editar: (id) => {
+    edit: (id) => {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
@@ -126,18 +202,18 @@ const faq = {
             async: true,
             success: function (msg) {
 
-                var item = msg.d;
-                faq.idSeleccionado = item.Id;
+                let item = msg.d;
+                messages.idSeleccionado = item.IdMensaje;
 
-                $('#txtPregunta').val(item.Pregunta);
-                $('#txtRespuesta').val(item.Respuesta);
-                $('#chkActivo').prop('checked', item.Activo === 1);
+                $('#txtNombre').val(item.Nombre);
+                $('#comboTipoPlantilla').val(item.IdTipoPlantilla);               
+                $('#comboFrecuenciaEnvio').val(item.IdFrecuenciaEnvio);
+                tinymce.get("contenido").setContent(item.Contenido);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
-
-                faq.accion = "editar";
+                messages.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -164,8 +240,8 @@ const faq = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        faq.accion = "nuevo";
-        faq.idSeleccionado = -1;
+        messages.accion = "nuevo";
+        messages.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -180,7 +256,7 @@ const faq = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            faq.nuevo();
+            messages.nuevo();
 
         });
 
@@ -194,15 +270,17 @@ const faq = {
             if (!hasErrors) {
 
                 let item =  {};
-                item.IdPlantilla = faq.idSeleccionado;
+                item.IdMensaje = messages.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();                
                 item.Contenido = tinymce.get("contenido").getContent();
-
+                item.IdTipoPlantilla = $('#comboTipoPlantilla').val();
+                item.IdFrecuenciaEnvio = $('#comboFrecuenciaEnvio').val();
+                
 
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = faq.accion;
+                params.accion = messages.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
@@ -224,7 +302,7 @@ const faq = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            faq.cargarItems();
+                            messages.cargarItems();
 
 
                         } else {
@@ -263,13 +341,13 @@ const faq = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = faq.idSeleccionado;
+            params.id = messages.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Messages.aspxEliminar",
+                url: "../../pages/Config/Messages.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -282,7 +360,7 @@ const faq = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        faq.cargarItems();
+                        messages.cargarItems();
 
                     } else {
 
@@ -308,9 +386,9 @@ const faq = {
 
 window.addEventListener('load', () => {
 
-    faq.init();
+    messages.init();
 
-    faq.accionesBotones();
+    messages.accionesBotones();
 
 });
 

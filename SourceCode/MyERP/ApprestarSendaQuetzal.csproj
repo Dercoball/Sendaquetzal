@@ -1118,15 +1118,18 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\Mensaje.cs" />
     <Compile Include="Clases\Comision.cs" />
-    <Compile Include="Clases\Plantilla.cs" />
     <Compile Include="Clases\Periodo.cs" />
     <Compile Include="Clases\Calendario.cs" />
+    <Compile Include="Clases\Plantilla.cs" />
     <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\Direccion.cs" />
     <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\Modulo.cs" />
     <Compile Include="Clases\Posicion.cs" />
+    <Compile Include="Clases\FrecuenciaEnvio.cs" />
+    <Compile Include="Clases\TipoPlantilla.cs" />
     <Compile Include="Clases\TipoCliente.cs" />
     <Compile Include="Clases\Tutorial.cs" />
     <Compile Include="Clases\Status.cs" />

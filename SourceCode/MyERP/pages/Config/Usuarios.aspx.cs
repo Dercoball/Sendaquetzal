@@ -262,7 +262,6 @@ namespace Plataforma.pages
                     {
                         item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
-                        item.IdProveedor= int.Parse(ds.Tables[0].Rows[i]["id_proveedor"].ToString());
                         item.IdEmpleado= int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.Login = ds.Tables[0].Rows[i]["login"].ToString();
@@ -339,8 +338,8 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = " INSERT INTO usuario (id_tipo_usuario, nombre, login, email, telefono, id_proveedor, id_empleado) " +
-                                       " VALUES ( @id_tipo_usuario, @nombre, @login, @email, @telefono, @id_proveedor, @id_empleado)";
+                    sql = " INSERT INTO usuario (id_tipo_usuario, nombre, login, email, telefono, id_empleado) " +
+                                       " VALUES ( @id_tipo_usuario, @nombre, @login, @email, @telefono, @id_empleado)";
                 }
                 else
                 {
@@ -364,7 +363,6 @@ namespace Plataforma.pages
 
           
                 cmd.Parameters.AddWithValue("@id_empleado",usuario.IdEmpleado);
-                cmd.Parameters.AddWithValue("@id_proveedor", DBNull.Value);
                 
 
 

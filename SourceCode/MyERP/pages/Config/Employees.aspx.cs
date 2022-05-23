@@ -287,7 +287,7 @@ namespace Plataforma.pages
                 sql = @"  INSERT INTO usuario
                             (id_empleado, login, password, id_tipo_usuario, eliminado)
                             VALUES
-                            (@id_empleado, @login, @password, @id_tipo_usuario, 1);
+                            (@id_empleado, @login, @password, @id_tipo_usuario, 0);
                         ";
 
 

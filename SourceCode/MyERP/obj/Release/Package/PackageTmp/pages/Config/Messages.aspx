@@ -104,7 +104,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Colaboradores</h1>
+                    <h1 class="h3 display">Mensajes</h1>
 
                 </header>
 
@@ -118,6 +118,7 @@
 
                                 <th>No.</th>
                                 <th>Nombre</th>
+                                <th>Tipo</th>
                                 <th>
                                     <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo</button>
                                 </th>
@@ -148,7 +149,7 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-12">
                                         <label for="txtNombre">
                                             Nombre
                                         </label>
@@ -156,12 +157,34 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
+                                </div>
 
+                                <div class="row">
 
+                                    <div class="form-group col-md-6">
+                                        <label for="comboTipoPlantilla">
+                                            Tipo plantilla
+                                        </label>
+                                        <select class="form-control campo-combo" id="comboTipoPlantilla" required="required" data-required-error='Requerido'>
+                                        </select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
 
+                                    <div class="form-group col-md-6">
+                                        <label for="comboFrecuenciaEnvio">
+                                            Frecuencia envío
+                                        </label>
+                                        <select class="form-control campo-combo" id="comboFrecuenciaEnvio" required="required" data-required-error='Requerido'>
+                                        </select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
 
-                                    <div class="form-group col-md-4">
-                                        <label for="txtPrimerApellido">
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="contenido">
                                             Contenido
                                         </label>
 
@@ -180,27 +203,28 @@
                                     </div>
 
                                 </div>
-
-
                             </div>
-
                         </div>
 
-                        <div class="row mt-3 mb-3">
+                        <div class="row mt-3 mb-3 mr-auto ml-auto">
 
-                            <div class=" col-md-6 text-left">
+                            <div class="col-md-4">
                                 <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                             </div>
 
-                            <div class=" col-md-6 text-right">
+                            <div class="col-md-4 text-center">
                                 <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                            </div>
+
+
+                            <div class="col-md-4 text-right">
+                                <button id="btnEnviar" class="btn btn-success" disabled="disabled"><i class="fa fa-send mr-1"></i>Enviar ahora</button>
                             </div>
 
                         </div>
                     </form>
 
                 </div>
-
             </div>
         </section>
 

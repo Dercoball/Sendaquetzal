@@ -1,12 +1,12 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "PERIODOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '45';
+let descargas = "COMISIONES_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '48';
 
 
 
 
-const period = {
+const Commision = {
 
 
     init: () => {
@@ -14,10 +14,11 @@ const period = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        period.idSeleccionado = -1;
-        period.accion = '';
+        Commision.idSeleccionado = -1;
+        Commision.accion = '';
 
-        period.loadContent();
+        Commision.loadComboModulo();
+        Commision.loadContent();
         
 
     },
@@ -31,7 +32,7 @@ const period = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Periods.aspx/GetListaItems",
+            url: "../../pages/Config/Commissions.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -52,8 +53,9 @@ const period = {
                     data: data,
                     columns: [
 
-                        { data: 'IdPeriodo' },
-                        { data: 'Nombre' },
+                        { data: 'IdComision' },
+                        { data: 'Modulo' },
+                        { data: 'Porcentaje' },
                         { data: 'ActivoStr' },
                         { data: 'Accion' }
 
@@ -97,7 +99,7 @@ const period = {
 
     delete: (id) => {
 
-        period.idSeleccionado = id;
+        Commision.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -120,7 +122,7 @@ const period = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Periods.aspx/GetItem",
+            url: "../../pages/Config/Commissions.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -128,9 +130,13 @@ const period = {
             success: function (msg) {
 
                 var item = msg.d;
-                period.idSeleccionado = item.IdPeriodo;
+                Commision.idSeleccionado = item.Id;
 
-                $('#txtNombrePeriodo').val(item.Nombre);
+
+                $('#comboModulo').val(item.IdModulo);
+
+                $('#txtPorcentaje').val(item.Porcentaje);
+
 
                 $('#chkActivo').prop('checked', item.Activo === 1);
 
@@ -138,7 +144,7 @@ const period = {
                 $('#panelForm').show();
 
 
-                period.accion = "editar";
+                Commision.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -165,8 +171,8 @@ const period = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        period.accion = "nuevo";
-        period.idSeleccionado = -1;
+        Commision.accion = "nuevo";
+        Commision.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -175,13 +181,48 @@ const period = {
 
     },
 
+    loadComboModulo: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Employees.aspx/GetListaItemsModulos",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdModulo}' > ${item.Nombre}</option > `;
+
+                }
+
+                $('#comboModulo').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+
 
     accionesBotones: () => {
 
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            period.nuevo();
+            Commision.nuevo();
 
         });
 
@@ -196,20 +237,21 @@ const period = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdPeriodo = period.idSeleccionado;
-                item.Nombre = $('#txtNombrePeriodo').val();
+                item.IdComision = Commision.idSeleccionado;
+                item.IdModulo = $('#comboModulo').val();
+                item.Porcentaje = $('#txtPorcentaje').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = period.accion;
+                params.accion = Commision.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/Periods.aspx/Save",
+                    url: "../../pages/Config/Commissions.aspx/Save",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -225,7 +267,7 @@ const period = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            period.loadContent();
+                            Commision.loadContent();
 
 
                         } else {
@@ -264,13 +306,13 @@ const period = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = period.idSeleccionado;
+            params.id = Commision.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Periods.aspx/Delete",
+                url: "../../pages/Config/Commissions.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -283,7 +325,7 @@ const period = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        period.loadContent();
+                        Commision.loadContent();
 
                     } else {
 
@@ -306,13 +348,15 @@ const period = {
 
 
 
+
+
 }
 
 window.addEventListener('load', () => {
 
-    period.init();
+    Commision.init();
 
-    period.accionesBotones();
+    Commision.accionesBotones();
 
 });
 

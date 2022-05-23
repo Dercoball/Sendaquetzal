@@ -1,12 +1,12 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "PERIODOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let descargas = "CATEGORIAS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '45';
 
 
 
 
-const period = {
+const Category = {
 
 
     init: () => {
@@ -14,10 +14,10 @@ const period = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        period.idSeleccionado = -1;
-        period.accion = '';
+        Category.idSeleccionado = -1;
+        Category.accion = '';
 
-        period.loadContent();
+        Category.loadContent();
         
 
     },
@@ -31,7 +31,7 @@ const period = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Periods.aspx/GetListaItems",
+            url: "../../pages/Config/Categories.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -52,7 +52,7 @@ const period = {
                     data: data,
                     columns: [
 
-                        { data: 'IdPeriodo' },
+                        { data: 'Id' },
                         { data: 'Nombre' },
                         { data: 'ActivoStr' },
                         { data: 'Accion' }
@@ -97,7 +97,7 @@ const period = {
 
     delete: (id) => {
 
-        period.idSeleccionado = id;
+        Category.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -120,7 +120,7 @@ const period = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Periods.aspx/GetItem",
+            url: "../../pages/Config/Categories.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -128,9 +128,9 @@ const period = {
             success: function (msg) {
 
                 var item = msg.d;
-                period.idSeleccionado = item.IdPeriodo;
+                Category.idSeleccionado = item.Id;
 
-                $('#txtNombrePeriodo').val(item.Nombre);
+                $('#txtNombre').val(item.Nombre);
 
                 $('#chkActivo').prop('checked', item.Activo === 1);
 
@@ -138,7 +138,7 @@ const period = {
                 $('#panelForm').show();
 
 
-                period.accion = "editar";
+                Category.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -165,8 +165,8 @@ const period = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        period.accion = "nuevo";
-        period.idSeleccionado = -1;
+        Category.accion = "nuevo";
+        Category.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -181,7 +181,7 @@ const period = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            period.nuevo();
+            Category.nuevo();
 
         });
 
@@ -196,20 +196,20 @@ const period = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdPeriodo = period.idSeleccionado;
-                item.Nombre = $('#txtNombrePeriodo').val();
+                item.Id = Category.idSeleccionado;
+                item.Nombre = $('#txtNombre').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = period.accion;
+                params.accion = Category.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/Periods.aspx/Save",
+                    url: "../../pages/Config/Categories.aspx/Save",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -225,7 +225,7 @@ const period = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            period.loadContent();
+                            Category.loadContent();
 
 
                         } else {
@@ -264,13 +264,13 @@ const period = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = period.idSeleccionado;
+            params.id = Category.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Periods.aspx/Delete",
+                url: "../../pages/Config/Categories.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -283,7 +283,7 @@ const period = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        period.loadContent();
+                        Category.loadContent();
 
                     } else {
 
@@ -310,9 +310,9 @@ const period = {
 
 window.addEventListener('load', () => {
 
-    period.init();
+    Category.init();
 
-    period.accionesBotones();
+    Category.accionesBotones();
 
 });
 

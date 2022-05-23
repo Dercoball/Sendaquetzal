@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Periods.aspx.cs" Inherits="Plataforma.pages.Periods" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Commissions.aspx.cs" Inherits="Plataforma.pages.Commissions" %>
 
 <!DOCTYPE html>
 
@@ -99,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Periodos</h1>
+                    <h1 class="h3 display">Comisiones</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -111,8 +111,10 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Nombre</th>
+                                    <th>Modulo</th>
+                                    <th>Porcentaje</th>
                                     <th>Activo</th>
+
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
                                     </th>
@@ -145,13 +147,32 @@
 
                                 <div class="row">
 
+                                    
+
+
                                     <div class="form-group col-md-6">
-                                        <label for="txtNombrePeriodo">
-                                            Nombre
+                                        <label for="comboModulo">
+                                            Modulo
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombrePeriodo" required="required" data-required-error='Requerido' />
+                                        <select class="form-control campo-combo" id="comboModulo" required="required" data-required-error='Requerido'>
+                                        </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
+
+                                   
+                                    <div class="form-group col-md-6">
+                                        <label for="txtPorcentaje">
+                                            Porcentaje  
+                                        </label>
+                                        <input type="number" step="any" class="form-control" id="txtPorcentaje" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+
 
                                     <div class="form-control-sm ml-2">
                                         <label for="chkActivo">Activo</label>
@@ -163,6 +184,7 @@
 
                                 </div>
 
+                               
 
 
 
@@ -305,7 +327,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/periods.js"></script>
+    <script src="../../js/app/config/commissions.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

@@ -42,7 +42,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Plantilla> GetListaItems(string path, string idUsuario)
+        public static List<Mensaje> GetItems(string path, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -56,13 +56,18 @@ namespace Plataforma.pages
             }
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Plantilla> items = new List<Plantilla>();
+            List<Mensaje> items = new List<Mensaje>();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT  id, nombre FROM plantilla WHERE isnull(e.eliminado, 0) != 1  ";
+                string query = @" SELECT  p.id, p.nombre, p.id_tipo_plantilla, t.nombre nombre_tipo_plantilla
+                                    FROM plantilla p 
+                                    JOIN tipo_plantilla t ON (t.id_tipo_plantilla = p.id_tipo_plantilla)
+                                    WHERE isnull(p.eliminado, 0) != 1  
+
+                                    ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -75,16 +80,17 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Plantilla item = new Plantilla();
+                        Mensaje item = new Mensaje();
 
-                        item.IdPlantilla = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        item.IdMensaje = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        
-                       
+                        item.NombreTipoPlantilla = ds.Tables[0].Rows[i]["nombre_tipo_plantilla"].ToString();
 
-                        string botones = "<button  onclick='template.edit(" + item.IdPlantilla + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='template.delete(" + item.IdPlantilla + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-                   
+
+
+                        string botones = "<button  onclick='messages.edit(" + item.IdMensaje + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='messages.delete(" + item.IdMensaje + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+
 
                         item.Accion = botones;
 
@@ -114,7 +120,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static object Save(string path, PreguntaFrecuente item, string accion, string idUsuario)
+        public static object Save(string path, Mensaje item, string accion, string idUsuario)
         {
 
             // verificar que tenga permisos para usar esta pagina
@@ -135,13 +141,14 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO plantilla(nombre, contenido, id_tipo_plantilla, activo, eliminado) 
-                                            VALUES (@nombre, @contenido, @id_tipo_plantilla, 1, 0) ";
+                    sql = @" INSERT INTO plantilla(nombre, contenido, id_tipo_plantilla, id_frecuencia_envio_mensaje, eliminado) 
+                                            VALUES (@nombre, @contenido, @id_tipo_plantilla, @id_frecuencia_envio_mensaje, 0) ";
                 }
                 else
                 {
                     sql = @" UPDATE plantilla 
-                           SET nombre = @nombre, contenido = @contenido
+                           SET nombre = @nombre, contenido = @contenido, 
+                            id_tipo_plantilla = @id_tipo_plantilla, id_frecuencia_envio_mensaje = @id_frecuencia_envio_mensaje
                            WHERE id = @id ";
 
                 }
@@ -152,10 +159,11 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@pregunta", item.Pregunta);
-                cmd.Parameters.AddWithValue("@respuesta", item.Respuesta);
-                cmd.Parameters.AddWithValue("@activo", item.Activo);
-                cmd.Parameters.AddWithValue("@id", item.Id);
+                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                cmd.Parameters.AddWithValue("@contenido", item.Contenido);
+                cmd.Parameters.AddWithValue("@id_tipo_plantilla", item.IdTipoPlantilla);
+                cmd.Parameters.AddWithValue("@id_frecuencia_envio_mensaje", item.IdFrecuenciaEnvio);
+                cmd.Parameters.AddWithValue("@id", item.IdMensaje);
 
 
                 int r = cmd.ExecuteNonQuery();
@@ -169,7 +177,7 @@ namespace Plataforma.pages
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return -1; 
+                return -1;
             }
 
             finally
@@ -182,7 +190,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida Delete(string path, string id)
+        public static DatosSalida Delete(string path, string id, string idUsuario)
         {
             DatosSalida salida = new DatosSalida();
             salida.CodigoError = 0;
@@ -192,6 +200,14 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+
             try
             {
 
@@ -199,11 +215,11 @@ namespace Plataforma.pages
 
                 string sql = "";
 
-                sql = @" UPDATE plantilla set eliminado = 1 WHERE id_plantilla = @id_plantilla ";
+                sql = @" UPDATE plantilla set eliminado = 1 WHERE id = @id ";
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id_plantilla", id);
+                cmd.Parameters.AddWithValue("@id", id);
 
 
                 int r = cmd.ExecuteNonQuery();
@@ -241,19 +257,19 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Plaza> GetListaItemsPlazas(string path)
+        public static List<TipoPlantilla> GetListaItemsTipoPlantilla(string path)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Plaza> items = new List<Plaza>();
+            List<TipoPlantilla> items = new List<TipoPlantilla>();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE  ISNull(eliminado, 0) = 0   ";
+                string query = @" SELECT id_tipo_plantilla, nombre FROM  tipo_plantilla WHERE  ISNull(eliminado, 0) = 0   ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -266,8 +282,8 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Plaza item = new Plaza();
-                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        TipoPlantilla item = new TipoPlantilla();
+                        item.IdTipoPlantilla = int.Parse(ds.Tables[0].Rows[i]["id_tipo_plantilla"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
 
                         items.Add(item);
@@ -293,30 +309,80 @@ namespace Plataforma.pages
 
         }
 
-      
+
+        [WebMethod]
+        public static List<FrecuenciaEnvio> GetListaItemsFrecuenciaEnvio(string path)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<FrecuenciaEnvio> items = new List<FrecuenciaEnvio>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_frecuencia_envio_mensaje, nombre FROM  frecuencia_envio_mensaje WHERE  ISNull(eliminado, 0) = 0   ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        FrecuenciaEnvio item = new FrecuenciaEnvio();
+                        item.IdFrecuenciaEnvio = int.Parse(ds.Tables[0].Rows[i]["id_frecuencia_envio_mensaje"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
 
 
 
         [WebMethod]
-        public static Plantilla GetItem(string path, string id)
+        public static Mensaje GetItem(string path, string id)
         {
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-            Plantilla item = new Plantilla();
+            Mensaje item = new Mensaje();
 
             try
             {
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT  id, nombre FROM plantilla WHERE id_plantilla =  @id_plantilla ";
+                string query = @" SELECT  id, nombre, contenido, id_tipo_plantilla, id_frecuencia_envio_mensaje FROM plantilla WHERE id =  @id ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("id_empleado =  " + id);
+                Utils.Log("id =  " + id);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_plantilla", id);
+                adp.SelectCommand.Parameters.AddWithValue("@id", id);
 
                 adp.Fill(ds);
 
@@ -326,8 +392,11 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
 
-                        item.IdPlantilla = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        item.IdMensaje = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.Contenido = ds.Tables[0].Rows[i]["contenido"].ToString();
+                        item.IdTipoPlantilla = int.Parse(ds.Tables[0].Rows[i]["id_tipo_plantilla"].ToString());
+                        item.IdFrecuenciaEnvio = int.Parse(ds.Tables[0].Rows[i]["id_frecuencia_envio_mensaje"].ToString());
 
                     }
                 }

@@ -75,8 +75,6 @@ namespace Plataforma.pages
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
 
 
-                        item.FechaFormateada = ds.Tables[0].Rows[i]["fecha"].ToString();
-
                     }
                 }
 
@@ -191,7 +189,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, FORMAT(fecha, 'yyyy-MM-dd') fecha
+                string query = @" SELECT id, nombre, fecha, FORMAT(fecha, 'dd/MM/yyyy') fecha_formateada_mx
                      FROM calendario
                      WHERE 
                      ISNull(eliminado, 0) = 0
@@ -213,7 +211,7 @@ namespace Plataforma.pages
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
 
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
-                        item.FechaFormateada = ds.Tables[0].Rows[i]["fecha"].ToString();
+                        item.FechaMx = ds.Tables[0].Rows[i]["fecha_formateada_mx"].ToString();
 
 
 
@@ -246,75 +244,6 @@ namespace Plataforma.pages
 
         }
 
-
-        [WebMethod]
-        public static List<Calendario> LoadContentPublic(string path, string idUsuario)
-        {
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Calendario> items = new List<Calendario>();
-
-
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, fecha
-                     FROM calendario
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Calendario item = new Calendario();
-                        item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
-
-                        item.FechaFormateada = ds.Tables[0].Rows[i]["fecha"].ToString();
-
-
-
-                        string botones = "<button  onclick='calendar.edit(" + item.Id + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='calendar.delete(" + item.Id + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-        }
 
 
         [WebMethod]

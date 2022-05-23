@@ -12,7 +12,7 @@ namespace Plataforma.Clases
         public string Nombre;
 
         public string Fecha;
-        public string FechaFormateada;
+        public string FechaMx;
 
         public string Dia;
         public string Mes;

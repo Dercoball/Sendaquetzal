@@ -308,7 +308,7 @@ const employee = {
         $('.combo-ejecutivo').hide();
         $('#txtPassword').prop('disabled', false);
 
-        employee.testData();
+        //employee.testData();
 
 
     },

@@ -132,8 +132,7 @@ const calendar = {
 
                 $('#txtNombre').val(item.Nombre);
 
-                $('#fecha').val(item.Fecha);
-
+                $('#txtFecha').val(item.Fecha);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -199,7 +198,7 @@ const calendar = {
                 let item = {};
                 item.Id = calendar.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
-                item.Fecha = $('#fecha').val();
+                item.Fecha = $('#txtfecha').val();
 
                 let params = {};
                 params.path = window.location.hostname;

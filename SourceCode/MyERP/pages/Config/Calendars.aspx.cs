@@ -50,7 +50,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, fecha
+                string query = @" SELECT id, nombre, FORMAT(fecha, 'yyyy-MM-dd') fecha
                      FROM calendario
                      WHERE  id =  @id ";
 
@@ -74,6 +74,8 @@ namespace Plataforma.pages
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
 
+
+                        item.FechaFormateada = ds.Tables[0].Rows[i]["fecha"].ToString();
 
                     }
                 }
@@ -189,7 +191,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, fecha
+                string query = @" SELECT id, nombre, FORMAT(fecha, 'yyyy-MM-dd') fecha
                      FROM calendario
                      WHERE 
                      ISNull(eliminado, 0) = 0
@@ -209,8 +211,10 @@ namespace Plataforma.pages
                         Calendario item = new Calendario();
                         item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-                       
+
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
+                        item.FechaFormateada = ds.Tables[0].Rows[i]["fecha"].ToString();
+
 
 
 
@@ -279,6 +283,8 @@ namespace Plataforma.pages
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
 
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
+
+                        item.FechaFormateada = ds.Tables[0].Rows[i]["fecha"].ToString();
 
 
 

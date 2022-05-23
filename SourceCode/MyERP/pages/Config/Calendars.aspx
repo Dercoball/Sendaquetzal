@@ -153,12 +153,13 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="fecha">Fecha</label>
-                                            <input type="date" class="form-control dates" id="fecha" name="fecha" />
-
-                                        </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="txtFecha">
+                                            Fecha
+                                        </label>
+                                        <input type="date" class="form-control campo-date" id="txtFecha"
+                                            required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
                                     </div>
 
 

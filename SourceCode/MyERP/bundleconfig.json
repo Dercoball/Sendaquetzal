@@ -340,5 +340,11 @@
     "inputFiles": [
       "js/app/config/categories.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/config/commissions.min.js",
+    "inputFiles": [
+      "js/app/config/commissions.js"
+    ]
   }
 ]

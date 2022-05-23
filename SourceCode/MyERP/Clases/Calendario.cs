@@ -12,6 +12,11 @@ namespace Plataforma.Clases
         public string Nombre;
 
         public string Fecha;
+        public string FechaFormateada;
+
+        public string Dia;
+        public string Mes;
+        public string Anio;
 
         public string Accion;
 

@@ -8,11 +8,11 @@ namespace Plataforma.Clases
     public class Categoria
     {
 
-        public int IdCategoria;
-        public String Nombre;
-        public Boolean Activo;
+        public int Id;
+        public string Nombre;
+        public int Activo;
         public string ActivoStr;
-        public Boolean Eliminado;
+        public int Eliminado;
         public string UltimaModificacionStr;
         
 

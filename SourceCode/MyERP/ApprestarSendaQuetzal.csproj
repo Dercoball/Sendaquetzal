@@ -107,6 +107,7 @@
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
     <Content Include="icons-reference\styles.css" />
+    <Content Include="img\upload.png" />
     <Content Include="img\ico_doc.png" />
     <Content Include="img\ico_pdf.png" />
     <Content Include="img\pfg.png" />

@@ -161,7 +161,7 @@ namespace Plataforma
                 cmdGrupo.Parameters.AddWithValue("@id_cliente", idCliente);
                 cmdGrupo.Parameters.AddWithValue("@fecha_ingreso", DateTime.Now);
                 cmdGrupo.Parameters.AddWithValue("@contenido", b64Contenido);
-                cmdGrupo.Parameters.AddWithValue("@nombre", nombre);
+                cmdGrupo.Parameters.AddWithValue("@nombre", nombre.Split('.')[0]);
                 cmdGrupo.Parameters.AddWithValue("@id_tipo_documento", tipo);
                 cmdGrupo.Parameters.AddWithValue("@url", urlThumbnail);
                 cmdGrupo.Parameters.AddWithValue("@extension", extension);

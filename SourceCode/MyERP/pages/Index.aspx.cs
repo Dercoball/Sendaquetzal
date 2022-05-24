@@ -30,6 +30,8 @@ namespace Plataforma.pages
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
 
+            Utils.Log("usuario " + usuario);
+
             //  si no esta logueado
             if (usuario == "")
             {
@@ -194,6 +196,7 @@ namespace Plataforma.pages
         {
 
             ElementosInterfaz elementos = new ElementosInterfaz();
+            
 
             if (idTipoUsuario == string.Empty)
             {

@@ -131,11 +131,11 @@ const employee = {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        
+
         $('#txtLoginP').val(login);
         $('#txtPassP').val('');
         employee.idSeleccionado = idEmpleado;
-        employee.idTipoUsuario = idPosicion;        
+        employee.idTipoUsuario = idPosicion;
         employee.login = login;
         employee.accion = "changePassword";
 
@@ -271,12 +271,19 @@ const employee = {
             success: function (foto) {
 
                 let doc = foto.d;
-                if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
-                    $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
-                } else if (doc.Extension === 'pdf') {
-                    $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
+
+                if (doc.IdDocumento) {
+                    if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                        $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
+                    } else if (doc.Extension === 'pdf') {
+                        $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
+                    } else {
+                        $(`${idControl}`).attr('src', '../../img/ico_doc.png');
+                    }
+
+                    $(`#href_${idTipoDocumento}`).css('cursor', 'pointer');
                 } else {
-                    //$(`${idControl}`).attr('src', '../../img/ico_doc.png');
+                    $(`#href_${idTipoDocumento}`).css('cursor', 'default');
                 }
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -470,6 +477,7 @@ const employee = {
             e.preventDefault();
 
             let idTipoDocumento = e.currentTarget.dataset['tipo'];
+            //let disabled = $(`#${e.currentTarget.id}`).prop('disabled');
 
             if (employee.accion !== 'nuevo') {
 
@@ -491,7 +499,26 @@ const employee = {
                         let doc = foto.d;
 
                         if (doc.Contenido) {
-                            window.open(`data:image/jpg;base64,${doc.Contenido}`);
+
+                            let blob = null;
+                            if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                                blob = utils.b64toBlob(doc.Contenido, 'data:image/png', 512);
+                            } else if (doc.Extension === 'pdf') {
+                                blob = utils.b64toBlob(doc.Contenido, 'data:document/pdf', 512);
+                            }
+                            else {
+                                blob = utils.b64toBlob(doc.Contenido, '', 512);
+                            }
+                            if (blob) {
+                                const blobUrl = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = blobUrl;
+                                link.setAttribute('download', doc.Nombre + "." + doc.Extension);
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }
+
                         }
                     }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -726,6 +753,9 @@ const employee = {
 
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
+
+            $(`.documentos`).attr('src', '../../img/upload.png');
+
 
             $('#panelTabla').show();
             $('#panelForm').hide();

@@ -31,6 +31,7 @@ namespace Plataforma.pages
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
 
+            
 
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
@@ -611,7 +612,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT contenido, extension 
+                string query = @" SELECT id_documento_colaborador, contenido, extension, nombre 
                                   FROM documento    
                                   WHERE id_empleado = @id AND id_tipo_documento = @id_tipo_documento ";
 
@@ -629,8 +630,10 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
+                    item.IdDocumento = int.Parse(ds.Tables[0].Rows[0]["id_documento_colaborador"].ToString());
                     item.Contenido = ds.Tables[0].Rows[0]["contenido"].ToString();
                     item.Extension = ds.Tables[0].Rows[0]["extension"].ToString();
+                    item.Nombre = ds.Tables[0].Rows[0]["nombre"].ToString();
                 }
 
                 return item;

@@ -59,8 +59,9 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_tipo_cliente as id, tipo_cliente ,prestamo_inicial_maximo, porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
-                     fechas_pago, cantidad_para_renovar, semana_extra
+                string query = @" SELECT id_tipo_cliente as id, tipo_cliente ,prestamo_inicial_maximo,
+                        porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
+                        cantidad_para_renovar, semana_extra
                      FROM tipo_cliente
                      WHERE 
                      ISNull(eliminado, 0) = 0
@@ -84,7 +85,6 @@ namespace Plataforma.pages
                         item.PorcentajeSemanal = float.Parse(ds.Tables[0].Rows[i]["porcentaje_semanal"].ToString());
                         item.SemanasAPrestar = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
                         item.GarantiasPorMonto = float.Parse(ds.Tables[0].Rows[i]["garantias_por_monto"].ToString());
-                        item.FechasDePago = (ds.Tables[0].Rows[i]["fechas_pago"].ToString());
                         item.CantidadParaRenovar = float.Parse(ds.Tables[0].Rows[i]["cantidad_para_renovar"].ToString());
                         item.SemanasExtra = int.Parse(ds.Tables[0].Rows[i]["semana_extra"].ToString());
 
@@ -118,86 +118,6 @@ namespace Plataforma.pages
             }
 
         }
-
-
-
-        /**
-         * Sin importar los permisos
-         */
-        [WebMethod]
-        public static List<TipoCliente> GetListaItemsPublic(string path)
-        {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<TipoCliente> items = new List<TipoCliente>();
-
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_tipo_cliente as id, tipo_cliente ,prestamo_inicial_maximo, porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
-                     fechas_pago, cantidad_para_renovar, semana_extra
-                     FROM tipo_cliente
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        TipoCliente item = new TipoCliente();
-                        item.IdTipoCliente = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
-                        item.NombreTipoCliente = (ds.Tables[0].Rows[i]["tipo_cliente"].ToString());
-                        item.PrestamoInicialMaximo = float.Parse(ds.Tables[0].Rows[i]["prestamo_inicial_maximo"].ToString());
-                        item.PorcentajeSemanal = float.Parse(ds.Tables[0].Rows[i]["porcentaje_semanal"].ToString());
-                        item.SemanasAPrestar = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
-                        item.GarantiasPorMonto = float.Parse(ds.Tables[0].Rows[i]["garantias_por_monto"].ToString());
-                        item.FechasDePago = (ds.Tables[0].Rows[i]["fechas_pago"].ToString());
-                        item.CantidadParaRenovar = float.Parse(ds.Tables[0].Rows[i]["cantidad_para_renovar"].ToString());
-                        item.SemanasExtra = int.Parse(ds.Tables[0].Rows[i]["semana_extra"].ToString());
-
-                        item.ActivoSemanaExtra = (item.SemanasExtra == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
-
-
-                        string botones = "<button  onclick='tipoCliente.editar(" + item.IdTipoCliente + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='tipoCliente.eliminar(" + item.IdTipoCliente + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-        }
-
 
 
         [WebMethod]
@@ -222,10 +142,16 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO tipo_cliente(tipo_cliente, prestamo_inicial_maximo, porcentaje_semanal, 
-                    semanas_a_prestar, garantias_por_monto, fechas_pago, cantidad_para_renovar, semana_extra, eliminado) 
-                    VALUES (@tipo_cliente, @prestamo_inicial_maximo,@porcentaje_semanal,@semanas_a_prestar,@garantias_por_monto,@fechas_pago
-                    ,@cantidad_para_renovar,@semanas_extra, 0) ";
+                    sql = @" INSERT INTO tipo_cliente 
+                        (tipo_cliente, prestamo_inicial_maximo, porcentaje_semanal, 
+                        semanas_a_prestar, garantias_por_monto, cantidad_para_renovar, semana_extra, eliminado,
+                        fecha_pago_lunes, fecha_pago_martes, fecha_pago_miercoles, fecha_pago_jueves, fecha_pago_viernes, 
+                        fecha_pago_sabado, fecha_pago_domingo) 
+                    VALUES 
+                        (@tipo_cliente, @prestamo_inicial_maximo, @porcentaje_semanal,
+                        @semanas_a_prestar,@garantias_por_monto, @cantidad_para_renovar,@semanas_extra, 0,
+                        @fecha_pago_lunes, @fecha_pago_martes, @fecha_pago_miercoles, @fecha_pago_jueves, @fecha_pago_viernes,
+                        @fecha_pago_sabado, @fecha_pago_domingo) ";
                 }
                 else
                 {
@@ -235,9 +161,12 @@ namespace Plataforma.pages
                                porcentaje_semanal = @porcentaje_semanal,   
                                semanas_a_prestar = @semanas_a_prestar,   
                                garantias_por_monto = @garantias_por_monto,   
-                               fechas_pago = @fechas_pago,   
                                cantidad_para_renovar = @cantidad_para_renovar,   
-                               semana_extra = @semanas_extra   
+                               semana_extra = @semanas_extra,
+                               fecha_pago_lunes = @fecha_pago_lunes, fecha_pago_martes = @fecha_pago_martes, 
+                               fecha_pago_miercoles = @fecha_pago_miercoles, fecha_pago_jueves = @fecha_pago_jueves, 
+                               fecha_pago_viernes = @fecha_pago_viernes, fecha_pago_sabado = @fecha_pago_sabado, 
+                               fecha_pago_domingo = @fecha_pago_domingo
                            WHERE id_tipo_cliente = @id ";
 
                 }
@@ -254,7 +183,13 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@semanas_a_prestar", item.SemanasAPrestar);
                 cmd.Parameters.AddWithValue("@garantias_por_monto", item.GarantiasPorMonto);
 
-                cmd.Parameters.AddWithValue("@fechas_pago", item.FechasDePago);
+                cmd.Parameters.AddWithValue("@fecha_pago_lunes", item.FechaPagoLunes);
+                cmd.Parameters.AddWithValue("@fecha_pago_martes", item.FechaPagoMartes);
+                cmd.Parameters.AddWithValue("@fecha_pago_miercoles", item.FechaPagoMiercoles);
+                cmd.Parameters.AddWithValue("@fecha_pago_jueves", item.FechaPagoJueves);
+                cmd.Parameters.AddWithValue("@fecha_pago_viernes", item.FechaPagoViernes);
+                cmd.Parameters.AddWithValue("@fecha_pago_sabado", item.FechaPagoSabado);
+                cmd.Parameters.AddWithValue("@fecha_pago_domingo", item.FechaPagoDomingo);
 
                 cmd.Parameters.AddWithValue("@cantidad_para_renovar", item.CantidadParaRenovar);
 
@@ -375,14 +310,17 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_tipo_cliente as id, tipo_cliente, prestamo_inicial_maximo, porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
-                     fechas_pago, cantidad_para_renovar, semana_extra
-                     FROM tipo_cliente
-                     WHERE id_tipo_cliente =  @id ";
+                string query = @" SELECT id_tipo_cliente as id, tipo_cliente, prestamo_inicial_maximo, 
+                                    porcentaje_semanal, semanas_a_prestar, garantias_por_monto,
+                                    fechas_pago, cantidad_para_renovar, semana_extra, fecha_pago_lunes, 
+                                    fecha_pago_martes, fecha_pago_miercoles, fecha_pago_jueves, fecha_pago_viernes, 
+                                    fecha_pago_sabado, fecha_pago_domingo
+                                FROM tipo_cliente
+                                WHERE id_tipo_cliente =  @id ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("id_puesto =  " + id);
+                Utils.Log("id=  " + id);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", id);
@@ -405,6 +343,14 @@ namespace Plataforma.pages
                         item.FechasDePago = (ds.Tables[0].Rows[i]["fechas_pago"].ToString());
                         item.CantidadParaRenovar = float.Parse(ds.Tables[0].Rows[i]["cantidad_para_renovar"].ToString());
                         item.SemanasExtra = int.Parse(ds.Tables[0].Rows[i]["semana_extra"].ToString());
+
+                        item.FechaPagoLunes = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_lunes"].ToString());
+                        item.FechaPagoMartes = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_martes"].ToString());
+                        item.FechaPagoMiercoles = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_miercoles"].ToString());
+                        item.FechaPagoJueves = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_jueves"].ToString());
+                        item.FechaPagoViernes = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_viernes"].ToString());
+                        item.FechaPagoSabado = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_sabado"].ToString());
+                        item.FechaPagoDomingo = int.Parse(ds.Tables[0].Rows[i]["fecha_pago_domingo"].ToString());
 
 
                     }

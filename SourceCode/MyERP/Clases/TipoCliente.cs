@@ -14,6 +14,13 @@ namespace Plataforma.Clases
         public int SemanasAPrestar;
         public float GarantiasPorMonto;
         public string FechasDePago;
+        public int FechaPagoLunes;
+        public int FechaPagoMartes;
+        public int FechaPagoMiercoles;
+        public int FechaPagoJueves;
+        public int FechaPagoViernes;
+        public int FechaPagoSabado;
+        public int FechaPagoDomingo;
         public float CantidadParaRenovar;
         public int SemanasExtra;
         public string ActivoSemanaExtra;

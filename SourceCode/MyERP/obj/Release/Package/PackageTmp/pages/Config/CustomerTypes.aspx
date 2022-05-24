@@ -115,7 +115,7 @@
                                     <th>Porcentaje semanal a pagar</th>
                                     <th>Semanas a prestar</th>
                                     <th>Garantías por monto</th>
-                                    <th>Fechas de pago</th>
+                                    <%--<th>Fechas de pago</th>--%>
                                     <th>Cantidad para renovar</th>
                                     <th>Semanas extra</th>
                                     <th>
@@ -205,14 +205,13 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFechasDePago">
-                                            Fechas de pago
-                                        </label>
-                                        <input type="text" class="form-control" id="txtFechasDePago" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
 
+                                    <div class="form-group">
+                                        <div class="form-check ml-2 mt-4">
+                                            <input id="chkSemanaExtra" class="form-check-input" type="checkbox" />
+                                            <label for="chkSemanaExtra" class="form-check-label">Semana extra</label>
+                                        </div>
+                                    </div>
 
                                 </div>
 
@@ -228,15 +227,71 @@
 
 
 
-                                    <div class="form-group">
-                                        <div class="form-check ml-2 mt-4">
-                                            <input id="chkSemanaExtra" class="form-check-input" type="checkbox" />
-                                            <label for="chkSemanaExtra" class="form-check-label">Semana extra</label>
-                                        </div>
-                                    </div>
                                 </div>
 
-                            </div>
+                                <div class="row">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="txtFechasDePago">
+                                            Fechas de pago
+                                        </label>
+
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkLunes" class="form-check-input" type="checkbox" />
+                                                    <label for="chkLunes" class="form-check-label">Lunes</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkMartes" class="form-check-input" type="checkbox" />
+                                                    <label for="chkMartes" class="form-check-label">Martes</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkMiercoles" class="form-check-input" type="checkbox" />
+                                                    <label for="chkMiercoles" class="form-check-label">Miercoles</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkJueves" class="form-check-input" type="checkbox" />
+                                                    <label for="chkJueves" class="form-check-label">Jueves</label>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkViernes" class="form-check-input" type="checkbox" />
+                                                    <label for="chkViernes" class="form-check-label">Viernes</label>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkSabado" class="form-check-input" type="checkbox" />
+                                                    <label for="chkSabado" class="form-check-label">Sábado</label>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-1">
+                                                <div class="form-check">
+                                                    <input id="chkDomingo" class="form-check-input" type="checkbox" />
+                                                    <label for="chkDomingo" class="form-check-label">Domingo</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                         </form>
                     </div>
 
@@ -256,7 +311,7 @@
 
                 </div>
             </div>
-    </section>
+        </section>
 
 
 

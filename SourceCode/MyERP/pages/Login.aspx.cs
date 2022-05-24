@@ -20,7 +20,7 @@ namespace Plataforma.pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
 
         }
 
@@ -42,17 +42,27 @@ namespace Plataforma.pages
             var password = inputPassword.Text;
             var path = txtPath.Value;
 
+            panelError.Visible = false;
+            panelCamposVacios.Visible = false;
 
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            Usuario item = new Usuario();
-            SqlConnection conn = new SqlConnection(strConexion);
-
-
-            try
+            if (String.IsNullOrEmpty(login) || String.IsNullOrEmpty(password))
             {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_usuario, id_tipo_usuario,  nombre, login, password, 
+                panelCamposVacios.Visible = true;
+
+            }
+            else
+            {
+
+                string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+                Usuario item = new Usuario();
+                SqlConnection conn = new SqlConnection(strConexion);
+
+
+                try
+                {
+                    conn.Open();
+                    DataSet ds = new DataSet();
+                    string query = @" SELECT id_usuario, id_tipo_usuario,  nombre, login, password, 
                                      email, telefono, 
                                      Isnull(id_empleado, 0) id_empleado 
                                      FROM usuario 
@@ -60,90 +70,97 @@ namespace Plataforma.pages
                                      and IsNull(eliminado, 0) <> 1 
                                 ";
 
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("login =  " + login);
+                    Utils.Log("\nMétodo-> " +
+                    System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                    Utils.Log("login =  " + login);
 
-                string md5Password = CreateMD5Hash(password);
+                    string md5Password = CreateMD5Hash(password);
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@login", login);
-                adp.SelectCommand.Parameters.AddWithValue("@password", md5Password);
+                    SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                    adp.SelectCommand.Parameters.AddWithValue("@login", login);
+                    adp.SelectCommand.Parameters.AddWithValue("@password", md5Password);
 
-                adp.Fill(ds);
+                    adp.Fill(ds);
 
-                bool found = false;
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    bool found = false;
+                    if (ds.Tables[0].Rows.Count > 0)
                     {
-                        //item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
-                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
-                        item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
-                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.Login = ds.Tables[0].Rows[i]["login"].ToString();
-                        item.Password = ds.Tables[0].Rows[i]["password"].ToString();
-                        item.Email = ds.Tables[0].Rows[i]["email"].ToString();
-                        item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
+                        for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                        {
+                            //item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                            item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                            item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
+                            item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                            item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                            item.Login = ds.Tables[0].Rows[i]["login"].ToString();
+                            item.Password = ds.Tables[0].Rows[i]["password"].ToString();
+                            item.Email = ds.Tables[0].Rows[i]["email"].ToString();
+                            item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
 
-                        found = true;
+                            found = true;
+
+                        }
+                    }
+
+                    string uuid = Guid.NewGuid().ToString();
+                    Utils.Log("uuid =  " + uuid);
+                    string hashedData = ComputeSha256Hash(uuid);
+                    Utils.Log("hashedData =  " + hashedData);
+
+                    item.Token = hashedData;
+
+                    if (found)
+                    {
+                        DateTime now = DateTime.Now;
+
+                        string sql = "";
+                        sql = " INSERT INTO bitacora_login ( id_usuario, fecha_hora, comentario, ip) " +
+                              " VALUES ( @id_usuario, @fecha_hora, @comentario, @ip ) ";
+                        Utils.Log("\nMétodo-> " +
+                        System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                        string IP = GetIP();
+
+
+                        SqlCommand cmd = new SqlCommand(sql, conn);
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
+                        cmd.Parameters.AddWithValue("@fecha_hora", now);
+                        cmd.Parameters.AddWithValue("@ip", IP);
+                        cmd.Parameters.AddWithValue("@comentario", "Usuario : " + item.Login);
+
+                        int r = cmd.ExecuteNonQuery();
+                        Utils.Log("Login Guardado -> OK ");
+
+                        Session["path"] = path.ToString();
+                        Session["usuario"] = login.ToString();
+                        Session["id_usuario"] = item.IdUsuario.ToString();
+                        Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
+
+                        Response.Redirect("Index.aspx");
 
                     }
+                    else
+                    {
+                        panelError.Visible = true;
+                    }
+
+
                 }
-
-                string uuid = Guid.NewGuid().ToString();
-                Utils.Log("uuid =  " + uuid);
-                string hashedData = ComputeSha256Hash(uuid);
-                Utils.Log("hashedData =  " + hashedData);
-
-                item.Token = hashedData;
-
-                if (found)
+                catch (Exception ex)
                 {
-                    DateTime now = DateTime.Now;
-
-                    string sql = "";
-                    sql = " INSERT INTO bitacora_login ( id_usuario, fecha_hora, comentario, ip) " +
-                          " VALUES ( @id_usuario, @fecha_hora, @comentario, @ip ) ";
-                    Utils.Log("\nMétodo-> " +
-                    System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
-
-                    string IP = GetIP();
-
-
-                    SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
-                    cmd.Parameters.AddWithValue("@fecha_hora", now);
-                    cmd.Parameters.AddWithValue("@ip",  IP);
-                    cmd.Parameters.AddWithValue("@comentario",  "Usuario : " + item.Login );
-
-                    int r = cmd.ExecuteNonQuery();
-                    Utils.Log("Login Guardado -> OK ");
-
-                    Session["path"] = path.ToString();
-                    Session["usuario"] = login.ToString();
-                    Session["id_usuario"] = item.IdUsuario.ToString();
-                    Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
-
-                    Response.Redirect("Index.aspx");
+                    Utils.Log("Error ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    item.Msg = ex.Message + ex.StackTrace;
 
                 }
 
+                finally
+                {
+                    conn.Close();
+                }
 
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                item.Msg = ex.Message + ex.StackTrace;
-                
-            }
 
-            finally
-            {
-                conn.Close();
             }
 
         }

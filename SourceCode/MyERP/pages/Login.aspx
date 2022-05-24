@@ -121,6 +121,20 @@
                                 </div>
                             </div>
 
+                            <asp:Panel ID="panelError" runat="server" Visible="false">
+                                <div class="alert alert-warning alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong></strong>No se encontró el usuario y contraseña.
+                                </div>
+                            </asp:Panel>
+
+                            <asp:Panel ID="panelCamposVacios" runat="server" Visible="false">
+                                <div class="alert alert-warning alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong></strong>Debe ingresar su nombre de usuario y contraseña.
+                                </div>
+                            </asp:Panel>
+
                             <div class="row text-right">
                                 <div class="form-group col-md-12 d-flex">
                                     <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary"
@@ -128,12 +142,14 @@
                                 </div>
                             </div>
 
+
+
+
+
                         </div>
 
-                        <div class="alert alert-warning alert-dismissible" role="alert" id="alert-login-fail">
-                            <span id="lblMensajes"></span>
 
-                        </div>
+
 
                     </form>
 

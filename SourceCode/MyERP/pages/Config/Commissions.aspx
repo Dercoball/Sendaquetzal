@@ -147,7 +147,7 @@
 
                                 <div class="row">
 
-                                    
+
 
 
                                     <div class="form-group col-md-6">
@@ -159,7 +159,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                   
+
                                     <div class="form-group col-md-6">
                                         <label for="txtPorcentaje">
                                             Porcentaje  
@@ -173,18 +173,15 @@
 
                                 <div class="row">
 
-
-                                    <div class="form-control-sm ml-2">
-                                        <label for="chkActivo">Activo</label>
-                                        <input id="chkActivo" class="form-control-sm" type="checkbox" />
-
+                                    <div class="form-group col-md-12">
+                                        <div class="form-check ml-2">
+                                            <input id="chkActivo" class="form-check-input" type="checkbox" />
+                                            <label for="chkActivo" class="form-check-label">Activo</label>
+                                        </div>
                                     </div>
-
-
-
                                 </div>
 
-                               
+
 
 
 

@@ -10,6 +10,7 @@ namespace Plataforma.Clases
 
         public int IdPeriodo;
         public string Nombre;
+        public int ValorPeriodo;
 
         public int Activo;
         public string ActivoStr;

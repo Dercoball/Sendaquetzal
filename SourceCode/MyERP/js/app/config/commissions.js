@@ -6,7 +6,7 @@ let pagina = '48';
 
 
 
-const Commision = {
+const comission = {
 
 
     init: () => {
@@ -14,11 +14,11 @@ const Commision = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        Commision.idSeleccionado = -1;
-        Commision.accion = '';
+        comission.idSeleccionado = -1;
+        comission.accion = '';
 
-        Commision.loadComboModulo();
-        Commision.loadContent();
+        comission.loadComboModulo();
+        comission.loadContent();
         
 
     },
@@ -99,7 +99,7 @@ const Commision = {
 
     delete: (id) => {
 
-        Commision.idSeleccionado = id;
+        comission.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -130,7 +130,7 @@ const Commision = {
             success: function (msg) {
 
                 var item = msg.d;
-                Commision.idSeleccionado = item.Id;
+                comission.idSeleccionado = item.IdComision;
 
 
                 $('#comboModulo').val(item.IdModulo);
@@ -144,7 +144,7 @@ const Commision = {
                 $('#panelForm').show();
 
 
-                Commision.accion = "editar";
+                comission.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -171,8 +171,8 @@ const Commision = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        Commision.accion = "nuevo";
-        Commision.idSeleccionado = -1;
+        comission.accion = "nuevo";
+        comission.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -222,7 +222,7 @@ const Commision = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            Commision.nuevo();
+            comission.nuevo();
 
         });
 
@@ -237,7 +237,7 @@ const Commision = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdComision = Commision.idSeleccionado;
+                item.IdComision = comission.idSeleccionado;
                 item.IdModulo = $('#comboModulo').val();
                 item.Porcentaje = $('#txtPorcentaje').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
@@ -245,7 +245,7 @@ const Commision = {
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = Commision.accion;
+                params.accion = comission.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
@@ -267,7 +267,7 @@ const Commision = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            Commision.loadContent();
+                            comission.loadContent();
 
 
                         } else {
@@ -306,7 +306,7 @@ const Commision = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = Commision.idSeleccionado;
+            params.id = comission.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
@@ -325,7 +325,7 @@ const Commision = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        Commision.loadContent();
+                        comission.loadContent();
 
                     } else {
 
@@ -354,9 +354,9 @@ const Commision = {
 
 window.addEventListener('load', () => {
 
-    Commision.init();
+    comission.init();
 
-    Commision.accionesBotones();
+    comission.accionesBotones();
 
 });
 

@@ -226,12 +226,14 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    <div class="form-control-sm ml-2">
-                                        <label for="chkSemanaExtra">Semana extra</label>
-                                        <input id="chkSemanaExtra" class="form-control-sm" type="checkbox" />
 
+
+                                    <div class="form-group">
+                                        <div class="form-check ml-2 mt-4">
+                                            <input id="chkSemanaExtra" class="form-check-input" type="checkbox" />
+                                            <label for="chkSemanaExtra" class="form-check-label">Semana extra</label>
+                                        </div>
                                     </div>
-
                                 </div>
 
                             </div>
@@ -253,10 +255,8 @@
                     </div>
 
                 </div>
-
             </div>
-
-        </section>
+    </section>
 
 
 

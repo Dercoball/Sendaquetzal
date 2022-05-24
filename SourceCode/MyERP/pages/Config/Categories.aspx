@@ -145,26 +145,24 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-12">
                                         <label for="txtNombre">
                                             Nombre categoría
                                         </label>
                                         <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
-
-                                    <div class="form-control-sm ml-2">
-                                        <label for="chkActivo">Activo</label>
-                                        <input id="chkActivo" class="form-control-sm" type="checkbox" />
-
-                                    </div>
-
-
-
                                 </div>
 
+                                <div class="row">
 
-
+                                    <div class="form-group col-md-12">
+                                        <div class="form-check ml-2">
+                                            <input id="chkActivo" class="form-check-input" type="checkbox" />
+                                            <label for="chkActivo" class="form-check-label">Activo</label>
+                                        </div>
+                                    </div>
+                                </div>
 
 
                             </div>
@@ -186,7 +184,6 @@
                     </div>
 
                 </div>
-
             </div>
 
         </section>

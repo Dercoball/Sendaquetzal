@@ -67,7 +67,7 @@
     </nav>
     <div class="page">
         <!-- navbar-->
-         <header class="header">
+        <header class="header">
 
 
             <nav class="navbar">
@@ -77,7 +77,7 @@
                         <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a>
                         <a href="Index.aspx" class="navbar-brand">
                             <div class="brand-text d-none d-md-inline-block">
-                                <span></span><strong class="text-primary"><span id="systemName"/></strong>
+                                <span></span><strong class="text-primary"><span id="systemName" /></strong>
                             </div>
                         </a>
                     </div>
@@ -139,13 +139,9 @@
                                     <hr />
                                 </h3>
 
-
-
-
-
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-12">
                                         <label for="txtNombrePlaza">
                                             Nombre
                                         </label>
@@ -153,14 +149,17 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                     <div class="form-control-sm ml-2">
-                                        <label for="chkActivo">Activo</label>
-                                        <input id="chkActivo" class="form-control-sm" type="checkbox" />
+                                </div>
 
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-12">
+                                        <div class="form-check ml-2">
+                                            <input id="chkActivo" class="form-check-input" type="checkbox" />
+                                            <label for="chkActivo" class="form-check-label">Activo</label>
+                                        </div>
                                     </div>
-
-                                   
-
                                 </div>
 
                             </div>
@@ -182,10 +181,8 @@
                     </div>
 
                 </div>
-
             </div>
-
-        </section>
+    </section>
 
 
 

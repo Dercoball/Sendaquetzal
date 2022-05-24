@@ -147,9 +147,6 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_modulo", item.IdModulo);
                 cmd.Parameters.AddWithValue("@porcentaje", item.Porcentaje);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
-
-
-
                 cmd.Parameters.AddWithValue("@id", item.IdComision);
 
 
@@ -229,8 +226,8 @@ namespace Plataforma.pages
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                        string botones = "<button  onclick='Commision.edit(" + item.IdComision + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='Commision.delete(" + item.IdComision + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "<button  onclick='comission.edit(" + item.IdComision + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='comission.delete(" + item.IdComision + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 

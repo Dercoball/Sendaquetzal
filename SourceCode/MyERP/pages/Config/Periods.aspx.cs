@@ -50,7 +50,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_periodo, nombre, activo
+                string query = @" SELECT id_periodo, IsNull(valor_periodo, 0) valor_periodo, activo
                      FROM periodo
                      WHERE  id_periodo =  @id ";
 
@@ -71,8 +71,9 @@ namespace Plataforma.pages
                         item = new Periodo();
 
                         item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
+                        
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+                        item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
 
 
                     }
@@ -118,13 +119,13 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO periodo(nombre, activo, eliminado) 
-                    VALUES (@nombre, @activo, 0) ";
+                    sql = @" INSERT INTO periodo(valor_periodo, activo, eliminado, nombre) 
+                    VALUES (@valor_periodo, @activo, 0, '') ";
                 }
                 else
                 {
                     sql = @" UPDATE periodo
-                          SET nombre = @nombre,
+                          SET valor_periodo = @valor_periodo,
                               activo = @activo
                           WHERE 
                               id_periodo = @id";
@@ -137,7 +138,7 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                cmd.Parameters.AddWithValue("@valor_periodo", item.ValorPeriodo);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
    
                 cmd.Parameters.AddWithValue("@id", item.IdPeriodo);
@@ -189,7 +190,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_periodo, nombre, activo
+                string query = @" SELECT id_periodo,  IsNull(valor_periodo, 0) valor_periodo, activo
                      FROM periodo
                      WHERE 
                      ISNull(eliminado, 0) = 0
@@ -208,7 +209,7 @@ namespace Plataforma.pages
                     {
                         Periodo item = new Periodo();
                         item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
+                        item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
                        
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
@@ -243,75 +244,6 @@ namespace Plataforma.pages
 
         }
 
-
-        [WebMethod]
-        public static List<Periodo> LoadContentPublic(string path, string idUsuario)
-        {
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Periodo> items = new List<Periodo>();
-
-
-            
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_periodo, nombre, activo
-                     FROM periodo
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id_periodo ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Periodo item = new Periodo();
-                        item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
-
-
-                        string botones = "<button  onclick='period.edit(" + item.IdPeriodo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='period.delete(" + item.IdPeriodo + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-        }
 
 
         [WebMethod]

@@ -53,7 +53,7 @@ const period = {
                     columns: [
 
                         { data: 'IdPeriodo' },
-                        { data: 'Nombre' },
+                        { data: 'ValorPeriodo' },
                         { data: 'ActivoStr' },
                         { data: 'Accion' }
 
@@ -130,7 +130,7 @@ const period = {
                 var item = msg.d;
                 period.idSeleccionado = item.IdPeriodo;
 
-                $('#txtNombrePeriodo').val(item.Nombre);
+                $('#txtPeriodo').val(item.ValorPeriodo);
 
                 $('#chkActivo').prop('checked', item.Activo === 1);
 
@@ -194,10 +194,9 @@ const period = {
 
             if (!hasErrors) {
 
-                //  Objeto con los valores a enviar
                 let item = {};
                 item.IdPeriodo = period.idSeleccionado;
-                item.Nombre = $('#txtNombrePeriodo').val();
+                item.ValorPeriodo = $('#txtPeriodo').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};

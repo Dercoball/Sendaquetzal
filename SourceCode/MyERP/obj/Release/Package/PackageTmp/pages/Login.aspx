@@ -79,82 +79,81 @@
 
 
     <div class="container">
-        <div class="row">
+        <div class="panel">
+            <div class="panel-body col-md-6 col-md-offset-3">
+
+                <div style="color: black; margin-left: auto; margin-right: auto; margin-top: 10px;">
+
+                    <h3 style="margin-top: 30px;">Login</h3>
+
+                    <div class="panel-body">
+
+                        <form class="form-signin" id="frmLogin" runat="server">
+
+                            <asp:HiddenField ID="txtPath" runat="server"></asp:HiddenField>
 
 
-            <div class="panel panel-success" style="color: black;margin-left: auto; margin-right: auto; margin-top: 10px;">
+                            <div>
 
-                <h3 style="margin-top: 30px;">Login</h3>
+                                <div class="text-center">
+                                </div>
 
-                <div class="panel-body">
+                                <div class="row">
 
-                    <form class="form-signin" id="frmLogin" runat="server">
+                                    <div class="form-group col-md-12">
+                                        <label>Usuario</label>
+                                        <asp:TextBox ID="inputEmail" runat="server" class="form-control flex-fill"
+                                            required="required" data-required-error='Requerido'
+                                            placeholder="Ingrese su nombre de usuario"></asp:TextBox>
+                                        <div class="help-block with-errors"></div>
 
-                        <asp:HiddenField ID="txtPath" runat="server"></asp:HiddenField>
+                                    </div>
+                                </div>
 
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label>Constraseña</label>
+                                        <asp:TextBox ID="inputPassword" runat="server" class="form-control" placeholder="Ingrese su contraseña"
+                                            required="required" data-required-error='Requerido'
+                                            TextMode="Password"></asp:TextBox>
+                                        <div class="help-block with-errors"></div>
 
-                        <div>
+                                    </div>
+                                </div>
 
-                            <div class="text-center">
+                                <asp:Panel ID="panelError" runat="server" Visible="false">
+                                    <div class="alert alert-warning alert-dismissible" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <strong></strong>No se encontró el usuario y contraseña.
+                                    </div>
+                                </asp:Panel>
+
+                                <asp:Panel ID="panelCamposVacios" runat="server" Visible="false">
+                                    <div class="alert alert-danger alert-dismissible" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <strong></strong>Debe ingresar su nombre de usuario y contraseña.
+                                    </div>
+                                </asp:Panel>
+
+                                <div class="row text-right">
+                                    <div class="form-group col-md-12 d-flex">
+                                        <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary"
+                                            Text="Entrar" OnClick="Entrar_Click" UseSubmitBehavior="false" />
+                                    </div>
+                                </div>
+
                             </div>
 
-                            <div class="row">
-
-                                <div class="form-group col-md-12">
-                                    <label>Usuario</label>
-                                    <asp:TextBox ID="inputEmail" runat="server" class="form-control flex-fill"
-                                        required="required" data-required-error='Requerido'
-                                        placeholder="Ingrese su nombre de usuario"></asp:TextBox>
-                                    <div class="help-block with-errors"></div>
-
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label>Constraseña</label>
-                                    <asp:TextBox ID="inputPassword" runat="server" class="form-control" placeholder="Ingrese su contraseña"
-                                        required="required" data-required-error='Requerido'
-                                        TextMode="Password"></asp:TextBox>
-                                    <div class="help-block with-errors"></div>
-
-                                </div>
-                            </div>
-
-                            <asp:Panel ID="panelError" runat="server" Visible="false">
-                                <div class="alert alert-warning alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <strong></strong>No se encontró el usuario y contraseña.
-                                </div>
-                            </asp:Panel>
-
-                            <asp:Panel ID="panelCamposVacios" runat="server" Visible="false">
-                                <div class="alert alert-warning alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <strong></strong>Debe ingresar su nombre de usuario y contraseña.
-                                </div>
-                            </asp:Panel>
-
-                            <div class="row text-right">
-                                <div class="form-group col-md-12 d-flex">
-                                    <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary"
-                                        Text="Entrar" OnClick="Entrar_Click" UseSubmitBehavior="false" />
-                                </div>
-                            </div>
 
 
 
+                        </form>
 
-
-                        </div>
-
-
-
-
-                    </form>
-
+                    </div>
                 </div>
+
             </div>
+
 
         </div>
     </div>

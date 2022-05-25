@@ -132,7 +132,7 @@
             <div class="container-fluid">
                 <div class="row d-flex align-items-md-stretch">
                     <div class="col-sm-12 text-center">
-                        <p class='nombreempresa'></p>
+                        SENDA QUETZAL
                     </div>
                 </div>
             </div>

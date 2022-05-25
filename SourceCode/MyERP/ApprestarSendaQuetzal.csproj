@@ -146,6 +146,7 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\config\days_off.js" />
     <Content Include="js\app\config\calendars.min.js">
       <DependentUpon>calendars.js</DependentUpon>
     </Content>
@@ -161,6 +162,9 @@
     </Content>
     <Content Include="js\app\config\configuracion.min.js">
       <DependentUpon>configuracion.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\config\days_off.min.js">
+      <DependentUpon>days_off.js</DependentUpon>
     </Content>
     <Content Include="js\app\config\employees.min.js">
       <DependentUpon>employees.js</DependentUpon>
@@ -254,6 +258,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Config\DaysOff.aspx" />
     <Content Include="pages\Config\Commissions.aspx" />
     <Content Include="pages\Config\Messages.aspx" />
     <Content Include="pages\Config\Calendars.aspx" />
@@ -1119,6 +1124,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\DiaDeParo.cs" />
     <Compile Include="Clases\Mensaje.cs" />
     <Compile Include="Clases\Comision.cs" />
     <Compile Include="Clases\Periodo.cs" />
@@ -1150,6 +1156,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Config\DaysOff.aspx.cs">
+      <DependentUpon>DaysOff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Config\DaysOff.aspx.designer.cs">
+      <DependentUpon>DaysOff.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Config\Commissions.aspx.cs">
       <DependentUpon>Commissions.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

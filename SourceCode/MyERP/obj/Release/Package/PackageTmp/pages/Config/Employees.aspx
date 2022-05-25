@@ -186,6 +186,16 @@
                                             </select>
                                             <div class="help-block with-errors"></div>
                                         </div>
+
+                                         <div class="combo-coordinador">
+                                            <label for="comboCoordinador">
+                                                Coordinador
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboCoordinador">
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
                                     </div>
 
 

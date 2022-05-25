@@ -211,6 +211,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@id_supervisor", item.IdPosicion == POSICION_PROMOTOR ? item.IdSupervisor : 0);
                 cmd.Parameters.AddWithValue("@id_ejecutivo", item.IdPosicion == POSICION_SUPERVISOR ? item.IdEjecutivo : 0);
+                cmd.Parameters.AddWithValue("@id_coordinador", item.IdPosicion == POSICION_EJECUTIVO ? item.IdCoordinador : 0);
 
                 cmd.Parameters.AddWithValue("@curp", item.CURP);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
@@ -381,6 +382,7 @@ namespace Plataforma.pages
                                     segundo_apellido = @segundo_apellido, telefono = @telefono, 
                                     fecha_nacimiento = @fecha_nacimiento, fecha_ingreso = @fecha_ingreso,
                                     id_supervisor = @id_supervisor, id_ejecutivo = @id_ejecutivo, 
+                                    id_coordinador = @id_coordinador,
                                     monto_limite_inicial = @monto_limite_inicial,
                                     curp_aval = @curp_aval, nombre_aval = @nombre_aval, primer_apellido_aval = @primer_apellido_aval, 
                                     segundo_apellido_aval = @segundo_apellido_aval, telefono_aval = @telefono_aval
@@ -402,6 +404,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@id_supervisor", item.IdPosicion == POSICION_PROMOTOR ? item.IdSupervisor : 0);
                 cmd.Parameters.AddWithValue("@id_ejecutivo", item.IdPosicion == POSICION_SUPERVISOR ? item.IdEjecutivo : 0);
+                cmd.Parameters.AddWithValue("@id_coordinador", item.IdPosicion == POSICION_EJECUTIVO ? item.IdCoordinador : 0);
 
                 cmd.Parameters.AddWithValue("@curp", item.CURP);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
@@ -850,7 +853,7 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         Empleado item = new Empleado();
-                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
 
                         items.Add(item);

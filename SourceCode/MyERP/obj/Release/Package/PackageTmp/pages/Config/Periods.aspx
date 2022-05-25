@@ -111,7 +111,7 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Periodo</th>
+                                    <th>Periodo en semanas</th>
                                     <th>Activo</th>
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>

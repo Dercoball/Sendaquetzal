@@ -18,6 +18,7 @@ var mensajesAlertas = {
     exitoGuardar: 'Los datos se almacenaron correctamente.',
     errorSeleccionarSupervisor: 'Debe seleccionar un supervisor para poder continuar.',
     errorSeleccionarEjecutivo: 'Debe seleccionar un ejecutivo para poder continuar.',
+    errorSeleccionarCoordinador: 'Debe seleccionar un coordinador para poder continuar.',
     errorInesperado: 'Se ha producido un error inesperado. Por favor intente de nuevo.',
     exitoEliminar: 'El registro se eliminó correctamente.',
     exitoCancelarRefaccion: 'La solicitud de refacción se canceló correctamente.',

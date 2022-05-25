@@ -82,7 +82,7 @@
         <div class="row">
 
 
-            <div class="panel panel-success" style="color: black; width: 40%; margin-left: auto; margin-right: auto; margin-top: 10px;">
+            <div class="panel panel-success" style="color: black;margin-left: auto; margin-right: auto; margin-top: 10px;">
 
                 <h3 style="margin-top: 30px;">Login</h3>
 

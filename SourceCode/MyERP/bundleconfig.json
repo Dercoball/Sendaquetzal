@@ -346,5 +346,11 @@
     "inputFiles": [
       "js/app/config/commissions.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/config/days_off.min.js",
+    "inputFiles": [
+      "js/app/config/days_off.js"
+    ]
   }
 ]

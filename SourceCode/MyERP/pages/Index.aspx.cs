@@ -329,7 +329,7 @@ namespace Plataforma.pages
             {
 
                 nav += "<li " + active_Configuracion + "><a href=\"#liConfiguracion\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"icon-interface-windows\"></i>Configuracion</a> " +
+                    " <i class=\"icon-interface-windows\"></i>Configuración</a> " +
                 "  <ul id=\"liConfiguracion\" class=\"collapse list-unstyled\"> ";
 
 

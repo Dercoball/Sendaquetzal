@@ -106,7 +106,7 @@ $(document).ready(function () {
     $('#nombreUsuario').text(nombreUsuario);
 
 
-    cargarValoresConfiguracionEmpresa('4', '.nombre-empresa');//logo empresa
+    cargarValoresConfiguracionEmpresa('2', '.nombre-empresa');//logo empresa
     cargarValoresConfiguracionEmpresa('2', '#systemName');
     cargarValoresConfiguracionNombreSistema('8');// <title>
     cargarValoresConfiguracionEmpresa('3', '.empresa-copy');//link y año
@@ -131,7 +131,7 @@ $(document).ready(function () {
 
             const elementosInterfaz = msg.d;
 
-            //console.log(JSON.stringify(elementosInterfaz));
+            console.log(JSON.stringify(elementosInterfaz));
             console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
 
             if (elementosInterfaz != null && elementosInterfaz.Url !== '') {
@@ -140,9 +140,15 @@ $(document).ready(function () {
                 window.location = elementosInterfaz.Url;
             } else {
 
-                controlLateral();
+                $('#spnMenuSuperior').empty().html(elementosInterfaz.BarraSuperior).promise().done(function () {
 
-                $('#side-main-menu').html(elementosInterfaz.BarraLateral);
+                    controlLateral();
+
+                    $('#side-main-menu').html(elementosInterfaz.BarraLateral);
+
+                });
+
+                
 
             }
 
@@ -206,6 +212,7 @@ $(document).ready(function () {
                 let valores = msg.d;
 
                 $(controlHtml).html(valores.ValorCadena);
+                //$('.brand-text').html(valores.ValorCadena);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);

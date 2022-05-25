@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Calendars.aspx.cs" Inherits="Plataforma.pages.Calendars" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DaysOff.aspx.cs" Inherits="Plataforma.pages.DaysOff" %>
 
 <!DOCTYPE html>
 
@@ -65,21 +65,28 @@
             </div>
         </div>
     </nav>
-
     <div class="page">
         <!-- navbar-->
         <header class="header">
 
 
-           
             <nav class="navbar">
                 <div class="container-fluid">
 
+                    <div class="navbar-header">
+                        <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a>
+                        <a href="Index.aspx" class="navbar-brand">
+                            <div class="brand-text d-none d-md-inline-block">
+                                <span></span><strong class="text-primary"><span id="systemName" /></strong>
+                            </div>
+                        </a>
+                    </div>
+                    <ul class="nav-menu list-unstyled d-flex flex-md-row">
+                        <li class="nav-item"><a href="#" class="nav-link logout" onclick="window.top.location.href = '/pages/Logout.aspx'">
+                            <span class="d-none d-sm-inline-block">Salir</span><i class="fa fa-sign-out"></i></a>
+                        </li>
+                    </ul>
 
-                    <span id="spnMenuSuperior"></span>
-
-
-                    <!-- Languages dropdown    -->
 
                 </div>
             </nav>
@@ -92,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Calendarios</h1>
+                    <h1 class="h3 display">Días de paro</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -104,8 +111,10 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Nombre</th>
-                                    <th>Fecha</th>
+                                    <th>Nota</th>
+                                    <th>Fecha inicio</th>
+                                    <th>Fecha final</th>
+
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
                                     </th>
@@ -139,21 +148,45 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-6">
-                                        <label for="txtNombre">
-                                            Nombre
+                                        <label for="txtNota">
+                                            Nota
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtNota" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
+                                   
+
                                     <div class="form-group col-md-6">
-                                        <label for="txtFecha">
-                                            Fecha
+                                        <label for="comboPlaza">
+                                            Plazas a paro
                                         </label>
-                                        <input type="date" class="form-control campo-date" id="txtFecha"
-                                            required="required" data-required-error='Requerido' />
+                                        <select class="form-control campo-combo" id="comboPlaza" >
+                                        </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
+
+                                </div>
+
+                                 <div class="row">
+
+                                     <div class="form-group col-md-6">
+                                         <label for="txtFechaInicio">
+                                             Fecha inicio
+                                         </label>
+                                         <input type="date" class="form-control campo-date" id="txtFechaInicio"
+                                             required="required" data-required-error='Requerido' />
+                                         <div class="help-block with-errors"></div>
+                                     </div>
+
+                                     <div class="form-group col-md-6">
+                                         <label for="txtFechaFin">
+                                             Fecha final
+                                         </label>
+                                         <input type="date" class="form-control campo-date" id="txtFechaFin"
+                                             required="required" data-required-error='Requerido' />
+                                         <div class="help-block with-errors"></div>
+                                     </div>
 
 
 
@@ -301,7 +334,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/calendars.js"></script>
+    <script src="../../js/app/config/days_off.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

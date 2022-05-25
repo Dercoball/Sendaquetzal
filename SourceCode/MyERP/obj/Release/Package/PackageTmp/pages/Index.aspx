@@ -85,9 +85,8 @@
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
     </form>
 
-
     <!-- Side Navbar -->
-    <nav class="side-navbar">
+     <nav class="side-navbar">
         <div class="side-navbar-wrapper">
             <!-- Sidebar Header    -->
             <div class="sidenav-header d-flex align-items-center justify-content-center">
@@ -98,7 +97,7 @@
                     <span></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
-                <div class="sidenav-header-logo"><a href="Index.aspx" class="brand-small text-center"><strong>S</strong><strong class="text-primary">G</strong></a></div>
+                <div class="sidenav-header-logo"><a href="Index.aspx" class="brand-small text-center"><strong>S</strong><strong class="text-primary">Q</strong></a></div>
             </div>
             <!-- Sidebar Navigation Menus-->
             <div class="main-menu">
@@ -108,28 +107,20 @@
             </div>
         </div>
     </nav>
+
     <div class="page">
         <!-- navbar-->
         <header class="header">
 
 
-            <nav class="navbar">
+           <nav class="navbar">
                 <div class="container-fluid">
 
-                    <div class="navbar-header">
-                        <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a>
-                        <a href="Index.aspx" class="navbar-brand">
-                            <div class="brand-text d-none d-md-inline-block">
-                                <span></span><strong class="text-primary"><span id="systemName" /></strong>
-                            </div>
-                        </a>
-                    </div>
-                    <ul class="nav-menu list-unstyled d-flex flex-md-row">
-                        <li class="nav-item"><a href="#" class="nav-link logout" onclick="window.top.location.href = '/pages/Logout.aspx'">
-                            <span class="d-none d-sm-inline-block">Salir</span><i class="fa fa-sign-out"></i></a>
-                        </li>
-                    </ul>
 
+                    <span id="spnMenuSuperior"></span>
+
+
+                    <!-- Languages dropdown    -->
 
                 </div>
             </nav>
@@ -141,7 +132,7 @@
             <div class="container-fluid">
                 <div class="row d-flex align-items-md-stretch">
                     <div class="col-sm-12 text-center">
-                        <p class='nombreempresa'></p>
+                        SENDA QUETZAL
                     </div>
                 </div>
             </div>

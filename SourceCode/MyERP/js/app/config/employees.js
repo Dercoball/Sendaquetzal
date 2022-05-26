@@ -610,6 +610,7 @@ const employee = {
 
             if (!dataEmployee.IdSupervisor) dataEmployee.IdSupervisor = 0;
             if (!dataEmployee.IdEjecutivo) dataEmployee.IdEjecutivo = 0;
+            if (!dataEmployee.IdCoordinador) dataEmployee.IdCoordinador = 0;
 
             dataEmployee.IdPlaza = $('#comboPlaza').val();
             dataEmployee.IdComisionInicial = $('#comboComisionInicial').val();
@@ -653,6 +654,7 @@ const employee = {
             params = JSON.stringify(params);
 
             let urlService = (employee.accion === 'nuevo') ? "Save" : "Update";
+            //url: "  ../../pages/Config/Employees.aspx/GetListaItems",
 
             $.ajax({
                 type: "POST",

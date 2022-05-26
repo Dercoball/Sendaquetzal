@@ -348,7 +348,7 @@
                                         <label for="txtMontoLimiteInicial">
                                             Monto límite inicial
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtMontoLimiteInicial"
+                                        <input type="number" class="form-control campo-number" id="txtMontoLimiteInicial" step="1"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>

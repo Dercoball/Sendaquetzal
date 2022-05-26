@@ -1099,7 +1099,8 @@ namespace Plataforma.pages
                 DataSet ds = new DataSet();
                 string query = @" SELECT id_empleado, id_tipo_usuario, id_comision_inicial, id_posicion, id_plaza, curp, email, 
                                     nombre, primer_apellido, segundo_apellido, telefono, eliminado, 
-                                    activo, id_supervisor, id_ejecutivo, FORMAT(fecha_ingreso, 'yyyy-MM-dd') fecha_ingreso, 
+                                    activo, IsNull(id_supervisor, 0) id_supervisor, IsNull(id_ejecutivo, 0) id_ejecutivo, 
+                                    IsNull(id_coordinador, 0) id_coordinador, FORMAT(fecha_ingreso, 'yyyy-MM-dd') fecha_ingreso, 
                                     FORMAT(fecha_nacimiento, 'yyyy-MM-dd') fecha_nacimiento,
                                     monto_limite_inicial,
                                     nombre_aval, primer_apellido_aval, segundo_apellido_aval, curp_aval, telefono_aval,
@@ -1129,8 +1130,10 @@ namespace Plataforma.pages
                         item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
                         item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
                         item.IdComisionInicial = int.Parse(ds.Tables[0].Rows[i]["id_comision_inicial"].ToString());
+
                         item.IdSupervisor = int.Parse(ds.Tables[0].Rows[i]["id_supervisor"].ToString());
                         item.IdEjecutivo = int.Parse(ds.Tables[0].Rows[i]["id_ejecutivo"].ToString());
+                        item.IdCoordinador = int.Parse(ds.Tables[0].Rows[i]["id_coordinador"].ToString());
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 

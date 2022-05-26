@@ -8,6 +8,8 @@ namespace Plataforma.Clases
     public class Direccion{ 
 
         public int IdEmpleado;
+        public int IdCliente;
+
         public int Aval;
         public String Calle;
         public String Colonia;
@@ -17,6 +19,7 @@ namespace Plataforma.Clases
         public int Activo;
         public string Accion;
         public string ActivoStr;
+        public string DireccionTrabajo;
        
 
 

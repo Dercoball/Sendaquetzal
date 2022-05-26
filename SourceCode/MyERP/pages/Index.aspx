@@ -132,11 +132,27 @@
             <div class="container-fluid">
                 <div class="row d-flex align-items-md-stretch">
                     <div class="col-sm-12 text-center">
-                        SENDA QUETZAL
+                        SENDA QUETZALll
                     </div>
                 </div>
             </div>
         </section>
+
+        <section class="opcion">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-12" >
+                    <ul class="nav navbar-nav navbar-right links2">
+                        <li><a href="../pages/Clients.aspx">Clientes</a></li>
+                    </ul>
+                        
+                </div>
+            </div>
+
+
+        </div>
+    </section>
 
         <section class="statistics">
 

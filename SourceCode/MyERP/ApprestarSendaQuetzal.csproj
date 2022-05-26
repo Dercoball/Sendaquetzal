@@ -146,6 +146,9 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\config\clients.min.js">
+      <DependentUpon>clients.js</DependentUpon>
+    </Content>
     <Content Include="js\app\config\days_off.js" />
     <Content Include="js\app\config\calendars.min.js">
       <DependentUpon>calendars.js</DependentUpon>
@@ -260,6 +263,7 @@
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\DaysOff.aspx" />
     <Content Include="pages\Config\Commissions.aspx" />
+    <Content Include="pages\Clients.aspx" />
     <Content Include="pages\Config\Messages.aspx" />
     <Content Include="pages\Config\Calendars.aspx" />
     <Content Include="pages\Config\Categories.aspx" />
@@ -1130,6 +1134,7 @@
     <Compile Include="Clases\Periodo.cs" />
     <Compile Include="Clases\Calendario.cs" />
     <Compile Include="Clases\Plantilla.cs" />
+    <Compile Include="Clases\Prestamo.cs" />
     <Compile Include="Clases\Plaza.cs" />
     <Compile Include="Clases\Direccion.cs" />
     <Compile Include="Clases\Plaza.cs" />
@@ -1169,6 +1174,13 @@
     </Compile>
     <Compile Include="pages\Config\Commissions.aspx.designer.cs">
       <DependentUpon>Commissions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Clients.aspx.cs">
+      <DependentUpon>Clients.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Clients.aspx.designer.cs">
+      <DependentUpon>Clients.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Config\Messages.aspx.cs">
       <DependentUpon>Messages.aspx</DependentUpon>
@@ -1507,6 +1519,12 @@
     <Folder Include="pages\Loans\" />
     <Folder Include="pages\Request\" />
     <Folder Include="Uploads\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="js\app\config\clients.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

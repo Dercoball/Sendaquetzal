@@ -132,8 +132,8 @@ $(document).ready(function () {
 
             const elementosInterfaz = msg.d;
 
-            console.log(JSON.stringify(elementosInterfaz));
-            console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
+            //console.log(JSON.stringify(elementosInterfaz));
+            //console.log(`elementosInterfaz.Url ${elementosInterfaz.Url}`);
 
             if (elementosInterfaz != null && elementosInterfaz.Url !== '') {
 

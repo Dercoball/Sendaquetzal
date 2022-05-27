@@ -31,7 +31,7 @@ namespace Plataforma.pages
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
 
-            
+
 
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
@@ -117,9 +117,9 @@ namespace Plataforma.pages
 
                         string botones = "<button  onclick='employee.edit(" + item.IdEmpleado + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
                         botones += "&nbsp; <button  onclick='employee.delete(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-                        
+
                         botones += " &nbsp; <button  title='Asignar contraseña' " +
-                            " onclick='employee.changePassword(" + item.IdEmpleado + "," + item.IdPosicion  + ",\"" + item.Login + "\")'   class='btn btn-outline-primary'> <span class='fa fa-lock mr-1'></span>Contraseña</button> " + 
+                            " onclick='employee.changePassword(" + item.IdEmpleado + "," + item.IdPosicion + ",\"" + item.Login + "\")'   class='btn btn-outline-primary'> <span class='fa fa-lock mr-1'></span>Contraseña</button> " +
                             "";
 
                         item.Accion = botones;
@@ -148,6 +148,52 @@ namespace Plataforma.pages
         }
 
 
+        public static Usuario GetUsuarioByLogin(string path, string login, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        {
+
+            Usuario item = null;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT TOP 1 id_usuario, id_tipo_usuario,  nombre, login, password, email, telefono 
+                                FROM usuario 
+                                WHERE login = @login ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                Utils.Log("login =  " + login);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@login", login);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    item = new Usuario();
+                    item.Login = ds.Tables[0].Rows[0]["login"].ToString();
+
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+         
+
+        }
+
 
         [WebMethod]
         public static DatosSalida Save(string path, Empleado item, Direccion itemAddress, Direccion itemAddressAval,
@@ -174,6 +220,20 @@ namespace Plataforma.pages
                 conn.Open();
 
                 transaccion = conn.BeginTransaction();
+
+
+                //  Validar que no exista un nombre de usuario-login 
+                Usuario usuarioExists = GetUsuarioByLogin(path, itemUser.Login, conn, strConexion, transaccion);
+                if (usuarioExists != null)
+                {
+                    salida.MensajeError = "Ya existe un usuario con el Nombre de usuario/Login " + itemUser.Login + " por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+
+
+                    return salida;
+                }
+
+
 
 
                 Utils.Log("\nMétodo-> " +
@@ -323,6 +383,16 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
+                try
+                {
+                    transaccion.Rollback();
+                }
+                catch (Exception exep)
+                {
+                    Utils.Log("Error ... " + exep.Message);
+                    Utils.Log(exep.StackTrace);
+                }
+
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 r = -1;

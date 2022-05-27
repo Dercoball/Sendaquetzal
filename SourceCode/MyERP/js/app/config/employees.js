@@ -668,7 +668,7 @@ const employee = {
 
 
                     //debugger;
-                    if (valores.CodigoError == 0) {
+                    if (Number(valores.CodigoError) === 0) {
 
                         if (employee.accion === 'nuevo') {
 
@@ -704,7 +704,7 @@ const employee = {
 
                     } else {
 
-                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+                        utils.toast(valores.MensajeError, 'error');
 
                     }
 

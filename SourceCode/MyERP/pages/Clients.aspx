@@ -122,7 +122,7 @@
                                 <th>Monto Prestamo</th>
                                 <th>Fecha prestamo</th>
                                 <th>
-                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo</button>
+                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo prestamo</button>
                                 </th>
 
                             </thead>
@@ -807,7 +807,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/clients.js"></script>
+    <script src="../../js/app/clients.js"></script>
     <script src="../../js/app/general.js"></script>
 
 

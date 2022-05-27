@@ -275,7 +275,7 @@ namespace Plataforma
                 sql = @" UPDATE documento 
                                      SET contenido = @contenido, nombre = @nombre, fecha_ingreso = @fecha_ingreso, url = @url, extension = @extension
                                      WHERE 
-                                     id_tipo_documento = @id_tipo_documento AND id_empleado = @id_empleado ";
+                                     id_tipo_documento = @id_tipo_documento AND id_cliente = @id_cliente ";
 
                 Log("sql = " + sql);
 

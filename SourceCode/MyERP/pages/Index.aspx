@@ -142,9 +142,9 @@
         <div class="container">
 
             <div class="row">
-                <div class="col-md-12" >
+                <div class="col-md-12 text-right" >
                     <ul class="nav navbar-nav navbar-right links2">
-                        <li><a href="../pages/Clients.aspx">Clientes</a></li>
+                        <li><a href="../pages/Clients.aspx">NUEVO PRESTAMO</a></li>
                     </ul>
                         
                 </div>

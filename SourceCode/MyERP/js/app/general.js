@@ -474,7 +474,6 @@ var utils = {
 
         if (fileOwner === "cliente") {
             // en caso de que el usuario que guarda su imagen sea un cliente
-
             formData.append('id', 0);//0
         } else {
             formData.append('id', idItem);//0
@@ -491,7 +490,8 @@ var utils = {
 
       
         if (fileOwner === "cliente") {
-            formData.append('id', idItem);//0
+            formData.append('id_cliente', idItem);//0
+            console.log("cliente");
         } else {
             formData.append('id_cliente', 0)//8
         }

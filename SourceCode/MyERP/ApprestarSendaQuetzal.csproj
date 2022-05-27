@@ -146,7 +146,7 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
-    <Content Include="js\app\config\clients.min.js">
+    <Content Include="js\app\clients.min.js">
       <DependentUpon>clients.js</DependentUpon>
     </Content>
     <Content Include="js\app\config\days_off.js" />
@@ -1521,7 +1521,7 @@
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="js\app\config\clients.js" />
+    <Content Include="js\app\clients.js" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

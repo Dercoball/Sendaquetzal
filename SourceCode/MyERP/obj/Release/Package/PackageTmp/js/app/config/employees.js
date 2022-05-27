@@ -668,7 +668,7 @@ const employee = {
 
 
                     //debugger;
-                    if (valores.CodigoError == 0) {
+                    if (Number(valores.CodigoError) === 0) {
 
                         if (employee.accion === 'nuevo') {
 
@@ -680,7 +680,7 @@ const employee = {
                                 let file;
                                 if (file = this.files[0]) {
 
-                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento);
+                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "empleado");
 
                                 }
 
@@ -704,7 +704,7 @@ const employee = {
 
                     } else {
 
-                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+                        utils.toast(valores.MensajeError, 'error');
 
                     }
 
@@ -736,7 +736,7 @@ const employee = {
                 let file;
                 if (file = this.files[0]) {
 
-                    utils.sendFileEmployee(file, 'update_document_employee', employee.idSeleccionado, idTipoDocumento);
+                    utils.sendFileEmployee(file, 'update_document_employee', employee.idSeleccionado, idTipoDocumento, "empleado");
 
                     setTimeout(function () {
 

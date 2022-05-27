@@ -261,6 +261,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Clients.aspx" />
     <Content Include="pages\Config\DaysOff.aspx" />
     <Content Include="pages\Config\Commissions.aspx" />
     <Content Include="pages\Config\Messages.aspx" />
@@ -1160,6 +1161,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Clients.aspx.cs">
+      <DependentUpon>Clients.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Clients.aspx.designer.cs">
+      <DependentUpon>Clients.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Config\DaysOff.aspx.cs">
       <DependentUpon>DaysOff.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

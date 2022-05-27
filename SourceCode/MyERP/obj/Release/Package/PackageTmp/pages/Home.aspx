@@ -34,7 +34,7 @@
 
 
 
-    <title></title>
+    <title>Senda Quetzal</title>
 
     <style>
       
@@ -43,7 +43,7 @@
 </head>
 <body>
 
-    <header>
+    <   >
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -77,7 +77,7 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </>
 
 
     <img src="../img/brand.png" class="img-responsive  center-block" style="margin-top: 70px;" />
@@ -143,7 +143,7 @@
         </div>
     </section>--%>
 
-
+   
     <section class="pasos">
         <div class="container">
             <%--    <div class="col-md-12">

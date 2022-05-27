@@ -34,8 +34,7 @@
 
 
 
-    <title></title>
-
+    <title>Senda Quetzal</title>
 </head>
 <body>
     <header>
@@ -79,7 +78,7 @@
 
 
 
-       <footer>
+    <footer>
         <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Employees.aspx.cs" Inherits="Plataforma.pages.Employees" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Clients.aspx.cs" Inherits="Plataforma.pages.Clients" %>
 
 <!DOCTYPE html>
 
@@ -101,7 +101,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Colaboradores</h1>
+                    <h1 class="h3 display">Clientes</h1>
 
                 </header>
 
@@ -115,13 +115,14 @@
 
                                 <th>No.</th>
                                 <th>Nombre</th>
-                                <th>Usuario</th>
-                                <th>Módulo</th>
-                                <th>Tipo usuario</th>
-                                <th>Plaza</th>
-                                <th>Fecha ingreso</th>
+                                <th>Tipo Cliente</th>
+                                <th>Telefono</th>
+                                <th>CURP</th>
+                                <th>Ocupación</th>
+                                <th>Monto Prestamo</th>
+                                <th>Fecha prestamo</th>
                                 <th>
-                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo</button>
+                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo prestamo</button>
                                 </th>
 
                             </thead>
@@ -136,13 +137,13 @@
 
 
                 <div id="panelForm" style="overflow-y: auto;">
-                    <form role="form" id="frm" name="frm" data-toggle="validator">
+                    <form role="form" id="frm" name="frm">
 
                         <%--Datos de ingreso--%>
                         <div class="card">
 
                             <div class="card-header">
-                                Datos de ingreso
+                                Datos del prestamo
                             </div>
 
                             <div class="card-body">
@@ -151,51 +152,21 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtFechaIngreso">
-                                            Fecha de ingreso
+                                        <label for="txtFechaSolicitud">
+                                            Fecha de solicitud
                                         </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaIngreso"
+                                        <input type="date" class="form-control campo-date" id="txtFechaSolicitud"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="comboPosicion">
-                                            Posición
+                                        <label for="txtCantidadPrestamo">
+                                            Cantidad
                                         </label>
-                                        <select class="form-control campo-combo" id="comboPosicion" required="required" data-required-error='Requerido'>
-                                        </select>
+                                        <input type="text" class="form-control campo-input" id="txtCantidadPrestamo"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <div class="combo-supervisor">
-                                            <label for="comboSupervisor">
-                                                Supervisor
-                                            </label>
-                                            <select class="form-control campo-combo" id="comboSupervisor">
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="combo-ejecutivo">
-                                            <label for="comboEjecutivo">
-                                                Ejecutivo
-                                            </label>
-                                            <select class="form-control campo-combo" id="comboEjecutivo">
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                         <div class="combo-coordinador">
-                                            <label for="comboCoordinador">
-                                                Coordinador
-                                            </label>
-                                            <select class="form-control campo-combo" id="comboCoordinador">
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
                                     </div>
 
 
@@ -204,11 +175,11 @@
                             </div>
                         </div>
 
-                        <%--Datos del Colaborador--%>
+                        <%--Datos del cliente--%>
                         <div class="card">
 
                             <div class="card-header">
-                                Colaborador
+                                Cliente
                             </div>
 
                             <div class="card-body">
@@ -225,15 +196,14 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="txtFechaNacimiento">
-                                            Fecha de nacimiento
+                                        <label for="comboTipoCliente">
+                                            Tipo de cliente
                                         </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaNacimiento"
-                                            required="required" data-required-error='Requerido' />
+                                        <select class="form-control campo-combo" id="comboTipoCliente" required="required" data-required-error='Requerido'>
+                                        </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
-
-
+                                    
                                 </div>
 
 
@@ -296,10 +266,6 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                </div>
-
-                                <div class="row">
-
                                     <div class="form-group col-md-4">
                                         <label for="txtEstado">
                                             Estado
@@ -308,7 +274,13 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
+                                   
 
+                                </div>
+
+                                <div class="row">
+
+                                    
                                     <div class="form-group col-md-4">
                                         <label for="txtCodigoPostal">
                                             Código postal
@@ -317,6 +289,27 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
+
+                                    
+
+                                     <div class="form-group col-md-4">
+                                        <label for="txtOcupacion">
+                                            Ocupación
+                                        </label>
+                                        <input type="text" class="form-control campo-input" id="txtOcupacion"
+                                            required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                     <div class="form-group col-md-4">
+                                        <label for="txtDireccionTrabajo">
+                                            Dirección de trabajo
+                                        </label>
+                                        <input type="text" class="form-control campo-input" id="txtDireccionTrabajo"
+                                            required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                    
 
                                     <div class="form-group col-md-4">
                                         <label for="txtTelefono">
@@ -331,79 +324,7 @@
                                 </div>
 
 
-
                                 <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="comboPlaza">
-                                            Plaza
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboPlaza" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtMontoLimiteInicial">
-                                            Monto límite inicial
-                                        </label>
-                                        <input type="number" class="form-control campo-number" id="txtMontoLimiteInicial" step="1"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-4 ejecutivo">
-                                        <label for="comboComisionInicial">
-                                            Comisión inicial
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboComisionInicial" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtNombreUsuario">
-                                            Usuario
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtNombreUsuario" title=""
-                                            required="required" data-required-error='Requerido' 
-                                            pattern="[0-9A-Za-z]{4,}" 
-                                            data-pattern-error="Solo se permiten letras y números. Mínimo 4."
-                                            />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtPassword">
-                                            Contraseña
-                                        </label>
-                                        <input type="password" class="form-control campo-input" id="txtPassword"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Fotografía
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-fotografia documentos-colaborador" data-tipo="1" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
 
                                     <div class="form-group col-md-4">
 
@@ -423,6 +344,17 @@
                                         </label>
 
                                         <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    
+                                    <div class="form-group col-md-4">
+
+                                        <label>
+                                            Comprobante de domicilio
+                                        </label>
+
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4" />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -467,59 +399,6 @@
                                     </div>
 
 
-
-                                </div>
-
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Comprobante de domicilio
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Carta no antecedentes penales
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-carta-no-antecedentes documentos-colaborador" data-tipo="5" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="4" id="href_4">
-                                                    <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="5" id="href_5">
-                                                    <img src="../../img/upload.png" id="img_5" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
-                                        </div>
-                                    </div>
 
                                 </div>
 
@@ -611,11 +490,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
+                                     <div class="form-group col-md-4">
                                         <label for="txtEstadoAval">
                                             Estado
                                         </label>
@@ -623,6 +498,12 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                   
 
                                     <div class="form-group col-md-4">
                                         <label for="txtCodigoPostalAval">
@@ -632,6 +513,25 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
+
+                                   <div class="form-group col-md-4">
+                                        <label for="txtOcupacionAval">
+                                            Ocupación
+                                        </label>
+                                        <input type="text" class="form-control campo-input" id="txtOcupacionAval"
+                                            required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                     <div class="form-group col-md-4">
+                                        <label for="txtDireccionTrabajoAval">
+                                            Dirección de trabajo
+                                        </label>
+                                        <input type="text" class="form-control campo-input" id="txtDireccionTrabajoAval"
+                                            required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                    
 
                                     <div class="form-group col-md-4">
                                         <label for="txtTelefonoAval">
@@ -709,7 +609,7 @@
 
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
+                                            <div class="card-body text-center">dd
                                                 <a href="#" class="img-document" data-tipo="8" id="href_8">
                                                     <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
                                                 </a>
@@ -907,8 +807,9 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/employees.js"></script>
+    <script src="../../js/app/clients.js"></script>
     <script src="../../js/app/general.js"></script>
+
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet">

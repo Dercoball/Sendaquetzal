@@ -680,7 +680,7 @@ const employee = {
                                 let file;
                                 if (file = this.files[0]) {
 
-                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento);
+                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "empleado");
 
                                 }
 
@@ -736,7 +736,7 @@ const employee = {
                 let file;
                 if (file = this.files[0]) {
 
-                    utils.sendFileEmployee(file, 'update_document_employee', employee.idSeleccionado, idTipoDocumento);
+                    utils.sendFileEmployee(file, 'update_document_employee', employee.idSeleccionado, idTipoDocumento, "empleado");
 
                     setTimeout(function () {
 

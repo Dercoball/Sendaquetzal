@@ -457,20 +457,30 @@ var utils = {
     },
 
 
-    sendFileEmployee: (file, nombreArchivo, idItem, tipo) => {
+    sendFileEmployee: (file, nombreArchivo, idItem, tipo, fileOwner) => {
 
 
         var files = file;
         var fileName = files.name;
         var extension = utils.getFileExtension(fileName);
         var idUsuario = idUsuario;
+        var idOwner = "";
 
+      
 
 
 
         var formData = new FormData();
         formData.append('file', file);
-        formData.append('id', idItem);//0
+
+        if (fileOwner === "cliente") {
+            // en caso de que el usuario que guarda su imagen sea un cliente
+            formData.append('id', 0);//0
+        } else {
+            formData.append('id', idItem);//0
+        }
+
+
         formData.append('pagina', window.location.pathname);//
         formData.append('path', window.location.hostname);//
         formData.append('extension', extension);//
@@ -478,7 +488,14 @@ var utils = {
         formData.append('tipo', tipo);//5
         formData.append('idUsuario', idUsuario);//
         formData.append('nombreArchivo', nombreArchivo)//7
-        formData.append('id_cliente', 0)//8
+
+      
+        if (fileOwner === "cliente") {
+            formData.append('id_cliente', idItem);//0
+            console.log("cliente");
+        } else {
+            formData.append('id_cliente', 0)//8
+        }
 
 
         $.ajax({
@@ -497,6 +514,50 @@ var utils = {
             }
         });
     },
+
+
+    sendFileClient: (file, nombreArchivo, idItem, tipo) => {
+
+
+        var files = file;
+        var fileName = files.name;
+        var extension = utils.getFileExtension(fileName);
+        var idUsuario = idUsuario;
+
+
+
+
+        var formData = new FormData();
+        formData.append('file', file);
+        // Se asigna cero para que id_empleado sea 0 porque es archivo de cliente
+        formData.append('id', 0);//0
+        formData.append('pagina', window.location.pathname);//
+        formData.append('path', window.location.hostname);//
+        formData.append('extension', extension);//
+        formData.append('descripcion', fileName);//
+        formData.append('tipo', tipo);//5
+        formData.append('idUsuario', idUsuario);//
+        formData.append('nombreArchivo', nombreArchivo)//7
+        formData.append('id_cliente', idItem)//8
+
+
+        $.ajax({
+            type: 'post',
+            url: '../../pages/FileUploader.ashx',
+            data: formData,
+            success: function (status) {
+                if (status != 'error') {
+                    console.log('Upload OK...');
+                }
+            },
+            processData: false,
+            contentType: false,
+            error: function (err) {
+                console.log('Upload Fail...' + err);
+            }
+        });
+    },
+
 
 
     toast: (mensaje, tipo) => {

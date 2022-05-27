@@ -263,7 +263,6 @@
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\DaysOff.aspx" />
     <Content Include="pages\Config\Commissions.aspx" />
-    <Content Include="pages\Clients.aspx" />
     <Content Include="pages\Config\Messages.aspx" />
     <Content Include="pages\Config\Calendars.aspx" />
     <Content Include="pages\Config\Categories.aspx" />
@@ -1174,13 +1173,6 @@
     </Compile>
     <Compile Include="pages\Config\Commissions.aspx.designer.cs">
       <DependentUpon>Commissions.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="pages\Clients.aspx.cs">
-      <DependentUpon>Clients.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="pages\Clients.aspx.designer.cs">
-      <DependentUpon>Clients.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Config\Messages.aspx.cs">
       <DependentUpon>Messages.aspx</DependentUpon>

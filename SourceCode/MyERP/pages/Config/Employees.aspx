@@ -136,7 +136,7 @@
 
 
                 <div id="panelForm" style="overflow-y: auto;">
-                    <form role="form" id="frm" name="frm">
+                    <form role="form" id="frm" name="frm" data-toggle="validator">
 
                         <%--Datos de ingreso--%>
                         <div class="card">
@@ -373,8 +373,11 @@
                                         <label for="txtNombreUsuario">
                                             Usuario
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtNombreUsuario"
-                                            required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control campo-input" id="txtNombreUsuario" title=""
+                                            required="required" data-required-error='Requerido' 
+                                            pattern="[0-9A-Za-z]{4,}" 
+                                            data-pattern-error="Solo se permiten letras y números. Mínimo 4."
+                                            />
                                         <div class="help-block with-errors"></div>
                                     </div>
 

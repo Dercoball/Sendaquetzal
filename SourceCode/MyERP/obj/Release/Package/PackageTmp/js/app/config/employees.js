@@ -29,10 +29,12 @@ const employee = {
         employee.loadComboModulo();
         employee.loadComboEmployeesByPosicion(POSICION_EJECUTIVO, '#comboEjecutivo');
         employee.loadComboEmployeesByPosicion(POSICION_SUPERVISOR, '#comboSupervisor');
+        employee.loadComboEmployeesByPosicion(POSICION_COORDINADOR, '#comboCoordinador');
         employee.cargarItems();
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
+        $('.combo-coordinador').hide();
 
     },
 
@@ -184,6 +186,7 @@ const employee = {
                 $('#comboPlaza').val(item.IdPlaza);
                 $('#comboEjecutivo').val(item.IdEjecutivo);
                 $('#comboSupervisor').val(item.IdSupervisor);
+                $('#comboCoordinador').val(item.IdCoordinador);
 
                 //  dirección empleado
                 $('#txtCalle').val(item.direccion.Calle);
@@ -223,11 +226,19 @@ const employee = {
                 if (Number(item.IdPosicion) === Number(POSICION_PROMOTOR)) {
                     $('.combo-supervisor').show();
                     $('.combo-ejecutivo').hide();
+                    $('.combo-coordinador').hide();
                 }
                 else if (Number(item.IdPosicion) === Number(POSICION_SUPERVISOR)) {
-                    $('.combo-supervisor').hide();
                     $('.combo-ejecutivo').show();
+                    $('.combo-supervisor').hide();
+                    $('.combo-coordinador').hide();
+                }
+                else if (Number(item.IdPosicion) === Number(POSICION_EJECUTIVO)) {
+                    $('.combo-coordinador').show();
+                    $('.combo-ejecutivo').hide();
+                    $('.combo-supervisor').hide();
                 } else {
+                    $('.combo-coordinador').hide();
                     $('.combo-supervisor').hide();
                     $('.combo-ejecutivo').hide();
                 }
@@ -313,6 +324,7 @@ const employee = {
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
+        $('.combo-coordinador').hide();
         $('#txtPassword').prop('disabled', false);
 
         //employee.testData();
@@ -355,7 +367,7 @@ const employee = {
 
                 }
 
-                $(`${control} `).html(opcion);
+                $(`${control}`).html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -568,12 +580,22 @@ const employee = {
                 }
             }
 
+            if (Number(valuePosition) === Number(POSICION_EJECUTIVO)) {
+                let id = $('#comboCoordinador').val();
+                if (!id) {
+                    utils.toast(mensajesAlertas.errorSeleccionarCoordinador, 'error');
+
+                    return;
+                }
+            }
+
             let dataEmployee = {};
             dataEmployee.IdEmpleado = employee.idSeleccionado;
             dataEmployee.FechaIngreso = $('#txtFechaIngreso').val();
             dataEmployee.IdPosicion = $('#comboPosicion').val();
             dataEmployee.IdSupervisor = $('#comboSupervisor').val() == null ? 0 : $('#comboSupervisor').val();
             dataEmployee.IdEjecutivo = $('#comboEjecutivo').val() == null ? 0 : $('#comboEjecutivo').val();
+            dataEmployee.IdCoordinador = $('#comboCoordinador').val() == null ? 0 : $('#comboCoordinador').val();
             dataEmployee.CURP = $('#txtCURP').val();
             dataEmployee.FechaNacimiento = $('#txtFechaNacimiento').val();
             dataEmployee.PrimerApellido = $('#txtPrimerApellido').val();
@@ -588,6 +610,7 @@ const employee = {
 
             if (!dataEmployee.IdSupervisor) dataEmployee.IdSupervisor = 0;
             if (!dataEmployee.IdEjecutivo) dataEmployee.IdEjecutivo = 0;
+            if (!dataEmployee.IdCoordinador) dataEmployee.IdCoordinador = 0;
 
             dataEmployee.IdPlaza = $('#comboPlaza').val();
             dataEmployee.IdComisionInicial = $('#comboComisionInicial').val();
@@ -631,6 +654,7 @@ const employee = {
             params = JSON.stringify(params);
 
             let urlService = (employee.accion === 'nuevo') ? "Save" : "Update";
+            //url: "  ../../pages/Config/Employees.aspx/GetListaItems",
 
             $.ajax({
                 type: "POST",
@@ -737,11 +761,19 @@ const employee = {
             if (Number(value) === Number(POSICION_PROMOTOR)) {
                 $('.combo-supervisor').show();
                 $('.combo-ejecutivo').hide();
+                $('.combo-coordinador').hide();
             }
             else if (Number(value) === Number(POSICION_SUPERVISOR)) {
-                $('.combo-supervisor').hide();
                 $('.combo-ejecutivo').show();
+                $('.combo-supervisor').hide();
+                $('.combo-coordinador').hide();
+            }
+            else if (Number(value) === Number(POSICION_EJECUTIVO)) {
+                $('.combo-coordinador').show();
+                $('.combo-ejecutivo').hide();
+                $('.combo-supervisor').hide();
             } else {
+                $('.combo-coordinador').hide();
                 $('.combo-supervisor').hide();
                 $('.combo-ejecutivo').hide();
             }

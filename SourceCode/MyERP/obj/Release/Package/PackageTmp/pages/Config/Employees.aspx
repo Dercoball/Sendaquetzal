@@ -186,6 +186,16 @@
                                             </select>
                                             <div class="help-block with-errors"></div>
                                         </div>
+
+                                         <div class="combo-coordinador">
+                                            <label for="comboCoordinador">
+                                                Coordinador
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboCoordinador">
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
                                     </div>
 
 
@@ -338,7 +348,7 @@
                                         <label for="txtMontoLimiteInicial">
                                             Monto límite inicial
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtMontoLimiteInicial"
+                                        <input type="number" class="form-control campo-number" id="txtMontoLimiteInicial" step="1"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>

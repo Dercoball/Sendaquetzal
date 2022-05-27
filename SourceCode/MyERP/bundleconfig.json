@@ -352,5 +352,17 @@
     "inputFiles": [
       "js/app/config/days_off.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/config/clients.min.js",
+    "inputFiles": [
+      "js/app/config/clients.js"
+    ]
+  },
+  {
+    "outputFileName": "js/app/clients.min.js",
+    "inputFiles": [
+      "js/app/clients.js"
+    ]
   }
 ]

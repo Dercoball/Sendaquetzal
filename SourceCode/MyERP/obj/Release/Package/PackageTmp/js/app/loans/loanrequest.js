@@ -592,9 +592,8 @@ const client = {
 
             $(`.documentos`).attr('src', '../../img/upload.png');
 
+            window.location = "LoansIndex.aspx";
 
-            $('#panelTabla').show();
-            $('#panelForm').hide();
 
         });
 

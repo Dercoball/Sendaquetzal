@@ -364,5 +364,11 @@
     "inputFiles": [
       "js/app/clients.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/loans/loanrequest.min.js",
+    "inputFiles": [
+      "js/app/loans/loanrequest.js"
+    ]
   }
 ]

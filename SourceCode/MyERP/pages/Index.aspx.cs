@@ -196,7 +196,7 @@ namespace Plataforma.pages
         {
 
             ElementosInterfaz elementos = new ElementosInterfaz();
-            
+
 
             if (idTipoUsuario == string.Empty)
             {
@@ -238,19 +238,43 @@ namespace Plataforma.pages
             string nav = "";
 
 
-            List<string> paginaHome = new List<string>
+
+
+            if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString())
+            {
+
+                List<string> paginaHomePromotor = new List<string>
                 {
-                    "83"
+                    "13"
                 };
-            var esPagina_Home = paginaHome.Find(x => x == pagina);
-            string active_Home = esPagina_Home != null ? "class = 'active' " : "";
+                var esPagina_HomePromotor = paginaHomePromotor.Find(x => x == pagina);
+                PermisoUsuario loadIndex = listaPermisos.Find(x => x.IdPermiso == 13);
+                string active_HomePromotor = esPagina_HomePromotor != null ? "class = 'active' " : "";
 
-            nav += "<li " + active_Home +
-              "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + "Index.aspx\" aria-expanded=\"false\"> " +
-              " <i class=\"icon-interface-windows\"></i>Home</a>   ";
+                nav += "<li " + active_HomePromotor +
+                  "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + loadIndex.NombreInterno +"\"> " +
+                  " <i class=\"icon-interface-windows\"></i>Home</a>   ";
+                nav += "</li> ";
+
+            }
+            else
+            {
+                //
+                List<string> paginaHome = new List<string>
+                {
+                    "0"
+                };
+                var esPagina_Home = paginaHome.Find(x => x == pagina);
+                string active_Home = esPagina_Home != null ? "class = 'active' " : "";
+
+                nav += "<li " + active_Home +
+                  "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + "Index.aspx\" aria-expanded=\"false\"> " +
+                  " <i class=\"icon-interface-windows\"></i>Home</a>   ";
 
 
-            nav += "</li> ";
+                nav += "</li> ";
+
+            }
 
             //........MENU WEB
             //Agregar los numeros de paginas o permisos , de los tipo WEB
@@ -372,7 +396,7 @@ namespace Plataforma.pages
 
             string barraSuperior = "" +
             " <div class=\"navbar-holder d-flex align-items-center justify-content-between\"> " +
-            "  <div class=\"navbar-header\"><a id=\"toggle-btn\" href=\"#\" class=\"menu-btn\"><i class=\"icon-bars\"> </i></a><a href=\"Index.aspx\" class=\"navbar-brand\">  " +
+            "  <div class=\"navbar-header\"><a id=\"toggle-btn\" href=\"#\" class=\"menu-btn\"><i class=\"icon-bars\"> </i></a><a href=\"#\" class=\"navbar-brand\">  " +
             "      <div class=\"brand-text d-none d-md-inline-block\"><span></span><strong class=\"text-primary\">" + nombreEmpresa.ValorCadena + "</strong></div></a></div> " +
 
             "                <ul class=\"nav-menu list-unstyled d-flex flex-md-row\"> " +

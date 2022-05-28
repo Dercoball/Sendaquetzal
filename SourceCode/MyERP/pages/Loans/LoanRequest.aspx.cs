@@ -12,17 +12,9 @@ using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
-    public partial class Clients : System.Web.UI.Page
+    public partial class LoanRequest : System.Web.UI.Page
     {
-        const string pagina = "50";
-
-
-        const int POSICION_DIRECTOR = 1;
-        const int POSICION_COORDINADOR = 2;
-        const int POSICION_EJECUTIVO = 3;
-        const int POSICION_SUPERVISOR = 4;
-        const int POSICION_PROMOTOR = 5;
-
+        const string pagina = "12";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -276,11 +268,12 @@ namespace Plataforma.pages
 
                 //  Guardar prestamo
                 sql = @"  INSERT INTO prestamo
-                            (fecha_solicitud, monto, id_status_prestamo, id_cliente, id_usuario)
+                            (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo)
                             VALUES
-                            (@fecha_solicitud, @monto, 0, @id_cliente, @id_usuario);
+                            (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo);
                         ";
 
+                // un nuevo prestamo nace con status 1 = PENDIENTE
 
                 Utils.Log("insert prestamo " + sql);
 
@@ -293,6 +286,7 @@ namespace Plataforma.pages
                 cmdInsertPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
                 cmdInsertPrestamo.Parameters.AddWithValue("@monto", item.Monto);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);
 
                 cmdInsertPrestamo.Transaction = transaccion;
 

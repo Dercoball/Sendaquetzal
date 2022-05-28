@@ -20,9 +20,17 @@ namespace Plataforma.Clases
 
         public int Activo;
         public string ActivoStr;
+        public string Color;    //
+        public string NombreStatus;
+
 
 
         public string Accion;
+
+        public const int STATUS_PENDIENTE = 1;
+        public const int STATUS_ACEPTADO = 2;
+        public const int STATUS_RECHAZADO = 3;
+
 
     }
 }

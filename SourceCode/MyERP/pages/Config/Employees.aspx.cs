@@ -17,11 +17,12 @@ namespace Plataforma.pages
         const string pagina = "8";
 
 
-        const int POSICION_DIRECTOR = 1;
-        const int POSICION_COORDINADOR = 2;
-        const int POSICION_EJECUTIVO = 3;
-        const int POSICION_SUPERVISOR = 4;
-        const int POSICION_PROMOTOR = 5;
+        public const int POSICION_DIRECTOR = 1;
+        public const int POSICION_COORDINADOR = 2;
+        public const int POSICION_EJECUTIVO = 3;
+        public const int POSICION_SUPERVISOR = 4;
+        public const int POSICION_PROMOTOR = 5;
+        public const int SUPERUSUARIO = 6;
 
 
         protected void Page_Load(object sender, EventArgs e)

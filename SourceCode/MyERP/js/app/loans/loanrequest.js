@@ -1,7 +1,7 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "Clientes_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '8';
+let descargas = "Prestamos" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '12';
 
 
 const POSICION_DIRECTOR = 1;
@@ -11,22 +11,24 @@ const POSICION_SUPERVISOR = 4;
 const POSICION_PROMOTOR = 5;
 
 const client = {
-    
+
 
     init: () => {
 
-        $('#panelTabla').show();
-        $('#panelForm').hide();
+        $('#panelTabla').hide();
+        $('#panelForm').show();
 
         client.idSeleccionado = "-1";
         client.idTipoUsuario = "-1";
-        client.login = "-1";
-        client.accion = "";
+
+        client.accion = "nuevo";
 
 
         client.loadComboTipoCliente();
-        
+
         client.cargarItems();
+        client.fechaHoy();
+        client.testData();
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
@@ -44,7 +46,7 @@ const client = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Clients.aspx/GetListaItems",
+            url: "../../pages/Loans/LoanRequest.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -121,29 +123,17 @@ const client = {
     },
 
 
+    fechaHoy() {
+        let today = new Date();
 
-    /**
-     * 
-     * @param {any} idEmpleado
-     * @param {any} idPosicion  - Tipo usuario / Puesto
-     * @param {any} login       - Nombre de usuario
-     */
-    changePassword: (idEmpleado, idPosicion, login) => {
+        let dayMonth = today.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
+        let month = (today.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
 
-        $('.form-group').removeClass('has-error');
-        $('.help-block').empty();
-
-        $('#txtLoginP').val(login);
-        $('#txtPassP').val('');
-        client.idSeleccionado = idEmpleado;
-        client.idTipoUsuario = idPosicion;
-        client.login = login;
-        client.accion = "changePassword";
-
-        $('#panelEdicionPass').modal('show');
+        $('#txtFechaSolicitud').val(`${today.getFullYear()}-${month}-${dayMonth}`);
 
     },
-
 
     edit: (id) => {
 
@@ -159,7 +149,7 @@ const client = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Clients.aspx/GetDataClient",
+            url: "../../pages/Loans/LoanRequest.aspx/GetDataClient",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -167,7 +157,7 @@ const client = {
             success: function (msg) {
 
                 var item = msg.d;
-               
+
 
                 client.idSeleccionado = item.Id_Cliente;
 
@@ -179,7 +169,7 @@ const client = {
                 $('#txtFechaSolicitud').val(item.FechaSolicitud);
                 $('#txtTelefono').val(item.Telefono_1);
                 $('#txtCantidadPrestamo').val(item.Monto);
-                
+
                 $('#txtOcupacion').val(item.Ocupacion);
                 $('#comboTipoCliente').val(item.IdTipoCliente);
 
@@ -209,7 +199,7 @@ const client = {
                 $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
 
 
-             
+
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
@@ -249,7 +239,7 @@ const client = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Clients.aspx/GetDocument",
+            url: "../../pages/Loans/LoanRequest.aspx/GetDocument",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -297,10 +287,6 @@ const client = {
 
         $('.deshabilitable').prop('disabled', false);
 
-        $('.combo-supervisor').hide();
-        $('.combo-ejecutivo').hide();
-        $('#txtPassword').prop('disabled', false);
-
 
 
 
@@ -308,14 +294,16 @@ const client = {
 
     testData() {
         $('.campo-combo').val(2);
-        $('.campo-date').val('2022-01-01');
+        //$('.campo-date').val(client.fechaHoy());
         $('.campo-input').val(7);
+        $('.campo-input').val(200 + parseInt(Math.random() * 1000 + 1));
+        $('#txtCantidadPrestamo').val(1000 + parseInt(Math.random() * 1000 + 1));
 
         //$('#txtFechaNacimiento').val('2000-01-01');
 
     },
 
-    
+
 
 
 
@@ -327,7 +315,7 @@ const client = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Clients.aspx/GetListaItemsTipoCliente",
+            url: "../../pages/Loans/LoanRequest.aspx/GetListaItemsTipoCliente",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -342,7 +330,7 @@ const client = {
 
                     opcion += `<option value = '${item.IdTipoCliente}' > ${item.NombreTipoCliente}</option > `;
 
-                } 
+                }
 
                 $('#comboTipoCliente').html(opcion);
 
@@ -354,7 +342,7 @@ const client = {
     },
 
 
-    
+
 
 
     accionesBotones: () => {
@@ -363,7 +351,6 @@ const client = {
             e.preventDefault();
 
             let idTipoDocumento = e.currentTarget.dataset['tipo'];
-            //let disabled = $(`#${e.currentTarget.id}`).prop('disabled');
 
             if (client.accion !== 'nuevo') {
 
@@ -375,7 +362,7 @@ const client = {
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Clients.aspx/GetDocument",
+                    url: "../../pages/Loans/LoanRequest.aspx/GetDocument",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -433,8 +420,13 @@ const client = {
                 return;
             }
 
+            //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
+            $('.deshabilitable').prop('disabled', true);
+
+
             let dataClient = {};
             dataClient.Id_Cliente = client.idSeleccionado;
+
 
 
             dataClient.FechaSolicitud = $('#txtFechaSolicitud').val();
@@ -480,7 +472,7 @@ const client = {
             dataAddressClientAval.CodigoPostal = $('#txtCodigoPostalAval').val();
             dataAddressClientAval.DireccionTrabajo = $('#txtDireccionTrabajoAval').val();
 
-           
+
 
 
             let params = {};
@@ -492,13 +484,13 @@ const client = {
             params.accion = client.accion;
             params = JSON.stringify(params);
 
-            let urlService = (client.accion === 'nuevo') ? "Save" : "Update";
+            let urlService = "Save";
 
-            console.log(urlService);
-           
+            //console.log(urlService);
+
             $.ajax({
                 type: "POST",
-                url: `../../pages/Clients.aspx/${urlService}`,
+                url: `../../pages/Loans/LoanRequest.aspx/${urlService}`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -529,20 +521,22 @@ const client = {
 
                         }
 
-                        let time_ = client.accion === 'nuevo' ? 5000 : 100;
+                        let time_ = client.accion === 'nuevo' ? 10000 : 100;
 
                         setTimeout(function () {
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
-
-                            client.init();
+                            $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
+                            $('#panelMensajeControlado').modal('show');
 
 
                         }, time_);
 
 
                     } else {
+
+                        $('.deshabilitable').prop('disabled', false);
 
                         utils.toast(mensajesAlertas.errorGuardar, 'error');
 
@@ -591,7 +585,7 @@ const client = {
 
         });
 
-       
+
 
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
@@ -605,6 +599,24 @@ const client = {
         });
 
 
+        $('#btnAceptarPanelMensajeControlado').on('click', (e) => {
+            e.preventDefault();
+
+
+            setTimeout(function () {
+                console.log(`Retornnado a lista de prestamos`);
+                window.location = "LoansIndex.aspx";
+
+
+            }, 2000);
+
+
+        });
+
+
+
+
+
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
@@ -614,7 +626,7 @@ const client = {
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Clients.aspx/Delete",
+                url: "../../pages/Loans/LoanRequest.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

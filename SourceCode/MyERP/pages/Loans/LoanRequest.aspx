@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Clients.aspx.cs" Inherits="Plataforma.pages.Clients" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoanRequest.aspx.cs" Inherits="Plataforma.pages.LoanRequest" %>
 
 <!DOCTYPE html>
 
@@ -101,11 +101,11 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Clientes</h1>
+                    <h1 class="h3 display" id="paginaName">Nuevo préstamo</h1>
 
                 </header>
 
-                <div id="panelTabla">
+             <%--   <div id="panelTabla">
                     <div class="table-responsive">
 
                         <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
@@ -131,13 +131,13 @@
                         </table>
 
                     </div>
-                </div>
+                </div>--%>
 
 
 
 
                 <div id="panelForm" style="overflow-y: auto;">
-                    <form role="form" id="frm" name="frm">
+                    <form role="form" id="frm" name="frm" data-toggle="validator">
 
                         <%--Datos de ingreso--%>
                         <div class="card">
@@ -155,7 +155,7 @@
                                         <label for="txtFechaSolicitud">
                                             Fecha de solicitud
                                         </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaSolicitud"
+                                        <input type="date" class="form-control campo-date" id="txtFechaSolicitud" disabled="disabled"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -164,7 +164,7 @@
                                         <label for="txtCantidadPrestamo">
                                             Cantidad
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtCantidadPrestamo"
+                                        <input type="number" class="form-control campo-number" id="txtCantidadPrestamo"
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
@@ -609,7 +609,7 @@
 
                                     <div class="col-md-4">
                                         <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">dd
+                                            <div class="card-body text-center">
                                                 <a href="#" class="img-document" data-tipo="8" id="href_8">
                                                     <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
                                                 </a>
@@ -626,7 +626,7 @@
                         <div class="row mt-3 mb-3">
 
                             <div class=" col-md-6 text-left">
-                                <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                <button id="btnCancelar" class="btn btn-secondary deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                             </div>
 
                             <div class=" col-md-6 text-right">
@@ -661,60 +661,28 @@
 
 
     </div>
+    
 
-
-
-    <div class="modal fade" id="panelEdicionPass" role="dialog" data-backdrop="static">
+    <div id="panelMensajeControlado" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog">
+            <!-- Modal content-->
             <div class="modal-content">
-
                 <div class="modal-header">
-                    <h3 class="modal-title">Asignar nueva contraseña</h3>
+                    <h4 class="modal-title text-center">Información</h4>
 
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span></button>
                 </div>
-
-                <div class="modal-body form">
-                    <form role="form" id="frmUsuarioP" name="frmUsuarioP" data-toggle="validator">
-                        <div class="form-body">
-
-                            <div class="form-group">
-                                <label class="control-label">Login</label>
-                                <div class="col-md-8">
-                                    <input id="txtLoginP" readonly="true" placeholder="Login" class="form-control" type="text" />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="control-label">Nueva contraseña</label>
-                                <div class="col-md-8">
-                                    <input id="txtPassP" placeholder="Ingrese la nueva contraseña" class="form-control" type="password"
-                                        required data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                            </div>
-
-
-
-
-
-                        </div>
-                    </form>
+                <div class="modal-body">
+                    <p>
+                        <span id="spnMensajeControlado"></span>
+                    </p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
-                    <button type="button" id="btnGuardarPassword" class="btn btn-primary">Guardar</button>
+                    <button class="btn btn-primary" id="btnAceptarPanelMensajeControlado">Aceptar</button>
                 </div>
             </div>
-
         </div>
-
     </div>
+
 
     <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog">
@@ -739,30 +707,6 @@
         </div>
     </div>
 
-    <div id="panelEliminar" class="modal fade" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title text-center">Confirmación</h4>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        Se eliminará el registro seleccionado. ¿Desea continuar?                                                   
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button id="btnEliminarAceptar" class="btn btn-danger" data-dismiss="modal">Aceptar</button>
-                    <button id="btnEliminarCancelar" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="panelLoading" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -781,13 +725,10 @@
     </div>
 
 
+    
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
-    <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
-    <script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>
-    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
 
@@ -804,10 +745,12 @@
 
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/"></script>
+
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/clients.js"></script>
+    <script src="../../js/app/loans/loanrequest.js"></script>
     <script src="../../js/app/general.js"></script>
 
 

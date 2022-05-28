@@ -13,6 +13,7 @@ let idUsuario = null;
 
 
 var mensajesAlertas = {
+    solicitudPrestamoEnviada: 'Solicitud de préstamo enviada.',
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
     errorGuardar: 'Se ha producido un error al almacenar los datos. Los datos no fueron almacenados.',
     exitoGuardar: 'Los datos se almacenaron correctamente.',

@@ -146,9 +146,6 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
-    <Content Include="js\app\clients.min.js">
-      <DependentUpon>clients.js</DependentUpon>
-    </Content>
     <Content Include="js\app\config\days_off.js" />
     <Content Include="js\app\config\calendars.min.js">
       <DependentUpon>calendars.js</DependentUpon>
@@ -195,6 +192,10 @@
     <Content Include="js\app\config\usuarios.min.js">
       <DependentUpon>usuarios.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\loanrequest.min.js">
+      <DependentUpon>loanrequest.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\loans\loansindex.js" />
     <Content Include="js\app\noticeofprivacy.js" />
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
@@ -261,7 +262,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
-    <Content Include="pages\Clients.aspx" />
+    <Content Include="pages\Loans\LoanRequest.aspx" />
     <Content Include="pages\Config\DaysOff.aspx" />
     <Content Include="pages\Config\Commissions.aspx" />
     <Content Include="pages\Config\Messages.aspx" />
@@ -269,6 +270,7 @@
     <Content Include="pages\Config\Categories.aspx" />
     <Content Include="pages\Config\Periods.aspx" />
     <Content Include="pages\Config\Plazas.aspx" />
+    <Content Include="pages\Loans\LoansIndex.aspx" />
     <Content Include="pages\Logout.aspx" />
     <Content Include="pages\NoticeOfPrivacy.aspx" />
     <Content Include="pages\TermsAndConditions.aspx" />
@@ -1141,6 +1143,7 @@
     <Compile Include="Clases\Modulo.cs" />
     <Compile Include="Clases\Posicion.cs" />
     <Compile Include="Clases\FrecuenciaEnvio.cs" />
+    <Compile Include="Clases\StatusPrestamo.cs" />
     <Compile Include="Clases\TipoPlantilla.cs" />
     <Compile Include="Clases\TipoCliente.cs" />
     <Compile Include="Clases\Tutorial.cs" />
@@ -1161,12 +1164,12 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
-    <Compile Include="pages\Clients.aspx.cs">
-      <DependentUpon>Clients.aspx</DependentUpon>
+    <Compile Include="pages\Loans\LoanRequest.aspx.cs">
+      <DependentUpon>LoanRequest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="pages\Clients.aspx.designer.cs">
-      <DependentUpon>Clients.aspx</DependentUpon>
+    <Compile Include="pages\Loans\LoanRequest.aspx.designer.cs">
+      <DependentUpon>LoanRequest.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Config\DaysOff.aspx.cs">
       <DependentUpon>DaysOff.aspx</DependentUpon>
@@ -1216,6 +1219,13 @@
     </Compile>
     <Compile Include="pages\Config\Plazas.aspx.designer.cs">
       <DependentUpon>Plazas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Loans\LoansIndex.aspx.cs">
+      <DependentUpon>LoansIndex.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Loans\LoansIndex.aspx.designer.cs">
+      <DependentUpon>LoansIndex.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
@@ -1516,12 +1526,11 @@
   <ItemGroup>
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
-    <Folder Include="pages\Loans\" />
     <Folder Include="pages\Request\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="js\app\clients.js" />
+    <Content Include="js\app\loans\loanrequest.js" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

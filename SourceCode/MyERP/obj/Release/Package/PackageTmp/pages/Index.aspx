@@ -86,7 +86,7 @@
     </form>
 
     <!-- Side Navbar -->
-     <nav class="side-navbar">
+    <nav class="side-navbar">
         <div class="side-navbar-wrapper">
             <!-- Sidebar Header    -->
             <div class="sidenav-header d-flex align-items-center justify-content-center">
@@ -113,7 +113,7 @@
         <header class="header">
 
 
-           <nav class="navbar">
+            <nav class="navbar">
                 <div class="container-fluid">
 
 
@@ -132,27 +132,26 @@
             <div class="container-fluid">
                 <div class="row d-flex align-items-md-stretch">
                     <div class="col-sm-12 text-center">
-                        SENDA QUETZALll
+                        SENDA QUETZAL
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="opcion">
-        <div class="container">
+            <div class="container">
 
-            <div class="row">
-                <div class="col-md-12 text-right" >
-                    <ul class="nav navbar-nav navbar-right links2">
-                        <li><a href="../pages/Clients.aspx">NUEVO PRESTAMO</a></li>
-                    </ul>
-                        
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <ul class="nav navbar-nav navbar-right links2">
+                        </ul>
+
+                    </div>
                 </div>
+
+
             </div>
-
-
-        </div>
-    </section>
+        </section>
 
         <section class="statistics">
 

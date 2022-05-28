@@ -87,7 +87,7 @@ namespace Plataforma.pages
                         Cliente item = new Cliente();
                         //..
                         //
-                        item.Id_Cliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
+                        item.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
                         item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
                         item.Telefono_1 = ds.Tables[0].Rows[i]["telefono"].ToString();
@@ -106,8 +106,8 @@ namespace Plataforma.pages
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
 
-                        string botones = "<button  onclick='client.edit(" + item.Id_Cliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='client.delete(" + item.Id_Cliente + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "<button  onclick='client.edit(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='client.delete(" + item.IdCliente + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
                         
 
                         item.Accion = botones;
@@ -160,8 +160,50 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
-
                 transaccion = conn.BeginTransaction();
+
+
+                //  Validar que no exista un cliente con la misma CURP
+                Cliente customerExists = GetClienteByCURP(path, item.Curp, conn, strConexion, transaccion);
+                if (customerExists != null)
+                {
+                    salida.MensajeError = "Ya existe el cliente con CURP " + item.Curp + " por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
+
+
+                //  Validar que el nuevo cliente no sea AVAL de otro préstamo en tabla de clientes
+                Cliente customerAval = GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
+                if (customerAval != null)
+                {
+                    salida.MensajeError = "El cliente se encuentra como aval del otro préstamo, por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
+
+
+                //  Validar que el nuevo cliente no sea AVAL de otro préstamo en tabla de empleados
+                Empleado employeeAval = GetClienteByCURPAvalEmpleado(path, item.Curp, conn, strConexion, transaccion);
+                if (employeeAval != null)
+                {
+                    salida.MensajeError = "El cliente se encuentra como aval del otro préstamo,  por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
+
+
+                //  Validar que el nuevo aval no sea AVAL 3 o mas veces en la tabla de clientes
+                int customerAval3Times = GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, transaccion);
+                if (customerAval3Times > 2)
+                {
+                    salida.MensajeError = "El aval ya existe " + customerAval3Times +  " veces como aval del otros préstamos. Lo máximo permitido son 2,  por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
+
+
+
 
 
                 Utils.Log("\nMétodo-> " +
@@ -206,7 +248,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
                 cmd.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
                 cmd.Parameters.AddWithValue("@ocupacion_aval", item.OcupacionAval);
-                cmd.Parameters.AddWithValue("@id_cliente", item.Id_Cliente);
+                cmd.Parameters.AddWithValue("@id_cliente", item.IdCliente);
                 cmd.Transaction = transaccion;
 
                 int idGenerado = (int)cmd.ExecuteScalar();
@@ -323,6 +365,186 @@ namespace Plataforma.pages
 
         }
 
+        public static Cliente GetClienteByCURP(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        {
+
+            Cliente item = null;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT TOP 1 id_cliente, curp
+                                FROM cliente 
+                                WHERE curp = @curp";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                Utils.Log("CURP =  " + CURP);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@curp", CURP);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    item = new Cliente();
+                    item.IdCliente = int.Parse(ds.Tables[0].Rows[0]["id_cliente"].ToString());
+
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+
+
+        }
+
+
+        //  Buscar una persona Aval, mediante su curp en tabla de cliente
+        public static Cliente GetClienteByCURPAvalCliente(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        {
+
+            Cliente item = null;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT TOP 1 id_cliente, curp
+                                FROM cliente 
+                                WHERE curp_aval = @curp_aval";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                Utils.Log("CURP Aval =  " + CURP);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@curp_aval", CURP);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    item = new Cliente();
+                    item.IdCliente = int.Parse(ds.Tables[0].Rows[0]["id_cliente"].ToString());
+
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+
+
+        }
+
+
+        //  Buscar una persona Aval, mediante su curp en tabla de empleado
+        public static Empleado GetClienteByCURPAvalEmpleado(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        {
+
+            Empleado item = null;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT TOP 1 id_empleado, curp
+                                FROM empleado 
+                                WHERE curp_aval = @curp_aval";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                Utils.Log("CURP Aval =  " + CURP);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@curp_aval", CURP);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    item = new Empleado();
+                    item.IdEmpleado = int.Parse(ds.Tables[0].Rows[0]["id_empleado"].ToString());
+
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+
+
+        }
+
+
+        //  Buscar una persona Aval, cuantas veces esta como aval una curp en la tabla de cliente
+        public static int GetClienteByCURPAvalCliente3Veces(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        {
+
+            int num = 0;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_cliente
+                                FROM cliente 
+                                WHERE curp_aval = @curp_aval";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                Utils.Log("CURP Aval =  " + CURP);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@curp_aval", CURP);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+                                   
+                num = ds.Tables[0].Rows.Count + 1;
+         
+                return num;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return -1;
+            }
+
+
+
+        }
 
 
         [WebMethod]
@@ -390,7 +612,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
                 cmd.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
                 cmd.Parameters.AddWithValue("@ocupacion_aval", item.OcupacionAval);
-                cmd.Parameters.AddWithValue("@id_cliente", item.Id_Cliente);
+                cmd.Parameters.AddWithValue("@id_cliente", item.IdCliente);
                 cmd.Transaction = transaccion;
 
                 r += cmd.ExecuteNonQuery();
@@ -408,7 +630,7 @@ namespace Plataforma.pages
                 SqlCommand cmdAddressEmployee = new SqlCommand(sql, conn);
                 cmdAddressEmployee.CommandType = CommandType.Text;
 
-                cmdAddressEmployee.Parameters.AddWithValue("@id_cliente", item.Id_Cliente);
+                cmdAddressEmployee.Parameters.AddWithValue("@id_cliente", item.IdCliente);
                 cmdAddressEmployee.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
                 cmdAddressEmployee.Parameters.AddWithValue("@colonia", itemAddress.Colonia);
                 cmdAddressEmployee.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
@@ -434,7 +656,7 @@ namespace Plataforma.pages
                 SqlCommand cmdAddressEmployeeAval = new SqlCommand(sql, conn);
                 cmdAddressEmployeeAval.CommandType = CommandType.Text;
 
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@id_cliente", item.Id_Cliente);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@id_cliente", item.IdCliente);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@calleyno", itemAddressAval.Calle);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
@@ -461,7 +683,7 @@ namespace Plataforma.pages
                 //MD5 md5Hash = MD5.Create();
                 //string hash = Usuarios.GetMd5Hash(md5Hash, itemUser.Password);
 
-                cmdInsertPrestamo.Parameters.AddWithValue("@id_cliente", item.Id_Cliente);
+                cmdInsertPrestamo.Parameters.AddWithValue("@id_cliente", item.IdCliente);
                 cmdInsertPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
                 //cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", '0');
 
@@ -479,7 +701,7 @@ namespace Plataforma.pages
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
-                salida.IdItem = item.Id_Cliente.ToString();
+                salida.IdItem = item.IdCliente.ToString();
 
             }
             catch (Exception ex)
@@ -750,7 +972,7 @@ namespace Plataforma.pages
                     {
                         item = new Cliente();
 
-                        item.Id_Cliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
+                        item.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
                         item.IdTipoCliente = int.Parse(ds.Tables[0].Rows[i]["id_tipo_cliente"].ToString());
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();

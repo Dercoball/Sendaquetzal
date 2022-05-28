@@ -187,7 +187,7 @@
                                             <div class="help-block with-errors"></div>
                                         </div>
 
-                                         <div class="combo-coordinador">
+                                        <div class="combo-coordinador">
                                             <label for="comboCoordinador">
                                                 Coordinador
                                             </label>
@@ -219,8 +219,10 @@
                                         <label for="txtCURP">
                                             CURP
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtCURP"
-                                            required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control campo-input" id="txtCURP" title=""
+                                            required="required" data-required-error='Requerido'
+                                            pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                            data-pattern-error="Debe ingresar una CURP válida." />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -374,10 +376,9 @@
                                             Usuario
                                         </label>
                                         <input type="text" class="form-control campo-input" id="txtNombreUsuario" title=""
-                                            required="required" data-required-error='Requerido' 
-                                            pattern="[0-9A-Za-z]{4,}" 
-                                            data-pattern-error="Solo se permiten letras y números. Mínimo 4."
-                                            />
+                                            required="required" data-required-error='Requerido'
+                                            pattern="[0-9A-Za-z]{4,}"
+                                            data-pattern-error="Solo se permiten letras y números. Mínimo 4." />
                                         <div class="help-block with-errors"></div>
                                     </div>
 

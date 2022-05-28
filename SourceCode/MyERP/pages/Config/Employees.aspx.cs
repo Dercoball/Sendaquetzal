@@ -219,7 +219,6 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
-
                 transaccion = conn.BeginTransaction();
 
 

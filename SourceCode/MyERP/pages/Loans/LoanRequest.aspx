@@ -105,7 +105,7 @@
 
                 </header>
 
-             <%--   <div id="panelTabla">
+                <%--   <div id="panelTabla">
                     <div class="table-responsive">
 
                         <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
@@ -190,8 +190,10 @@
                                         <label for="txtCURP">
                                             CURP
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtCURP"
-                                            required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control campo-input" id="txtCURP" title=""
+                                            required="required" data-required-error='Requerido'
+                                            pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                            data-pattern-error="Debe ingresar una CURP válida." />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -203,7 +205,7 @@
                                         </select>
                                         <div class="help-block with-errors"></div>
                                     </div>
-                                    
+
                                 </div>
 
 
@@ -274,13 +276,13 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
-                                   
+
 
                                 </div>
 
                                 <div class="row">
 
-                                    
+
                                     <div class="form-group col-md-4">
                                         <label for="txtCodigoPostal">
                                             Código postal
@@ -290,9 +292,9 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    
 
-                                     <div class="form-group col-md-4">
+
+                                    <div class="form-group col-md-4">
                                         <label for="txtOcupacion">
                                             Ocupación
                                         </label>
@@ -301,7 +303,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                     <div class="form-group col-md-4">
+                                    <div class="form-group col-md-4">
                                         <label for="txtDireccionTrabajo">
                                             Dirección de trabajo
                                         </label>
@@ -309,7 +311,7 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
-                                    
+
 
                                     <div class="form-group col-md-4">
                                         <label for="txtTelefono">
@@ -347,7 +349,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    
+
                                     <div class="form-group col-md-4">
 
                                         <label>
@@ -490,7 +492,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                     <div class="form-group col-md-4">
+                                    <div class="form-group col-md-4">
                                         <label for="txtEstadoAval">
                                             Estado
                                         </label>
@@ -503,7 +505,7 @@
 
                                 <div class="row">
 
-                                   
+
 
                                     <div class="form-group col-md-4">
                                         <label for="txtCodigoPostalAval">
@@ -514,7 +516,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                   <div class="form-group col-md-4">
+                                    <div class="form-group col-md-4">
                                         <label for="txtOcupacionAval">
                                             Ocupación
                                         </label>
@@ -523,7 +525,7 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                     <div class="form-group col-md-4">
+                                    <div class="form-group col-md-4">
                                         <label for="txtDireccionTrabajoAval">
                                             Dirección de trabajo
                                         </label>
@@ -531,7 +533,7 @@
                                             required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
-                                    
+
 
                                     <div class="form-group col-md-4">
                                         <label for="txtTelefonoAval">
@@ -661,9 +663,9 @@
 
 
     </div>
-    
 
-    <div id="panelMensajeControlado" class="modal fade" role="dialog" data-backdrop="static">
+
+    <div id="panelMensajeControlado" class="modal fade" role="dialog" data-backdrop="static" style="margin-top: 200px;">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -684,7 +686,7 @@
     </div>
 
 
-    <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static">
+    <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static" style="margin-top: 200px;">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -701,7 +703,7 @@
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="btnAceptarPanelMensajes" data-dismiss="modal">Aceptar</button>
+                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -725,7 +727,7 @@
     </div>
 
 
-    
+
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>

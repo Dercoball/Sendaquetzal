@@ -7,7 +7,8 @@ namespace Plataforma.Clases
 {
     public class Cliente{ 
 
-        public int Id_Cliente;
+        //public int Id_Cliente;
+        public int IdCliente;
         public String Nombre;
         public String PrimerApellido;
         public String SegundoApellido;

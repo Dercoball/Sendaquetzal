@@ -13,7 +13,8 @@ let idUsuario = null;
 
 
 var mensajesAlertas = {
-    solicitudPrestamoEnviada: 'Solicitud de préstamo enviada.',
+    solicitudPrestamoEnviada: 'Solicitud de préstamo guardada y enviada correctamente.',
+    solicitudNoProcedenteCamposVacios: 'Solicitud no procedente: Existen campos sin llenar, por favor verifique.',
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
     errorGuardar: 'Se ha producido un error al almacenar los datos. Los datos no fueron almacenados.',
     exitoGuardar: 'Los datos se almacenaron correctamente.',

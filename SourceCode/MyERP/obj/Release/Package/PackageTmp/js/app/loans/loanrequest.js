@@ -26,7 +26,7 @@ const client = {
 
         client.loadComboTipoCliente();
 
-        client.cargarItems();
+        //client.cargarItems();
         client.fechaHoy();
         client.testData();
 
@@ -66,7 +66,7 @@ const client = {
                     "order": [],
                     data: data,
                     columns: [
-                        { data: 'Id_Cliente' },
+                        { data: 'IdCliente' },
                         { data: 'NombreCompleto' },
                         { data: 'TipoCliente' },
                         { data: 'Telefono_1' },
@@ -159,7 +159,7 @@ const client = {
                 var item = msg.d;
 
 
-                client.idSeleccionado = item.Id_Cliente;
+                client.idSeleccionado = item.IdCliente;
 
                 //  cliente
                 $('#txtNombre').val(item.Nombre);
@@ -417,15 +417,20 @@ const client = {
             let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
 
             if (hasErrors) {
+
+                $('#spnMensajes').html(mensajesAlertas.solicitudNoProcedenteCamposVacios);
+                $('#panelMensajes').modal('show');
+
                 return;
             }
 
             //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
             $('.deshabilitable').prop('disabled', true);
+            $('#btnGuardar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
 
             let dataClient = {};
-            dataClient.Id_Cliente = client.idSeleccionado;
+            dataClient.IdCliente = client.idSeleccionado;
 
 
 
@@ -496,49 +501,61 @@ const client = {
                 dataType: "json",
                 async: true,
                 success: function (msg) {
-                    var valores = msg.d;
+                    let valores = msg.d;
 
+                    //  si no tiene permisos
+                    if (valores == null) {
+                        window.location = "../../pages/Index.aspx";
+                    }
 
                     //debugger;
-                    if (valores.CodigoError == 0) {
-
-                        if (client.accion === 'nuevo') {
-
-                            //guardar documentos
-                            $('.campo-imagen').each(function (i, item) {
-
-                                let idTipoDocumento = item.dataset['tipo'];
-
-                                let file;
-                                if (file = this.files[0]) {
-
-                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "cliente");
-
-                                }
-
-                            });
+                    if (parseInt(valores.CodigoError) === 0) {
 
 
-                        }
+                        //guardar documentos
+                        $('.campo-imagen').each(function (i, item) {
 
-                        let time_ = client.accion === 'nuevo' ? 10000 : 100;
+                            let idTipoDocumento = item.dataset['tipo'];
 
-                        setTimeout(function () {
+                            let file;
+                            if (file = this.files[0]) {
+
+                                utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "cliente");
+
+                            }
+
+                        });
+
+
+                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+
+                        let time_ = 10000;
+                        setTimeout(function () {                         
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
                             $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
                             $('#panelMensajeControlado').modal('show');
 
-
                         }, time_);
 
+
+                        $('.deshabilitable').prop('disabled', false);
+                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
 
                     } else {
 
                         $('.deshabilitable').prop('disabled', false);
+                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+                        $('#spnMensajes').html(valores.MensajeError);
+                        $('#panelMensajes').modal('show');
+
 
                         utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                        return;
 
                     }
 

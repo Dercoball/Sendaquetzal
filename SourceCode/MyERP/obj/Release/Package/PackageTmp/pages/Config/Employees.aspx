@@ -434,36 +434,28 @@
                                 <div class="row">
 
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="1" id="href_1">
-                                                    <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="1" id="href_1">
+                                                <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="2" id="href_2">
-                                                    <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="2" id="href_2">
+                                                <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="3" id="href_3">
-                                                    <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
-                                                </a>
 
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="3" id="href_3">
+                                                <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
@@ -500,25 +492,19 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="4" id="href_4">
-                                                    <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="4" id="href_4">
+                                                <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="5" id="href_5">
-                                                    <img src="../../img/upload.png" id="img_5" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="5" id="href_5">
+                                                <img src="../../img/upload.png" id="img_5" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
@@ -526,7 +512,6 @@
 
 
                             </div>
-
                         </div>
 
                         <%--Datos del Aval--%>
@@ -686,36 +671,27 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="6" id="href_6">
-                                                    <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="6" id="href_6">
+                                                <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="7" id="href_7">
-                                                    <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="7" id="href_7">
+                                                <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="8" id="href_8">
-                                                    <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="8" id="href_8">
+                                                <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
@@ -738,7 +714,6 @@
                     </form>
 
                 </div>
-
             </div>
         </section>
 

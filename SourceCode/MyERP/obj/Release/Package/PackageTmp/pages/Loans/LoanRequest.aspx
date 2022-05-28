@@ -105,33 +105,6 @@
 
                 </header>
 
-                <%--   <div id="panelTabla">
-                    <div class="table-responsive">
-
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
-
-
-                            <thead>
-
-                                <th>No.</th>
-                                <th>Nombre</th>
-                                <th>Tipo Cliente</th>
-                                <th>Telefono</th>
-                                <th>CURP</th>
-                                <th>Ocupación</th>
-                                <th>Monto Prestamo</th>
-                                <th>Fecha prestamo</th>
-                                <th>
-                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo prestamo</button>
-                                </th>
-
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>--%>
 
 
 
@@ -367,36 +340,27 @@
                                 <div class="row">
 
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="1" id="href_1">
-                                                    <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="1" id="href_1">
+                                                <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="2" id="href_2">
-                                                    <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="2" id="href_2">
+                                                <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="3" id="href_3">
-                                                    <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="3" id="href_3">
+                                                <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
@@ -587,36 +551,27 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="6" id="href_6">
-                                                    <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="6" id="href_6">
+                                                <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="7" id="href_7">
-                                                    <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="7" id="href_7">
+                                                <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="card bg-light" style="width: 18rem;">
-                                            <div class="card-body text-center">
-                                                <a href="#" class="img-document" data-tipo="8" id="href_8">
-                                                    <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
-                                                </a>
-
-                                            </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="8" id="href_8">
+                                                <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
+                                            </a>
                                         </div>
                                     </div>
 

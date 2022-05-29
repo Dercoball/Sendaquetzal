@@ -21,13 +21,14 @@ namespace Plataforma.Clases
         public float Monto;
         public String FechaSolicitud;
 
-        public String Telefono_1;
-        public String Telefono_2;
+        public String Telefono;
+        public String Telefono2;
         public String Celular;
         public String Correo_Electronico;
         public String NombreCompleto;
 
         public int Activo;
+        public int ClienteExistente;
 
         public Direccion direccion;
         public Direccion direccionAval;

@@ -28,12 +28,12 @@ const client = {
 
         //client.cargarItems();
         client.fechaHoy();
-        client.testData();
+        //client.testData();
 
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
-
-
+        client.ClienteExistente = 0;
+        client.IdCliente = -1;
 
     },
 
@@ -69,7 +69,7 @@ const client = {
                         { data: 'IdCliente' },
                         { data: 'NombreCompleto' },
                         { data: 'TipoCliente' },
-                        { data: 'Telefono_1' },
+                        { data: 'Telefono' },
                         { data: 'Curp' },
                         { data: 'Ocupacion' },
                         { data: 'Monto' },
@@ -167,7 +167,7 @@ const client = {
                 $('#txtSegundoApellido').val(item.SegundoApellido);
                 $('#txtCURP').val(item.Curp);
                 $('#txtFechaSolicitud').val(item.FechaSolicitud);
-                $('#txtTelefono').val(item.Telefono_1);
+                $('#txtTelefono').val(item.Telefono);
                 $('#txtCantidadPrestamo').val(item.Monto);
 
                 $('#txtOcupacion').val(item.Ocupacion);
@@ -430,7 +430,7 @@ const client = {
 
 
             let dataClient = {};
-            dataClient.IdCliente = client.idSeleccionado;
+            dataClient.IdCliente = client.IdCliente;
 
 
 
@@ -441,7 +441,7 @@ const client = {
             dataClient.PrimerApellido = $('#txtPrimerApellido').val();
             dataClient.SegundoApellido = $('#txtSegundoApellido').val();
             dataClient.Nombre = $('#txtNombre').val();
-            dataClient.Telefono_1 = $('#txtTelefono').val();
+            dataClient.Telefono = $('#txtTelefono').val();
             dataClient.Ocupacion = $('#txtOcupacion').val();
             dataClient.OcupacionAval = $('#txtOcupacionAval').val();
 
@@ -451,14 +451,10 @@ const client = {
             dataClient.SegundoApellidoAval = $('#txtSegundoApellidoAval').val();
             dataClient.NombreAval = $('#txtNombreAval').val();
             dataClient.TelefonoAval = $('#txtTelefonoAval').val();
-
-
-
-
-
+            dataClient.ClienteExistente = client.ClienteExistente;
 
             let dataAddressClient = {};
-            dataAddressClient.IdCliente = client.idSeleccionado;
+            dataAddressClient.IdCliente = client.IdCliente;
             dataAddressClient.Calle = $('#txtCalle').val();
             dataAddressClient.Aval = 0;
             dataAddressClient.Colonia = $('#txtColonia').val();
@@ -468,7 +464,7 @@ const client = {
             dataAddressClient.DireccionTrabajo = $('#txtDireccionTrabajo').val();
 
             let dataAddressClientAval = {};
-            dataAddressClientAval.IdCliente = client.idSeleccionado;
+            dataAddressClientAval.IdCliente = client.IdCliente;
             dataAddressClientAval.Calle = $('#txtCalleAval').val();
             dataAddressClientAval.Aval = 1;
             dataAddressClientAval.Colonia = $('#txtColoniaAval').val();
@@ -489,9 +485,9 @@ const client = {
             params.accion = client.accion;
             params = JSON.stringify(params);
 
-            let urlService = "Save";
+            let urlService = client.clientExists ? "SaveLoanUpdateCustomer" : "Save";
 
-            //console.log(urlService);
+            console.log(urlService);
 
             $.ajax({
                 type: "POST",
@@ -520,18 +516,19 @@ const client = {
                             let file;
                             if (file = this.files[0]) {
 
-                                utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "cliente");
+                                if (client.clientExists) {
+                                    utils.sendFileEmployee(file, 'update_document_customer', valores.IdItem, idTipoDocumento, "cliente");
+                                } else {
+                                    utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "cliente");
+                                }
+
 
                             }
 
                         });
 
-
-                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
-
-
                         let time_ = 10000;
-                        setTimeout(function () {                         
+                        setTimeout(function () {
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
@@ -576,32 +573,6 @@ const client = {
         });
 
 
-        $('.campo-imagen').on('change', function (e) {
-            e.preventDefault();
-
-            let idTipoDocumento = e.currentTarget.dataset['tipo'];
-
-            if (client.idSeleccionado !== "-1" && client.accion !== 'nuevo') {
-
-
-                let file;
-                if (file = this.files[0]) {
-
-                    utils.sendFileEmployee(file, 'update_document_employee', client.idSeleccionado, idTipoDocumento, "cliente");
-
-                    setTimeout(function () {
-
-                        //  Mostrar la imagen que se acaba de subir...
-                        client.getDocument(client.idSeleccionado, idTipoDocumento, `#img_${idTipoDocumento}`);
-
-                    }, 5000);
-
-                }
-            }
-
-
-        });
-
 
 
         $('#btnCancelar').on('click', (e) => {
@@ -630,36 +601,77 @@ const client = {
         });
 
 
-
-
-
-        $('#btnEliminarAceptar').on('click', (e) => {
+        //  Buscar cliente anterior por medio de su curp
+        $('#txtCURP').on('change', (e) => {
+            e.preventDefault();
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = client.idSeleccionado;
+            params.curp = $('#txtCURP').val();
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Loans/LoanRequest.aspx/Delete",
+                url: "../../pages/Loans/LoanRequest.aspx/GetCustomerByCurp",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
                 success: function (msg) {
 
-                    var resultado = msg.d;
-                    if (resultado.MensajeError === null) {
+                    let item = msg.d;
+                    console.log(`data =  ${JSON.stringify(item)}`);
 
-                        utils.toast(mensajesAlertas.exitoEliminar, 'ok');
+                    //Cliente existe
+                    if (item) {
+
+                        client.IdCliente = item.IdCliente;
+
+                        //  cliente
+                        $('#txtNombre').val(item.Nombre);
+                        $('#txtPrimerApellido').val(item.PrimerApellido);
+                        $('#txtSegundoApellido').val(item.SegundoApellido);
+                        // $('#txtCURP').val(item.Curp);
+                        // $('#txtFechaSolicitud').val(item.FechaSolicitud);
+                        $('#txtTelefono').val(item.Telefono);
+                        // $('#txtCantidadPrestamo').val(item.Monto);
+
+                        $('#txtOcupacion').val(item.Ocupacion);
+                        $('#comboTipoCliente').val(item.IdTipoCliente);
+
+                        //  dirección cliente
+                        $('#txtCalle').val(item.direccion.Calle);
+                        $('#txtColonia').val(item.direccion.Colonia);
+                        $('#txtMunicipio').val(item.direccion.Municipio);
+                        $('#txtEstado').val(item.direccion.Estado);
+                        $('#txtCodigoPostal').val(item.direccion.CodigoPostal);
+                        $('#txtDireccionTrabajo').val(item.direccion.DireccionTrabajo);
 
 
-                        client.cargarItems();
+                        //datos aval
+                        $('#txtNombreAval').val(item.NombreAval);
+                        $('#txtPrimerApellidoAval').val(item.PrimerApellidoAval);
+                        $('#txtSegundoApellidoAval').val(item.SegundoApellidoAval);
+                        $('#txtCURPAval').val(item.CurpAval);
+                        $('#txtTelefonoAval').val(item.TelefonoAval);
+                        $('#txtOcupacionAval').val(item.OcupacionAval);
 
-                    } else {
+                        //  dirección aval
+                        $('#txtCalleAval').val(item.direccionAval.Calle);
+                        $('#txtColoniaAval').val(item.direccionAval.Colonia);
+                        $('#txtMunicipioAval').val(item.direccionAval.Municipio);
+                        $('#txtEstadoAval').val(item.direccionAval.Estado);
+                        $('#txtCodigoPostalAval').val(item.direccionAval.CodigoPostal);
+                        $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
 
-                        utils.toast(resultado.MensajeError, 'error');
+
+                        // console.log(client.idSeleccionado);
+                        client.getDocument(client.idSeleccionado, 2, '#img_1');
+                        client.getDocument(client.idSeleccionado, 3, '#img_2');
+                        client.getDocument(client.idSeleccionado, 4, '#img_3');
+                        client.getDocument(client.idSeleccionado, 6, '#img_6');
+                        client.getDocument(client.idSeleccionado, 7, '#img_7');
+                        client.getDocument(client.idSeleccionado, 8, '#img_8');
 
 
                     }
@@ -667,11 +679,14 @@ const client = {
 
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
                 }
 
             });
 
         });
+
 
     }
 

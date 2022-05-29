@@ -388,8 +388,10 @@
                                         <label for="txtCURPAval">
                                             CURP
                                         </label>
-                                        <input type="text" class="form-control campo-input" id="txtCURPAval"
-                                            required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control campo-input" id="txtCURPAval" title=""
+                                            required="required" data-required-error='Requerido'
+                                            pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                            data-pattern-error="Debe ingresar una CURP válida." />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -686,7 +688,6 @@
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
 
     <!-- DataTables JavaScript -->
@@ -702,7 +703,6 @@
 
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/"></script>
 
 
 

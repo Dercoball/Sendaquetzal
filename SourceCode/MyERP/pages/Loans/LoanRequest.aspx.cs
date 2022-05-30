@@ -564,14 +564,33 @@ namespace Plataforma.pages
             DatosSalida salida = new DatosSalida();
             SqlTransaction transaccion = null;
 
+
             int r = 0;
             try
             {
 
                 conn.Open();
-
                 transaccion = conn.BeginTransaction();
 
+                //  Validar que el nuevo cliente no sea AVAL de otro préstamo en tabla de clientes
+                Cliente customerAval = GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
+                if (customerAval != null)
+                {
+                    salida.MensajeError = "El cliente se encuentra como aval del otro préstamo, por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
+
+ 
+
+                //  Validar que el nuevo aval no sea AVAL 3 o mas veces en la tabla de clientes
+                int customerAval3Times = GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, transaccion);
+                if (customerAval3Times > 2)
+                {
+                    salida.MensajeError = "El aval ya existe " + customerAval3Times + " veces como aval del otros préstamos. Lo máximo permitido son 2,  por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
 
                 Utils.Log("\nMétodo-> " +
                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
@@ -590,23 +609,18 @@ namespace Plataforma.pages
                                 id_cliente = @id_cliente ";
 
 
-                Utils.Log("update client" + sql);
+                Utils.Log("ACTUALIZAR CLIENTE " + sql);
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.AddWithValue("@id_tipo_cliente", item.IdTipoCliente);
-
-
                 cmd.Parameters.AddWithValue("@curp", item.Curp);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
                 cmd.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
                 cmd.Parameters.AddWithValue("@ocupacion", item.Ocupacion);
-
                 cmd.Parameters.AddWithValue("@telefono", item.Telefono);
-
-
                 cmd.Parameters.AddWithValue("@curp_aval", item.CurpAval);
                 cmd.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
                 cmd.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
@@ -618,7 +632,7 @@ namespace Plataforma.pages
 
                 r += cmd.ExecuteNonQuery();
 
-                //  Guardar direccion empleado
+                //  Guardar direccion cliente
                 sql = @"  UPDATE direccion
                              SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
                                 codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
@@ -626,7 +640,7 @@ namespace Plataforma.pages
                         ";
 
 
-                Utils.Log("update customer " + sql);
+                Utils.Log("ACTUALIZAR DIRECCION CLIENTE " + sql);
 
                 SqlCommand cmdAddressEmployee = new SqlCommand(sql, conn);
                 cmdAddressEmployee.CommandType = CommandType.Text;
@@ -678,7 +692,7 @@ namespace Plataforma.pages
 
                 // un nuevo prestamo nace con status 1 = PENDIENTE
 
-                Utils.Log("insert prestamo " + sql);
+                Utils.Log("GUARDAR NUEVO PRESTAMO " + sql);
 
                 SqlCommand cmdInsertPrestamo = new SqlCommand(sql, conn);
                 cmdInsertPrestamo.CommandType = CommandType.Text;

@@ -485,9 +485,11 @@ const client = {
             params.accion = client.accion;
             params = JSON.stringify(params);
 
-            let urlService = client.clientExists ? "SaveLoanUpdateCustomer" : "Save";
+            let urlService = Number(client.ClienteExistente) !== 0 ? "SaveLoanUpdateCustomer" : "Save";
 
-            console.log(urlService);
+            console.log(`urlService = ${urlService}`);
+            console.log(`client.ClienteExistente ${client.ClienteExistente}`);
+            console.log(`client.IdCliente ${client.IdCliente}`);
 
             $.ajax({
                 type: "POST",
@@ -535,11 +537,13 @@ const client = {
                             $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
                             $('#panelMensajeControlado').modal('show');
 
+                            $('.deshabilitable').prop('disabled', false);
+                            $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
                         }, time_);
 
 
-                        $('.deshabilitable').prop('disabled', false);
-                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+                        
 
                     } else {
 
@@ -626,6 +630,7 @@ const client = {
                     if (item) {
 
                         client.IdCliente = item.IdCliente;
+                        client.ClienteExistente = 1;
 
                         //  cliente
                         $('#txtNombre').val(item.Nombre);
@@ -674,6 +679,9 @@ const client = {
                         client.getDocument(client.idSeleccionado, 8, '#img_8');
 
 
+                    } else {
+                        client.IdCliente = -1;
+                        client.ClienteExistente = 0;
                     }
 
 

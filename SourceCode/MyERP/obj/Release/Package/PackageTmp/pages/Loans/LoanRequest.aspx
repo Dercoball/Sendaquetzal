@@ -307,7 +307,8 @@
                                             Identificación frente
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -318,7 +319,8 @@
                                             Identificación reverso
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -329,7 +331,8 @@
                                             Comprobante de domicilio
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4" />
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -524,7 +527,8 @@
                                             Identificación frente
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" data-tipo="6" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" data-tipo="6"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -535,7 +539,8 @@
                                             Identificación reverso
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" data-tipo="7" />
+                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" data-tipo="7"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -545,7 +550,8 @@
                                             Comprobante de domicilio
                                         </label>
 
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" data-tipo="8" />
+                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" data-tipo="8"
+                                            required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 

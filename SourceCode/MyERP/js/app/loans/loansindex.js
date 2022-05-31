@@ -11,7 +11,7 @@ const POSICION_SUPERVISOR = 4;
 const POSICION_PROMOTOR = 5;
 
 const loansindex = {
-    
+
 
     init: () => {
 
@@ -24,10 +24,10 @@ const loansindex = {
         loansindex.accion = "";
 
 
-        
+
         loansindex.fechasHoy();
         loansindex.loadComboStatusPrestamo();
-        
+
         loansindex.cargarItems();
 
         $('.combo-supervisor').hide();
@@ -45,13 +45,13 @@ const loansindex = {
 
         if (!fechaFinal) {
 
-            fechaFinal = reporteCombustibles.fecha();
+            fechaFinal = loansindex.fecha();
             $('#txtFechaFinal').val(fechaFinal);
         }
 
         if (!fechaInicial) {
 
-            fechaInicial = reporteCombustibles.fecha();
+            fechaInicial = loansindex.fecha();
             $('#txtFechaInicial').val(fechaInicial);
         }
 
@@ -92,7 +92,7 @@ const loansindex = {
                         { data: 'Cliente.NombreCompleto' },
                         { data: 'Monto' },
                         { data: 'FechaSolicitud' },
-                        { data: 'NombreStatus' },                        
+                        { data: 'NombreStatus' },
                         { data: 'Accion' }
 
 
@@ -186,7 +186,7 @@ const loansindex = {
 
     },
 
-    
+
 
 
     loadComboStatusPrestamo: () => {
@@ -239,15 +239,28 @@ const loansindex = {
     },
 
     fechasHoy() {
-        let today = new Date();
 
+        //  fecha hoy (final)
+        let today = new Date();
         let dayMonth = today.getDate();
         dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
         let month = (today.getMonth() + 1);
         month = month.toString().length === 1 ? `0${month}` : month;
 
-        $('#txtFechaInicial').val(`${today.getFullYear()}-${month}-${dayMonth}`);
         $('#txtFechaFinal').val(`${today.getFullYear()}-${month}-${dayMonth}`);
+
+
+        //  fecha inicial
+        let startWeekDay = new Date();
+        startWeekDay.setDate(startWeekDay.getDate() - startWeekDay.getDay()-1);
+        let startDayMonth = startWeekDay.getDate();
+        startDayMonth = startDayMonth.toString().length === 1 ? `0${startDayMonth}` : startDayMonth;
+        let startMonth = (startWeekDay.getMonth() + 1);
+        startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
+        let startYear = (startWeekDay.getFullYear());
+        
+        $('#txtFechaInicial').val(`${startYear}-${startMonth}-${startDayMonth}`);
+
 
     },
 
@@ -274,7 +287,7 @@ const loansindex = {
 
                     opcion += `<option value = '${item.IdTipoCliente}' > ${item.NombreTipoCliente}</option > `;
 
-                } 
+                }
 
                 $('#comboTipoCliente').html(opcion);
 
@@ -286,7 +299,7 @@ const loansindex = {
     },
 
 
-    
+
 
 
     accionesBotones: () => {

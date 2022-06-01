@@ -213,7 +213,7 @@ const loansindex = {
                 var item = msg.d;
 
 
-                
+
                 loansindex.idSeleccionado = item.IdCliente;
                 //  cliente
                 $('#txtNombre').val(item.Nombre);
@@ -327,7 +327,7 @@ const loansindex = {
 
     },
 
-    
+
 
 
     loadComboStatusPrestamo: () => {
@@ -393,13 +393,15 @@ const loansindex = {
 
         //  fecha inicial
         let startWeekDay = new Date();
-        startWeekDay.setDate(startWeekDay.getDate() - startWeekDay.getDay()-1);
+        startWeekDay.setDate(startWeekDay.getDate() - startWeekDay.getDay() + 1);
+
         let startDayMonth = startWeekDay.getDate();
         startDayMonth = startDayMonth.toString().length === 1 ? `0${startDayMonth}` : startDayMonth;
+
         let startMonth = (startWeekDay.getMonth() + 1);
         startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
         let startYear = (startWeekDay.getFullYear());
-        
+
         $('#txtFechaInicial').val(`${startYear}-${startMonth}-${startDayMonth}`);
 
 

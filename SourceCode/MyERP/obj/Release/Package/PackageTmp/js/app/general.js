@@ -187,7 +187,7 @@ $(document).ready(function () {
 
                 let valores = msg.d;
 
-                console.log(`${JSON.stringify(valores)}`);
+                //console.log(`${JSON.stringify(valores)}`);
 
                 $(controlHtml).html(valores.NombreTipoUsuario);
 

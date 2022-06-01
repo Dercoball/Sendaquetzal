@@ -228,7 +228,65 @@ namespace Plataforma.pages
 
         }
 
-    
+        [WebMethod]
+        public static Usuario GetUserData(string path, string idUsuario)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            Usuario item = new Usuario();
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT p.nombre nombre_tipo_usuario, u.id_usuario, u.login, 
+                                u.id_tipo_usuario, IsNull(u.id_empleado, 0) id_empleado
+                                FROM usuario u
+                                JOIN posicion p ON (p.id_posicion = u.id_tipo_usuario)
+                                WHERE u.id_usuario = @id ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("Id =  " + idUsuario);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", idUsuario);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());                        
+                        item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
+                        item.Login = ds.Tables[0].Rows[i]["login"].ToString();
+
+                    }
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
         [WebMethod]
         public static Usuario GetUsuario(string path, string id)
         {

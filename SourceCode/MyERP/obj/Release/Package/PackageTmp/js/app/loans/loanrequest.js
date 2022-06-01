@@ -211,9 +211,9 @@ const client = {
 
 
                 console.log(client.idSeleccionado);
-                client.getDocument(client.idSeleccionado, 2, '#img_1');
-                client.getDocument(client.idSeleccionado, 3, '#img_2');
-                client.getDocument(client.idSeleccionado, 4, '#img_3');
+                client.getDocument(client.idSeleccionado, 2, '#img_2');
+                client.getDocument(client.idSeleccionado, 3, '#img_3');
+                client.getDocument(client.idSeleccionado, 4, '#img_4');
                 client.getDocument(client.idSeleccionado, 6, '#img_6');
                 client.getDocument(client.idSeleccionado, 7, '#img_7');
                 client.getDocument(client.idSeleccionado, 8, '#img_8');
@@ -515,10 +515,12 @@ const client = {
 
                             let idTipoDocumento = item.dataset['tipo'];
 
+                            console.log(`idTipoDocumento  = ${idTipoDocumento}`);
+
                             let file;
                             if (file = this.files[0]) {
 
-                                if (client.clientExists) {
+                                if (Number(client.ClienteExistente) !== 0) {
                                     utils.sendFileEmployee(file, 'update_document_customer', valores.IdItem, idTipoDocumento, "cliente");
                                 } else {
                                     utils.sendFileEmployee(file, 'documento', valores.IdItem, idTipoDocumento, "cliente");
@@ -624,7 +626,7 @@ const client = {
                 success: function (msg) {
 
                     let item = msg.d;
-                    console.log(`data =  ${JSON.stringify(item)}`);
+                    //console.log(`data =  ${JSON.stringify(item)}`);
 
                     //Cliente existe
                     if (item) {
@@ -636,10 +638,7 @@ const client = {
                         $('#txtNombre').val(item.Nombre);
                         $('#txtPrimerApellido').val(item.PrimerApellido);
                         $('#txtSegundoApellido').val(item.SegundoApellido);
-                        // $('#txtCURP').val(item.Curp);
-                        // $('#txtFechaSolicitud').val(item.FechaSolicitud);
                         $('#txtTelefono').val(item.Telefono);
-                        // $('#txtCantidadPrestamo').val(item.Monto);
 
                         $('#txtOcupacion').val(item.Ocupacion);
                         $('#comboTipoCliente').val(item.IdTipoCliente);
@@ -671,9 +670,9 @@ const client = {
 
 
                         // console.log(client.idSeleccionado);
-                        client.getDocument(item.IdCliente, 2, '#img_1');
-                        client.getDocument(item.IdCliente, 3, '#img_2');
-                        client.getDocument(item.IdCliente, 4, '#img_3');
+                        client.getDocument(item.IdCliente, 2, '#img_2');
+                        client.getDocument(item.IdCliente, 3, '#img_3');
+                        client.getDocument(item.IdCliente, 4, '#img_4');
                         client.getDocument(item.IdCliente, 6, '#img_6');
                         client.getDocument(item.IdCliente, 7, '#img_7');
                         client.getDocument(item.IdCliente, 8, '#img_8');
@@ -682,6 +681,10 @@ const client = {
                     } else {
                         client.IdCliente = -1;
                         client.ClienteExistente = 0;
+                        $('.campo-input').val('');
+                        $('.campo-combo').val('');
+                        $(`.documentos`).attr('src', '../../img/upload.png');
+
                     }
 
 

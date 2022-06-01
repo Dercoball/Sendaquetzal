@@ -158,21 +158,19 @@
 
                         <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="table">
 
-
                             <thead>
-
-                                <th>No.</th>
-                                <th>Nombre</th>
-                                <%--<th>Tipo Cliente</th>--%>
-                                <%--<th>Telefono</th>--%>
-                                <%--<th>CURP</th>--%>
-                                <%--<th>Ocupación</th>--%>
-                                <th>Monto préstamo</th>
-                                <th>Fecha de solicitud</th>
-                                <th>Status</th>
-                                <th></th>
-
+                                <tr>
+                                    <th>No.</th>
+                                    <%--<th></th>--%>
+                                    <th>Nombre</th>
+                                    <th>CURP</th>
+                                    <th>Monto préstamo</th>
+                                    <th>Fecha de solicitud</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
                             </thead>
+
                             <tbody>
                             </tbody>
                         </table>
@@ -197,7 +195,7 @@
 
                         <div class="tab-content" id="nav-tabContent">
 
-                            <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab"">
+                            <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
                                 <div class="card">
 
                                     <div class="card-header">
@@ -515,7 +513,7 @@
                                                     Notas supervisor
                                                 </label>
 
-                                                <textarea class="form-control" id="txtNotaSupervisor" 
+                                                <textarea class="form-control" id="txtNotaSupervisor"
                                                     rows="4"> 
                                                 </textarea>
 
@@ -532,8 +530,8 @@
 
                             </div>
 
-                              <!-- PESTAÑA AVAL-->
-                            
+                            <!-- PESTAÑA AVAL-->
+
                             <div class="tab-pane fade" id="nav-aval" role="tabpanel" aria-labelledby="nav-aval-tab">
 
                                 <div class="card">
@@ -872,7 +870,7 @@
 
                         </div>
 
-                       
+
 
 
 

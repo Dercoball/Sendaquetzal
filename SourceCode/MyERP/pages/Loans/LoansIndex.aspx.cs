@@ -112,6 +112,7 @@ namespace Plataforma.pages
                         Prestamo item = new Prestamo();
                         item.Cliente = new Cliente();
                         item.Cliente.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
+                        item.Cliente.Curp = ds.Tables[0].Rows[i]["curp"].ToString();
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
 
                         item.Cliente.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();

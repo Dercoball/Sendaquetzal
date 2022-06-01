@@ -210,7 +210,7 @@ const client = {
 
 
 
-                console.log(client.idSeleccionado);
+                //console.log(client.idSeleccionado);
                 client.getDocument(client.idSeleccionado, 2, '#img_2');
                 client.getDocument(client.idSeleccionado, 3, '#img_3');
                 client.getDocument(client.idSeleccionado, 4, '#img_4');
@@ -352,11 +352,11 @@ const client = {
 
             let idTipoDocumento = e.currentTarget.dataset['tipo'];
 
-            if (client.accion !== 'nuevo') {
+            if (client.IdCliente) {
 
                 let params = {};
                 params.path = window.location.hostname;
-                params.idEmpleado = client.idSeleccionado;
+                params.idCliente = client.IdCliente;
                 params.idTipoDocumento = idTipoDocumento;
                 params = JSON.stringify(params);
 
@@ -506,7 +506,6 @@ const client = {
                         window.location = "../../pages/Index.aspx";
                     }
 
-                    //debugger;
                     if (parseInt(valores.CodigoError) === 0) {
 
 
@@ -515,7 +514,7 @@ const client = {
 
                             let idTipoDocumento = item.dataset['tipo'];
 
-                            console.log(`idTipoDocumento  = ${idTipoDocumento}`);
+                            //console.log(`idTipoDocumento  = ${idTipoDocumento}`);
 
                             let file;
                             if (file = this.files[0]) {
@@ -545,7 +544,7 @@ const client = {
                         }, time_);
 
 
-                        
+
 
                     } else {
 
@@ -577,8 +576,6 @@ const client = {
             });
 
         });
-
-
 
 
         $('#btnCancelar').on('click', (e) => {

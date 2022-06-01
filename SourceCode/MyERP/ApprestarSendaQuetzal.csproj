@@ -1237,6 +1237,7 @@
     <Compile Include="pages\Loans\LoansIndex.aspx.designer.cs">
       <DependentUpon>LoansIndex.aspx</DependentUpon>
     </Compile>
+    <Compile Include="pages\Loans\LoanValidation.cs" />
     <Compile Include="pages\Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

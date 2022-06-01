@@ -1,4 +1,5 @@
 ﻿using Plataforma.Clases;
+using Plataforma.pages.Loans;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -145,12 +146,16 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
             // verificar que tenga permisos para usar esta pagina
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
             if (!tienePermiso)
             {
                 return null;//No tiene permisos
             }
+
+            LoanValidation validations = new LoanValidation();
 
             DatosSalida salida = new DatosSalida();
             SqlTransaction transaccion = null;
@@ -164,7 +169,7 @@ namespace Plataforma.pages
 
 
                 //  Validar que no exista un cliente con la misma CURP
-                Cliente customerExists = GetClienteByCURP(path, item.Curp, conn, strConexion, transaccion);
+                Cliente customerExists = validations.GetClienteByCURP(path, item.Curp, conn, strConexion, transaccion);
                 if (customerExists != null)
                 {
                     salida.MensajeError = "Ya existe el cliente con CURP " + item.Curp + " por favor verifique e intente de nuevo.";
@@ -184,7 +189,7 @@ namespace Plataforma.pages
 
 
                 //  Validar que el nuevo cliente no sea AVAL de otro préstamo en tabla de clientes
-                Cliente customerAval = GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
+                Cliente customerAval = validations.GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
                 if (customerAval != null)
                 {
                     salida.MensajeError = "El cliente se encuentra como aval del otro préstamo, por favor verifique e intente de nuevo.";
@@ -204,7 +209,7 @@ namespace Plataforma.pages
 
 
                 //  Validar que el nuevo aval no sea AVAL 3 o mas veces en la tabla de clientes
-                int customerAval3Times = GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, transaccion);
+                int customerAval3Times = validations.GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, transaccion);
                 if (customerAval3Times > 2)
                 {
                     salida.MensajeError = "El aval ya existe " + customerAval3Times + " veces como aval del otros préstamos. Lo máximo permitido son 2,  por favor verifique e intente de nuevo.";
@@ -213,7 +218,7 @@ namespace Plataforma.pages
                 }
 
                 //  Validar que no tenga un prestamo en status Pendiente ... != aprobado y != rechazado
-                Prestamo prestamoExists = GetPrestamoByCURP(path, item.Curp, conn, strConexion, transaccion);
+                Prestamo prestamoExists = validations.GetPrestamoByCURP(path, item.Curp, conn, strConexion, transaccion);
                 if (prestamoExists != null)
                 {
                     salida.MensajeError = "El cliente con curp " + item.Curp + " ya cuenta con un préstamo en proceso de aprobación, por favor verifique e intente de nuevo.";
@@ -221,10 +226,15 @@ namespace Plataforma.pages
                     return salida;
                 }
 
+                //  Validar que en su historial todo esté en Pagado. En caso contrario no dejar guardar el nuevo préstamo.
+                Boolean historialFallaOAbonado = validations.GetHistorialFallaOAbonadoByCustomerCurp(path, item.Curp, conn, strConexion, transaccion);
+                if (historialFallaOAbonado)
+                {
+                    salida.MensajeError = "El cliente con curp " + item.Curp + "  tiene registro en su historial de falla o abonado, no es posible continuar.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
 
-
-                Utils.Log("\nMétodo-> " +
-               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
 
                 string sql = "";
@@ -391,6 +401,9 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+
             //verificar que tenga permisos para usar esta pagina
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
             if (!tienePermiso)
@@ -401,6 +414,8 @@ namespace Plataforma.pages
             DatosSalida salida = new DatosSalida();
             SqlTransaction transaccion = null;
 
+            LoanValidation validations = new LoanValidation();
+
 
             int r = 0;
             try
@@ -410,7 +425,7 @@ namespace Plataforma.pages
                 transaccion = conn.BeginTransaction();
 
                 //  Validar que el nuevo cliente no sea AVAL de otro préstamo en tabla de clientes
-                Cliente customerAval = GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
+                Cliente customerAval = validations.GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
                 if (customerAval != null)
                 {
                     salida.MensajeError = "El cliente se encuentra como aval del otro préstamo, por favor verifique e intente de nuevo.";
@@ -429,7 +444,7 @@ namespace Plataforma.pages
 
 
                 //  Validar que el nuevo aval no sea AVAL 3 o mas veces en la tabla de clientes
-                int customerAval3Times = GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, transaccion);
+                int customerAval3Times = validations.GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, transaccion);
                 if (customerAval3Times > 2)
                 {
                     salida.MensajeError = "El aval ya existe " + customerAval3Times + " veces como aval del otros préstamos. Lo máximo permitido son 2,  por favor verifique e intente de nuevo.";
@@ -439,7 +454,7 @@ namespace Plataforma.pages
 
 
                 //  Validar que no tenga un prestamo en status Pendiente ... != aprobado y != rechazado
-                Prestamo prestamoExists = GetPrestamoByCURP(path, item.Curp, conn, strConexion, transaccion);
+                Prestamo prestamoExists = validations.GetPrestamoByCURP(path, item.Curp, conn, strConexion, transaccion);
                 if (prestamoExists != null)
                 {
                     salida.MensajeError = "El cliente con curp " + item.Curp + " ya cuenta con un préstamo en proceso de aprobación, por favor verifique e intente de nuevo.";
@@ -447,10 +462,17 @@ namespace Plataforma.pages
                     return salida;
                 }
 
+                //  Validar que en su historial todo esté en Pagado. En caso contrario no dejar guardar el nuevo préstamo.
+                Boolean historialFallaOAbonado = validations.GetHistorialFallaOAbonadoByCustomerId(path, item.IdCliente.ToString(), conn, strConexion, transaccion);
+                if (historialFallaOAbonado)
+                {
+                    salida.MensajeError = "El cliente con curp " + item.Curp + "  tiene registro en su historial de falla o abonado, no es posible continuar.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
 
-                Utils.Log("\nMétodo-> " +
-               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
+              
 
                 string sql = "";
 
@@ -595,236 +617,6 @@ namespace Plataforma.pages
 
         }
 
-
-
-        public static Cliente GetClienteByCURP(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
-        {
-
-            Cliente item = null;
-
-            try
-            {
-                DataSet ds = new DataSet();
-                string query = @" SELECT TOP 1 id_cliente, curp
-                                FROM cliente 
-                                WHERE curp = @curp";
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                Utils.Log("CURP =  " + CURP);
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@curp", CURP);
-                adp.SelectCommand.Transaction = transaction;
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-
-                    item = new Cliente();
-                    item.IdCliente = int.Parse(ds.Tables[0].Rows[0]["id_cliente"].ToString());
-
-                }
-
-
-
-                return item;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return item;
-            }
-
-
-
-        }
-
-
-        //  Buscar una persona Aval, mediante su curp en tabla de cliente
-        public static Cliente GetClienteByCURPAvalCliente(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
-        {
-
-            Cliente item = null;
-
-            try
-            {
-                DataSet ds = new DataSet();
-                string query = @" SELECT TOP 1 id_cliente, curp
-                                FROM cliente 
-                                WHERE curp_aval = @curp_aval";
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                Utils.Log("CURP Aval =  " + CURP);
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@curp_aval", CURP);
-                adp.SelectCommand.Transaction = transaction;
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-
-                    item = new Cliente();
-                    item.IdCliente = int.Parse(ds.Tables[0].Rows[0]["id_cliente"].ToString());
-
-                }
-
-
-
-                return item;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return item;
-            }
-
-
-
-        }
-
-
-        //  Buscar una persona Aval, mediante su curp en tabla de empleado
-        public static Empleado GetClienteByCURPAvalEmpleado(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
-        {
-
-            Empleado item = null;
-
-            try
-            {
-                DataSet ds = new DataSet();
-                string query = @" SELECT TOP 1 id_empleado, curp
-                                FROM empleado 
-                                WHERE curp_aval = @curp_aval";
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                Utils.Log("CURP Aval =  " + CURP);
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@curp_aval", CURP);
-                adp.SelectCommand.Transaction = transaction;
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-
-                    item = new Empleado();
-                    item.IdEmpleado = int.Parse(ds.Tables[0].Rows[0]["id_empleado"].ToString());
-
-                }
-
-
-
-                return item;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return item;
-            }
-
-
-
-        }
-
-
-        //  Buscar una persona Aval, cuantas veces esta como aval una curp en la tabla de cliente
-        public static int GetClienteByCURPAvalCliente3Veces(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
-        {
-
-            int num = 0;
-
-            try
-            {
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_cliente
-                                FROM cliente 
-                                WHERE curp_aval = @curp_aval";
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                Utils.Log("CURP Aval =  " + CURP);
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@curp_aval", CURP);
-                adp.SelectCommand.Transaction = transaction;
-                adp.Fill(ds);
-
-                num = ds.Tables[0].Rows.Count + 1;
-
-                return num;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return -1;
-            }
-
-
-
-        }
-
-
-
-        //  Buscar prestamo por curp del cliente, PRESTAMO con status pendiente 2 y 3 actualmente
-        public static Prestamo GetPrestamoByCURP(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
-        {
-
-            Prestamo item = null;
-
-            try
-            {
-                DataSet ds = new DataSet();
-                string query = @" SELECT TOP 1 p.id_prestamo, c.curp
-                                FROM prestamo p JOIN cliente c ON (c.id_cliente = p.id_cliente)
-                                WHERE c.curp = @curp AND p.id_status_prestamo NOT IN (3, 4) ";
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("CURP =  " + CURP);
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@curp", CURP);
-                adp.SelectCommand.Transaction = transaction;
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-
-                    item = new Prestamo();
-                    item.IdPrestamo = int.Parse(ds.Tables[0].Rows[0]["id_prestamo"].ToString());
-
-                }
-
-
-
-                return item;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return item;
-            }
-
-
-
-        }
 
 
 

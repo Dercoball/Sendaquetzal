@@ -1,4 +1,5 @@
 ﻿using Plataforma.Clases;
+using Plataforma.pages.Loans;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -192,8 +193,9 @@ namespace Plataforma.pages
             DatosSalida salida = new DatosSalida();
             SqlTransaction transaccion = null;
 
-            Utils.Log("\nMétodo-> " +
-                   System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+            LoanValidation validations = new LoanValidation();
 
 
             int r = 0;
@@ -204,6 +206,23 @@ namespace Plataforma.pages
 
                 conn.Open();
                 transaccion = conn.BeginTransaction();
+
+                //  Validar que el nuevo cliente no sea el mismo que el aval mediante su curp
+                if (curpCliente == curpAval)
+                {
+                    salida.MensajeError = "La CURP del cliente y del aval no debe ser la misma.";
+                    salida.CodigoError = 1;
+                    return salida;
+
+                }
+
+                Cliente customerExists = validations.GetClienteByCURP(path, curpCliente, conn, strConexion, transaccion);
+                if (customerExists != null)
+                {
+                    salida.MensajeError = "Ya existe el cliente con CURP " + curpCliente + " por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
 
 
                 sql = @"  INSERT INTO cliente

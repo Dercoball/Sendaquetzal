@@ -89,7 +89,9 @@ const loansindex = {
                     data: data,
                     columns: [
                         { data: 'IdPrestamo' },
+                        //{ data: 'Cliente.IdCliente' },
                         { data: 'Cliente.NombreCompleto' },
+                        { data: 'Cliente.Curp' },
                         { data: 'Monto' },
                         { data: 'FechaSolicitud' },
                         { data: 'NombreStatus' },
@@ -102,7 +104,7 @@ const loansindex = {
                         {
                             "targets": [-1],
                             "orderable": false
-                        },
+                        }
                     ],
                     dom: 'fBrtipl',
                     buttons: [

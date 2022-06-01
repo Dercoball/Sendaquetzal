@@ -100,6 +100,7 @@
 
             <div class="container-fluid">
 
+
                 <header>
                     <h1 class="h3 display" id="paginaName">Préstamos</h1>
 
@@ -108,43 +109,48 @@
                     <a href="LoanRequest.aspx" class="btn btn-outline btn-success" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo prestamo</a>
                 </div>
 
-                <div class="mt-2 mb-4">
+
+                <div id="panelFiltro">
+
+                    <div class="mt-2 mb-4">
 
 
 
-                    <div class="row mt-3 mb-3">
+                        <div class="row mt-3 mb-3">
 
-                        <div class="form-group col-md-2">
-                            <label for="comboStatus">
-                                Status
-                            </label>
-                            <select id="comboStatus" class="form-control">
-                            </select>
-                        </div>
-
-
-                        <div class="form-group col-md-3">
-                            <label for="txtFechaInicial">
-                                Fecha inicial
-                            </label>
-                            <input type="date" class="form-control" id="txtFechaInicial" />
-                        </div>
+                            <div class="form-group col-md-2">
+                                <label for="comboStatus">
+                                    Status
+                                </label>
+                                <select id="comboStatus" class="form-control">
+                                </select>
+                            </div>
 
 
-                        <div class="form-group col-md-3">
-                            <label for="txtFechaFinal">
-                                Fecha final
-                            </label>
-                            <input type="date" class="form-control" id="txtFechaFinal" />
-                        </div>
+                            <div class="form-group col-md-3">
+                                <label for="txtFechaInicial">
+                                    Fecha inicial
+                                </label>
+                                <input type="date" class="form-control" id="txtFechaInicial" />
+                            </div>
 
-                        <div class=" col-md-3">
-                            <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
+
+                            <div class="form-group col-md-3">
+                                <label for="txtFechaFinal">
+                                    Fecha final
+                                </label>
+                                <input type="date" class="form-control" id="txtFechaFinal" />
+                            </div>
+
+                            <div class=" col-md-3">
+                                <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
+                            </div>
+
                         </div>
 
                     </div>
-
                 </div>
+
 
 
                 <div id="panelTabla">
@@ -181,6 +187,695 @@
                     <form role="form" id="frm" name="frm">
 
 
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-client-tab" data-toggle="tab" href="#nav-client" role="tab" aria-controls="nav-client" aria-selected="true">Cliente</a>
+                                <a class="nav-item nav-link" id="nav-aval-tab" data-toggle="tab" href="#nav-aval" role="tab" aria-controls="nav-aval" aria-selected="false">Aval</a>
+
+                            </div>
+                        </nav>
+
+                        <div class="tab-content" id="nav-tabContent">
+
+                            <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab"">
+                                <div class="card">
+
+                                    <div class="card-header">
+                                        Cliente
+                                    </div>
+
+                                    <div class="card-body">
+                                        <div class="row">
+
+
+
+                                            <div class="form-group col-md-3">
+                                                <label for="txtNombre">
+                                                    Nombre(s)
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtNombre"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+
+                                            <div class="form-group col-md-3">
+
+                                                <label>
+                                                    Identificación frente
+                                                </label>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="1" id="href_1">
+                                                        <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+
+                                            </div>
+
+
+                                            <div class="form-group col-md-3">
+
+                                                <label>
+                                                    Identificación reverso
+                                                </label>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="2" id="href_2">
+                                                        <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="form-group col-md-3">
+
+                                                <label>
+                                                    Comprobante de domicilio
+                                                </label>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="3" id="href_3">
+                                                        <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-3">
+                                                <label for="txtPrimerApellido">
+                                                    Primer apellido
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtPrimerApellido"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtSegundoApellido">
+                                                    Segundo apellido
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtSegundoApellido" />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtCalle">
+                                                    Calle y número
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtCalle"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtColonia">
+                                                    Colonia
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtColonia"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtMunicipio">
+                                                    Municipio
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtMunicipio"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtEstado">
+                                                    Estado
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtEstado"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtCodigoPostal">
+                                                    Código postal
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtCodigoPostal"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtTelefono">
+                                                    Teléfono
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtTelefono"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtCURP">
+                                                    CURP
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtCURP" title=""
+                                                    required="required" data-required-error='Requerido'
+                                                    pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                                    data-pattern-error="Debe ingresar una CURP válida." />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtOcupacion">
+                                                    Ocupación
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtOcupacion"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtDireccionTrabajo">
+                                                    Dirección de trabajo
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtDireccionTrabajo"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtUbicacion">
+                                                    Ubicacion
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtUbicacion"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+
+                                <div class="card">
+
+                                    <div class="card-header">
+                                        Garantías
+                                    </div>
+
+                                    <div class="card-body">
+
+
+                                        <div class="row">
+
+
+
+                                            <div class="form-group col-md-6">
+
+                                                <label>
+                                                    Foto de cliente
+                                                </label>
+
+
+                                                <div class="col-md-6 text-center">
+                                                    <div class="card">
+                                                        <a href="#" class="img-document" data-tipo="4" id="href_4">
+                                                            <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+
+
+                                                <label for="txtNotaDeFoto">
+                                                    Nota de la foto
+                                                </label>
+                                                <textarea class="form-control" id="txtNotaDeFoto" disabled
+                                                    required data-required-error='Requerido' rows="4">
+                                            
+                                            </textarea>
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div id="panelTablaGarantias">
+                                            <div class="table-responsive">
+
+                                                <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableGarantias">
+
+
+                                                    <thead>
+
+                                                        <th>Nombre</th>
+
+                                                        <th>No. Serie</th>
+                                                        <th>Costo</th>
+                                                        <th>Fotografía</th>
+
+
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+
+
+                                                <label for="txtNotaSupervisor">
+                                                    Notas supervisor
+                                                </label>
+
+                                                <textarea class="form-control" id="txtNotaSupervisor" 
+                                                    rows="4"> 
+                                                </textarea>
+
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                              <!-- PESTAÑA AVAL-->
+                            
+                            <div class="tab-pane fade" id="nav-aval" role="tabpanel" aria-labelledby="nav-aval-tab">
+
+                                <div class="card">
+
+                                    <div class="card-header">
+                                        Aval
+                                    </div>
+
+                                    <div class="card-body">
+                                        <div class="row">
+
+
+
+                                            <div class="form-group col-md-3">
+                                                <label for="txtNombreAval">
+                                                    Nombre(s)
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtNombreAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+
+                                            <div class="form-group col-md-3">
+
+                                                <label>
+                                                    Identificación frente
+                                                </label>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="5" id="href_5">
+                                                        <img src="../../img/upload.png" id="img_5" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+
+                                            </div>
+
+
+                                            <div class="form-group col-md-3">
+
+                                                <label>
+                                                    Identificación reverso
+                                                </label>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="6" id="href_6">
+                                                        <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="form-group col-md-3">
+
+                                                <label>
+                                                    Comprobante de domicilio
+                                                </label>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="7" id="href_7">
+                                                        <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-3">
+                                                <label for="txtPrimerApellidoAval">
+                                                    Primer apellido
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtPrimerApellidoAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtSegundoApellidoAval">
+                                                    Segundo apellido
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval" />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtCalleAval">
+                                                    Calle y número
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtCalleAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtColoniaAval">
+                                                    Colonia
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtColoniaAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtMunicipioAval">
+                                                    Municipio
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtMunicipioAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtEstadoAval">
+                                                    Estado
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtEstadoAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtCodigoPostalAval">
+                                                    Código postal
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtCodigoPostalAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtTelefonoAval">
+                                                    Teléfono
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtTelefonoAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtCURPAval">
+                                                    CURP
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtCURPAval" title=""
+                                                    required="required" data-required-error='Requerido'
+                                                    pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                                    data-pattern-error="Debe ingresar una CURP válida." />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtOcupacionAval">
+                                                    Ocupación
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtOcupacionAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtDireccionTrabajoAval">
+                                                    Dirección de trabajo
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtDireccionTrabajoAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtUbicacionAval">
+                                                    Ubicacion
+                                                </label>
+                                                <input type="text" class="form-control campo-input" id="txtUbicacionAval"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+
+                                <div class="card">
+
+                                    <div class="card-header">
+                                        Garantías
+                                    </div>
+
+                                    <div class="card-body">
+
+
+                                        <div class="row">
+
+
+
+                                            <div class="form-group col-md-6">
+
+                                                <label>
+                                                    Foto de aval
+                                                </label>
+
+
+                                                <div class="col-md-6 text-center">
+                                                    <div class="card">
+                                                        <a href="#" class="img-document" data-tipo="8" id="href_8">
+                                                            <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+
+
+                                                <label for="txtNotaDeFotoAval">
+                                                    Nota de la foto
+                                                </label>
+                                                <textarea class="form-control" id="txtNotaDeFotoAval" disabled
+                                                    required data-required-error='Requerido' rows="4">
+                                            
+                                            </textarea>
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div id="panelTablaGarantiasAval">
+                                            <div class="table-responsive">
+
+                                                <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableGarantiasAval">
+
+
+                                                    <thead>
+
+                                                        <th>Nombre</th>
+
+                                                        <th>No. Serie</th>
+                                                        <th>Costo</th>
+                                                        <th>Fotografía</th>
+
+
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row">
+
+
+                                            <div class="form-group col-md-6">
+
+
+                                                <label for="txtNotaSupervisorAval">
+                                                    Notas supervisor
+                                                </label>
+
+                                                <textarea class="form-control" id="txtNotaSupervisorAval" rows="4"> 
+                                                </textarea>
+
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                       
+
+
+
 
                         <div class="row mt-3 mb-3">
 
@@ -196,7 +891,6 @@
                     </form>
 
                 </div>
-
             </div>
         </section>
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Categories.aspx.cs" Inherits="Plataforma.pages.Categories" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CustomerHistory.aspx.cs" Inherits="Plataforma.pages.CustomerHistory" %>
 
 <!DOCTYPE html>
 
@@ -34,7 +34,9 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
 
+
 <body>
+
 
     <form class="form-signin" id="form1" runat="server">
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
@@ -55,7 +57,7 @@
                     <span id="nombreTipoUsuario"></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
-                <div class="sidenav-header-logo"><a href="#" class="brand-small text-center"><strong>S</strong><strong class="text-primary">Q</strong></a></div>
+                <div class="sidenav-header-logo"><a href="Index.aspx" class="brand-small text-center"><strong>S</strong><strong class="text-primary">Q</strong></a></div>
             </div>
             <!-- Sidebar Navigation Menus-->
             <div class="main-menu">
@@ -99,94 +101,75 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Categorías</h1>
+                    <h1 class="h3 display" id="paginaName">Generar historial</h1>
+
                 </header>
 
-                <div id="panelTabla">
-                    <div class="table-responsive">
+                <div class="mt-2 mb-4">
 
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
+                    <form role="form" id="frm" name="frm" data-toggle="validator">
+                        <div class="row mt-3 mb-3">
 
-
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Nombre</th>
-                                    <th>Activo</th>
-                                    <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-
-
-
-
-                <div id="panelForm">
-
-                    <div class="modal-body form">
-                        <form role="form" id="frm" name="frm">
-
-                            <div class="form-body">
-                                <h3 class="text-left">
-                                    <span id="spnTituloForm"></span>
-                                    <hr />
-                                </h3>
-
-
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-12">
-                                        <label for="txtNombre">
-                                            Nombre categoría
-                                        </label>
-                                        <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-12">
-                                        <div class="form-check ml-2">
-                                            <input id="chkActivo" class="form-check-input" type="checkbox" />
-                                            <label for="chkActivo" class="form-check-label">Activo</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-
+                            <div class="form-group col-md-3">
+                                <label for="txtCurpCliente">
+                                    Curp cliente
+                                </label>
+                                <input type="text" class="form-control" id="txtCurpCliente" required="required" data-required-error='Requerido'
+                                    pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                    data-pattern-error="Debe ingresar una CURP válida." />
+                                <div class="help-block with-errors"></div>
                             </div>
-                        </form>
-                    </div>
 
 
+                            <div class="form-group col-md-3">
+                                <label for="txtCurpAval">
+                                    Curp aval
+                                </label>
+                                <input type="text" class="form-control" id="txtCurpAval" required="required" data-required-error='Requerido'
+                                    pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                    data-pattern-error="Debe ingresar una CURP válida." />
+                                <div class="help-block with-errors"></div>
+                            </div>
 
-                    <div class="row mt-3 mb-3">
 
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                            <div class="form-group col-md-3">
+                                <label for="comboSemanasPrestamo">
+                                    Semanas de préstamo
+                                </label>
+                                <select id="comboSemanasPrestamo" class="form-control" required="required" data-required-error='Requerido'>
+                                </select>
+                                <div class="help-block with-errors"></div>
+                            </div>
                         </div>
 
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
+                    </form>
 
+                </div>
+
+
+                <div id="panelTabla">
+
+                    <div class="table-responsive" id="table_">
                     </div>
 
                 </div>
-            </div>
 
+
+
+
+                <div class="row mt-5 mb-3">
+
+
+                    <div class=" col-md-12 text-right">
+                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                    </div>
+
+                </div>
+
+
+            </div>
         </section>
+
 
 
 
@@ -209,8 +192,7 @@
     </div>
 
 
-
-    <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static">
+    <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static" style="margin-top: 200px;">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -227,59 +209,17 @@
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="btnAceptarPanelMensajes" data-dismiss="modal">Aceptar</button>
+                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="panelEliminar" class="modal fade" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title text-center">Confirmación</h4>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <span id="mensajeEliminar"></span>
-                </div>
-                <div class="modal-footer">
-                    <button id="btnEliminarAceptar" class="btn btn-warning" data-dismiss="modal">Eliminar</button>
-                    <button id="btnEliminarCancelar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="panelLoading" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-
-                <div class="modal-body">
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                            role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                            aria-valuemax="100" style="width: 100%">
-                            Procesando...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
-    <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
-    <script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>
-    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
 
@@ -298,16 +238,15 @@
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
 
-    <script src="../../js/front.js"></script>
-
-
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/categories.js"></script>
+    <script src="../../js/app/customers/customerhistory.js"></script>
     <script src="../../js/app/general.js"></script>
+
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet">
     <script src="../../js/toastr.min.js"></script>
+
 
 </body>
 </html>

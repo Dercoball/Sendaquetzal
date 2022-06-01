@@ -17,12 +17,6 @@ namespace Plataforma.pages
         const string pagina = "13";
 
 
-        const int POSICION_DIRECTOR = 1;
-        const int POSICION_COORDINADOR = 2;
-        const int POSICION_EJECUTIVO = 3;
-        const int POSICION_SUPERVISOR = 4;
-        const int POSICION_PROMOTOR = 5;
-
 
         protected void Page_Load(object sender, EventArgs e)
         {

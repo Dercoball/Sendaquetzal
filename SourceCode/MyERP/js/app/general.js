@@ -15,9 +15,12 @@ let idUsuario = null;
 var mensajesAlertas = {
     solicitudPrestamoEnviada: 'Solicitud de préstamo guardada y enviada correctamente.',
     solicitudNoProcedenteCamposVacios: 'Solicitud no procedente: Existen campos sin llenar, por favor verifique.',
+    solicitudCamposVacios: 'Existen campos sin llenar, por favor verifique.',
+    solicitudCamposVaciosEnTablaHistorial: 'Existen campos vacíos en la tabla de historial, por favor verifique.',
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
     errorGuardar: 'Se ha producido un error al almacenar los datos. Los datos no fueron almacenados.',
     exitoGuardar: 'Los datos se almacenaron correctamente.',
+    exitoGuardarHistorial: 'Los datos del historial se almacenaron correctamente.',
     errorSeleccionarSupervisor: 'Debe seleccionar un supervisor para poder continuar.',
     errorSeleccionarEjecutivo: 'Debe seleccionar un ejecutivo para poder continuar.',
     errorSeleccionarCoordinador: 'Debe seleccionar un coordinador para poder continuar.',

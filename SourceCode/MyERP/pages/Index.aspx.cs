@@ -422,7 +422,7 @@ namespace Plataforma.pages
             if (permisoPaginaActual != null)
             {
                 nav += "<li " + activa +
-                    " id='li" + permisoPaginaActual.NombreRecurso + "'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/") + permisoPaginaActual.NombreInterno + "\" aria-expanded=\"false\"> " +
+                    " id='li" + permisoPaginaActual.NombreRecurso + "'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("") + permisoPaginaActual.NombreInterno + "\" aria-expanded=\"false\"> " +
                     " <i class=\"icon-interface-windows\"></i>" + permisoPaginaActual.NombreRecurso + "</a>   ";
 
                 nav += "</li> ";

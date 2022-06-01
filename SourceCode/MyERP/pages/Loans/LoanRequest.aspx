@@ -345,14 +345,6 @@
 
                                     <div class="col-md-4 text-center">
                                         <div class="card">
-                                            <a href="#" class="img-document" data-tipo="1" id="href_1">
-                                                <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
                                             <a href="#" class="img-document" data-tipo="2" id="href_2">
                                                 <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
                                             </a>
@@ -363,6 +355,14 @@
                                         <div class="card">
                                             <a href="#" class="img-document" data-tipo="3" id="href_3">
                                                 <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 text-center">
+                                        <div class="card">
+                                            <a href="#" class="img-document" data-tipo="4" id="href_4">
+                                                <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
                                             </a>
                                         </div>
                                     </div>

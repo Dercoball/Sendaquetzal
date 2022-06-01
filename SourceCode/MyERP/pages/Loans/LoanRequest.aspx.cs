@@ -791,7 +791,7 @@ namespace Plataforma.pages
                 DataSet ds = new DataSet();
                 string query = @" SELECT TOP 1 p.id_prestamo, c.curp
                                 FROM prestamo p JOIN cliente c ON (c.id_cliente = p.id_cliente)
-                                WHERE c.curp = @curp AND p.id_status_prestamo NOT IN (2, 3) ";
+                                WHERE c.curp = @curp AND p.id_status_prestamo NOT IN (6,7) ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");

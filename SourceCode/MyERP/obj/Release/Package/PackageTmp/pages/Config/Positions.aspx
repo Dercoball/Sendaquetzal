@@ -51,7 +51,7 @@
                 <div class="sidenav-header-inner text-center">
                     <i class="fa fa-user-o fa-4x"></i>
                     <h2 class="h5" id="nombreUsuario"></h2>
-                    <span></span>
+                    <span id="nombreTipoUsuario"></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
                 <div class="sidenav-header-logo"><a href="Index.aspx" class="brand-small text-center"><strong>C</strong><strong class="text-primary">B</strong></a></div>

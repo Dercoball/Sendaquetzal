@@ -192,6 +192,7 @@
     <Content Include="js\app\config\usuarios.min.js">
       <DependentUpon>usuarios.js</DependentUpon>
     </Content>
+    <Content Include="js\app\customers\customerhistory.js" />
     <Content Include="js\app\loans\loanrequest.min.js">
       <DependentUpon>loanrequest.js</DependentUpon>
     </Content>
@@ -262,6 +263,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Customers\CustomerHistory.aspx" />
     <Content Include="pages\Loans\LoanRequest.aspx" />
     <Content Include="pages\Config\DaysOff.aspx" />
     <Content Include="pages\Config\Commissions.aspx" />
@@ -1143,6 +1145,7 @@
     <Compile Include="Clases\Modulo.cs" />
     <Compile Include="Clases\Posicion.cs" />
     <Compile Include="Clases\FrecuenciaEnvio.cs" />
+    <Compile Include="Clases\ItemHistorial.cs" />
     <Compile Include="Clases\StatusPrestamo.cs" />
     <Compile Include="Clases\TipoPlantilla.cs" />
     <Compile Include="Clases\TipoCliente.cs" />
@@ -1164,6 +1167,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Customers\CustomerHistory.aspx.cs">
+      <DependentUpon>CustomerHistory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Customers\CustomerHistory.aspx.designer.cs">
+      <DependentUpon>CustomerHistory.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Loans\LoanRequest.aspx.cs">
       <DependentUpon>LoanRequest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1526,7 +1536,6 @@
   <ItemGroup>
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
-    <Folder Include="pages\Customers\" />
     <Folder Include="pages\Request\" />
     <Folder Include="Uploads\" />
   </ItemGroup>

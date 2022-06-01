@@ -671,12 +671,12 @@ const client = {
 
 
                         // console.log(client.idSeleccionado);
-                        client.getDocument(client.idSeleccionado, 2, '#img_1');
-                        client.getDocument(client.idSeleccionado, 3, '#img_2');
-                        client.getDocument(client.idSeleccionado, 4, '#img_3');
-                        client.getDocument(client.idSeleccionado, 6, '#img_6');
-                        client.getDocument(client.idSeleccionado, 7, '#img_7');
-                        client.getDocument(client.idSeleccionado, 8, '#img_8');
+                        client.getDocument(item.IdCliente, 2, '#img_1');
+                        client.getDocument(item.IdCliente, 3, '#img_2');
+                        client.getDocument(item.IdCliente, 4, '#img_3');
+                        client.getDocument(item.IdCliente, 6, '#img_6');
+                        client.getDocument(item.IdCliente, 7, '#img_7');
+                        client.getDocument(item.IdCliente, 8, '#img_8');
 
 
                     } else {

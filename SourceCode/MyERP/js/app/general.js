@@ -147,6 +147,8 @@ $(document).ready(function () {
 
                     controlLateral();
 
+                    cargarNombreTipoUsuario(idUsuario, '#nombreTipoUsuario');
+
                     $('#side-main-menu').html(elementosInterfaz.BarraLateral);
 
                 });
@@ -164,6 +166,36 @@ $(document).ready(function () {
     });
 
 
+    function cargarNombreTipoUsuario(idUsuario, controlHtml) {
+
+        let parametros = {};
+        parametros.path = window.location.hostname;
+        parametros.idUsuario = idUsuario;
+        parametros = JSON.stringify(parametros);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Usuarios.aspx/GetUserData",
+            data: parametros,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let valores = msg.d;
+
+                console.log(`${JSON.stringify(valores)}`);
+
+                $(controlHtml).html(valores.NombreTipoUsuario);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                document.title = '';
+
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    }
 
     function cargarValoresConfiguracionNombreSistema(id) {
 
@@ -319,103 +351,6 @@ var utils = {
 
     getDocumentos: (params) => {
 
-
-
-
-        $.ajax({
-            type: "POST",
-            url: "../pages/MantenimientoPanelRegistroFallas.aspx/GetDocumentos",
-            data: JSON.stringify(params),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-
-                let documentos = msg.d;
-
-                //console.log(msg.d);
-
-                let htmlDoc = '';
-                htmlDoc += '<div class = "row">';
-
-                documentos.forEach(function (documento) {
-
-                    let url = `'../pages/Download.ashx?path=${window.location.hostname}&id_documento=${documento.IdDocumento}'`;
-
-                    htmlDoc += `
-                            <div class="card bg-light" style="width: 18rem;">
-                              <div class="card-body text-center">
-                            `;
-
-                    htmlDoc += '<a href = "#" onClick = "utils.abrirImagen(' + url + ',' + (documento.Descripcion.trim().toLowerCase().endsWith('pdf') || documento.Descripcion.trim().toLowerCase().endsWith('docx')) + ' ) " >';
-
-                    if (documento.Descripcion.trim().toLowerCase().endsWith('gif') ||
-                        documento.Descripcion.trim().toLowerCase().endsWith('png') ||
-                        documento.Descripcion.trim().toLowerCase().endsWith('jpg') ||
-                        documento.Descripcion.trim().toLowerCase().endsWith('jpeg') ||
-                        documento.Descripcion.trim().toLowerCase().endsWith('bmp')
-                    ) {
-                        htmlDoc += '<img src="' + documento.Url + '" class="img-thumbnail thumb" />';
-                    } else {
-                        htmlDoc += '<img src="/pages/Uploads/pdf.png" class="img-thumbnail thumb" />';
-                    }
-
-                    htmlDoc += '</a>';
-                    htmlDoc += `
-
-                                <p>
-                                    <small class="text-muted">
-                                    (${documento.IdDocumento}) ${documento.Descripcion}
-                                    </small>
-                                </p>
-                        `;
-
-
-
-                    htmlDoc += (Number(idTipoUsuario) === 1)
-                        ? `<div><button class="btn btn-sm btn-default eliminar-documento deshabilitable" data-iddocumento="${documento.IdDocumento}"><em class="fa fa-times"></em></button></div>`
-                        : ``;
-
-                    htmlDoc += '</div>';
-                    htmlDoc += '</div>';
-
-
-
-                });
-
-                htmlDoc += '</div>';
-                htmlDoc += '</div>';
-
-                $('#divDocumentosExistentes').empty().append(htmlDoc);
-
-
-                $('.eliminar-documento').on('click', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-
-                    let idDoc = e.currentTarget.dataset["iddocumento"];
-
-                    utils.idDoc = idDoc;
-
-                    //console.log(`eliminar-documento ${idDoc}`);
-
-                    $('#msgEliminarImagen').html('<p>Se va a eliminar esta imagen/documento  (No.' + idDoc + '). ¿Desea continuar?</p>');
-                    $('#panelEliminarImagen').modal('show');
-
-                });
-
-
-
-
-                $('#panelTabla').hide();
-                $('#panelForm').show();
-
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
-
-        });
 
 
 

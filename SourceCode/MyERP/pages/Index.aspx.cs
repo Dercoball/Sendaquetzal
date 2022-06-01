@@ -252,7 +252,7 @@ namespace Plataforma.pages
                 string active_HomePromotor = esPagina_HomePromotor != null ? "class = 'active' " : "";
 
                 nav += "<li " + active_HomePromotor +
-                  "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + loadIndex.NombreInterno +"\"> " +
+                  "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + loadIndex.NombreInterno + "\"> " +
                   " <i class=\"icon-interface-windows\"></i>Home</a>   ";
                 nav += "</li> ";
 
@@ -323,8 +323,8 @@ namespace Plataforma.pages
             List<string> paginasConfiguracion = new List<string>
                 {
                     "7",//tipos de clientes     ,                             
-                    "44",//tipos de clientes     ,                             
-                    "45",//tipos de clientes     ,                             
+                    "44",                            
+                    "45",                           
                     "8",
                     "10",
                 };
@@ -362,28 +362,13 @@ namespace Plataforma.pages
                 nav += "</ul> ";
                 nav += "</li> ";
             }
+            //.........FIN DE CONFIGURACION
             //
 
 
-            //List<string> paginaCliente = new List<string>
-            //    {
-            //        "83"
-            //    };
-            //var esPagina_Cliente = paginaCliente.Find(x => x == pagina);
-            //string active_Cliente = esPagina_Cliente != null ? "class = 'active' " : "";
-
-
-            //nav += "<li " + active_Cliente +
-            //    " id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + "Customers.aspx\" aria-expanded=\"false\"> " +
-            //    " <i class=\"icon-interface-windows\"></i>Clientes</a>   ";
-
-            //nav += "</li> ";
-
-
-
-            //.........FIN DE CONFIGURACION
-
-
+            //  
+           
+            nav += AgregarItemRootMenu("14", pagina, listaPermisos);
 
 
 
@@ -424,7 +409,28 @@ namespace Plataforma.pages
             return elementos;
         }
 
+        private static string AgregarItemRootMenu(string paginaActual, string pagina, List<PermisoUsuario> listaPermisos)
+        {
+            string nav = "";
 
+
+            PermisoUsuario permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso == int.Parse(paginaActual));
+
+            var esEstaPagina = paginaActual == pagina;
+            string activa = esEstaPagina ? "class = 'active' " : "";
+
+            if (permisoPaginaActual != null)
+            {
+                nav += "<li " + activa +
+                    " id='li" + permisoPaginaActual.NombreRecurso + "'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/") + permisoPaginaActual.NombreInterno + "\" aria-expanded=\"false\"> " +
+                    " <i class=\"icon-interface-windows\"></i>" + permisoPaginaActual.NombreRecurso + "</a>   ";
+
+                nav += "</li> ";
+            }
+
+            return nav;
+
+        }
 
         public static object RegistrarLogCambios(string path, string idUsuario, string descripcion, string modulo)
         {

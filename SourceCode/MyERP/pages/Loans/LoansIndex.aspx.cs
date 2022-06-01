@@ -132,7 +132,7 @@ namespace Plataforma.pages
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
 
-                        string botones = "<button  onclick='loansindex.view(" + item.IdPrestamo + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                        string botones = "<button  onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
 
                         
 

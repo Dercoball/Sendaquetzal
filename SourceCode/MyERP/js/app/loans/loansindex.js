@@ -149,6 +149,9 @@ const loansindex = {
 
     view(idPrestamo) {
         console.log('Abir datos del préstamo' + idPrestamo);
+
+        loansindex.edit(idPrestamo);
+
     },
 
 
@@ -183,6 +186,144 @@ const loansindex = {
         $('.campo-input').val(7);
 
         //$('#txtFechaNacimiento').val('2000-01-01');
+
+    },
+
+    edit: (id) => {
+
+        $('.form-group').removeClass('has-error');
+        $('.help-block').empty();
+        $('#frm')[0].reset();
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.id = id;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Loans/LoanRequest.aspx/GetDataPrestamo",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                var item = msg.d;
+
+
+                
+                loansindex.idSeleccionado = item.IdCliente;
+                //  cliente
+                $('#txtNombre').val(item.Nombre);
+                $('#txtPrimerApellido').val(item.PrimerApellido);
+                $('#txtSegundoApellido').val(item.SegundoApellido);
+                $('#txtCURP').val(item.Curp);
+                //$('#txtFechaSolicitud').val(item.FechaSolicitud);
+                $('#txtTelefono').val(item.Telefono);
+                //$('#txtCantidadPrestamo').val(item.Monto);
+
+                $('#txtOcupacion').val(item.Ocupacion);
+                //$('#comboTipoCliente').val(item.IdTipoCliente);
+
+                //  dirección cliente
+                $('#txtCalle').val(item.direccion.Calle);
+                $('#txtColonia').val(item.direccion.Colonia);
+                $('#txtMunicipio').val(item.direccion.Municipio);
+                $('#txtEstado').val(item.direccion.Estado);
+                $('#txtCodigoPostal').val(item.direccion.CodigoPostal);
+                $('#txtDireccionTrabajo').val(item.direccion.DireccionTrabajo);
+
+
+                //datos aval
+                $('#txtNombreAval').val(item.NombreAval);
+                $('#txtPrimerApellidoAval').val(item.PrimerApellidoAval);
+                $('#txtSegundoApellidoAval').val(item.SegundoApellidoAval);
+                $('#txtCURPAval').val(item.CurpAval);
+                $('#txtTelefonoAval').val(item.TelefonoAval);
+                $('#txtOcupacionAval').val(item.OcupacionAval);
+
+                //  dirección aval
+                $('#txtCalleAval').val(item.direccionAval.Calle);
+                $('#txtColoniaAval').val(item.direccionAval.Colonia);
+                $('#txtMunicipioAval').val(item.direccionAval.Municipio);
+                $('#txtEstadoAval').val(item.direccionAval.Estado);
+                $('#txtCodigoPostalAval').val(item.direccionAval.CodigoPostal);
+                $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
+
+
+
+                $('#panelTabla').hide();
+                $('#panelFiltro').hide();
+                $('#btnNuevo').hide();
+
+                $('#panelForm').show();
+                loansindex.accion = "editar";
+                //$('#spnTituloForm').text('Editar');
+
+
+
+
+                console.log(loansindex.idSeleccionado);
+                loansindex.getDocument(loansindex.idSeleccionado, 2, '#img_1');
+                loansindex.getDocument(loansindex.idSeleccionado, 3, '#img_2');
+                loansindex.getDocument(loansindex.idSeleccionado, 4, '#img_3');
+                loansindex.getDocument(loansindex.idSeleccionado, 6, '#img_5');
+                loansindex.getDocument(loansindex.idSeleccionado, 7, '#img_6');
+                loansindex.getDocument(loansindex.idSeleccionado, 8, '#img_7');
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+
+
+    },
+
+
+
+    getDocument(idCliente, idTipoDocumento, idControl) {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idCliente = idCliente;
+        params.idTipoDocumento = idTipoDocumento;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Loans/LoanRequest.aspx/GetDocument",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (foto) {
+
+                let doc = foto.d;
+
+                if (doc.IdDocumento) {
+                    if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                        $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
+                    } else if (doc.Extension === 'pdf') {
+                        $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
+                    } else {
+                        $(`${idControl}`).attr('src', '../../img/ico_doc.png');
+                    }
+
+                    $(`#href_${idTipoDocumento}`).css('cursor', 'pointer');
+                } else {
+                    $(`#href_${idTipoDocumento}`).css('cursor', 'default');
+                }
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
 
     },
 

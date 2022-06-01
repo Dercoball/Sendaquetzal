@@ -189,6 +189,7 @@
                             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-client-tab" data-toggle="tab" href="#nav-client" role="tab" aria-controls="nav-client" aria-selected="true">Cliente</a>
                                 <a class="nav-item nav-link" id="nav-aval-tab" data-toggle="tab" href="#nav-aval" role="tab" aria-controls="nav-aval" aria-selected="false">Aval</a>
+                                <a class="nav-item nav-link" id="nav-aprobacion-tab" data-toggle="tab" href="#nav-aprobacion" role="tab" aria-controls="nav-aprovacion" aria-selected="false">Aprobación</a>
 
                             </div>
                         </nav>
@@ -864,6 +865,74 @@
                                     </div>
 
                                 </div>
+
+                            </div>
+
+
+                             <!-- PESTAÑA APROBACION-->
+                            <div class="tab-pane fade" id="nav-aprobacion" role="tabpanel" aria-labelledby="nav-aprobacion-tab">
+
+                                <div class="card">
+
+                                    <div class="card-header">
+                                        Aprobación
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        <div class="form-group col-md-12">
+
+
+                                            <label for="txtNotaAprobacion">
+                                                Notas
+                                            </label>
+                                            <textarea class="form-control" id="txtNotaAprobacion" rows="6">
+                                            
+                                            </textarea>
+                                            <div class="help-block with-errors"></div>
+
+                                        </div>
+
+
+                                        <div class="row mt-3 mb-3">
+
+                                            <div class=" col-md-6 text-right">
+                                                <button id="btnAceptar" class="btn btn-secondary"><i class=""></i>Aceptar</button>
+                                            </div>
+
+                                            <div class=" col-md-6 ">
+                                                <button id="btnRechazar" class="btn btn-primary deshabilitable"><i class=""></i>Rechazar</button>
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <div id="panelTableAprobadores">
+                                            <div class="table-responsive">
+
+                                                <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAprobadores">
+
+
+                                                    <thead>
+
+                                                        <th>Aprobadores</th>
+                                                        <th>Estatus</th>
+                                                        <th>Notas</th>
+
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
 
                             </div>
 

@@ -240,7 +240,9 @@ namespace Plataforma.pages
 
 
 
-            if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString())
+            if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString() ||
+                              idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString() ||
+                              idTipoUsuario == Employees.POSICION_EJECUTIVO.ToString())
             {
 
                 List<string> paginaHomePromotor = new List<string>
@@ -253,7 +255,7 @@ namespace Plataforma.pages
 
                 nav += "<li " + active_HomePromotor +
                   "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + loadIndex.NombreInterno + "\"> " +
-                  " <i class=\"icon-interface-windows\"></i>Home</a>   ";
+                  " <i class=\"fa fa-home\"></i>Home</a>   ";
                 nav += "</li> ";
 
             }
@@ -269,7 +271,7 @@ namespace Plataforma.pages
 
                 nav += "<li " + active_Home +
                   "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + "Index.aspx\" aria-expanded=\"false\"> " +
-                  " <i class=\"icon-interface-windows\"></i>Home</a>   ";
+                  " <i class=\"fa fa-home\"></i>Home</a>   ";
 
 
                 nav += "</li> ";
@@ -296,7 +298,7 @@ namespace Plataforma.pages
                     permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
 
                     htmlItemsWeb += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.NombreRecurso + "</a> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"fa fa-internet-explorer\"></i>" + permiso.NombreRecurso + "</a> " +
                            " </li> ";
 
                 }
@@ -307,7 +309,7 @@ namespace Plataforma.pages
             {
 
                 nav += "<li " + active_Web + "><a href=\"#liWeb\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"icon-interface-windows\"></i>Web</a> " +
+                    " <i class=\"fa fa-internet-explorer\"></i>Web</a> " +
                 "  <ul id=\"liWeb\" class=\"collapse list-unstyled\"> ";
 
 
@@ -342,7 +344,7 @@ namespace Plataforma.pages
                     permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
 
                     htmlItemsConfiguracion += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"icon-picture\"></i>" + permiso.NombreRecurso + "</a> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"fa fa-cog\"></i>" + permiso.NombreRecurso + "</a> " +
                            " </li> ";
 
                 }
@@ -353,7 +355,7 @@ namespace Plataforma.pages
             {
 
                 nav += "<li " + active_Configuracion + "><a href=\"#liConfiguracion\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"icon-interface-windows\"></i>Configuración</a> " +
+                    " <i class=\"fa fa-cogs\"></i>Configuración</a> " +
                 "  <ul id=\"liConfiguracion\" class=\"collapse list-unstyled\"> ";
 
 
@@ -368,7 +370,8 @@ namespace Plataforma.pages
 
             //  
            
-            nav += AgregarItemRootMenu("14", pagina, listaPermisos);
+            //  historial
+            nav += AgregarItemRootMenu("14", pagina, listaPermisos, "fa fa-calendar-check-o");
 
 
 
@@ -409,7 +412,7 @@ namespace Plataforma.pages
             return elementos;
         }
 
-        private static string AgregarItemRootMenu(string paginaActual, string pagina, List<PermisoUsuario> listaPermisos)
+        private static string AgregarItemRootMenu(string paginaActual, string pagina, List<PermisoUsuario> listaPermisos, string icono)
         {
             string nav = "";
 
@@ -422,8 +425,8 @@ namespace Plataforma.pages
             if (permisoPaginaActual != null)
             {
                 nav += "<li " + activa +
-                    " id='li" + permisoPaginaActual.NombreRecurso + "'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("") + permisoPaginaActual.NombreInterno + "\" aria-expanded=\"false\"> " +
-                    " <i class=\"icon-interface-windows\"></i>" + permisoPaginaActual.NombreRecurso + "</a>   ";
+                    " id='li" + permisoPaginaActual.NombreRecurso + "'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + permisoPaginaActual.NombreInterno + "\" aria-expanded=\"false\"> " +
+                    " <i class=\"" + icono + "\"></i>" + permisoPaginaActual.NombreRecurso + "</a>   ";
 
                 nav += "</li> ";
             }

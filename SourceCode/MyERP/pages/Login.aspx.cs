@@ -137,7 +137,9 @@ namespace Plataforma.pages
                         Session["id_usuario"] = item.IdUsuario.ToString();
                         Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
 
-                        if (item.IdTipoUsuario == Employees.POSICION_PROMOTOR)
+                        if (item.IdTipoUsuario == Employees.POSICION_PROMOTOR || 
+                                item.IdTipoUsuario == Employees.POSICION_SUPERVISOR || 
+                                item.IdTipoUsuario == Employees.POSICION_EJECUTIVO)
                         {
                             Response.Redirect("Loans/LoansIndex.aspx");
                         }

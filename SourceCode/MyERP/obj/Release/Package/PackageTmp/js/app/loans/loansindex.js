@@ -88,11 +88,10 @@ const loansindex = {
                     "order": [],
                     data: data,
                     columns: [
-                        { data: 'IdPrestamo' },
-                        //{ data: 'Cliente.IdCliente' },
+                        { data: 'IdPrestamo' },                        
                         { data: 'Cliente.NombreCompleto' },
                         { data: 'Cliente.Curp' },
-                        { data: 'Monto' },
+                        { data: 'MontoFormateadoMx' },
                         { data: 'FechaSolicitud' },
                         { data: 'NombreStatus' },
                         { data: 'Accion' }

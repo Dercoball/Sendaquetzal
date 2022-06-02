@@ -13,6 +13,7 @@ namespace Plataforma.Clases
 
         public string FechaSolicitud;
         public float Monto;
+        public string MontoFormateadoMx;
 
         public int IdStatusPrestamo;
 

@@ -25,7 +25,7 @@ namespace Plataforma.pages
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
 
-            
+
 
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
@@ -45,7 +45,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Prestamo> GetListaItems(string path, string idUsuario, string idTipoUsuario, string idStatus, 
+        public static List<Prestamo> GetListaItems(string path, string idUsuario, string idTipoUsuario, string idStatus,
                 string fechaInicial, string fechaFinal)
         {
 
@@ -58,30 +58,79 @@ namespace Plataforma.pages
             {
                 return null;//No tiene permisos
             }
+            
 
-
-
-            //  Filtro status del préstamo
-            var sqlStatus = "";
-            if (idStatus != "-1")
-            {               
-                sqlStatus = " AND p.id_status_prestamo = '" + idStatus + "'";                
-            }
-
-            //  Filtro para que la persona vea sus prestamos
-            var sqlUsuario = "";
-            if (idTipoUsuario != Employees.SUPERUSUARIO.ToString())
-            {
-                sqlUsuario = " AND p.id_usuario = " + idUsuario; 
-            }
+            //  Lista de datos a devolver
+            List<Prestamo> items = new List<Prestamo>();
 
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Prestamo> items = new List<Prestamo>();
 
             try
             {
+
                 conn.Open();
+
+                //  Traer datos del usuario para saber su id_empleado
+                Usuario user = Usuarios.GetUsuario(path, idUsuario);
+
+
+                //  Filtro status del préstamo
+                var sqlStatus = "";
+                if (idStatus != "-1")
+                {
+                    sqlStatus = " AND p.id_status_prestamo = '" + idStatus + "'";
+                }
+
+
+                var sqlUsuario = "";
+
+                //  Si es superusuario que vea todos los datos de todos
+                if (idTipoUsuario != Employees.SUPERUSUARIO.ToString())
+                {
+
+                    //  Filtro para que el promotor solo vea sus prestamos 
+                    if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString())
+                    {
+                        sqlUsuario = " AND p.id_usuario = " + idUsuario;
+
+                    }
+
+                    //  Filtro para que el supervisor vea los prestamos hechos por sus promotores
+                    else if (idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString())
+                    {
+
+                            //  La subquery arroja todos los id_usuario, que son empleados que dependen del supervisor logueado
+                        sqlUsuario = @" AND p.id_usuario IN   
+                                        ( select u.id_usuario
+		                                        from empleado e
+                                                join empleado superv ON (e.id_supervisor = superv.id_empleado)
+                                                JOIN usuario u ON (u.id_empleado = e.id_empleado)
+		                                        WHERE superv.id_empleado = " + user.IdEmpleado + @" )
+
+                            ";
+
+                    }
+
+                    //  Filtro para que el ejecutivo vea los prestamos asignados a sus supervisores
+                    else if (idTipoUsuario == Employees.POSICION_EJECUTIVO.ToString())
+                    {
+                        sqlUsuario = @" AND p.id_usuario IN   
+                                        ( select u.id_usuario
+		                                    from empleado e
+                                            join empleado ejec ON (e.id_ejecutivo = ejec.id_empleado)
+                                            JOIN usuario u ON (u.id_empleado = e.id_empleado)
+		                                    WHERE ejec.id_empleado = " + user.IdEmpleado + @" )
+
+                            ";
+
+                    }
+
+
+                }
+
+
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT c.id_cliente,
                      concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
@@ -92,7 +141,7 @@ namespace Plataforma.pages
                      JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
                      JOIN status_prestamo st ON (st.id_status_prestamo = p.id_status_prestamo) 
                      WHERE  "
-                    + @" (p.fecha_solicitud >= '" + fechaInicial + @"' AND p.fecha_solicitud <= '" + fechaFinal + @"') " 
+                    + @" (p.fecha_solicitud >= '" + fechaInicial + @"' AND p.fecha_solicitud <= '" + fechaFinal + @"') "
                     + sqlStatus
                     + sqlUsuario
                     + " ORDER BY p.id_prestamo ";
@@ -116,20 +165,22 @@ namespace Plataforma.pages
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
 
                         item.Cliente.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-                        
+
                         item.Color = ds.Tables[0].Rows[i]["color"].ToString();
-                        item.NombreStatus = "<span class='" + item.Color + "'>" +  ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
+                        item.NombreStatus = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
 
 
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoFormateadoMx = item.Monto.ToString("C2");//moneda Mx -> $ 2.00
+                        
                         item.FechaSolicitud = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
 
-                        string botones = "<button onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                        string botones = "<button disabled onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
 
-                        
+
 
                         item.Accion = botones;
 

@@ -53,7 +53,7 @@
                 <!-- User Info-->
                 <div class="sidenav-header-inner text-center">
                     <i class="fa fa-user-o fa-4x"></i>
-                    <h2 class="h5" id="nombreUsuario"></h2>
+                    <h3 class="h5" id="nombreUsuario"></h3>
                     <span id="nombreTipoUsuario"></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
@@ -221,8 +221,9 @@
                                         </label>
                                         <input type="text" class="form-control campo-input" id="txtCURP" title=""
                                             required="required" data-required-error='Requerido'
-                                            pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
-                                            data-pattern-error="Debe ingresar una CURP válida." />
+                                            <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                            data-pattern-error="Debe ingresar una CURP válida." --%>
+                                            />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -377,8 +378,8 @@
                                         </label>
                                         <input type="text" class="form-control campo-input" id="txtNombreUsuario" title=""
                                             required="required" data-required-error='Requerido'
-                                            pattern="[0-9A-Za-z]{4,}"
-                                            data-pattern-error="Solo se permiten letras y números. Mínimo 4." />
+                                            pattern="[0-9A-Za-z._]{4,}"
+                                            data-pattern-error="Solo se permiten letras, números punto y guión bajo. Mínimo 4." />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -530,7 +531,9 @@
                                             CURP
                                         </label>
                                         <input type="text" class="form-control campo-input" id="txtCURPAval"
-                                            required="required" data-required-error='Requerido' />
+                                            required="required" data-required-error='Requerido' 
+
+                                            />
                                         <div class="help-block with-errors"></div>
                                     </div>
 

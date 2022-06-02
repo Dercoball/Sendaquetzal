@@ -161,7 +161,7 @@ const tiposUsuario = {
 
         $('.deshabilitable').prop('disabled', false);
 
-        obtenerFechaHoraServidor('txtFechaCreacion');
+        //obtenerFechaHoraServidor('txtFechaCreacion');
 
 
 

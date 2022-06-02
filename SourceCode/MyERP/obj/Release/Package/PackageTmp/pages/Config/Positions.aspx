@@ -50,7 +50,7 @@
                 <!-- User Info-->
                 <div class="sidenav-header-inner text-center">
                     <i class="fa fa-user-o fa-4x"></i>
-                    <h2 class="h5" id="nombreUsuario"></h2>
+                    <h3 class="h5" id="nombreUsuario"></h3>
                     <span id="nombreTipoUsuario"></span>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->

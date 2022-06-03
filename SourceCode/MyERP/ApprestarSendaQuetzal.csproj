@@ -272,6 +272,7 @@
     <Content Include="pages\Config\Categories.aspx" />
     <Content Include="pages\Config\Periods.aspx" />
     <Content Include="pages\Config\Plazas.aspx" />
+    <Content Include="pages\Loans\LoanApprove.aspx" />
     <Content Include="pages\Loans\LoansIndex.aspx" />
     <Content Include="pages\Logout.aspx" />
     <Content Include="pages\NoticeOfPrivacy.aspx" />
@@ -1229,6 +1230,13 @@
     </Compile>
     <Compile Include="pages\Config\Plazas.aspx.designer.cs">
       <DependentUpon>Plazas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Loans\LoanApprove.aspx.cs">
+      <DependentUpon>LoanApprove.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Loans\LoanApprove.aspx.designer.cs">
+      <DependentUpon>LoanApprove.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Loans\LoansIndex.aspx.cs">
       <DependentUpon>LoansIndex.aspx</DependentUpon>

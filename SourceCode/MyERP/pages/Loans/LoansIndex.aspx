@@ -248,12 +248,12 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2"
-                                                    required="required" data-required-error='Requerido' />
+                                                   <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="1" id="href_2">
-                                                        <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="2" id="href_2">
+                                                        <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
 
@@ -268,12 +268,12 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3"
-                                                    required="required" data-required-error='Requerido' />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="2" id="href_2">
-                                                        <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="3" id="href_3">
+                                                        <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
 
@@ -287,12 +287,12 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4"
-                                                    required="required" data-required-error='Requerido' />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="3" id="href_3">
-                                                        <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="4" id="href_4">
+                                                        <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
 
@@ -450,13 +450,13 @@
                                                     Foto de cliente
                                                 </label>
 
-                                                <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4"
-                                                    required="required" data-required-error='Requerido' />
+                                                <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="1"
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="4" id="href_4">
-                                                        <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="1" id="href_1">
+                                                        <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
 
@@ -472,6 +472,14 @@
                                                     required="required" data-required-error='Requerido' rows="4"></textarea>
                                                 <div class="help-block with-errors"></div>
 
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row mt-3 mb-3">
+
+                                            <div class=" col-md-6 text-right">
+                                                <button id="btnGuardarCliente" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                                             </div>
 
                                         </div>
@@ -546,17 +554,7 @@
                                 </div>
 
 
-                                <div class="row mt-3 mb-3">
-
-                                    <div class=" col-md-6 text-left">
-                                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                                    </div>
-
-                                    <div class=" col-md-6 text-right">
-                                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                    </div>
-
-                                </div>
+                               
 
                             </div>
 
@@ -616,11 +614,11 @@
 
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" data-tipo="6"
-                                                    required="required" data-required-error='Requerido' />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="5" id="href_6">
+                                                    <a href="#" class="img-document" data-tipo="6" id="href_6">
                                                         <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
@@ -638,7 +636,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" data-tipo="7"
-                                                    required="required" data-required-error='Requerido' />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -657,7 +655,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" data-tipo="8"
-                                                    required="required" data-required-error='Requerido' />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -818,7 +816,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="9"
-                                                    required="required" data-required-error='Requerido' />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
 
@@ -842,6 +840,14 @@
 
                                         </div>
 
+                                        
+                                        <div class="row mt-3 mb-3">
+
+                                            <div class=" col-md-6 text-right">
+                                                <button id="btnGuardarAval" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                            </div>
+
+                                        </div>
 
 
                                     </div>
@@ -917,17 +923,6 @@
                                 </div>
 
 
-                                <div class="row mt-3 mb-3">
-
-                                    <div class=" col-md-6 text-left">
-                                        <button id="btnCancelarAval" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                                    </div>
-
-                                    <div class=" col-md-6 text-right">
-                                        <button id="btnGuardarAval" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                    </div>
-
-                                </div>
                             </div>
 
 
@@ -1009,6 +1004,17 @@
 
                             </div>
                         </div>
+
+
+                        <div class="row mt-3 mb-3">
+
+                            <div class=" col-md-6 text-left">
+                                <button id="btnCancelarAval" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                            </div>
+
+                        </div>
+
+
                     </form>
 
                 </div>

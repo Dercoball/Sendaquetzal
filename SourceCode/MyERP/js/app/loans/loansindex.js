@@ -295,12 +295,14 @@ const loansindex = {
 
 
                 console.log(loansindex.idSeleccionado);
+                loansindex.getDocument(loansindex.idSeleccionado, 1, '#img_1');
                 loansindex.getDocument(loansindex.idSeleccionado, 2, '#img_2');
                 loansindex.getDocument(loansindex.idSeleccionado, 3, '#img_3');
                 loansindex.getDocument(loansindex.idSeleccionado, 4, '#img_4');
                 loansindex.getDocument(loansindex.idSeleccionado, 6, '#img_6');
                 loansindex.getDocument(loansindex.idSeleccionado, 7, '#img_7');
                 loansindex.getDocument(loansindex.idSeleccionado, 8, '#img_8');
+                loansindex.getDocument(loansindex.idSeleccionado, 9, '#img_9');
 
 
 
@@ -335,7 +337,7 @@ const loansindex = {
                 let doc = foto.d;
 
                 if (doc.IdDocumento) {
-                    if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                    if (doc.Extension === 'png' || doc.Extension === 'PNG' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
                         $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
                     } else if (doc.Extension === 'pdf') {
                         $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
@@ -513,6 +515,296 @@ const loansindex = {
 
 
         });
+
+        $('#btnGuardarCliente').on('click', (e) => {
+            e.preventDefault();
+
+            //let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
+
+            //if (hasErrors) {
+
+            //    $('#spnMensajes').html(mensajesAlertas.solicitudNoProcedenteCamposVacios);
+            //    $('#panelMensajes').modal('show');
+
+            //    return;
+            //}
+
+            //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
+            $('.deshabilitable').prop('disabled', true);
+            $('#btnGuardar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
+
+
+            let dataClient = {};
+            dataClient.IdCliente = loansindex.idSeleccionado;
+
+
+            dataClient.Curp = $('#txtCURP').val();
+            dataClient.PrimerApellido = $('#txtPrimerApellido').val();
+            dataClient.SegundoApellido = $('#txtSegundoApellido').val();
+            dataClient.Nombre = $('#txtNombre').val();
+            dataClient.Telefono = $('#txtTelefono').val();
+            dataClient.Ocupacion = $('#txtOcupacion').val();
+            dataClient.CurpAval = $('#txtCURPAval').val();
+
+            let dataAddressClient = {};
+            dataAddressClient.IdCliente = loansindex.idSeleccionado;
+            dataAddressClient.Calle = $('#txtCalle').val();
+            dataAddressClient.Aval = 0;
+            dataAddressClient.Colonia = $('#txtColonia').val();
+            dataAddressClient.Municipio = $('#txtMunicipio').val();
+            dataAddressClient.Estado = $('#txtEstado').val();
+            dataAddressClient.CodigoPostal = $('#txtCodigoPostal').val();
+            dataAddressClient.DireccionTrabajo = $('#txtDireccionTrabajo').val();
+
+           
+
+
+
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.item = dataClient;
+            params.itemAddress = dataAddressClient;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.accion = loansindex.accion;
+            params = JSON.stringify(params);
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/LoanRequest.aspx/UpdateCustomer`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+                    //  si no tiene permisos
+                    if (valores == null) {
+                        window.location = "../../pages/Index.aspx";
+                    }
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+
+                        //guardar documentos
+                        $('.campo-imagen').each(function (i, item) {
+
+                            let idTipoDocumento = item.dataset['tipo'];
+
+                            //console.log(`idTipoDocumento  = ${idTipoDocumento}`);
+
+                            let file;
+                            if (file = this.files[0]) {
+
+                                console.log("id del cliente: " + valores.IdItem);
+
+                                
+
+                                utils.sendFileEmployee(file, 'update_document_customer', valores.IdItem, idTipoDocumento, "cliente");
+                               
+                                
+
+
+                            }
+
+                        });
+
+                        let time_ = 10000;
+                        setTimeout(function () {
+
+                            utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
+                            $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
+                            $('#panelMensajeControlado').modal('show');
+
+                            $('.deshabilitable').prop('disabled', false);
+                            $('#btnGuardarCliente').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+                        }, time_);
+
+
+
+
+                    } else {
+
+                        $('.deshabilitable').prop('disabled', false);
+                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+                        $('#spnMensajes').html(valores.MensajeError);
+                        $('#panelMensajes').modal('show');
+
+
+                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                        return;
+
+                    }
+
+
+                    // VUELVE A CARGAR LOS DATOS
+                    loansindex.edit(loansindex.idSeleccionado);
+
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+
+
+
+                }
+
+            });
+
+        });
+
+        $('#btnGuardarAval').on('click', (e) => {
+            //e.preventDefault();
+
+            //let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
+
+            //if (hasErrors) {
+
+            //    $('#spnMensajes').html(mensajesAlertas.solicitudNoProcedenteCamposVacios);
+            //    $('#panelMensajes').modal('show');
+
+            //    return;
+            //}
+
+            //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
+            $('.deshabilitable').prop('disabled', true);
+            $('#btnGuardar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
+
+
+            let dataClient = {};
+            dataClient.IdCliente = loansindex.idSeleccionado;
+
+
+
+            dataClient.OcupacionAval = $('#txtOcupacionAval').val();
+            dataClient.CurpAval = $('#txtCURPAval').val();
+            dataClient.PrimerApellidoAval = $('#txtPrimerApellidoAval').val();
+            dataClient.SegundoApellidoAval = $('#txtSegundoApellidoAval').val();
+            dataClient.NombreAval = $('#txtNombreAval').val();
+            dataClient.TelefonoAval = $('#txtTelefonoAval').val();
+
+
+            let dataAddressClientAval = {};
+            dataAddressClientAval.IdCliente = loansindex.idSeleccionado;
+            dataAddressClientAval.Calle = $('#txtCalleAval').val();
+            dataAddressClientAval.Aval = 1;
+            dataAddressClientAval.Colonia = $('#txtColoniaAval').val();
+            dataAddressClientAval.Municipio = $('#txtMunicipioAval').val();
+            dataAddressClientAval.Estado = $('#txtEstadoAval').val();
+            dataAddressClientAval.CodigoPostal = $('#txtCodigoPostalAval').val();
+            dataAddressClientAval.DireccionTrabajo = $('#txtDireccionTrabajoAval').val();
+
+
+
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.item = dataClient;
+            params.itemAddressAval = dataAddressClientAval;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.accion = loansindex.accion;
+            params = JSON.stringify(params);
+
+           
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/LoanRequest.aspx/UpdateCustomerAval`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+                    //  si no tiene permisos
+                    if (valores == null) {
+                        window.location = "../../pages/Index.aspx";
+                    }
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+
+                        //guardar documentos
+                        $('.campo-imagen').each(function (i, item) {
+
+                            let idTipoDocumento = item.dataset['tipo'];
+
+                            //console.log(`idTipoDocumento  = ${idTipoDocumento}`);
+
+                            let file;
+                            if (file = this.files[0]) {
+
+                                utils.sendFileEmployee(file, 'update_document_customer', valores.IdItem, idTipoDocumento, "cliente");
+
+                            }
+
+                        });
+
+                        let time_ = 10000;
+                        setTimeout(function () {
+
+                            utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
+                            $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
+                            $('#panelMensajeControlado').modal('show');
+
+                            $('.deshabilitable').prop('disabled', false);
+                            $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+                        }, time_);
+
+
+
+
+                    } else {
+
+                        $('.deshabilitable').prop('disabled', false);
+                        $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+                        $('#spnMensajes').html(valores.MensajeError);
+                        $('#panelMensajes').modal('show');
+
+
+                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                        return;
+
+                    }
+
+
+                    // VUELVE A CARGAR LOS DATOS
+                    loansindex.edit(loansindex.idSeleccionado);
+
+
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+
+
+
+                }
+
+            });
+
+        });
+
+
+
+
 
 
 

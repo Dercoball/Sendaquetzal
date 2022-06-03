@@ -70,7 +70,7 @@ namespace Plataforma
                     else if (nombreArchivo == "update_document_customer")
                     {
 
-                        int r = UpdateDocumentCustomer(path_server, idItem, base64String, descripcionArchivo, tipo, urlThumb, extension);
+                        int r = UpdateDocumentCustomer(path_server, idCliente, base64String, descripcionArchivo, tipo, urlThumb, extension);
 
                         if (r == 0)
                         {
@@ -292,7 +292,8 @@ namespace Plataforma
 
                 r = (int)cmdGrupo.ExecuteNonQuery();
 
-
+                Log(idCliente);
+                Log(tipo);
 
                 Log("Guardado -> OK " + r);
 

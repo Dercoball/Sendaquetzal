@@ -240,7 +240,8 @@ namespace Plataforma.pages
 
 
 
-            if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString() ||
+            if (idTipoUsuario == Employees.SUPERUSUARIO.ToString() ||
+                    idTipoUsuario == Employees.POSICION_PROMOTOR.ToString() ||
                               idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString() ||
                               idTipoUsuario == Employees.POSICION_EJECUTIVO.ToString())
             {
@@ -259,8 +260,12 @@ namespace Plataforma.pages
                 nav += "</li> ";
 
             }
-            else
+
+            if (idTipoUsuario == Employees.SUPERUSUARIO.ToString() ||
+                            idTipoUsuario == Employees.POSICION_COORDINADOR.ToString() ||
+                            idTipoUsuario == Employees.POSICION_DIRECTOR.ToString())
             {
+
                 //
                 List<string> paginaHome = new List<string>
                 {
@@ -325,8 +330,8 @@ namespace Plataforma.pages
             List<string> paginasConfiguracion = new List<string>
                 {
                     "7",//tipos de clientes     ,                             
-                    "44",                            
-                    "45",                           
+                    "44",
+                    "45",
                     "8",
                     "10",
                 };
@@ -369,7 +374,7 @@ namespace Plataforma.pages
 
 
             //  
-           
+
             //  historial
             nav += AgregarItemRootMenu("14", pagina, listaPermisos, "fa fa-calendar-check-o");
 

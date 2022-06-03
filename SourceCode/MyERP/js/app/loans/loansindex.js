@@ -4,12 +4,6 @@ let descargas = "Prestamos_" + date.getFullYear() + "_" + date.getMonth() + "_" 
 let pagina = '13';
 
 
-const POSICION_DIRECTOR = 1;
-const POSICION_COORDINADOR = 2;
-const POSICION_EJECUTIVO = 3;
-const POSICION_SUPERVISOR = 4;
-const POSICION_PROMOTOR = 5;
-
 const loansindex = {
 
 
@@ -22,7 +16,8 @@ const loansindex = {
         loansindex.idTipoUsuario = "-1";
         loansindex.login = "-1";
         loansindex.accion = "";
-
+        //loansindex.lat = '';
+        //loansindex.lng = '';
 
 
         loansindex.fechasHoy();
@@ -88,7 +83,7 @@ const loansindex = {
                     "order": [],
                     data: data,
                     columns: [
-                        { data: 'IdPrestamo' },                        
+                        { data: 'IdPrestamo' },
                         { data: 'Cliente.NombreCompleto' },
                         { data: 'Cliente.Curp' },
                         { data: 'MontoFormateadoMx' },
@@ -190,6 +185,40 @@ const loansindex = {
 
     },
 
+    getLocation(control) {
+
+        var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+
+
+        function success(pos) {
+            var crd = pos.coords;
+
+            console.log('Your current position is:');
+            console.log('Latitude : ' + crd.latitude);
+            console.log('Longitude: ' + crd.longitude);
+            console.log('More or less ' + crd.accuracy + ' meters.');
+
+
+
+            $(`${control}`).val(`${crd.latitude}, ${crd.longitude}`);
+
+
+        };
+
+        function error(err) {
+            console.warn('ERROR(' + err.code + '): ' + err.message);
+        };
+
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+
+
+    },
+
     edit: (id) => {
 
         $('.form-group').removeClass('has-error');
@@ -221,12 +250,9 @@ const loansindex = {
                 $('#txtPrimerApellido').val(item.PrimerApellido);
                 $('#txtSegundoApellido').val(item.SegundoApellido);
                 $('#txtCURP').val(item.Curp);
-                //$('#txtFechaSolicitud').val(item.FechaSolicitud);
                 $('#txtTelefono').val(item.Telefono);
-                //$('#txtCantidadPrestamo').val(item.Monto);
 
                 $('#txtOcupacion').val(item.Ocupacion);
-                //$('#comboTipoCliente').val(item.IdTipoCliente);
 
                 //  dirección cliente
                 $('#txtCalle').val(item.direccion.Calle);
@@ -253,6 +279,8 @@ const loansindex = {
                 $('#txtCodigoPostalAval').val(item.direccionAval.CodigoPostal);
                 $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
 
+                loansindex.getLocation('#txtUbicacion');
+
 
 
                 $('#panelTabla').hide();
@@ -267,12 +295,12 @@ const loansindex = {
 
 
                 console.log(loansindex.idSeleccionado);
-                loansindex.getDocument(loansindex.idSeleccionado, 2, '#img_1');
-                loansindex.getDocument(loansindex.idSeleccionado, 3, '#img_2');
-                loansindex.getDocument(loansindex.idSeleccionado, 4, '#img_3');
-                loansindex.getDocument(loansindex.idSeleccionado, 6, '#img_5');
-                loansindex.getDocument(loansindex.idSeleccionado, 7, '#img_6');
-                loansindex.getDocument(loansindex.idSeleccionado, 8, '#img_7');
+                loansindex.getDocument(loansindex.idSeleccionado, 2, '#img_2');
+                loansindex.getDocument(loansindex.idSeleccionado, 3, '#img_3');
+                loansindex.getDocument(loansindex.idSeleccionado, 4, '#img_4');
+                loansindex.getDocument(loansindex.idSeleccionado, 6, '#img_6');
+                loansindex.getDocument(loansindex.idSeleccionado, 7, '#img_7');
+                loansindex.getDocument(loansindex.idSeleccionado, 8, '#img_8');
 
 
 
@@ -455,6 +483,45 @@ const loansindex = {
 
         });
 
+
+        $('#btnCancelar').on('click', (e) => {
+            e.preventDefault();
+
+            $(`.documentos`).attr('src', '../../img/upload.png');
+
+            window.location = "LoansIndex.aspx";
+
+
+        });
+
+        $('#btnCancelarAval').on('click', (e) => {
+            e.preventDefault();
+
+            $(`.documentos`).attr('src', '../../img/upload.png');
+
+            window.location = "LoansIndex.aspx";
+
+
+        });
+
+        $('#btnCancelarAprobacion').on('click', (e) => {
+            e.preventDefault();
+
+            $(`.documentos`).attr('src', '../../img/upload.png');
+
+            window.location = "LoansIndex.aspx";
+
+
+        });
+
+
+
+        $('#btnReloadLocation').on('click', (e) => {
+            e.preventDefault();
+
+            loansindex.getLocation('#txtUbicacion');
+
+        });
 
 
     }

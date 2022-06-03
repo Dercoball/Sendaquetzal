@@ -178,8 +178,18 @@ namespace Plataforma.pages
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
 
-                        string botones = "<button disabled onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                        string botones = "";
 
+                        if (idTipoUsuario != Employees.SUPERUSUARIO.ToString())
+                        {
+                         
+                            botones += "<button disabled onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                        }
+                        else
+                        {
+
+                            botones += "<button onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                        }
 
 
                         item.Accion = botones;

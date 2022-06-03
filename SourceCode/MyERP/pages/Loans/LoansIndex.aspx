@@ -197,6 +197,7 @@
                         <div class="tab-content" id="nav-tabContent">
 
                             <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
+
                                 <div class="card">
 
                                     <div class="card-header">
@@ -207,27 +208,51 @@
                                         <div class="row">
 
 
+                                            <div class="col-md-3">
 
-                                            <div class="form-group col-md-3">
-                                                <label for="txtNombre">
-                                                    Nombre(s)
-                                                </label>
-                                                <input type="text" class="form-control campo-input" id="txtNombre"
-                                                    required="required" data-required-error='Requerido' />
-                                                <div class="help-block with-errors"></div>
+                                                <div class="form-group">
+                                                    <label for="txtNombre">
+                                                        Nombre(s)
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtNombre"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtPrimerApellido">
+                                                        Primer apellido
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtPrimerApellido"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtSegundoApellido">
+                                                        Segundo apellido
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtSegundoApellido" />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+
                                             </div>
 
 
-
                                             <div class="form-group col-md-3">
+
 
                                                 <label>
                                                     Identificación frente
                                                 </label>
 
+                                                <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="1" id="href_1">
+                                                    <a href="#" class="img-document" data-tipo="1" id="href_2">
                                                         <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
@@ -242,6 +267,9 @@
                                                     Identificación reverso
                                                 </label>
 
+                                                <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
 
                                                 <div class="card">
                                                     <a href="#" class="img-document" data-tipo="2" id="href_2">
@@ -258,6 +286,9 @@
                                                     Comprobante de domicilio
                                                 </label>
 
+                                                <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
 
                                                 <div class="card">
                                                     <a href="#" class="img-document" data-tipo="3" id="href_3">
@@ -272,35 +303,7 @@
                                         </div>
 
 
-
                                         <div class="row">
-
-
-                                            <div class="form-group col-md-3">
-                                                <label for="txtPrimerApellido">
-                                                    Primer apellido
-                                                </label>
-                                                <input type="text" class="form-control campo-input" id="txtPrimerApellido"
-                                                    required="required" data-required-error='Requerido' />
-                                                <div class="help-block with-errors"></div>
-
-                                            </div>
-
-
-                                        </div>
-
-
-                                        <div class="row">
-
-
-
-                                            <div class="form-group col-md-6">
-                                                <label for="txtSegundoApellido">
-                                                    Segundo apellido
-                                                </label>
-                                                <input type="text" class="form-control campo-input" id="txtSegundoApellido" />
-                                                <div class="help-block with-errors"></div>
-                                            </div>
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtCalle">
@@ -312,11 +315,6 @@
                                             </div>
 
 
-                                        </div>
-
-
-                                        <div class="row">
-
                                             <div class="form-group col-md-6">
                                                 <label for="txtColonia">
                                                     Colonia
@@ -325,6 +323,13 @@
                                                     required="required" data-required-error='Requerido' />
                                                 <div class="help-block with-errors"></div>
                                             </div>
+
+
+
+                                        </div>
+
+
+                                        <div class="row">
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtMunicipio">
@@ -336,10 +341,6 @@
                                             </div>
 
 
-                                        </div>
-
-
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
@@ -351,6 +352,12 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
+
+                                        </div>
+
+
+                                        <div class="row">
+
                                             <div class="form-group col-md-6">
                                                 <label for="txtCodigoPostal">
                                                     Código postal
@@ -361,9 +368,7 @@
                                             </div>
 
 
-                                        </div>
 
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
@@ -375,6 +380,9 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
+                                        </div>
+
+                                        <div class="row">
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtCURP">
@@ -382,14 +390,12 @@
                                                 </label>
                                                 <input type="text" class="form-control campo-input" id="txtCURP" title=""
                                                     required="required" data-required-error='Requerido'
-                                                    pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
-                                                    data-pattern-error="Debe ingresar una CURP válida." />
+                                                    <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                                    data-pattern-error="Debe ingresar una CURP válida." --%> />
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
-                                        </div>
 
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
@@ -401,6 +407,10 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
+                                        </div>
+
+                                        <div class="row">
+
                                             <div class="form-group col-md-6">
                                                 <label for="txtDireccionTrabajo">
                                                     Dirección de trabajo
@@ -410,18 +420,58 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
-                                        </div>
-
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtUbicacion">
-                                                    Ubicacion
+                                                    Ubicación (lat, lng)
                                                 </label>
-                                                <input type="text" class="form-control campo-input" id="txtUbicacion"
+
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control campo-input" id="txtUbicacion"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+
+                                                    <div class="input-group-append">
+                                                        <button class="input-group-text" id="btnReloadLocation">
+                                                            <span class="fa fa-map-marker"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+
+                                            <div class="form-group col-md-6">
+
+                                                <label>
+                                                    Foto de cliente
+                                                </label>
+
+                                                <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4"
                                                     required="required" data-required-error='Requerido' />
                                                 <div class="help-block with-errors"></div>
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="4" id="href_4">
+                                                        <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
+                                                    </a>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+
+
+                                                <label for="txtNotaDeFoto">
+                                                    Nota de la foto
+                                                </label>
+                                                <textarea class="form-control" id="txtNotaDeFoto"
+                                                    required="required" data-required-error='Requerido' rows="4"></textarea>
+                                                <div class="help-block with-errors"></div>
+
                                             </div>
 
                                         </div>
@@ -440,44 +490,6 @@
                                     <div class="card-body">
 
 
-                                        <div class="row">
-
-
-
-                                            <div class="form-group col-md-6">
-
-                                                <label>
-                                                    Foto de cliente
-                                                </label>
-
-
-                                                <div class="col-md-6 text-center">
-                                                    <div class="card">
-                                                        <a href="#" class="img-document" data-tipo="4" id="href_4">
-                                                            <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
-
-                                            <div class="form-group col-md-6">
-
-
-                                                <label for="txtNotaDeFoto">
-                                                    Nota de la foto
-                                                </label>
-                                                <textarea class="form-control" id="txtNotaDeFoto" disabled
-                                                    required data-required-error='Requerido' rows="4">
-                                            
-                                            </textarea>
-                                                <div class="help-block with-errors"></div>
-
-                                            </div>
-
-                                        </div>
-
 
                                         <div id="panelTablaGarantias">
                                             <div class="table-responsive">
@@ -486,13 +498,13 @@
 
 
                                                     <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
 
-                                                        <th>Nombre</th>
-
-                                                        <th>No. Serie</th>
-                                                        <th>Costo</th>
-                                                        <th>Fotografía</th>
-
+                                                            <th>No. Serie</th>
+                                                            <th>Costo</th>
+                                                            <th>Fotografía</th>
+                                                        </tr>
 
                                                     </thead>
                                                     <tbody>
@@ -504,27 +516,44 @@
 
 
 
-                                        <div class="row">
 
 
-                                            <div class="form-group col-md-6">
+
+                                    </div>
+
+                                </div>
 
 
-                                                <label for="txtNotaSupervisor">
-                                                    Notas supervisor
-                                                </label>
 
-                                                <textarea class="form-control" id="txtNotaSupervisor"
-                                                    rows="4"> 
-                                                </textarea>
+                                <div class="card">
 
-                                                <div class="help-block with-errors"></div>
+                                    <div class="card-header">
+                                        Notas supervisor
+                                    </div>
 
-                                            </div>
+                                    <div class="card-body">
+
+                                        <div class="form-group col-md-12">
+
+                                            <textarea class="form-control" id="txtNotaSupervisor"
+                                                rows="4"></textarea>
+
+                                            <div class="help-block with-errors"></div>
 
                                         </div>
+                                    </div>
+
+                                </div>
 
 
+                                <div class="row mt-3 mb-3">
+
+                                    <div class=" col-md-6 text-left">
+                                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                    </div>
+
+                                    <div class=" col-md-6 text-right">
+                                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                                     </div>
 
                                 </div>
@@ -546,13 +575,35 @@
 
 
 
-                                            <div class="form-group col-md-3">
-                                                <label for="txtNombreAval">
-                                                    Nombre(s)
-                                                </label>
-                                                <input type="text" class="form-control campo-input" id="txtNombreAval"
-                                                    required="required" data-required-error='Requerido' />
-                                                <div class="help-block with-errors"></div>
+                                            <div class="col-md-3">
+
+                                                <div class="form-group">
+                                                    <label for="txtNombreAval">
+                                                        Nombre(s)
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtNombreAval"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtPrimerApellidoAval">
+                                                        Primer apellido
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtPrimerApellidoAval"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtSegundoApellidoAval">
+                                                        Segundo apellido
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval" />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+
                                             </div>
 
 
@@ -564,11 +615,17 @@
                                                 </label>
 
 
+                                                <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" data-tipo="6"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="5" id="href_5">
-                                                        <img src="../../img/upload.png" id="img_5" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="5" id="href_6">
+                                                        <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
+
+
 
 
                                             </div>
@@ -580,10 +637,13 @@
                                                     Identificación reverso
                                                 </label>
 
+                                                <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" data-tipo="7"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="6" id="href_6">
-                                                        <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="7" id="href_7">
+                                                        <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
 
@@ -596,10 +656,13 @@
                                                     Comprobante de domicilio
                                                 </label>
 
+                                                <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" data-tipo="8"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
 
                                                 <div class="card">
-                                                    <a href="#" class="img-document" data-tipo="7" id="href_7">
-                                                        <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
+                                                    <a href="#" class="img-document" data-tipo="8" id="href_8">
+                                                        <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
                                                     </a>
                                                 </div>
 
@@ -611,34 +674,9 @@
 
 
 
-                                        <div class="row">
-
-
-                                            <div class="form-group col-md-3">
-                                                <label for="txtPrimerApellidoAval">
-                                                    Primer apellido
-                                                </label>
-                                                <input type="text" class="form-control campo-input" id="txtPrimerApellidoAval"
-                                                    required="required" data-required-error='Requerido' />
-                                                <div class="help-block with-errors"></div>
-
-                                            </div>
-
-
-                                        </div>
-
 
                                         <div class="row">
 
-
-
-                                            <div class="form-group col-md-6">
-                                                <label for="txtSegundoApellidoAval">
-                                                    Segundo apellido
-                                                </label>
-                                                <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval" />
-                                                <div class="help-block with-errors"></div>
-                                            </div>
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtCalleAval">
@@ -650,10 +688,7 @@
                                             </div>
 
 
-                                        </div>
 
-
-                                        <div class="row">
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtColoniaAval">
@@ -663,6 +698,11 @@
                                                     required="required" data-required-error='Requerido' />
                                                 <div class="help-block with-errors"></div>
                                             </div>
+
+                                        </div>
+
+
+                                        <div class="row">
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtMunicipioAval">
@@ -674,10 +714,6 @@
                                             </div>
 
 
-                                        </div>
-
-
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
@@ -689,6 +725,13 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
+
+
+                                        </div>
+
+
+                                        <div class="row">
+
                                             <div class="form-group col-md-6">
                                                 <label for="txtCodigoPostalAval">
                                                     Código postal
@@ -698,10 +741,6 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
-
-                                        </div>
-
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
@@ -714,20 +753,24 @@
                                             </div>
 
 
+                                        </div>
+
+                                        <div class="row">
+
+
+
                                             <div class="form-group col-md-6">
                                                 <label for="txtCURPAval">
                                                     CURP
                                                 </label>
                                                 <input type="text" class="form-control campo-input" id="txtCURPAval" title=""
                                                     required="required" data-required-error='Requerido'
-                                                    pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
-                                                    data-pattern-error="Debe ingresar una CURP válida." />
+                                                    <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                                    data-pattern-error="Debe ingresar una CURP válida." --%> />
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
-                                        </div>
 
-                                        <div class="row">
 
 
                                             <div class="form-group col-md-6">
@@ -739,6 +782,11 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
+
+                                        </div>
+
+                                        <div class="row">
+
                                             <div class="form-group col-md-6">
                                                 <label for="txtDireccionTrabajoAval">
                                                     Dirección de trabajo
@@ -748,14 +796,10 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
-                                        </div>
-
-                                        <div class="row">
-
 
                                             <div class="form-group col-md-6">
                                                 <label for="txtUbicacionAval">
-                                                    Ubicacion
+                                                    Ubicación
                                                 </label>
                                                 <input type="text" class="form-control campo-input" id="txtUbicacionAval"
                                                     required="required" data-required-error='Requerido' />
@@ -763,6 +807,41 @@
                                             </div>
 
                                         </div>
+
+
+                                        <div class="row">
+
+                                            <div class="form-group col-md-6">
+
+                                                <label>
+                                                    Foto de aval
+                                                </label>
+
+                                                <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="9"
+                                                    required="required" data-required-error='Requerido' />
+                                                <div class="help-block with-errors"></div>
+
+
+                                                <div class="card">
+                                                    <a href="#" class="img-document" data-tipo="9" id="href_9">
+                                                        <img src="../../img/upload.png" id="img_9" class="img-fluid documentos" />
+                                                    </a>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtNotaDeFotoAval">
+                                                    Nota de la foto
+                                                </label>
+                                                <textarea class="form-control" id="txtNotaDeFotoAval"
+                                                    required="required" data-required-error='Requerido' rows="4"></textarea>
+                                                <div class="help-block with-errors"></div>
+
+                                            </div>
+
+                                        </div>
+
 
 
                                     </div>
@@ -778,43 +857,6 @@
                                     <div class="card-body">
 
 
-                                        <div class="row">
-
-
-
-                                            <div class="form-group col-md-6">
-
-                                                <label>
-                                                    Foto de aval
-                                                </label>
-
-
-                                                <div class="col-md-6 text-center">
-                                                    <div class="card">
-                                                        <a href="#" class="img-document" data-tipo="8" id="href_8">
-                                                            <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
-
-                                            <div class="form-group col-md-6">
-
-
-                                                <label for="txtNotaDeFotoAval">
-                                                    Nota de la foto
-                                                </label>
-                                                <textarea class="form-control" id="txtNotaDeFotoAval" disabled
-                                                    required data-required-error='Requerido' rows="4">
-                                            
-                                            </textarea>
-                                                <div class="help-block with-errors"></div>
-
-                                            </div>
-
-                                        </div>
 
 
                                         <div id="panelTablaGarantiasAval">
@@ -824,13 +866,13 @@
 
 
                                                     <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
 
-                                                        <th>Nombre</th>
-
-                                                        <th>No. Serie</th>
-                                                        <th>Costo</th>
-                                                        <th>Fotografía</th>
-
+                                                            <th>No. Serie</th>
+                                                            <th>Costo</th>
+                                                            <th>Fotografía</th>
+                                                        </tr>
 
                                                     </thead>
                                                     <tbody>
@@ -842,15 +884,25 @@
 
 
 
+
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="card">
+
+                                    <div class="card-header">
+                                        Notas supervisor
+                                    </div>
+
+                                    <div class="card-body">
+
                                         <div class="row">
 
 
                                             <div class="form-group col-md-6">
-
-
-                                                <label for="txtNotaSupervisorAval">
-                                                    Notas supervisor
-                                                </label>
 
                                                 <textarea class="form-control" id="txtNotaSupervisorAval" rows="4"> 
                                                 </textarea>
@@ -861,15 +913,25 @@
 
                                         </div>
 
+                                    </div>
+                                </div>
 
+
+                                <div class="row mt-3 mb-3">
+
+                                    <div class=" col-md-6 text-left">
+                                        <button id="btnCancelarAval" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                    </div>
+
+                                    <div class=" col-md-6 text-right">
+                                        <button id="btnGuardarAval" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                                     </div>
 
                                 </div>
-
                             </div>
 
 
-                             <!-- PESTAÑA APROBACION-->
+                            <!-- PESTAÑA APROBACION-->
                             <div class="tab-pane fade" id="nav-aprobacion" role="tabpanel" aria-labelledby="nav-aprobacion-tab">
 
                                 <div class="card">
@@ -915,11 +977,11 @@
 
 
                                                     <thead>
-
-                                                        <th>Aprobadores</th>
-                                                        <th>Estatus</th>
-                                                        <th>Notas</th>
-
+                                                        <tr>
+                                                            <th>Aprobadores</th>
+                                                            <th>Estatus</th>
+                                                            <th>Notas</th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
                                                     </tbody>
@@ -928,6 +990,17 @@
                                             </div>
                                         </div>
 
+
+                                        <div class="row mt-3 mb-3">
+
+                                            <div class=" col-md-6 text-left">
+                                                <button id="btnCancelarAprobacion" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                            </div>
+
+
+                                        </div>
+
+
                                     </div>
 
                                 </div>
@@ -935,30 +1008,10 @@
 
 
                             </div>
-
-
-                        </div>
-
-
-
-
-
-
-                        <div class="row mt-3 mb-3">
-
-                            <div class=" col-md-6 text-left">
-                                <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                            </div>
-
-                            <div class=" col-md-6 text-right">
-                                <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                            </div>
-
                         </div>
                     </form>
 
                 </div>
-            </div>
         </section>
 
 
@@ -1013,11 +1066,7 @@
 
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
-    <%--<script src="../../vendor/popper.js/umd/popper.min.js"> </script>--%>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <%--<script src="../../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>--%>
-    <%--<script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>--%>
-    <%--<script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>--%>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
 

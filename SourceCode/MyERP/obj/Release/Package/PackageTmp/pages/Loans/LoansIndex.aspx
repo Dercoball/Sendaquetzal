@@ -414,16 +414,23 @@
 
                                         <div class="row">
 
-
                                             <div class="form-group col-md-6">
                                                 <label for="txtUbicacion">
-                                                    Ubicacion
+                                                    Ubicación (lat, lng)
                                                 </label>
-                                                <input type="text" class="form-control campo-input" id="txtUbicacion"
-                                                    required="required" data-required-error='Requerido' />
-                                                <div class="help-block with-errors"></div>
-                                            </div>
 
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control campo-input" id="txtUbicacion"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+
+                                                    <div class="input-group-append">
+                                                        <button class="input-group-text" id="btnReloadLocation">
+                                                            <span class="fa fa-map-marker"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
 
@@ -869,7 +876,7 @@
                             </div>
 
 
-                             <!-- PESTAÑA APROBACION-->
+                            <!-- PESTAÑA APROBACION-->
                             <div class="tab-pane fade" id="nav-aprobacion" role="tabpanel" aria-labelledby="nav-aprobacion-tab">
 
                                 <div class="card">
@@ -935,8 +942,6 @@
 
 
                             </div>
-
-
                         </div>
 
 

@@ -22,7 +22,8 @@ const loansindex = {
         loansindex.idTipoUsuario = "-1";
         loansindex.login = "-1";
         loansindex.accion = "";
-
+        //loansindex.lat = '';
+        //loansindex.lng = '';
 
 
         loansindex.fechasHoy();
@@ -88,7 +89,7 @@ const loansindex = {
                     "order": [],
                     data: data,
                     columns: [
-                        { data: 'IdPrestamo' },                        
+                        { data: 'IdPrestamo' },
                         { data: 'Cliente.NombreCompleto' },
                         { data: 'Cliente.Curp' },
                         { data: 'MontoFormateadoMx' },
@@ -190,6 +191,40 @@ const loansindex = {
 
     },
 
+    getLocation(control) {
+
+        var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+
+
+        function success(pos) {
+            var crd = pos.coords;
+
+            console.log('Your current position is:');
+            console.log('Latitude : ' + crd.latitude);
+            console.log('Longitude: ' + crd.longitude);
+            console.log('More or less ' + crd.accuracy + ' meters.');
+
+
+
+            $(`${control}`).val(`${crd.latitude}, ${crd.longitude}`);
+
+
+        };
+
+        function error(err) {
+            console.warn('ERROR(' + err.code + '): ' + err.message);
+        };
+
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+
+
+    },
+
     edit: (id) => {
 
         $('.form-group').removeClass('has-error');
@@ -252,6 +287,8 @@ const loansindex = {
                 $('#txtEstadoAval').val(item.direccionAval.Estado);
                 $('#txtCodigoPostalAval').val(item.direccionAval.CodigoPostal);
                 $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
+
+                loansindex.getLocation('#txtUbicacion');
 
 
 
@@ -455,6 +492,13 @@ const loansindex = {
 
         });
 
+
+        $('#btnReloadLocation').on('click', (e) => {
+            e.preventDefault();
+
+            loansindex.getLocation('#txtUbicacion');
+
+        });
 
 
     }

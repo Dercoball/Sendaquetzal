@@ -338,28 +338,60 @@ namespace Plataforma.pages
                 //  Guardar prestamo
                 sql = @"  INSERT INTO prestamo
                             (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo)
+                            OUTPUT INSERTED.id_prestamo
                             VALUES
                             (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo);
                         ";
 
-                // un nuevo prestamo nace con status 1 = PENDIENTE
+                
 
                 Utils.Log("insert prestamo " + sql);
-
                 SqlCommand cmdInsertPrestamo = new SqlCommand(sql, conn);
                 cmdInsertPrestamo.CommandType = CommandType.Text;
-
-
-
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_cliente", idGenerado);
                 cmdInsertPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
                 cmdInsertPrestamo.Parameters.AddWithValue("@monto", item.Monto);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
-                cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);
-
+                cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);// un nuevo prestamo nace con status 1 = PENDIENTE
                 cmdInsertPrestamo.Transaction = transaccion;
 
-                r += cmdInsertPrestamo.ExecuteNonQuery();
+                int idPrestamoGenerado = (int)cmdInsertPrestamo.ExecuteScalar();
+
+
+
+                //  Guardar registros de aprobacion, supervisor y ejecutivo
+                sql = @"  INSERT INTO relacion_prestamo_aprobacion
+                            (id_prestamo, id_posicion, id_usuario)
+                            VALUES
+                            (@id_prestamo, @id_posicion, @id_usuario);
+                        ";
+
+                Utils.Log("insert relacion_prestamo_aprobacion " + sql);
+                SqlCommand cmdInserRelAprobacion = new SqlCommand(sql, conn);
+                cmdInserRelAprobacion.CommandType = CommandType.Text;
+                cmdInserRelAprobacion.Parameters.AddWithValue("@id_prestamo", idPrestamoGenerado);
+                cmdInserRelAprobacion.Parameters.AddWithValue("@id_posicion", Employees.POSICION_SUPERVISOR);
+                cmdInserRelAprobacion.Parameters.AddWithValue("@monto", item.Monto);
+                cmdInserRelAprobacion.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInserRelAprobacion.Transaction = transaccion;
+                r += cmdInserRelAprobacion.ExecuteNonQuery();
+
+                //  Guardar registros de aprobacion, supervisor y ejecutivo
+                sql = @"  INSERT INTO relacion_prestamo_aprobacion
+                            (id_prestamo, id_posicion, id_usuario)
+                            VALUES
+                            (@id_prestamo, @id_posicion, @id_usuario);
+                        ";
+
+                Utils.Log("insert relacion_prestamo_aprobacion " + sql);
+                SqlCommand cmdInserRelAprobacion2 = new SqlCommand(sql, conn);
+                cmdInserRelAprobacion2.CommandType = CommandType.Text;
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@id_prestamo", idPrestamoGenerado);
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@id_posicion", Employees.POSICION_EJECUTIVO);
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@monto", item.Monto);
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInserRelAprobacion2.Transaction = transaccion;
+                r += cmdInserRelAprobacion2.ExecuteNonQuery();
 
 
                 Utils.Log("Guardado -> OK ");
@@ -564,27 +596,58 @@ namespace Plataforma.pages
                 //  Guardar prestamo
                 sql = @"  INSERT INTO prestamo
                             (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo)
+                            OUTPUT INSERTED.id_prestamo
                             VALUES
                             (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo);
                         ";
-
-                // un nuevo prestamo nace con status 1 = PENDIENTE
 
                 Utils.Log("GUARDAR NUEVO PRESTAMO " + sql);
 
                 SqlCommand cmdInsertPrestamo = new SqlCommand(sql, conn);
                 cmdInsertPrestamo.CommandType = CommandType.Text;
-
-
-
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_cliente", item.IdCliente);
                 cmdInsertPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
                 cmdInsertPrestamo.Parameters.AddWithValue("@monto", item.Monto);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
-                cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);
+                cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);// un nuevo prestamo nace con status 1 = PENDIENTE
                 cmdInsertPrestamo.Transaction = transaccion;
 
-                r += cmdInsertPrestamo.ExecuteNonQuery();
+                int idPrestamoGenerado =  (int) cmdInsertPrestamo.ExecuteScalar();
+
+
+                //  Guardar registros de aprobacion, supervisor y ejecutivo
+                sql = @"  INSERT INTO relacion_prestamo_aprobacion
+                            (id_prestamo, id_posicion, id_usuario)
+                            VALUES
+                            (@id_prestamo, @id_posicion, @id_usuario);
+                        ";
+
+                Utils.Log("insert relacion_prestamo_aprobacion " + sql);
+                SqlCommand cmdInserRelAprobacion = new SqlCommand(sql, conn);
+                cmdInserRelAprobacion.CommandType = CommandType.Text;
+                cmdInserRelAprobacion.Parameters.AddWithValue("@id_prestamo", idPrestamoGenerado);
+                cmdInserRelAprobacion.Parameters.AddWithValue("@id_posicion", Employees.POSICION_SUPERVISOR);
+                cmdInserRelAprobacion.Parameters.AddWithValue("@monto", item.Monto);
+                cmdInserRelAprobacion.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInserRelAprobacion.Transaction = transaccion;
+                r += cmdInserRelAprobacion.ExecuteNonQuery();
+
+                //  Guardar registros de aprobacion, supervisor y ejecutivo
+                sql = @"  INSERT INTO relacion_prestamo_aprobacion
+                            (id_prestamo, id_posicion, id_usuario)
+                            VALUES
+                            (@id_prestamo, @id_posicion, @id_usuario);
+                        ";
+
+                Utils.Log("insert relacion_prestamo_aprobacion " + sql);
+                SqlCommand cmdInserRelAprobacion2 = new SqlCommand(sql, conn);
+                cmdInserRelAprobacion2.CommandType = CommandType.Text;
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@id_prestamo", idPrestamoGenerado);
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@id_posicion", Employees.POSICION_EJECUTIVO);
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@monto", item.Monto);
+                cmdInserRelAprobacion2.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInserRelAprobacion2.Transaction = transaccion;
+                r += cmdInserRelAprobacion2.ExecuteNonQuery();
 
 
                 Utils.Log("Guardado -> OK ");
@@ -702,6 +765,8 @@ namespace Plataforma.pages
                 r = cmdAddressEmployee.ExecuteNonQuery();
 
                 Utils.Log("Guardado -> OK ");
+
+                //r += UpdateRelacionPrestamoAprobacion(path, "", idTipoUsuario, );
 
 
                 transaccion.Commit();
@@ -848,6 +913,87 @@ namespace Plataforma.pages
 
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="notas"></param>
+        /// <param name="idPosicion">Es el puesto de la persona que hace el cambio, supervisor o coordinador</param>
+        /// <returns></returns>
+        [WebMethod]
+        public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string notas, string idPosicion, int esSupervisor, 
+                string notaCliente, string notaAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction)
+        {
+
+
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+            DatosSalida salida = new DatosSalida();
+
+            int r = 0;
+            try
+            {
+
+
+                string sqlIdPocision = esSupervisor == 1 ? Employees.POSICION_SUPERVISOR.ToString() : Employees.POSICION_COORDINADOR.ToString();
+                string sqlActualizaPosicion = esSupervisor == 1 ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
+                string sqlActualizaNotaCliente = notaCliente != "" ? ", notas_cliente = @notas_cliente " : " ";
+                string sqlActualizaNotaAval = notaAval != "" ? ", notas_aval = @notas_aval " : " ";
+
+                string sql = "";
+
+                sql = @"  UPDATE relacion_prestamo_aprobacion
+                                SET fecha = @fecha " 
+                                + sqlActualizaPosicion 
+                                + sqlActualizaNotaCliente
+                                + sqlActualizaNotaAval
+                                + @"
+                                WHERE id_prestamo = @id_prestamo AND
+                                id_posicion = " + idPosicion + " ";
+
+
+                Utils.Log("ACTUALIZAR RelacionPrestamoAprobacion " + sql);
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
+                cmd.Parameters.AddWithValue("@notas_cliente", notaCliente);
+                cmd.Parameters.AddWithValue("@notas_aval", notaAval);
+                cmd.Transaction = transaction;
+
+                r += cmd.ExecuteNonQuery();
+
+
+                Utils.Log("Guardado -> OK ");
+
+
+
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+                salida.MensajeError = "Se ha generado un error.";
+                salida.CodigoError = 1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return salida;
+
+
+        }
 
 
 

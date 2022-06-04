@@ -200,10 +200,6 @@
 
                                 <div class="card">
 
-                                    <div class="card-header">
-                                        Cliente
-                                    </div>
-
                                     <div class="card-body">
                                         <div class="row">
 
@@ -248,7 +244,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2"
-                                                   <%-- required="required" data-required-error='Requerido'--%> />
+                                                    <%-- required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -476,13 +472,7 @@
 
                                         </div>
 
-                                        <div class="row mt-3 mb-3">
 
-                                            <div class=" col-md-6 text-right">
-                                                <button id="btnGuardarCliente" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                            </div>
-
-                                        </div>
 
 
                                     </div>
@@ -551,10 +541,24 @@
                                         </div>
                                     </div>
 
+
+                                    <div class="row mt-3 mb-3">
+
+                                        <div class=" col-md-6 text-center">
+                                            <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                        </div>
+
+
+                                        <div class=" col-md-6 text-center">
+                                            <button id="btnGuardarCliente" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                        </div>
+
+                                    </div>
+
                                 </div>
 
 
-                               
+
 
                             </div>
 
@@ -564,9 +568,6 @@
 
                                 <div class="card">
 
-                                    <div class="card-header">
-                                        Aval
-                                    </div>
 
                                     <div class="card-body">
                                         <div class="row">
@@ -840,14 +841,7 @@
 
                                         </div>
 
-                                        
-                                        <div class="row mt-3 mb-3">
 
-                                            <div class=" col-md-6 text-right">
-                                                <button id="btnGuardarAval" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                            </div>
-
-                                        </div>
 
 
                                     </div>
@@ -908,13 +902,27 @@
                                         <div class="row">
 
 
-                                            <div class="form-group col-md-6">
+                                            <div class="form-group col-md-12">
 
                                                 <textarea class="form-control" id="txtNotaSupervisorAval" rows="4"> 
                                                 </textarea>
 
                                                 <div class="help-block with-errors"></div>
 
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <div class="row mt-3 mb-3">
+
+                                            <div class=" col-md-6 text-center">
+                                                <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                            </div>
+
+                                            <div class=" col-md-6 text-center">
+                                                <button id="btnGuardarAval" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                                             </div>
 
                                         </div>
@@ -988,10 +996,13 @@
 
                                         <div class="row mt-3 mb-3">
 
-                                            <div class=" col-md-6 text-left">
-                                                <button id="btnCancelarAprobacion" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                            <div class=" col-md-6 text-center">
+                                                <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                                             </div>
 
+                                            <div class=" col-md-6 text-center">
+                                                <button id="btnGuardarAprobacion" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                            </div>
 
                                         </div>
 
@@ -1006,18 +1017,12 @@
                         </div>
 
 
-                        <div class="row mt-3 mb-3">
-
-                            <div class=" col-md-6 text-left">
-                                <button id="btnCancelarAval" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                            </div>
-
-                        </div>
-
-
                     </form>
 
                 </div>
+
+            </div>
+
         </section>
 
 
@@ -1073,7 +1078,6 @@
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
 
     <!-- DataTables JavaScript -->
@@ -1093,6 +1097,7 @@
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/loansindex.js"></script>
+    <script src="../../js/app/loans/loansedit.js"></script>
     <script src="../../js/app/general.js"></script>
 
 

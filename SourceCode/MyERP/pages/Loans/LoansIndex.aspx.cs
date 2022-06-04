@@ -183,12 +183,12 @@ namespace Plataforma.pages
                         if (idTipoUsuario != Employees.SUPERUSUARIO.ToString())
                         {
                          
-                            botones += "<button disabled onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                            botones += "<button disabled onclick='loansEdit.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
                         }
                         else
                         {
 
-                            botones += "<button onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                            botones += "<button onclick='loansEdit.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
                         }
 
 

@@ -182,7 +182,7 @@
 
 
                 <div id="panelForm" style="overflow-y: auto;">
-                    <form role="form" id="frm" name="frm">
+                   <%-- <form role="form" id="frm" name="frm">--%>
 
 
                         <nav>
@@ -489,7 +489,13 @@
 
 
 
+                                        <div class="text-right">
+                                            <button id="btnNuevaGarantia" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Agregar garantía</button>                                           
+                                        </div>
+
+                                    
                                         <div id="panelTablaGarantias">
+
                                             <div class="table-responsive">
 
                                                 <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableGarantias">
@@ -507,15 +513,102 @@
                                                     </thead>
                                                     <tbody>
                                                     </tbody>
+
                                                 </table>
 
+                                            
                                             </div>
+
                                         </div>
 
 
+                                        <div id="panelFormGarantias">
+
+                                            <div class="modal-body form">
+
+                                                <form role="form" id="frmGarantias" name="frmGarantias">
+
+                                                    <div class="form-body">
+                                                        <h3 class="text-left">
+                                                            <hr />
+                                                        </h3>
+
+                                                        <div class="row">
+
+
+                                                            <div class="form-group col-md-6">
+                                                                <label for="txtNombreGarantia">
+                                                                    Nombre
+                                                                </label>
+                                                                <input type="text" class="form-control campo-input" id="txtNombreGarantia"
+                                                                    required="required" data-required-error='Requerido' />
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+
+
+                                                            <div class="form-group col-md-6">
+                                                                <label for="txtNumeroSerie">
+                                                                    Número de serie
+                                                                </label>
+                                                                <input type="number" class="form-control" id="txtNumeroSerie" step="0.1"
+                                                                    required="required" data-required-error='Requerido' />
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+
+
+                                                        </div>
+
+                                                        <div class="row">
+
+                                                             <div class="form-group col-md-6">
+                                                                <label for="txtCosto">
+                                                                    Costo
+                                                                </label>
+                                                                <input type="number" class="form-control" id="txtCosto" step="0.1"
+                                                                    required="required" data-required-error='Requerido' />
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+
+
+                                                           <div class="form-group col-md-6">
+
+                                                               <label>
+                                                                   Fotografía
+                                                               </label>
+
+                                                               <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" id="imgGarantee"
+                                                                   <%-- required="required" data-required-error='Requerido'--%> />
+                                                               <div class="help-block with-errors"></div>
+
+                                                               <div class="card">
+                                                                   <a href="#" class="img-document" data-tipo="1" id="href_10">
+                                                                       <img src="../../img/upload.png" id="img_10" class="img-fluid documentos" />
+                                                                   </a>
+                                                               </div>
+
+                                                           </div>
+
+
+                                                        </div>
 
 
 
+                                                        <div class="row mt-3 mb-3">
+
+                                                            <div class=" col-md-6 text-left">
+                                                                <button id="btnCancelarGarantíaCliente" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>&nbsp;Cancelar</button>
+                                                            </div>
+
+                                                            <div class=" col-md-6 text-right">
+                                                                <button id="btnGuardarGarantiaCliente" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Guardar</button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
 
                                     </div>
 
@@ -856,7 +949,9 @@
 
                                     <div class="card-body">
 
-
+                                        <div class="text-right">
+                                            <button id="btnNuevaGarantiaAval" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Agregar garantía</button>                                           
+                                        </div>
 
 
                                         <div id="panelTablaGarantiasAval">
@@ -883,7 +978,93 @@
                                         </div>
 
 
+                                        <div id="panelFormGarantiasAval">
 
+                                            <div class="modal-body form">
+
+                                                <form role="form" id="frmGarantiasAval" name="frmGarantiasAval">
+
+                                                    <div class="form-body">
+                                                        <h3 class="text-left">
+                                                            <hr />
+                                                        </h3>
+
+                                                        <div class="row">
+
+
+                                                            <div class="form-group col-md-6">
+                                                                <label for="txtNombreGarantiaAval">
+                                                                    Nombre
+                                                                </label>
+                                                                <input type="text" class="form-control campo-input" id="txtNombreGarantiaAval"
+                                                                    required="required" data-required-error='Requerido' />
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+
+
+                                                            <div class="form-group col-md-6">
+                                                                <label for="txtNumeroSerieAval">
+                                                                    Número de serie
+                                                                </label>
+                                                                <input type="number" class="form-control" id="txtNumeroSerieAval" step="0.1"
+                                                                    required="required" data-required-error='Requerido' />
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+
+
+                                                        </div>
+
+                                                        <div class="row">
+
+                                                            <div class="form-group col-md-6">
+                                                                <label for="txtCostoAval">
+                                                                    Costo
+                                                                </label>
+                                                                <input type="number" class="form-control" id="txtCostoAval" step="0.1"
+                                                                    required="required" data-required-error='Requerido' />
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+
+
+                                                            <div class="form-group col-md-6">
+
+                                                                <label>
+                                                                    Fotografía
+                                                                </label>
+
+                                                                <input type="file" class="form-control file-fotografia" id="imgGaranteeAval"
+                                                                    <%-- required="required" data-required-error='Requerido'--%> />
+                                                                <div class="help-block with-errors"></div>
+
+                                                                <div class="card">
+                                                                    <a href="#" class="img-document" data-tipo="1" id="href_11">
+                                                                        <img src="../../img/upload.png" id="img_11" class="img-fluid documentos" />
+                                                                    </a>
+                                                                </div>
+
+                                                            </div>
+
+
+                                                        </div>
+
+
+
+                                                        <div class="row mt-3 mb-3">
+
+                                                            <div class=" col-md-6 text-left">
+                                                                <button id="btnCancelarGarantíaAval" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>&nbsp;Cancelar</button>
+                                                            </div>
+
+                                                            <div class=" col-md-6 text-right">
+                                                                <button id="btnGuardarGarantiaAval" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Guardar</button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
 
 
                                     </div>
@@ -1017,7 +1198,7 @@
                         </div>
 
 
-                    </form>
+                    <%--</form>--%>
 
                 </div>
 
@@ -1098,6 +1279,7 @@
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/loansindex.js"></script>
     <script src="../../js/app/loans/loansedit.js"></script>
+    <script src="../../js/app/loans/panelguarantee.js"></script>
     <script src="../../js/app/general.js"></script>
 
 

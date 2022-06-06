@@ -78,6 +78,11 @@ namespace Plataforma
                         }
 
                     }
+                    else if (nombreArchivo == "garantia")
+                    {
+
+                        InsertarImagenGarantia(path_server, idItem, base64String, descripcionArchivo, tipo, urlThumb);
+                    }
 
 
                     context.Response.Write(str_image);
@@ -317,7 +322,7 @@ namespace Plataforma
         }
 
 
-        public int InsertarImagen(string path, string id, string b64, string descripcionArchivo, string tipo, string urlThumbnail)
+        public int InsertarImagenGarantia(string path, string id, string b64, string descripcionArchivo, string tipo, string urlThumbnail)
         {
 
             Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
@@ -335,8 +340,8 @@ namespace Plataforma
                 string sql = "";
 
 
-                sql = " UPDATE equipo " +
-                                        " SET fotografia_b64 = @fotografia_b64 WHERE id_equipo =  @id";
+                sql = " UPDATE garantia_prestamo " +
+                                        " SET fotografia = @fotografia_b64 WHERE id_garantia_prestamo =  @id";
 
                 Log("sql = " + sql);
 
@@ -351,7 +356,7 @@ namespace Plataforma
 
 
 
-                Log("Guardado -> OK " + r);
+                Log("Guardado imagen garantia -> OK " + r);
 
 
 

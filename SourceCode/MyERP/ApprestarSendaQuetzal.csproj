@@ -196,8 +196,12 @@
     <Content Include="js\app\loans\loanrequest.min.js">
       <DependentUpon>loanrequest.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\panelguarantee.js" />
     <Content Include="js\app\loans\loansedit.js" />
     <Content Include="js\app\loans\loansindex.js" />
+    <Content Include="js\app\loans\panelguarantee.min.js">
+      <DependentUpon>panelguarantee.js</DependentUpon>
+    </Content>
     <Content Include="js\app\noticeofprivacy.js" />
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
@@ -1134,6 +1138,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\Garantia.cs" />
     <Compile Include="Clases\DiaDeParo.cs" />
     <Compile Include="Clases\Mensaje.cs" />
     <Compile Include="Clases\Comision.cs" />

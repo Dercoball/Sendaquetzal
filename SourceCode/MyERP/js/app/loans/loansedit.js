@@ -17,6 +17,8 @@ const loansEdit = {
 
         loansEdit.edit(idPrestamo);
 
+        panelGuarantee.view(idPrestamo);
+
     },
 
 
@@ -85,7 +87,7 @@ const loansEdit = {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        $('#frm')[0].reset();
+        //$('#frm')[0].reset();
 
 
         let params = {};

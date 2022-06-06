@@ -370,5 +370,11 @@
     "inputFiles": [
       "js/app/loans/loanrequest.js"
     ]
+  },
+  {
+    "outputFileName": "js/app/loans/panelguarantee.min.js",
+    "inputFiles": [
+      "js/app/loans/panelguarantee.js"
+    ]
   }
 ]

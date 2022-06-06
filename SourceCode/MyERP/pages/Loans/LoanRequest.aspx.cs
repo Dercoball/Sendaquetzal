@@ -343,7 +343,7 @@ namespace Plataforma.pages
                             (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo);
                         ";
 
-                
+
 
                 Utils.Log("insert prestamo " + sql);
                 SqlCommand cmdInsertPrestamo = new SqlCommand(sql, conn);
@@ -504,7 +504,7 @@ namespace Plataforma.pages
                 }
 
 
-              
+
 
                 string sql = "";
 
@@ -612,7 +612,7 @@ namespace Plataforma.pages
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);// un nuevo prestamo nace con status 1 = PENDIENTE
                 cmdInsertPrestamo.Transaction = transaccion;
 
-                int idPrestamoGenerado =  (int) cmdInsertPrestamo.ExecuteScalar();
+                int idPrestamoGenerado = (int)cmdInsertPrestamo.ExecuteScalar();
 
 
                 //  Guardar registros de aprobacion, supervisor y ejecutivo
@@ -683,7 +683,8 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida UpdateCustomer(string path, Cliente item, Direccion itemAddress, string accion, string idUsuario)
+        public static DatosSalida UpdateCustomer(string path, Cliente item, Direccion itemAddress, string accion,
+            string idUsuario, string idTipoUsuario, string idPrestamo)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -766,7 +767,7 @@ namespace Plataforma.pages
 
                 Utils.Log("Guardado -> OK ");
 
-                //r += UpdateRelacionPrestamoAprobacion(path, "", idTipoUsuario, );
+                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.notaCliente, item.notaAval, idUsuario, idPrestamo, conn, transaccion);
 
 
                 transaccion.Commit();
@@ -799,7 +800,8 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida UpdateCustomerAval(string path, Cliente item, Direccion itemAddressAval, string accion, string idUsuario)
+        public static DatosSalida UpdateCustomerAval(string path, Cliente item, Direccion itemAddressAval, string accion, string idUsuario,
+            string idTipoUsuario, string idPrestamo)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -817,8 +819,6 @@ namespace Plataforma.pages
 
             DatosSalida salida = new DatosSalida();
             SqlTransaction transaccion = null;
-
-            LoanValidation validations = new LoanValidation();
 
 
             int r = 0;
@@ -844,7 +844,7 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-               
+
                 cmd.Parameters.AddWithValue("@curp_aval", item.CurpAval);
                 cmd.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
                 cmd.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
@@ -882,6 +882,8 @@ namespace Plataforma.pages
                 r = cmdAddressEmployeeAval.ExecuteNonQuery();
 
                 Utils.Log("Guardado -> OK ");
+
+                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.notaCliente, item.notaAval, idUsuario, idPrestamo, conn, transaccion);
 
 
                 transaccion.Commit();
@@ -921,7 +923,7 @@ namespace Plataforma.pages
         /// <param name="idPosicion">Es el puesto de la persona que hace el cambio, supervisor o coordinador</param>
         /// <returns></returns>
         [WebMethod]
-        public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string notas, string idPosicion, int esSupervisor, 
+        public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string idPosicion,
                 string notaCliente, string notaAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -934,17 +936,15 @@ namespace Plataforma.pages
             try
             {
 
-
-                string sqlIdPocision = esSupervisor == 1 ? Employees.POSICION_SUPERVISOR.ToString() : Employees.POSICION_COORDINADOR.ToString();
-                string sqlActualizaPosicion = esSupervisor == 1 ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
+                string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
                 string sqlActualizaNotaCliente = notaCliente != "" ? ", notas_cliente = @notas_cliente " : " ";
                 string sqlActualizaNotaAval = notaAval != "" ? ", notas_aval = @notas_aval " : " ";
 
                 string sql = "";
 
                 sql = @"  UPDATE relacion_prestamo_aprobacion
-                                SET fecha = @fecha " 
-                                + sqlActualizaPosicion 
+                                SET fecha = @fecha "
+                                + sqlActualizaPosicion
                                 + sqlActualizaNotaCliente
                                 + sqlActualizaNotaAval
                                 + @"
@@ -1124,7 +1124,7 @@ namespace Plataforma.pages
                 item = GetItemClient(path, id, conn, strConexion);
                 item.direccion = GetAddress(path, id, 0, conn, strConexion);
                 item.direccionAval = GetAddress(path, id, 1, conn, strConexion);
-
+                item.relPrestamoAprobacion = GetRelPrestamoAprobacion(path, id, conn);
 
                 return item;
 
@@ -1508,6 +1508,75 @@ namespace Plataforma.pages
 
         }
 
+
+        [WebMethod]
+        public static RelPrestamoAprobacion GetRelPrestamoAprobacion(string path, string idPrestamo, SqlConnection conn)
+        {
+
+            RelPrestamoAprobacion item = new RelPrestamoAprobacion();
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_historial_aprobacion, 
+                                    IsNull(id_prestamo, 0) id_prestamo, 
+                                    IsNull(id_usuario, 0) id_usuario, 
+                                    IsNull(id_empleado, 0) id_empleado, 
+                                    IsNull(id_supervisor, 0) id_supervisor, 
+                                    IsNull(id_ejecutivo, 0) id_ejecutivo,
+                                    IsNull(id_posicion, 0) id_posicion,
+                                    notas_cliente, notas_aval, fecha
+                                    FROM relacion_prestamo_aprobacion
+                                    WHERE id_prestamo = @id_prestamo
+                                ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("id_prestamo =  " + idPrestamo);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item = new RelPrestamoAprobacion();
+
+
+                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        item.IdRelPrestamoAprobacion = int.Parse(ds.Tables[0].Rows[i]["id_historial_aprobacion"].ToString());
+                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdSupervisor = int.Parse(ds.Tables[0].Rows[i]["id_supervisor"].ToString());
+                        item.IdEjecutivo = int.Parse(ds.Tables[0].Rows[i]["id_ejecutivo"].ToString());
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
+
+                    }
+                }
+
+
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
 
 
 

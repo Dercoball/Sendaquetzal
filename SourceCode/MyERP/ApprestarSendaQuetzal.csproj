@@ -1135,6 +1135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clases\DiaDeParo.cs" />
+    <Compile Include="Clases\RelPrestamoAprobacion.cs" />
     <Compile Include="Clases\Mensaje.cs" />
     <Compile Include="Clases\Comision.cs" />
     <Compile Include="Clases\Periodo.cs" />

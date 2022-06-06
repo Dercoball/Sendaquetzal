@@ -508,6 +508,8 @@
                                                             <th>No. Serie</th>
                                                             <th>Costo</th>
                                                             <th>Fotografía</th>
+                                                            <th></th>
+
                                                         </tr>
 
                                                     </thead>
@@ -576,8 +578,8 @@
                                                                    Fotografía
                                                                </label>
 
-                                                               <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" id="imgGarantee"
-                                                                   <%-- required="required" data-required-error='Requerido'--%> />
+                                                               <input type="file" class="form-control file-garantiacliente" id="imgGarantee"
+                                                                   required="required" data-required-error='Requerido' />
                                                                <div class="help-block with-errors"></div>
 
                                                                <div class="card">
@@ -967,6 +969,8 @@
                                                             <th>No. Serie</th>
                                                             <th>Costo</th>
                                                             <th>Fotografía</th>
+                                                            <th></th>
+
                                                         </tr>
 
                                                     </thead>
@@ -1032,8 +1036,8 @@
                                                                     Fotografía
                                                                 </label>
 
-                                                                <input type="file" class="form-control file-fotografia" id="imgGaranteeAval"
-                                                                    <%-- required="required" data-required-error='Requerido'--%> />
+                                                                <input type="file" class="form-control file-garantiaaval" id="imgGaranteeAval"
+                                                                    required="required" data-required-error='Requerido'> />
                                                                 <div class="help-block with-errors"></div>
 
                                                                 <div class="card">

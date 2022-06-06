@@ -287,10 +287,80 @@ namespace Plataforma.pages
                 conn.Open();
                 DataSet ds = new DataSet();
                 string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, costo, fotografia, 
-                            fecha_registro
-                            FROM  garantia_prestamo
+                            FORMAT(fecha_registro, 'dd/MM/yyyy') fecha_registro
+                            FROM  garantia_prestamo 
                             WHERE id_prestamo = @id_prestamo AND
                             aval = 0 AND eliminado = 0 
+                            ORDER by id_garantia_prestamo";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.SelectCommand.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Garantia item = new Garantia();
+                        item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
+
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
+                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+
+                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+
+                        item.Accion = botones;
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        [WebMethod]
+        public static List<Garantia> GetListGuaranteeAval(string path, string idUsuario, string idPrestamo)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Garantia> items = new List<Garantia>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, costo, fotografia, 
+                            FORMAT(fecha_registro, 'dd/MM/yyyy') fecha_registro
+                            FROM  garantia_prestamo
+                            WHERE id_prestamo = @id_prestamo AND
+                            aval = 1 AND eliminado = 0 
                             ORDER by id_garantia_prestamo";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
@@ -358,7 +428,6 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
 
 
-            SqlTransaction transaccion = null;
             DatosSalida salida = new DatosSalida();
 
             try
@@ -370,8 +439,11 @@ namespace Plataforma.pages
                 string sql = "";
 
 
-                sql = @" INSERT INTO garantia_prestamo(id_prestamo, nombre, numero_serie, costo, fecha_registro, 
+                sql = @" INSERT INTO garantia_prestamo (id_prestamo, nombre, numero_serie, costo, fecha_registro, 
                     aval, eliminado) 
+
+                    OUTPUT INSERTED.id_garantia_prestamo
+
                     VALUES (@id_prestamo, @nombre, @numero_serie, @costo, @fecha_registro, 0, 0) ";
 
 
@@ -397,7 +469,7 @@ namespace Plataforma.pages
                 
                 Utils.Log("Guardado -> OK ");
 
-                transaccion.Commit();
+                
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
@@ -418,6 +490,163 @@ namespace Plataforma.pages
             }
 
             return salida;
+
+        }
+
+
+        [WebMethod]
+        public static DatosSalida SaveAvalGuarantee(string path, Garantia item, string idUsuario, string idPrestamo)
+        {
+
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+            DatosSalida salida = new DatosSalida();
+
+            try
+            {
+
+
+                conn.Open();
+
+                string sql = "";
+
+
+                sql = @" INSERT INTO garantia_prestamo (id_prestamo, nombre, numero_serie, costo, fecha_registro, 
+                    aval, eliminado) 
+
+                    OUTPUT INSERTED.id_garantia_prestamo
+
+                    VALUES (@id_prestamo, @nombre, @numero_serie, @costo, @fecha_registro, 1, 0) ";
+
+
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                cmd.Parameters.AddWithValue("@numero_serie", item.NumeroSerie);
+                cmd.Parameters.AddWithValue("@costo", item.Costo);
+                cmd.Parameters.AddWithValue("@fecha_registro", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id", item.IdGarantia);
+
+
+
+
+
+                int idGenerado = (int)cmd.ExecuteScalar();
+
+                Utils.Log("Guardado -> OK ");
+
+
+
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
+                salida.IdItem = idGenerado.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                salida.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
+                salida.CodigoError = 1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return salida;
+
+        }
+
+
+        [WebMethod]
+        public static DatosSalida Delete(string path, string id, string idUsuario)
+        {
+
+
+
+            DatosSalida salida = new DatosSalida();
+            salida.CodigoError = 0;
+            salida.MensajeError = null;
+
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                salida.CodigoError = -1;
+                salida.MensajeError = "No se pudo eliminar el registro.";
+
+                return salida;
+
+            }
+
+            Utils.Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+            try
+            {
+
+                conn.Open();
+
+                string sql = @" UPDATE garantia_prestamo SET eliminado = 1  
+                                        WHERE id_garantia_prestamo = @id ";
+
+                Utils.Log("\n-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@id", id);
+
+                int r = cmd.ExecuteNonQuery();
+
+                Utils.Log("r = " + r);
+                Utils.Log("Eliminado -> OK ");
+
+                salida.MensajeError = null;
+                salida.CodigoError = 0;
+
+                return salida;
+            }
+            catch (Exception ex)
+            {
+
+                salida.CodigoError = -1;
+                salida.MensajeError = "No se pudo eliminar el registro.";
+
+
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return salida;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
 
         }
 

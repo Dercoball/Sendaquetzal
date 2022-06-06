@@ -17,76 +17,177 @@ const panelGuarantee = {
 
         panelGuarantee.accion = '';
         panelGuarantee.idPrestamo = -1;
+        panelGuarantee.idSeleccionado = -1;
 
 
     },
 
     view(idPrestamo) {
-        //console.log('Asignar id del prestamo al panel ' + idPrestamo);
-
+        
         panelGuarantee.idPrestamo = idPrestamo;
         panelGuarantee.cargarItemsCustomer(idPrestamo);
+        panelGuarantee.cargarItemsAval(idPrestamo);
+
         console.log('Asignar id del prestamo al paneeeel ' + idPrestamo);
 
     },
 
 
     cargarItemsCustomer: (idPrestamo) => {
-        var parametros = new Object();
-        parametros.path = window.location.hostname;
-        parametros.idUsuario = sessionStorage.getItem("idusuario");
-        parametros.idPrestamo = idPrestamo;
-        parametros = JSON.stringify(parametros);
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPrestamo = idPrestamo;
+        params = JSON.stringify(params);
+
         $.ajax({
             type: "POST",
             url: "../../pages/Loans/LoansIndex.aspx/GetListGuaranteeCustomer",
-            data: parametros,
+            data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
+                let data = msg.d;
 
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
 
-                let tablaRefacciones = $('#tableGarantias').DataTable({
-                    pageLength: 50,
+                let table = $('#tableGarantias').DataTable({
                     "destroy": true,
-                    "processing": true,
+                    "processing": false,
                     "order": [],
-                    data: msg.d,
+                    data: data,
                     columns: [
+
                         { data: 'Nombre' },
                         { data: 'NumeroSerie' },
                         { data: 'Costo' },
                         { data: 'Fecha' },
-                        { data: 'Accion' },
+                        { data: 'Accion' }
 
                     ],
                     "language": textosEsp,
                     "columnDefs": [
                         {
-                            "targets": [0, 1, 2, 3, 4],
+                            "targets": [-1],
                             "orderable": false
                         },
                     ],
-                    dom: 't'
+                    dom: 'frBtipl',
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            title: descargas,
+                            text: 'Xls', className: 'excelbtn'
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            title: descargas,
+                            text: 'Pdf', className: 'pdfbtn'
+                        }
+                    ]
 
                 });
-
-
-                $('#tableGarantias').on('draw.dt', function () {
-
-
-                });
-
-                $('#tableGarantias').trigger('draw.dt');
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
             }
 
         });
+
+
+
+    },
+
+
+    cargarItemsAval: (idPrestamo) => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPrestamo = idPrestamo;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Loans/LoansIndex.aspx/GetListGuaranteeAval",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                let table = $('#tableGarantiasAval').DataTable({
+                    "destroy": true,
+                    "processing": false,
+                    "order": [],
+                    data: data,
+                    columns: [
+
+                        { data: 'Nombre' },
+                        { data: 'NumeroSerie' },
+                        { data: 'Costo' },
+                        { data: 'Fecha' },
+                        { data: 'Accion' }
+
+                    ],
+                    "language": textosEsp,
+                    "columnDefs": [
+                        {
+                            "targets": [-1],
+                            "orderable": false
+                        },
+                    ],
+                    dom: 'frBtipl',
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            title: descargas,
+                            text: 'Xls', className: 'excelbtn'
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            title: descargas,
+                            text: 'Pdf', className: 'pdfbtn'
+                        }
+                    ]
+
+                });
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+
+    },
+
+    delete: (id) => {
+
+        panelGuarantee.idSeleccionado = id;
+
+        $('#panelEliminar').modal('show');
+
     },
 
 
@@ -138,30 +239,32 @@ const panelGuarantee = {
     accionesBotones: () => {
 
 
-        $('#btnEliminarAceptarRefaccion').on('click', (e) => {
+        $('#btnEliminarAceptar').on('click', (e) => {
 
             var parametros = new Object();
             parametros.path = window.location.hostname;
-            parametros.id = panelGuarantee.idRefaccionSeleccionada;
+            parametros.id = panelGuarantee.idSeleccionado;
+            parametros.idUsuario = document.getElementById('txtIdUsuario').value;
+
             parametros = JSON.stringify(parametros);
             $.ajax({
                 type: "POST",
-                url: "../pages/MantenimientoPanelSolicitudRefacciones.aspx/CancelarRefaccion",
+                url: "../../pages/Loans/LoansIndex.aspx/Delete",
                 data: parametros,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
                 success: function (msg) {
 
-                    $('#panelCancelarRefaccion').modal('hide');
-
+                   
                     var resultado = msg.d;
                     if (resultado.MensajeError === null) {
 
-                        utils.toast(mensajesAlertas.exitoCancelarRefaccion, 'ok');
+                        utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        //panelGuarantee.cargarItems(panelGuarantee.idPrestamo)
+                        panelGuarantee.cargarItemsCustomer(panelGuarantee.idPrestamo);
+                        panelGuarantee.cargarItemsAval(panelGuarantee.idPrestamo);
 
                     } else {
 
@@ -198,11 +301,11 @@ const panelGuarantee = {
 
         $('#btnGuardarGarantiaCliente').on('click', (e) => {
 
-            console.log("llego")
+            
 
             e.preventDefault();
 
-            var hasErrors = $('form[name="frmRefaccion"]').validator('validate').has('.has-error').length;
+            var hasErrors = $('form[name="frmGarantias"]').validator('validate').has('.has-error').length;
 
 
             if (hasErrors) {
@@ -212,7 +315,7 @@ const panelGuarantee = {
 
             var item = new Object();
 
-            var archivo = $('#imgGarantee').prop("files")[0];
+            
 
             item.IdGarantia = 0;
             item.Nombre = $('#txtNombreGarantia').val();
@@ -242,26 +345,122 @@ const panelGuarantee = {
 
                         utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
-                        $('#panelTablaGarantias').show();
-                        $('#panelFormGarantias').hide();
+                      
+
+                        
 
                         
 
                         //guardar foto
-                        $('.file-fotografia').each(function (documento) {
+                        $('.file-garantiacliente').each(function (documento) {
 
                             let file;
                             if (file = this.files[0]) {
 
+                                
                                 utils.sendFileEmployee(file, 'garantia', valores.IdItem, 0, "garantia");
-
+                                
                             }
 
                         });
                         
 
 
-                        //panelGuarantee.cargarItems(panelGuarantee.idPrestamo)
+                        panelGuarantee.cargarItemsCustomer(panelGuarantee.idPrestamo);
+
+                        $('#panelFormGarantias').hide();
+                        $('#panelTablaGarantias').show();
+                        
+
+                    } else {
+
+                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                    }
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+                }
+
+            });
+
+        });
+
+        $('#btnGuardarGarantiaAval').on('click', (e) => {
+
+
+
+            e.preventDefault();
+
+            var hasErrors = $('form[name="frmGarantiasAval"]').validator('validate').has('.has-error').length;
+
+
+            if (hasErrors) {
+                return;
+            }
+
+
+            var item = new Object();
+
+            
+
+            item.IdGarantia = 0;
+            item.Nombre = $('#txtNombreGarantiaAval').val();
+            item.NumeroSerie = $('#txtNumeroSerieAval').val();
+            item.Costo = $('#txtCostoAval').val();
+
+            var parametros = new Object();
+            parametros.path = window.location.hostname;
+            parametros.item = item;
+            parametros.idUsuario = document.getElementById('txtIdUsuario').value;
+            parametros.idPrestamo = panelGuarantee.idPrestamo;
+
+
+
+            parametros = JSON.stringify(parametros);
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Loans/LoansIndex.aspx/SaveAvalGuarantee",
+                data: parametros,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    var valores = msg.d;
+
+                    if (parseInt(valores.CodigoError) == 0) {
+
+                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
+                        
+
+                        //console.log("se guardo con el id" + valores.IdItem);
+
+
+
+                        //guardar foto
+                        $('.file-garantiaaval').each(function (documento) {
+
+                            let file;
+                            if (file = this.files[0]) {
+
+                                console.log("guardar la foto aval" + valores.IdItem);
+
+                                utils.sendFileEmployee(file, 'garantia', valores.IdItem, 0, "garantia");
+
+                            }
+
+                        });
+
+
+
+                        panelGuarantee.cargarItemsAval(panelGuarantee.idPrestamo);
+
+                        $('#panelFormGarantiasAval').hide();
+                        $('#panelTablaGarantiasAval').show();
+
 
 
                     } else {

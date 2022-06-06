@@ -182,21 +182,23 @@
 
 
                 <div id="panelForm" style="overflow-y: auto;">
-                   <%-- <form role="form" id="frm" name="frm">--%>
 
 
-                        <nav>
-                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                <a class="nav-item nav-link active" id="nav-client-tab" data-toggle="tab" href="#nav-client" role="tab" aria-controls="nav-client" aria-selected="true">Cliente</a>
-                                <a class="nav-item nav-link" id="nav-aval-tab" data-toggle="tab" href="#nav-aval" role="tab" aria-controls="nav-aval" aria-selected="false">Aval</a>
-                                <a class="nav-item nav-link" id="nav-aprobacion-tab" data-toggle="tab" href="#nav-aprobacion" role="tab" aria-controls="nav-aprovacion" aria-selected="false">Aprobación</a>
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link active" id="nav-client-tab" data-toggle="tab" href="#nav-client" role="tab" aria-controls="nav-client" aria-selected="true">Cliente</a>
+                            <a class="nav-item nav-link" id="nav-aval-tab" data-toggle="tab" href="#nav-aval" role="tab" aria-controls="nav-aval" aria-selected="false">Aval</a>
+                            <a class="nav-item nav-link" id="nav-aprobacion-tab" data-toggle="tab" href="#nav-aprobacion" role="tab" aria-controls="nav-aprovacion" aria-selected="false">Aprobación</a>
 
-                            </div>
-                        </nav>
+                        </div>
+                    </nav>
 
-                        <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-content" id="nav-tabContent">
 
-                            <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
+                        <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
+
+                            <form role="form" id="frmCustomer" name="frmCustomer" data-toggle="validator">
+
 
                                 <div class="card">
 
@@ -244,7 +246,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2"
-                                                    <%-- required="required" data-required-error='Requerido'--%> />
+                                                    <%--required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -264,7 +266,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3"
-                                                    <%-- required="required" data-required-error='Requerido'--%> />
+                                                    <%--required="required" data-required-error='Requerido'--%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -283,7 +285,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4"
-                                                    <%-- required="required" data-required-error='Requerido'--%> />
+                                                    <%--required="required" data-required-error='Requerido' --%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -447,7 +449,7 @@
                                                 </label>
 
                                                 <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="1"
-                                                    <%-- required="required" data-required-error='Requerido'--%> />
+                                                    <%--required="required" data-required-error='Requerido' --%> />
                                                 <div class="help-block with-errors"></div>
 
                                                 <div class="card">
@@ -476,6 +478,7 @@
 
 
                                     </div>
+
                                 </div>
 
 
@@ -490,10 +493,10 @@
 
 
                                         <div class="text-right">
-                                            <button id="btnNuevaGarantia" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Agregar garantía</button>                                           
+                                            <button id="btnNuevaGarantia" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Agregar garantía</button>
                                         </div>
 
-                                    
+
                                         <div id="panelTablaGarantias">
 
                                             <div class="table-responsive">
@@ -518,98 +521,13 @@
 
                                                 </table>
 
-                                            
+
                                             </div>
 
                                         </div>
 
 
-                                        <div id="panelFormGarantias">
-
-                                            <div class="modal-body form">
-
-                                                <form role="form" id="frmGarantias" name="frmGarantias">
-
-                                                    <div class="form-body">
-                                                        <h3 class="text-left">
-                                                            <hr />
-                                                        </h3>
-
-                                                        <div class="row">
-
-
-                                                            <div class="form-group col-md-6">
-                                                                <label for="txtNombreGarantia">
-                                                                    Nombre
-                                                                </label>
-                                                                <input type="text" class="form-control campo-input" id="txtNombreGarantia"
-                                                                    required="required" data-required-error='Requerido' />
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-
-
-                                                            <div class="form-group col-md-6">
-                                                                <label for="txtNumeroSerie">
-                                                                    Número de serie
-                                                                </label>
-                                                                <input type="number" class="form-control" id="txtNumeroSerie" step="0.1"
-                                                                    required="required" data-required-error='Requerido' />
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-
-
-                                                        </div>
-
-                                                        <div class="row">
-
-                                                             <div class="form-group col-md-6">
-                                                                <label for="txtCosto">
-                                                                    Costo
-                                                                </label>
-                                                                <input type="number" class="form-control" id="txtCosto" step="0.1"
-                                                                    required="required" data-required-error='Requerido' />
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-
-
-                                                           <div class="form-group col-md-6">
-
-                                                               <label>
-                                                                   Fotografía
-                                                               </label>
-
-                                                               <input type="file" class="form-control file-garantiacliente" id="imgGarantee"
-                                                                   required="required" data-required-error='Requerido' />
-                                                               <div class="help-block with-errors"></div>
-
-                                                               <div class="card">
-                                                                   <a href="#" class="img-document" data-tipo="1" id="href_10">
-                                                                       <img src="../../img/upload.png" id="img_10" class="img-fluid documentos" />
-                                                                   </a>
-                                                               </div>
-
-                                                           </div>
-
-
-                                                        </div>
-
-
-
-                                                        <div class="row mt-3 mb-3">
-
-                                                            <div class=" col-md-6 text-left">
-                                                                <button id="btnCancelarGarantíaCliente" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>&nbsp;Cancelar</button>
-                                                            </div>
-
-                                                            <div class=" col-md-6 text-right">
-                                                                <button id="btnGuardarGarantiaCliente" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Guardar</button>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </form>
-
-                                            </div>
+                                        <div id="panelFormGarantias_">
                                         </div>
 
                                     </div>
@@ -629,8 +547,8 @@
                                         <div class="form-group col-md-12">
 
                                             <textarea class="form-control" id="txtNotaSupervisor"
+                                                required="required" data-required-error='Requerido'
                                                 rows="4"></textarea>
-
                                             <div class="help-block with-errors"></div>
 
                                         </div>
@@ -653,13 +571,15 @@
                                 </div>
 
 
+                            </form>
 
+                        </div>
 
-                            </div>
+                        <!-- PESTAÑA AVAL-->
 
-                            <!-- PESTAÑA AVAL-->
+                        <div class="tab-pane fade" id="nav-aval" role="tabpanel" aria-labelledby="nav-aval-tab">
 
-                            <div class="tab-pane fade" id="nav-aval" role="tabpanel" aria-labelledby="nav-aval-tab">
+                            <form role="form" id="frmAval" name="frmAval" data-toggle="validator">
 
                                 <div class="card">
 
@@ -952,7 +872,7 @@
                                     <div class="card-body">
 
                                         <div class="text-right">
-                                            <button id="btnNuevaGarantiaAval" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Agregar garantía</button>                                           
+                                            <button id="btnNuevaGarantiaAval" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Agregar garantía</button>
                                         </div>
 
 
@@ -982,93 +902,6 @@
                                         </div>
 
 
-                                        <div id="panelFormGarantiasAval">
-
-                                            <div class="modal-body form">
-
-                                                <form role="form" id="frmGarantiasAval" name="frmGarantiasAval">
-
-                                                    <div class="form-body">
-                                                        <h3 class="text-left">
-                                                            <hr />
-                                                        </h3>
-
-                                                        <div class="row">
-
-
-                                                            <div class="form-group col-md-6">
-                                                                <label for="txtNombreGarantiaAval">
-                                                                    Nombre
-                                                                </label>
-                                                                <input type="text" class="form-control campo-input" id="txtNombreGarantiaAval"
-                                                                    required="required" data-required-error='Requerido' />
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-
-
-                                                            <div class="form-group col-md-6">
-                                                                <label for="txtNumeroSerieAval">
-                                                                    Número de serie
-                                                                </label>
-                                                                <input type="number" class="form-control" id="txtNumeroSerieAval" step="0.1"
-                                                                    required="required" data-required-error='Requerido' />
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-
-
-                                                        </div>
-
-                                                        <div class="row">
-
-                                                            <div class="form-group col-md-6">
-                                                                <label for="txtCostoAval">
-                                                                    Costo
-                                                                </label>
-                                                                <input type="number" class="form-control" id="txtCostoAval" step="0.1"
-                                                                    required="required" data-required-error='Requerido' />
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-
-
-                                                            <div class="form-group col-md-6">
-
-                                                                <label>
-                                                                    Fotografía
-                                                                </label>
-
-                                                                <input type="file" class="form-control file-garantiaaval" id="imgGaranteeAval"
-                                                                    required="required" data-required-error='Requerido'> />
-                                                                <div class="help-block with-errors"></div>
-
-                                                                <div class="card">
-                                                                    <a href="#" class="img-document" data-tipo="1" id="href_11">
-                                                                        <img src="../../img/upload.png" id="img_11" class="img-fluid documentos" />
-                                                                    </a>
-                                                                </div>
-
-                                                            </div>
-
-
-                                                        </div>
-
-
-
-                                                        <div class="row mt-3 mb-3">
-
-                                                            <div class=" col-md-6 text-left">
-                                                                <button id="btnCancelarGarantíaAval" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>&nbsp;Cancelar</button>
-                                                            </div>
-
-                                                            <div class=" col-md-6 text-right">
-                                                                <button id="btnGuardarGarantiaAval" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Guardar</button>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </form>
-
-                                            </div>
-                                        </div>
 
 
                                     </div>
@@ -1115,95 +948,95 @@
                                     </div>
                                 </div>
 
+                            </form>
 
-                            </div>
-
-
-                            <!-- PESTAÑA APROBACION-->
-                            <div class="tab-pane fade" id="nav-aprobacion" role="tabpanel" aria-labelledby="nav-aprobacion-tab">
-
-                                <div class="card">
-
-                                    <div class="card-header">
-                                        Aprobación
-                                    </div>
-
-                                    <div class="card-body">
-
-                                        <div class="form-group col-md-12">
-
-
-                                            <label for="txtNotaAprobacion">
-                                                Notas
-                                            </label>
-                                            <textarea class="form-control" id="txtNotaAprobacion" rows="6">
-                                            
-                                            </textarea>
-                                            <div class="help-block with-errors"></div>
-
-                                        </div>
-
-
-                                        <div class="row mt-3 mb-3">
-
-                                            <div class=" col-md-6 text-right">
-                                                <button id="btnAceptar" class="btn btn-secondary"><i class=""></i>Aceptar</button>
-                                            </div>
-
-                                            <div class=" col-md-6 ">
-                                                <button id="btnRechazar" class="btn btn-primary deshabilitable"><i class=""></i>Rechazar</button>
-                                            </div>
-
-                                        </div>
-
-
-
-                                        <div id="panelTableAprobadores">
-                                            <div class="table-responsive">
-
-                                                <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAprobadores">
-
-
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Aprobadores</th>
-                                                            <th>Estatus</th>
-                                                            <th>Notas</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
-
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row mt-3 mb-3">
-
-                                            <div class=" col-md-6 text-center">
-                                                <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                                            </div>
-
-                                            <div class=" col-md-6 text-center">
-                                                <button id="btnGuardarAprobacion" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                            </div>
-
-                                        </div>
-
-
-                                    </div>
-
-                                </div>
-
-
-
-                            </div>
                         </div>
 
 
-                    <%--</form>--%>
+                        <!-- PESTAÑA APROBACION-->
+                        <div class="tab-pane fade" id="nav-aprobacion" role="tabpanel" aria-labelledby="nav-aprobacion-tab">
 
+                            <div class="card">
+
+                                <div class="card-header">
+                                    Aprobación
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="form-group col-md-12">
+
+
+                                        <label for="txtNotaAprobacion">
+                                            Notas
+                                        </label>
+                                        <textarea class="form-control" id="txtNotaAprobacion" rows="6">
+                                            
+                                            </textarea>
+                                        <div class="help-block with-errors"></div>
+
+                                    </div>
+
+
+                                    <div class="row mt-3 mb-3">
+
+                                        <div class=" col-md-6 text-right">
+                                            <button id="btnAceptar" class="btn btn-secondary"><i class=""></i>Aceptar</button>
+                                        </div>
+
+                                        <div class=" col-md-6 ">
+                                            <button id="btnRechazar" class="btn btn-primary deshabilitable"><i class=""></i>Rechazar</button>
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div id="panelTableAprobadores">
+                                        <div class="table-responsive">
+
+                                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAprobadores">
+
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>Aprobadores</th>
+                                                        <th>Estatus</th>
+                                                        <th>Notas</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mt-3 mb-3">
+
+                                        <div class=" col-md-6 text-center">
+                                            <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                        </div>
+
+                                        <div class=" col-md-6 text-center">
+                                            <button id="btnGuardarAprobacion" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+
+                    <%--</form>--%>
                 </div>
 
             </div>
@@ -1231,6 +1064,207 @@
 
     </div>
 
+
+
+    <div id="panelFormGarantias" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Garantía cliente</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body form">
+
+                    <form role="form" id="frmGarantias" name="frmGarantias" data-toggle="validator">
+
+                        <div class="form-body">
+
+                            <div class="row">
+
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtNombreGarantia">
+                                        Nombre
+                                    </label>
+                                    <input type="text" class="form-control campo-input" id="txtNombreGarantia"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtNumeroSerie">
+                                        Número de serie
+                                    </label>
+                                    <input type="number" class="form-control" id="txtNumeroSerie" step="0.1"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtCosto">
+                                        Costo
+                                    </label>
+                                    <input type="number" class="form-control" id="txtCosto" step="0.1"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                                <div class="form-group col-md-6">
+
+                                    <label>
+                                        Fotografía
+                                    </label>
+
+                                    <input type="file" class="form-control file-garantiacliente" id="imgGarantee"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+
+                                    <div class="card">
+                                        <a href="#" class="img-document" data-tipo="1" id="href_10">
+                                            <img src="../../img/upload.png" id="img_10" class="img-fluid documentos" />
+                                        </a>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="row mt-3 mb-3">
+
+                                <div class=" col-md-6 text-left">
+                                    <button id="btnCancelarGarantíaCliente" data-dismiss="modal" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>&nbsp;Cancelar</button>
+                                </div>
+
+                                <div class=" col-md-6 text-right">
+                                    <button id="btnGuardarGarantiaCliente" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Guardar</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="panelFormGarantiasAval" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Garantía aval</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body form">
+
+
+                    <div class="form-body">
+
+                        <form role="form" id="frmGarantiasAval" name="frmGarantiasAval" data-toggle="validator">
+
+                            <div class="row">
+
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtNombreGarantiaAval">
+                                        Nombre
+                                    </label>
+                                    <input type="text" class="form-control campo-input" id="txtNombreGarantiaAval"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtNumeroSerieAval">
+                                        Número de serie
+                                    </label>
+                                    <input type="number" class="form-control" id="txtNumeroSerieAval" step="0.1"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtCostoAval">
+                                        Costo
+                                    </label>
+                                    <input type="number" class="form-control" id="txtCostoAval" step="0.1"
+                                        required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                                <div class="form-group col-md-6">
+
+                                    <label>
+                                        Fotografía
+                                    </label>
+
+                                    <input type="file" class="form-control file-garantiaaval" id="imgGaranteeAval"
+                                        required="required" data-required-error='Requerido' />
+
+                                    <div class="help-block with-errors"></div>
+
+                                    <div class="card">
+                                        <a href="#" class="img-document" data-tipo="1" id="href_11">
+                                            <img src="../../img/upload.png" id="img_11" class="img-fluid documentos" />
+                                        </a>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="row mt-3 mb-3">
+
+                                <div class=" col-md-6 text-left">
+                                    <button id="btnCancelarGarantíaAval" data-dismiss="modal" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i>&nbsp;Cancelar</button>
+                                </div>
+
+                                <div class=" col-md-6 text-right">
+                                    <button id="btnGuardarGarantiaAval" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Guardar</button>
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 
     <div id="panelEliminar" class="modal fade" role="dialog" data-backdrop="static">

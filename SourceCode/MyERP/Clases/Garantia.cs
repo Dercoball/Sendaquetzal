@@ -15,6 +15,7 @@ namespace Plataforma.Clases
         public float Costo;
         public string Fotografia;
         public string Fecha;
+        public string Imagen;
 
 
         public string Accion;

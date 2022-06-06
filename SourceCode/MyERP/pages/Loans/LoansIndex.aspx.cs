@@ -180,16 +180,16 @@ namespace Plataforma.pages
 
                         string botones = "";
 
-                        if (idTipoUsuario != Employees.SUPERUSUARIO.ToString())
-                        {
+                        //if (idTipoUsuario != Employees.SUPERUSUARIO.ToString())
+                        //{
                          
-                            botones += "<button disabled onclick='loansEdit.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
-                        }
-                        else
-                        {
+                        //    botones += "<button disabled onclick='loansEdit.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                        //}
+                        //else
+                        //{
 
                             botones += "<button onclick='loansEdit.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
-                        }
+                        //}
 
 
                         item.Accion = botones;
@@ -208,6 +208,55 @@ namespace Plataforma.pages
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        [WebMethod]
+        public static Garantia getGuaranteePhoto(string path, string idGarantia)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            Garantia item = new Garantia();
+
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_garantia_prestamo, fotografia 
+                                  FROM garantia_prestamo  
+                                  WHERE id_garantia_prestamo = @id_garantia_prestamo ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("idGarantia =  " + idGarantia);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_garantia_prestamo", idGarantia);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    item.IdGarantia = int.Parse(ds.Tables[0].Rows[0]["id_garantia_prestamo"].ToString());
+                    item.Fotografia = ds.Tables[0].Rows[0]["fotografia"].ToString();
+                }
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
             }
 
             finally
@@ -314,6 +363,7 @@ namespace Plataforma.pages
                         item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
                         item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
                         item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+                        item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
                         string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
@@ -384,6 +434,7 @@ namespace Plataforma.pages
                         item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
                         item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
                         item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+                        item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
                         string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 

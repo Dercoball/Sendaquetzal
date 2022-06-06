@@ -1,11 +1,6 @@
 ﻿'use strict';
 
 
-class PanelSolicitudRefacciones {
-
-
-
-}
 
 const panelGuarantee = {
 
@@ -23,7 +18,7 @@ const panelGuarantee = {
     },
 
     view(idPrestamo) {
-        
+
         panelGuarantee.idPrestamo = idPrestamo;
         panelGuarantee.cargarItemsCustomer(idPrestamo);
         panelGuarantee.cargarItemsAval(idPrestamo);
@@ -59,6 +54,7 @@ const panelGuarantee = {
 
                 let table = $('#tableGarantias').DataTable({
                     "destroy": true,
+                    "pageLength": 50,
                     "processing": false,
                     "order": [],
                     data: data,
@@ -67,7 +63,7 @@ const panelGuarantee = {
                         { data: 'Nombre' },
                         { data: 'NumeroSerie' },
                         { data: 'Costo' },
-                        { data: 'Fecha' },
+                        { data: 'Imagen' },
                         { data: 'Accion' }
 
                     ],
@@ -78,7 +74,7 @@ const panelGuarantee = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtipl',
+                    dom: 'frBtip',
                     buttons: [
                         {
                             extend: 'excelHtml5',
@@ -95,6 +91,20 @@ const panelGuarantee = {
                 });
 
 
+
+                $('.garantias').each(function (i, item) {
+
+                    let idGarantia = item.dataset['idgarantia'];
+                    let id = item.id;
+                    console.log(`idGarantia ${idGarantia}`);
+                    console.log(`id ${id}`);
+
+                    panelGuarantee.getGuaranteePhoto(idGarantia, `#${id}`);
+
+                });
+
+
+
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
 
@@ -104,6 +114,46 @@ const panelGuarantee = {
         });
 
 
+
+    },
+
+    getGuaranteePhoto: (idGarantia, idControl) => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idGarantia = idGarantia;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Loans/LoansIndex.aspx/getGuaranteePhoto",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (foto) {
+
+                let doc = foto.d;
+
+                if (doc.IdGarantia) {
+                    //if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                    $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Fotografia}`);
+                    //} else if (doc.Extension === 'pdf') {
+                    //    $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
+                    //} else {
+                    //    $(`${idControl}`).attr('src', '../../img/ico_doc.png');
+                    //}
+
+                    //$(`#href_${idTipoDocumento}`).css('cursor', 'pointer');
+                } else {
+                    //$(`#href_${idTipoDocumento}`).css('cursor', 'default');
+                }
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
 
     },
 
@@ -134,6 +184,7 @@ const panelGuarantee = {
 
                 let table = $('#tableGarantiasAval').DataTable({
                     "destroy": true,
+                    "pageLength": 50,
                     "processing": false,
                     "order": [],
                     data: data,
@@ -142,7 +193,7 @@ const panelGuarantee = {
                         { data: 'Nombre' },
                         { data: 'NumeroSerie' },
                         { data: 'Costo' },
-                        { data: 'Fecha' },
+                        { data: 'Imagen' },
                         { data: 'Accion' }
 
                     ],
@@ -153,7 +204,7 @@ const panelGuarantee = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtipl',
+                    dom: 'frBtip',
                     buttons: [
                         {
                             extend: 'excelHtml5',
@@ -168,6 +219,20 @@ const panelGuarantee = {
                     ]
 
                 });
+
+
+
+                $('.garantias').each(function (i, item) {
+
+                    let idGarantia = item.dataset['idgarantia'];
+                    let id = item.id;
+                    console.log(`idGarantia ${idGarantia}`);
+                    console.log(`id ${id}`);
+
+                    panelGuarantee.getGuaranteePhoto(idGarantia, `#${id}`);
+
+                });
+
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -194,7 +259,7 @@ const panelGuarantee = {
 
     nuevoGarantiaCliente: () => {
 
-       
+
 
         $('#frmGarantias')[0].reset();
         $('.form-group').removeClass('has-error');
@@ -202,10 +267,9 @@ const panelGuarantee = {
 
         panelGuarantee.accion = "nuevo";
 
-        $('#panelTablaGarantias').hide();
-        $('#panelFormGarantias').show();
+        $('#panelFormGarantias').modal('show');
 
-        
+
 
     },
 
@@ -214,14 +278,13 @@ const panelGuarantee = {
 
         console.log('nuevo garantia aval');
 
-        $('#frmGarantias')[0].reset();
+        //$('#frmGarantias')[0].reset();
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
 
         panelGuarantee.accion = "nuevo";
 
-        $('#panelTablaGarantiasAval').hide();
-        $('#panelFormGarantiasAval').show();
+        $('#panelFormGarantiasAval').modal('show');
 
 
 
@@ -256,7 +319,7 @@ const panelGuarantee = {
                 async: true,
                 success: function (msg) {
 
-                   
+
                     var resultado = msg.d;
                     if (resultado.MensajeError === null) {
 
@@ -301,7 +364,7 @@ const panelGuarantee = {
 
         $('#btnGuardarGarantiaCliente').on('click', (e) => {
 
-            
+
 
             e.preventDefault();
 
@@ -315,7 +378,7 @@ const panelGuarantee = {
 
             var item = new Object();
 
-            
+
 
             item.IdGarantia = 0;
             item.Nombre = $('#txtNombreGarantia').val();
@@ -345,11 +408,11 @@ const panelGuarantee = {
 
                         utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
-                      
 
-                        
 
-                        
+
+
+
 
                         //guardar foto
                         $('.file-garantiacliente').each(function (documento) {
@@ -357,20 +420,20 @@ const panelGuarantee = {
                             let file;
                             if (file = this.files[0]) {
 
-                                
+
                                 utils.sendFileEmployee(file, 'garantia', valores.IdItem, 0, "garantia");
-                                
+
                             }
 
                         });
-                        
+
 
 
                         panelGuarantee.cargarItemsCustomer(panelGuarantee.idPrestamo);
 
-                        $('#panelFormGarantias').hide();
-                        $('#panelTablaGarantias').show();
-                        
+                        $('#panelFormGarantias').modal('hide');
+
+
 
                     } else {
 
@@ -389,9 +452,6 @@ const panelGuarantee = {
         });
 
         $('#btnGuardarGarantiaAval').on('click', (e) => {
-
-
-
             e.preventDefault();
 
             var hasErrors = $('form[name="frmGarantiasAval"]').validator('validate').has('.has-error').length;
@@ -404,7 +464,7 @@ const panelGuarantee = {
 
             var item = new Object();
 
-            
+
 
             item.IdGarantia = 0;
             item.Nombre = $('#txtNombreGarantiaAval').val();
@@ -434,7 +494,7 @@ const panelGuarantee = {
 
                         utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
-                        
+
 
                         //console.log("se guardo con el id" + valores.IdItem);
 
@@ -458,8 +518,8 @@ const panelGuarantee = {
 
                         panelGuarantee.cargarItemsAval(panelGuarantee.idPrestamo);
 
-                        $('#panelFormGarantiasAval').hide();
-                        $('#panelTablaGarantiasAval').show();
+                        $('#panelFormGarantiasAval').modal('hide');
+                        
 
 
 
@@ -483,13 +543,11 @@ const panelGuarantee = {
         $('#btnCancelarGarantíaCliente').on('click', (e) => {
             e.preventDefault();
             $('#panelTablaGarantias').show();
-            $('#panelFormGarantias').hide();
         });
 
         $('#btnCancelarGarantíaAval').on('click', (e) => {
             e.preventDefault();
             $('#panelTablaGarantiasAval').show();
-            $('#panelFormGarantiasAval').hide();
         });
 
 

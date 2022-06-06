@@ -7,7 +7,7 @@ const loansEdit = {
         loansEdit.idSeleccionado = "-1";
         loansEdit.idTipoUsuario = "-1";
         loansEdit.accion = "";
-
+        loansEdit.idPrestamo = "-1";
 
 
     },
@@ -16,6 +16,7 @@ const loansEdit = {
         console.log('Abir datos del préstamo' + idPrestamo);
 
         loansEdit.edit(idPrestamo);
+        loansEdit.idPrestamo = idPrestamo;
 
         panelGuarantee.view(idPrestamo);
 
@@ -87,7 +88,8 @@ const loansEdit = {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        //$('#frm')[0].reset();
+        $('#frmCustomer')[0].reset();
+        $('#frmAval')[0].reset();
 
 
         let params = {};
@@ -117,6 +119,7 @@ const loansEdit = {
                 $('#txtTelefono').val(item.Telefono);
 
                 $('#txtOcupacion').val(item.Ocupacion);
+                $('#txtNotaDeFoto').val(item.NotaFotografiaCliente);
 
                 //  dirección cliente
                 $('#txtCalle').val(item.direccion.Calle);
@@ -134,6 +137,7 @@ const loansEdit = {
                 $('#txtCURPAval').val(item.CurpAval);
                 $('#txtTelefonoAval').val(item.TelefonoAval);
                 $('#txtOcupacionAval').val(item.OcupacionAval);
+                $('#txtNotaDeFotoAval').val(item.NotaFotografiaAval);
 
                 //  dirección aval
                 $('#txtCalleAval').val(item.direccionAval.Calle);
@@ -153,7 +157,6 @@ const loansEdit = {
 
                 $('#panelForm').show();
                 loansEdit.accion = "editar";
-                //$('#spnTituloForm').text('Editar');
 
 
 
@@ -243,15 +246,15 @@ const loansEdit = {
         $('#btnGuardarCliente').on('click', (e) => {
             e.preventDefault();
 
-            //let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
+            let hasErrors = $('form[name="frmCustomer"]').validator('validate').has('.has-error').length;
 
-            //if (hasErrors) {
+            if (hasErrors) {
 
-            //    $('#spnMensajes').html(mensajesAlertas.solicitudNoProcedenteCamposVacios);
-            //    $('#panelMensajes').modal('show');
+                $('#spnMensajes').html(mensajesAlertas.solicitudCamposVacios);
+                $('#panelMensajes').modal('show');
 
-            //    return;
-            //}
+                return;
+            }
 
             //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
             $('.deshabilitable').prop('disabled', true);
@@ -269,6 +272,8 @@ const loansEdit = {
             dataClient.Telefono = $('#txtTelefono').val();
             dataClient.Ocupacion = $('#txtOcupacion').val();
             dataClient.CurpAval = $('#txtCURPAval').val();
+            dataClient.NotaCliente = $('#txtNotaSupervisor').val();
+            dataClient.NotaFotografiaCliente = $('#txtNotaDeFoto').val();
 
             let dataAddressClient = {};
             dataAddressClient.IdCliente = loansEdit.idSeleccionado;
@@ -290,6 +295,8 @@ const loansEdit = {
             params.item = dataClient;
             params.itemAddress = dataAddressClient;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
+            params.idPrestamo = loansEdit.idPrestamo;
             params.accion = loansEdit.accion;
             params = JSON.stringify(params);
 
@@ -387,17 +394,17 @@ const loansEdit = {
         });
 
         $('#btnGuardarAval').on('click', (e) => {
-            //e.preventDefault();
+            e.preventDefault();
 
-            //let hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
+            let hasErrors = $('form[name="frmAval"]').validator('validate').has('.has-error').length;
 
-            //if (hasErrors) {
+            if (hasErrors) {
 
-            //    $('#spnMensajes').html(mensajesAlertas.solicitudNoProcedenteCamposVacios);
-            //    $('#panelMensajes').modal('show');
+                $('#spnMensajes').html(mensajesAlertas.solicitudCamposVacios);
+                $('#panelMensajes').modal('show');
 
-            //    return;
-            //}
+                return;
+            }
 
             //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
             $('.deshabilitable').prop('disabled', true);
@@ -415,6 +422,8 @@ const loansEdit = {
             dataClient.SegundoApellidoAval = $('#txtSegundoApellidoAval').val();
             dataClient.NombreAval = $('#txtNombreAval').val();
             dataClient.TelefonoAval = $('#txtTelefonoAval').val();
+            dataClient.NotaAval = $('#txtNotaSupervisorAval').val();
+            dataClient.NotaFotografiaAval = $('#txtNotaDeFotoAval').val();
 
 
             let dataAddressClientAval = {};

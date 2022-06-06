@@ -34,8 +34,10 @@ namespace Plataforma.Clases
         public Direccion direccionAval;
         public RelPrestamoAprobacion relPrestamoAprobacion;
 
-        public string notaCliente;
-        public string notaAval;
+        public string NotaCliente;
+        public string NotaAval;
+        public string NotaFotografiaCliente;
+        public string NotaFotografiaAval;
 
         //aval
 

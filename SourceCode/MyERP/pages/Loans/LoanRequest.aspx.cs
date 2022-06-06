@@ -703,7 +703,6 @@ namespace Plataforma.pages
             DatosSalida salida = new DatosSalida();
             SqlTransaction transaccion = null;
 
-            LoanValidation validations = new LoanValidation();
 
 
             int r = 0;
@@ -718,9 +717,9 @@ namespace Plataforma.pages
 
                 sql = @"  UPDATE cliente
                                 SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
-                                segundo_apellido = @segundo_apellido, 
+                                segundo_apellido = @segundo_apellido, nota_fotografia = @nota_fotografia, 
                                 ocupacion = @ocupacion, telefono = @telefono, id_tipo_cliente = @id_tipo_cliente 
-                                WHERE
+                          WHERE
                                 id_cliente = @id_cliente ";
 
 
@@ -737,6 +736,8 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@ocupacion", item.Ocupacion);
                 cmd.Parameters.AddWithValue("@telefono", item.Telefono);
                 cmd.Parameters.AddWithValue("@id_cliente", item.IdCliente);
+                cmd.Parameters.AddWithValue("@nota_fotografia", item.NotaFotografiaCliente);
+                //cmd.Parameters.AddWithValue("@nota_fotografia_aval", item.NotaFotografiaAval);
                 cmd.Transaction = transaccion;
 
                 r += cmd.ExecuteNonQuery();
@@ -767,7 +768,8 @@ namespace Plataforma.pages
 
                 Utils.Log("Guardado -> OK ");
 
-                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.notaCliente, item.notaAval, idUsuario, idPrestamo, conn, transaccion);
+                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente, item.NotaAval, 
+                    idUsuario, idPrestamo, conn, transaccion, 1);
 
 
                 transaccion.Commit();
@@ -852,6 +854,8 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
                 cmd.Parameters.AddWithValue("@ocupacion_aval", item.OcupacionAval);
                 cmd.Parameters.AddWithValue("@id_cliente", item.IdCliente);
+                cmd.Parameters.AddWithValue("@nota_fotografia_aval", item.NotaFotografiaAval);
+
                 cmd.Transaction = transaccion;
 
                 r += cmd.ExecuteNonQuery();
@@ -883,7 +887,8 @@ namespace Plataforma.pages
 
                 Utils.Log("Guardado -> OK ");
 
-                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.notaCliente, item.notaAval, idUsuario, idPrestamo, conn, transaccion);
+                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente, 
+                    item.NotaAval, idUsuario, idPrestamo, conn, transaccion, 2);
 
 
                 transaccion.Commit();
@@ -924,9 +929,10 @@ namespace Plataforma.pages
         /// <returns></returns>
         [WebMethod]
         public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string idPosicion,
-                string notaCliente, string notaAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction)
+                string notaCliente, string notaAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction, 
+                int tipo)
         {
-
+            //tipo 1 cliente, 2 aval
 
             Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
@@ -937,8 +943,8 @@ namespace Plataforma.pages
             {
 
                 string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
-                string sqlActualizaNotaCliente = notaCliente != "" ? ", notas_cliente = @notas_cliente " : " ";
-                string sqlActualizaNotaAval = notaAval != "" ? ", notas_aval = @notas_aval " : " ";
+                string sqlActualizaNotaCliente = tipo == 1 ? ", notas_cliente = @notas_cliente " : " ";
+                string sqlActualizaNotaAval = tipo == 2 ? ", notas_aval = @notas_aval " : " ";
 
                 string sql = "";
 
@@ -961,8 +967,8 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
                 cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
                 cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
-                cmd.Parameters.AddWithValue("@notas_cliente", notaCliente);
-                cmd.Parameters.AddWithValue("@notas_aval", notaAval);
+                cmd.Parameters.AddWithValue("@notas_cliente", notaCliente == null ? "": notaCliente);
+                cmd.Parameters.AddWithValue("@notas_aval", notaAval == null ? "": notaAval);
                 cmd.Transaction = transaction;
 
                 r += cmd.ExecuteNonQuery();
@@ -985,10 +991,6 @@ namespace Plataforma.pages
                 salida.CodigoError = 1;
             }
 
-            finally
-            {
-                conn.Close();
-            }
 
             return salida;
 
@@ -1049,6 +1051,9 @@ namespace Plataforma.pages
             }
 
         }
+
+
+        
 
 
 
@@ -1196,7 +1201,7 @@ namespace Plataforma.pages
                                 concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                 c.telefono , c.curp, c.ocupacion, c.activo, 
                                 c.curp_aval, c.nombre_aval, c.primer_apellido_aval, c.segundo_apellido_aval, c.ocupacion_aval, c.telefono_aval,
-                                tc.tipo_cliente, p.id_prestamo, p.monto,
+                                tc.tipo_cliente, p.id_prestamo, p.monto, nota_fotografia, nota_fotografia_aval,
                                 FORMAT(fecha_solicitud, 'yyyy-MM-dd') fecha_solicitud
                                 FROM cliente c 
                                 JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) 
@@ -1242,6 +1247,8 @@ namespace Plataforma.pages
                         item.SegundoApellidoAval = ds.Tables[0].Rows[i]["segundo_apellido_aval"].ToString();
                         item.TelefonoAval = ds.Tables[0].Rows[i]["telefono_aval"].ToString();
                         item.OcupacionAval = ds.Tables[0].Rows[i]["ocupacion_aval"].ToString();
+                        item.NotaFotografiaCliente = ds.Tables[0].Rows[i]["nota_fotografia"].ToString();
+                        item.NotaFotografiaAval = ds.Tables[0].Rows[i]["nota_fotografia_aval"].ToString();
 
                     }
                 }

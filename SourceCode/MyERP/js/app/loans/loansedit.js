@@ -1,4 +1,9 @@
 ﻿'use strict';
+let date = new Date();
+let descargas = "Prestamo_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '13';
+
+
 const loansEdit = {
 
 
@@ -9,18 +14,19 @@ const loansEdit = {
         loansEdit.accion = "";
         loansEdit.idPrestamo = "-1";
 
+        //  Cargar el id del cliente via GET
+        let urlParams = utils.parseURLParams(window.location.href);
+        //console.log(`urlParams = ${urlParams['id']}`);
+        if (urlParams && urlParams['id'] !== undefined) {
+
+            let id = urlParams['id'][0];
+            //console.log(`id = ${id}`);
+            loansEdit.edit(id);
+        }
+
 
     },
 
-    view(idPrestamo) {
-        console.log('Abir datos del préstamo' + idPrestamo);
-
-        loansEdit.edit(idPrestamo);
-        loansEdit.idPrestamo = idPrestamo;
-
-        panelGuarantee.view(idPrestamo);
-
-    },
 
 
     nuevo: () => {
@@ -48,7 +54,7 @@ const loansEdit = {
 
     },
 
- 
+
 
     getLocation(control) {
 
@@ -62,10 +68,10 @@ const loansEdit = {
         function success(pos) {
             var crd = pos.coords;
 
-            console.log('Your current position is:');
-            console.log('Latitude : ' + crd.latitude);
-            console.log('Longitude: ' + crd.longitude);
-            console.log('More or less ' + crd.accuracy + ' meters.');
+            //console.log('Your current position is:');
+            //console.log('Latitude : ' + crd.latitude);
+            //console.log('Longitude: ' + crd.longitude);
+            //console.log('More or less ' + crd.accuracy + ' meters.');
 
 
 
@@ -84,7 +90,7 @@ const loansEdit = {
 
     },
 
-    edit: (id) => {
+    edit: (idCliente) => {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
@@ -94,7 +100,7 @@ const loansEdit = {
 
         let params = {};
         params.path = window.location.hostname;
-        params.id = id;
+        params.idCliente = idCliente;
         params = JSON.stringify(params);
 
         $.ajax({
@@ -148,6 +154,20 @@ const loansEdit = {
                 $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
 
                 loansEdit.getLocation('#txtUbicacion');
+                loansEdit.getLocation('#txtUbicacionAval');
+
+                let relPrestamoAprobacion1 = item.listaRelPrestamoAprobacion[0];
+                let relPrestamoAprobacionAval2 = item.listaRelPrestamoAprobacion[1];
+
+                console.log(`NotaFotografiaCliente ${JSON.stringify(item.NotaFotografiaCliente)}`);
+                console.log(`NotaFotografiaAval ${JSON.stringify(item.NotaFotografiaAval)}`);
+
+
+                console.log(`NotaCliente ${JSON.stringify(relPrestamoAprobacion1.NotaCliente)}`);
+                console.log(`NotaAval ${JSON.stringify(relPrestamoAprobacion1.NotaAval)}`);
+
+                $('#txtNotaSupervisor').val(relPrestamoAprobacion1.NotaCliente);
+                $('#txtNotaSupervisorAval').val(relPrestamoAprobacion1.NotaAval);
 
 
 
@@ -158,10 +178,10 @@ const loansEdit = {
                 $('#panelForm').show();
                 loansEdit.accion = "editar";
 
+                loansEdit.idPrestamo = item.IdPrestamo;
 
 
-
-                console.log(loansEdit.idSeleccionado);
+                //console.log(loansEdit.idSeleccionado);
                 loansEdit.getDocument(loansEdit.idSeleccionado, 1, '#img_1');
                 loansEdit.getDocument(loansEdit.idSeleccionado, 2, '#img_2');
                 loansEdit.getDocument(loansEdit.idSeleccionado, 3, '#img_3');
@@ -171,6 +191,14 @@ const loansEdit = {
                 loansEdit.getDocument(loansEdit.idSeleccionado, 8, '#img_8');
                 loansEdit.getDocument(loansEdit.idSeleccionado, 9, '#img_9');
 
+
+                //  Deshabilitar y ocultar campos de acuerdo al tipo de usuario
+
+                let userTypeId = document.getElementById('txtIdTipoUsuario').value;
+                let disabled = (Number(userTypeId) === utils.POSICION_PROMOTOR);   //  true/ false
+                loansEdit.disableFields(disabled);
+
+                panelGuarantee.view(item.IdPrestamo, disabled);
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -182,6 +210,22 @@ const loansEdit = {
 
     },
 
+    disableFields(disabled) {
+
+        $('.campo-combo').prop('disabled', disabled);
+        $('.campo-date').prop('disabled', disabled);
+        $('.campo-input').prop('disabled', disabled);
+        $('.campo-imagen').prop('disabled', disabled);
+        $('.campo-textarea').prop('disabled', disabled);
+        if (disabled) {
+            $('.campo-imagen').hide();
+            $('.boton-ocultable').hide();
+        } else {
+            $('.campo-imagen').show();
+            $('.boton-ocultable').show()
+
+        }
+    },
 
 
     getDocument(idCliente, idTipoDocumento, idControl) {
@@ -230,7 +274,7 @@ const loansEdit = {
 
     accionesBotones: () => {
 
-  
+
 
         $('.cancelar').on('click', (e) => {
             e.preventDefault();
@@ -285,7 +329,7 @@ const loansEdit = {
             dataAddressClient.CodigoPostal = $('#txtCodigoPostal').val();
             dataAddressClient.DireccionTrabajo = $('#txtDireccionTrabajo').val();
 
-           
+
 
 
 
@@ -303,7 +347,7 @@ const loansEdit = {
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/LoanRequest.aspx/UpdateCustomer`,
+                url: `../../pages/Loans/LoanApprove.aspx/UpdateCustomer`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -331,11 +375,11 @@ const loansEdit = {
 
                                 console.log("id del cliente: " + valores.IdItem);
 
-                                
+
 
                                 utils.sendFileEmployee(file, 'update_document_customer', valores.IdItem, idTipoDocumento, "cliente");
-                               
-                                
+
+
 
 
                             }
@@ -444,14 +488,16 @@ const loansEdit = {
             params.item = dataClient;
             params.itemAddressAval = dataAddressClientAval;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
+            params.idPrestamo = loansEdit.idPrestamo;
             params.accion = loansEdit.accion;
             params = JSON.stringify(params);
 
-           
+
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/LoanRequest.aspx/UpdateCustomerAval`,
+                url: `../../pages/Loans/LoanApprove.aspx/UpdateCustomerAval`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

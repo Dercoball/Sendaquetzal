@@ -156,7 +156,7 @@ $(document).ready(function () {
 
                 });
 
-                
+
 
             }
 
@@ -352,6 +352,15 @@ function number_format(amount, decimals, simbolo = '$') {
 var utils = {
     idDoc: -1,
 
+
+    POSICION_DIRECTOR: 1,
+    POSICION_COORDINADOR: 2,
+    POSICION_EJECUTIVO: 3,
+    POSICION_SUPERVISOR: 4,
+    POSICION_PROMOTOR: 5,
+
+
+
     getDocumentos: (params) => {
 
 
@@ -363,7 +372,6 @@ var utils = {
     abrirImagen: (url, pdf) => {
 
         if (!pdf) {
-            $('#imgDoc').attr('src', url);
             $('#imgDoc').attr('src', url);
             $('#panelImagen').modal('show');
         }
@@ -406,7 +414,7 @@ var utils = {
         var idUsuario = idUsuario;
         var idOwner = "";
 
-      
+
 
 
 
@@ -429,7 +437,7 @@ var utils = {
         formData.append('idUsuario', idUsuario);//
         formData.append('nombreArchivo', nombreArchivo)//7
 
-      
+
         if (fileOwner === "cliente") {
             formData.append('id_cliente', idItem);//0
             console.log("cliente");
@@ -555,7 +563,7 @@ var utils = {
         return parms;
     },
 
-    b64toBlob : (b64Data, contentType = '', sliceSize = 512) => {
+    b64toBlob: (b64Data, contentType = '', sliceSize = 512) => {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
 

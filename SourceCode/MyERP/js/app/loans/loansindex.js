@@ -164,6 +164,17 @@ const loansindex = {
     },
 
 
+    view(idCliente) {
+        console.log('Abir datos del cliente ' + idCliente);
+
+        //loansEdit.edit(idCliente);
+
+        window.location = "LoanApprove.aspx?id=" + idCliente;
+
+        panelGuarantee.view(idCliente);
+
+    },
+
 
     fecha() {
         let today = new Date();

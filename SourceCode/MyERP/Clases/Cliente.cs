@@ -32,7 +32,7 @@ namespace Plataforma.Clases
 
         public Direccion direccion;
         public Direccion direccionAval;
-        public RelPrestamoAprobacion relPrestamoAprobacion;
+        public List<RelPrestamoAprobacion> listaRelPrestamoAprobacion;
 
         public string NotaCliente;
         public string NotaAval;

@@ -683,323 +683,6 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida UpdateCustomer(string path, Cliente item, Direccion itemAddress, string accion,
-            string idUsuario, string idTipoUsuario, string idPrestamo)
-        {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            SqlConnection conn = new SqlConnection(strConexion);
-
-            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-
-
-            //verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
-            if (!tienePermiso)
-            {
-                return null;//No tiene permisos
-            }
-
-            DatosSalida salida = new DatosSalida();
-            SqlTransaction transaccion = null;
-
-
-
-            int r = 0;
-            try
-            {
-
-                conn.Open();
-                transaccion = conn.BeginTransaction();
-
-
-                string sql = "";
-
-                sql = @"  UPDATE cliente
-                                SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
-                                segundo_apellido = @segundo_apellido, nota_fotografia = @nota_fotografia, 
-                                ocupacion = @ocupacion, telefono = @telefono, id_tipo_cliente = @id_tipo_cliente 
-                          WHERE
-                                id_cliente = @id_cliente ";
-
-
-                Utils.Log("ACTUALIZAR CLIENTE " + sql);
-
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.CommandType = CommandType.Text;
-
-                cmd.Parameters.AddWithValue("@id_tipo_cliente", item.IdTipoCliente);
-                cmd.Parameters.AddWithValue("@curp", item.Curp);
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
-                cmd.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
-                cmd.Parameters.AddWithValue("@ocupacion", item.Ocupacion);
-                cmd.Parameters.AddWithValue("@telefono", item.Telefono);
-                cmd.Parameters.AddWithValue("@id_cliente", item.IdCliente);
-                cmd.Parameters.AddWithValue("@nota_fotografia", item.NotaFotografiaCliente);
-                //cmd.Parameters.AddWithValue("@nota_fotografia_aval", item.NotaFotografiaAval);
-                cmd.Transaction = transaccion;
-
-                r += cmd.ExecuteNonQuery();
-
-                //  Guardar direccion cliente
-                sql = @"  UPDATE direccion
-                             SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
-                                codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
-                            WHERE id_cliente = @id_cliente AND ISNULL(aval, 0) = 0
-                        ";
-
-
-                Utils.Log("ACTUALIZAR DIRECCION CLIENTE " + sql);
-
-                SqlCommand cmdAddressEmployee = new SqlCommand(sql, conn);
-                cmdAddressEmployee.CommandType = CommandType.Text;
-
-                cmdAddressEmployee.Parameters.AddWithValue("@id_cliente", item.IdCliente);
-                cmdAddressEmployee.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
-                cmdAddressEmployee.Parameters.AddWithValue("@colonia", itemAddress.Colonia);
-                cmdAddressEmployee.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
-                cmdAddressEmployee.Parameters.AddWithValue("@estado", itemAddress.Estado);
-                cmdAddressEmployee.Parameters.AddWithValue("@codigo_postal", itemAddress.CodigoPostal);
-                cmdAddressEmployee.Parameters.AddWithValue("@direccion_trabajo", itemAddress.DireccionTrabajo);
-                cmdAddressEmployee.Transaction = transaccion;
-
-                r = cmdAddressEmployee.ExecuteNonQuery();
-
-                Utils.Log("Guardado -> OK ");
-
-                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente, item.NotaAval, 
-                    idUsuario, idPrestamo, conn, transaccion, 1);
-
-
-                transaccion.Commit();
-
-
-                salida.MensajeError = "Guardado correctamente";
-                salida.CodigoError = 0;
-                salida.IdItem = item.IdCliente.ToString();
-
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                r = -1;
-                salida.MensajeError = "Se ha generado un error.";
-                salida.CodigoError = 1;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-            return salida;
-
-
-        }
-
-
-
-        [WebMethod]
-        public static DatosSalida UpdateCustomerAval(string path, Cliente item, Direccion itemAddressAval, string accion, string idUsuario,
-            string idTipoUsuario, string idPrestamo)
-        {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            SqlConnection conn = new SqlConnection(strConexion);
-
-            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-
-
-            //verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
-            if (!tienePermiso)
-            {
-                return null;//No tiene permisos
-            }
-
-            DatosSalida salida = new DatosSalida();
-            SqlTransaction transaccion = null;
-
-
-            int r = 0;
-            try
-            {
-
-                conn.Open();
-                transaccion = conn.BeginTransaction();
-
-
-                string sql = "";
-
-                sql = @"  UPDATE cliente
-                                SET curp_aval = @curp_aval, nombre_aval = @nombre_aval, primer_apellido_aval = @primer_apellido_aval, 
-                                segundo_apellido_aval = @segundo_apellido_aval, ocupacion_aval = @ocupacion_aval, 
-                                telefono_aval = @telefono_aval 
-                                WHERE
-                                id_cliente = @id_cliente ";
-
-
-                Utils.Log("ACTUALIZAR CLIENTE " + sql);
-
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.CommandType = CommandType.Text;
-
-
-                cmd.Parameters.AddWithValue("@curp_aval", item.CurpAval);
-                cmd.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
-                cmd.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
-                cmd.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
-                cmd.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
-                cmd.Parameters.AddWithValue("@ocupacion_aval", item.OcupacionAval);
-                cmd.Parameters.AddWithValue("@id_cliente", item.IdCliente);
-                cmd.Parameters.AddWithValue("@nota_fotografia_aval", item.NotaFotografiaAval);
-
-                cmd.Transaction = transaccion;
-
-                r += cmd.ExecuteNonQuery();
-
-                //  Guardar direccion aval
-                sql = @"  UPDATE direccion
-                             SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
-                                codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
-                            WHERE id_cliente = @id_cliente AND ISNULL(aval, 0) = 1
-                        ";
-
-
-
-                Utils.Log("update customer aval" + sql);
-
-                SqlCommand cmdAddressEmployeeAval = new SqlCommand(sql, conn);
-                cmdAddressEmployeeAval.CommandType = CommandType.Text;
-
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@id_cliente", item.IdCliente);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@calleyno", itemAddressAval.Calle);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CodigoPostal);
-                cmdAddressEmployeeAval.Parameters.AddWithValue("@direccion_trabajo", itemAddressAval.DireccionTrabajo);
-                cmdAddressEmployeeAval.Transaction = transaccion;
-
-                r = cmdAddressEmployeeAval.ExecuteNonQuery();
-
-                Utils.Log("Guardado -> OK ");
-
-                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente, 
-                    item.NotaAval, idUsuario, idPrestamo, conn, transaccion, 2);
-
-
-                transaccion.Commit();
-
-
-                salida.MensajeError = "Guardado correctamente";
-                salida.CodigoError = 0;
-                salida.IdItem = item.IdCliente.ToString();
-
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                r = -1;
-                salida.MensajeError = "Se ha generado un error.";
-                salida.CodigoError = 1;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-            return salida;
-
-
-        }
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="notas"></param>
-        /// <param name="idPosicion">Es el puesto de la persona que hace el cambio, supervisor o coordinador</param>
-        /// <returns></returns>
-        [WebMethod]
-        public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string idPosicion,
-                string notaCliente, string notaAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction, 
-                int tipo)
-        {
-            //tipo 1 cliente, 2 aval
-
-            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-
-            DatosSalida salida = new DatosSalida();
-
-            int r = 0;
-            try
-            {
-
-                string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
-                string sqlActualizaNotaCliente = tipo == 1 ? ", notas_cliente = @notas_cliente " : " ";
-                string sqlActualizaNotaAval = tipo == 2 ? ", notas_aval = @notas_aval " : " ";
-
-                string sql = "";
-
-                sql = @"  UPDATE relacion_prestamo_aprobacion
-                                SET fecha = @fecha "
-                                + sqlActualizaPosicion
-                                + sqlActualizaNotaCliente
-                                + sqlActualizaNotaAval
-                                + @"
-                                WHERE id_prestamo = @id_prestamo AND
-                                id_posicion = " + idPosicion + " ";
-
-
-                Utils.Log("ACTUALIZAR RelacionPrestamoAprobacion " + sql);
-
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.CommandType = CommandType.Text;
-
-                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
-                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
-                cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
-                cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
-                cmd.Parameters.AddWithValue("@notas_cliente", notaCliente == null ? "": notaCliente);
-                cmd.Parameters.AddWithValue("@notas_aval", notaAval == null ? "": notaAval);
-                cmd.Transaction = transaction;
-
-                r += cmd.ExecuteNonQuery();
-
-
-                Utils.Log("Guardado -> OK ");
-
-
-
-                salida.MensajeError = "Guardado correctamente";
-                salida.CodigoError = 0;
-
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                r = -1;
-                salida.MensajeError = "Se ha generado un error.";
-                salida.CodigoError = 1;
-            }
-
-
-            return salida;
-
-
-        }
-
-
-
-        [WebMethod]
         public static Documento GetDocument(string path, string idCliente, string idTipoDocumento)
         {
 
@@ -1113,7 +796,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static Cliente GetDataPrestamo(string path, string id)
+        public static Cliente GetDataPrestamo(string path, string idCliente)
         {
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
@@ -1126,10 +809,10 @@ namespace Plataforma.pages
                 conn.Open();
 
 
-                item = GetItemClient(path, id, conn, strConexion);
-                item.direccion = GetAddress(path, id, 0, conn, strConexion);
-                item.direccionAval = GetAddress(path, id, 1, conn, strConexion);
-                item.relPrestamoAprobacion = GetRelPrestamoAprobacion(path, id, conn);
+                item = GetItemClient(path, idCliente, conn, strConexion);
+                item.direccion = GetAddress(path, idCliente, 0, conn, strConexion);
+                item.direccionAval = GetAddress(path, idCliente, 1, conn, strConexion);
+                item.listaRelPrestamoAprobacion = GetRelPrestamoAprobacion(path, item.IdPrestamo.ToString(), conn);
 
                 return item;
 
@@ -1188,7 +871,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static Cliente GetItemClient(string path, string id, SqlConnection conn, string strconexion)
+        public static Cliente GetItemClient(string path, string idCliente, SqlConnection conn, string strconexion)
         {
 
             Cliente item = new Cliente();
@@ -1211,10 +894,10 @@ namespace Plataforma.pages
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("id_empleado =  " + id);
+                Utils.Log("id_cliente =  " + idCliente);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id", id);
+                adp.SelectCommand.Parameters.AddWithValue("@id", idCliente);
 
                 adp.Fill(ds);
 
@@ -1517,10 +1200,10 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static RelPrestamoAprobacion GetRelPrestamoAprobacion(string path, string idPrestamo, SqlConnection conn)
+        public static List<RelPrestamoAprobacion> GetRelPrestamoAprobacion(string path, string idPrestamo, SqlConnection conn)
         {
 
-            RelPrestamoAprobacion item = new RelPrestamoAprobacion();
+            List<RelPrestamoAprobacion> items = new List<RelPrestamoAprobacion>();
 
             try
             {
@@ -1534,7 +1217,7 @@ namespace Plataforma.pages
                                     IsNull(id_posicion, 0) id_posicion,
                                     notas_cliente, notas_aval, fecha
                                     FROM relacion_prestamo_aprobacion
-                                    WHERE id_prestamo = @id_prestamo
+                                    WHERE id_prestamo = @id_prestamo ORDER BY id_posicion DESC
                                 ";
 
                 Utils.Log("\nMétodo-> " +
@@ -1551,7 +1234,7 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item = new RelPrestamoAprobacion();
+                        RelPrestamoAprobacion item = new RelPrestamoAprobacion();
 
 
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
@@ -1561,6 +1244,10 @@ namespace Plataforma.pages
                         item.IdSupervisor = int.Parse(ds.Tables[0].Rows[i]["id_supervisor"].ToString());
                         item.IdEjecutivo = int.Parse(ds.Tables[0].Rows[i]["id_ejecutivo"].ToString());
                         item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
+                        item.NotaCliente = ds.Tables[0].Rows[i]["notas_cliente"].ToString();
+                        item.NotaAval = ds.Tables[0].Rows[i]["notas_aval"].ToString();
+
+                        items.Add(item);
 
                     }
                 }
@@ -1569,13 +1256,13 @@ namespace Plataforma.pages
 
 
 
-                return item;
+                return items;
             }
             catch (Exception ex)
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return item;
+                return items;
             }
 
             finally

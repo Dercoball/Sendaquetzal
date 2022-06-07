@@ -17,18 +17,20 @@ const panelGuarantee = {
 
     },
 
-    view(idPrestamo) {
+    view(idPrestamo, disabled) {
 
         panelGuarantee.idPrestamo = idPrestamo;
-        panelGuarantee.cargarItemsCustomer(idPrestamo);
-        panelGuarantee.cargarItemsAval(idPrestamo);
+        panelGuarantee.cargarItemsCustomer(idPrestamo, disabled);
+        panelGuarantee.cargarItemsAval(idPrestamo, disabled);
+
+       
 
         console.log('Asignar id del prestamo al paneeeel ' + idPrestamo);
 
     },
 
 
-    cargarItemsCustomer: (idPrestamo) => {
+    cargarItemsCustomer: (idPrestamo, disabled) => {
 
         let params = {};
         params.path = window.location.hostname;
@@ -90,14 +92,20 @@ const panelGuarantee = {
 
                 });
 
+                if (disabled) {                    
+                    $('.boton-ocultable').hide();
+                } else {                    
+                    $('.boton-ocultable').show()
+
+                }
 
 
                 $('.garantias').each(function (i, item) {
 
                     let idGarantia = item.dataset['idgarantia'];
                     let id = item.id;
-                    console.log(`idGarantia ${idGarantia}`);
-                    console.log(`id ${id}`);
+                    //console.log(`idGarantia ${idGarantia}`);
+                    //console.log(`id ${id}`);
 
                     panelGuarantee.getGuaranteePhoto(idGarantia, `#${id}`);
 
@@ -158,7 +166,7 @@ const panelGuarantee = {
     },
 
 
-    cargarItemsAval: (idPrestamo) => {
+    cargarItemsAval: (idPrestamo, disabled) => {
 
         let params = {};
         params.path = window.location.hostname;
@@ -220,14 +228,19 @@ const panelGuarantee = {
 
                 });
 
+                if (disabled) {
+                    $('.boton-ocultable').hide();
+                } else {
+                    $('.boton-ocultable').show()
 
+                }
 
                 $('.garantias').each(function (i, item) {
 
                     let idGarantia = item.dataset['idgarantia'];
                     let id = item.id;
-                    console.log(`idGarantia ${idGarantia}`);
-                    console.log(`id ${id}`);
+                    //console.log(`idGarantia ${idGarantia}`);
+                    //console.log(`id ${id}`);
 
                     panelGuarantee.getGuaranteePhoto(idGarantia, `#${id}`);
 

@@ -188,7 +188,7 @@ namespace Plataforma.pages
                         //else
                         //{
 
-                            botones += "<button onclick='loansEdit.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
+                            botones += "<button onclick='loansindex.view(" + item.Cliente.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Ver</button>";
                         //}
 
 
@@ -365,7 +365,7 @@ namespace Plataforma.pages
                         item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
                         item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
-                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 
@@ -436,7 +436,7 @@ namespace Plataforma.pages
                         item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
                         item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
-                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 

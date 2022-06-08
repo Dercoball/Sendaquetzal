@@ -22,6 +22,12 @@ const loansindex = {
 
         loansindex.cargarItems();
 
+        let userTypeId = document.getElementById('txtIdTipoUsuario').value;
+        if (Number(userTypeId) === utils.POSICION_PROMOTOR) {
+            $('#btnNuevo').show();
+        } else {
+            $('#btnNuevo').hide();
+        }
 
     },
 
@@ -164,14 +170,12 @@ const loansindex = {
     },
 
 
-    view(idCliente) {
-        console.log('Abir datos del cliente ' + idCliente);
+    view(idPrestamo) {
+        console.log('Abir datos del idPrestamo ' + idPrestamo);
 
-        //loansEdit.edit(idCliente);
 
-        window.location = "LoanApprove.aspx?id=" + idCliente;
+        window.location = "LoanApprove.aspx?id=" + idPrestamo;
 
-        panelGuarantee.view(idCliente);
 
     },
 
@@ -217,7 +221,7 @@ const loansindex = {
 
     },
 
- 
+
 
     accionesBotones: () => {
 

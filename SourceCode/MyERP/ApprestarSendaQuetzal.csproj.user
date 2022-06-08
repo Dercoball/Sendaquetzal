@@ -10,7 +10,7 @@
     <UseGlobalApplicationHostFile />
     <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
     <ProjectView>ShowAllFiles</ProjectView>
-    <NameOfLastUsedPublishProfile>C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\Properties\PublishProfiles\urbanissa - FTP.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

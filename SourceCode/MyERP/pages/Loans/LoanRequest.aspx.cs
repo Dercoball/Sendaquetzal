@@ -154,6 +154,10 @@ namespace Plataforma.pages
             {
                 return null;//No tiene permisos
             }
+            
+
+            Usuario user = Usuarios.GetUsuario(path, idUsuario);
+
 
             LoanValidation validations = new LoanValidation();
 
@@ -337,10 +341,10 @@ namespace Plataforma.pages
 
                 //  Guardar prestamo
                 sql = @"  INSERT INTO prestamo
-                            (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo)
+                            (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo, id_empleado)
                             OUTPUT INSERTED.id_prestamo
                             VALUES
-                            (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo);
+                            (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo, @id_empleado);
                         ";
 
 
@@ -352,6 +356,7 @@ namespace Plataforma.pages
                 cmdInsertPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
                 cmdInsertPrestamo.Parameters.AddWithValue("@monto", item.Monto);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInsertPrestamo.Parameters.AddWithValue("@id_empleado", user.IdEmpleado);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);// un nuevo prestamo nace con status 1 = PENDIENTE
                 cmdInsertPrestamo.Transaction = transaccion;
 
@@ -1272,6 +1277,7 @@ namespace Plataforma.pages
                                     IsNull(r.id_ejecutivo, 0) id_ejecutivo,
                                     IsNull(r.id_posicion, 0) id_posicion,
                                     r.notas_cliente, r.notas_aval, r.fecha, 
+                                    r.notas_generales,
                                     r.status_aprobacion, p.nombre nombre_posicion
                                     FROM relacion_prestamo_aprobacion r
                                     JOIN posicion p ON (p.id_posicion = r.id_posicion)
@@ -1304,6 +1310,7 @@ namespace Plataforma.pages
                         item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
                         item.NotaCliente = ds.Tables[0].Rows[i]["notas_cliente"].ToString();
                         item.NotaAval = ds.Tables[0].Rows[i]["notas_aval"].ToString();
+                        item.NotasGenerales = ds.Tables[0].Rows[i]["notas_generales"].ToString();
                         item.StatusAprobacion = ds.Tables[0].Rows[i]["status_aprobacion"].ToString();
                         item.NombrePosicion = ds.Tables[0].Rows[i]["nombre_posicion"].ToString();
 

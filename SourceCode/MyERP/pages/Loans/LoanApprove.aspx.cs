@@ -41,7 +41,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idEmpleado)
+        public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idPosicion)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -76,7 +76,16 @@ namespace Plataforma.pages
                 cmdUpdatePrestamo.CommandType = CommandType.Text;
 
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
-                cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_ACEPTADO);
+
+                if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
+                {
+                    cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE_EJECUTIVO);
+                }
+                else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
+                {
+                    cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_APROBADO);
+                }
+
                 cmdUpdatePrestamo.Transaction = transaccion;
                 r += cmdUpdatePrestamo.ExecuteNonQuery();
 
@@ -94,6 +103,7 @@ namespace Plataforma.pages
                 Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
 
 
+                transaccion.Commit();
 
 
 
@@ -102,6 +112,9 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
+
+                transaccion.Rollback();
+
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 r = -1;
@@ -129,7 +142,7 @@ namespace Plataforma.pages
         /// <param name="idEmpleado"></param>
         /// <returns></returns>
         [WebMethod]
-        public static DatosSalida Reject(string path, string idPrestamo, string idUsuario, string nota)
+        public static DatosSalida Reject(string path, string idPrestamo, string idUsuario, string nota, string idPosicion)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -169,18 +182,29 @@ namespace Plataforma.pages
                 cmdUpdatePrestamo.Transaction = transaccion;
                 r += cmdUpdatePrestamo.ExecuteNonQuery();
 
+                string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
 
-                ////  Traer los datos del préstamo y cliente
-                //Cliente prestamoData = GetLoanDataByCustomerId(path, idPrestamo, conn, transaccion);
-                ////prestamoData.IdCliente
-                ////prestamoData.IdTipoCliente
-
-                ////  Tipo de cliente
-                //TipoCliente customerType = GetCustomerTypeById(path, prestamoData.TipoCliente, conn, transaccion);
+                sql = @"  UPDATE relacion_prestamo_aprobacion
+                                SET fecha = @fecha, notas_generales = @notas_generales, status_aprobacion = @status_aprobacion  "
+                                + sqlActualizaPosicion
+                                + @"WHERE id_prestamo = @id_prestamo AND
+                                id_posicion = " + idPosicion + " ";
 
 
-                ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
-                //Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
+                Utils.Log("ACTUALIZAR RelacionPrestamoAprobacion " + sql);
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@notas_generales", nota);
+                cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
+                cmd.Parameters.AddWithValue("@status_aprobacion", "Rechazado");
+                cmd.Transaction = transaccion;
+
+                r += cmd.ExecuteNonQuery();
 
                 response.MensajeError = "";
                 response.CodigoError = 0;
@@ -277,11 +301,6 @@ namespace Plataforma.pages
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 return item;
-            }
-
-            finally
-            {
-                conn.Close();
             }
 
 
@@ -417,10 +436,7 @@ namespace Plataforma.pages
                 return item;
             }
 
-            finally
-            {
-                conn.Close();
-            }
+           
 
         }
 

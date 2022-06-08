@@ -13,6 +13,7 @@ let idUsuario = null;
 
 
 var mensajesAlertas = {
+    solicitudPrestamoAprobadaExito: 'El préstamo fue aprobado correctamente.',
     solicitudPrestamoRechazadaExito: 'La solicitud de préstamo fue rechazada correctamente.',
     solicitudPrestamoEnviada: 'Solicitud de préstamo guardada y enviada correctamente.',
     solicitudNoProcedenteCamposVacios: 'Solicitud no procedente: Existen campos sin llenar, por favor verifique.',
@@ -360,7 +361,10 @@ var utils = {
     POSICION_SUPERVISOR: 4,
     POSICION_PROMOTOR: 5,
 
-
+    STATUS_PRESTAMO_PENDIENTE_SUPERVISOR : 1,
+    STATUS_PRESTAMO_PENDIENTE_EJECUTIVO: 2,
+    STATUS_PRESTAMO_RECHAZADO: 3,
+    STATUS_PRESTAMO_APROBADO: 4,
 
     getDocumentos: (params) => {
 

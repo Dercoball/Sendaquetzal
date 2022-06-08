@@ -121,6 +121,9 @@
 
                     <div class="tab-content" id="nav-tabContent">
 
+                       
+
+                        <%--Cliente--%>
                         <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
 
                             <form role="form" id="frmCustomer" name="frmCustomer" data-toggle="validator">
@@ -930,7 +933,7 @@
                                         <div class="row mt-5 mb-3">
 
                                             <div class=" col-md-4 text-center">
-                                                <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                                <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                                             </div>
 
 
@@ -958,9 +961,8 @@
 
 
                     </div>
+
                 </div>
-
-
             </div>
 
         </section>

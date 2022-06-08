@@ -20,7 +20,7 @@ const loansEdit = {
         if (urlParams && urlParams['id'] !== undefined) {
 
             let idPrestamo = urlParams['id'][0];
-            
+
             //console.log(`idPrestamo = ${idPrestamo}`);
             loansEdit.edit(idPrestamo);
         }
@@ -98,9 +98,11 @@ const loansEdit = {
         $('#frmCustomer')[0].reset();
         $('#frmAval')[0].reset();
 
+        //$('#divLoading').show();
+        //$('.tab-pane').hide();
 
         let params = {};
-        params.path = window.location.hostname;        
+        params.path = window.location.hostname;
         params.idPrestamo = idPrestamo;
         params = JSON.stringify(params);
 
@@ -202,11 +204,32 @@ const loansEdit = {
                 //  Deshabilitar y ocultar campos de acuerdo al tipo de usuario
 
                 let userTypeId = document.getElementById('txtIdTipoUsuario').value;
+
+                //----Analizar si van a estar los controles deshabilitados
+
+                //  Si el user es promotor
                 let disabled = (Number(userTypeId) === utils.POSICION_PROMOTOR);   //  true/ false
+
+                //  Si el prestamo está aprobado o rechazado
+                disabled = Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_RECHAZADO ||
+                    Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_APROBADO;
+
+                //  Si e user es supervisor y el préstamo esta en status pendiente de aprobacion por el ejecutivo
+                if (Number(userTypeId) === utils.POSICION_SUPERVISOR) {
+
+                    disabled = Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_PENDIENTE_EJECUTIVO;
+
+                }
+
+                //----Fin
+
+
                 loansEdit.disableFields(disabled);
 
                 panelGuarantee.view(item.IdPrestamo, disabled);
 
+                //$('#divLoading').hide();
+                //$('.tab-pane').show();
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -246,7 +269,7 @@ const loansEdit = {
 
                 { data: 'NombrePosicion' },
                 { data: 'StatusAprobacion' },
-                { data: 'StatusAprobacion' }
+                { data: 'NotasGenerales' }
 
             ],
             "language": textosEsp,
@@ -332,6 +355,64 @@ const loansEdit = {
 
         });
 
+        $('#btnAprobar').on('click', (e) => {
+            e.preventDefault();
+
+            let hasErrors = $('form[name="frmAprobacion"]').validator('validate').has('.has-error').length;
+
+            if (hasErrors) {
+
+                $('#spnMensajes').html(mensajesAlertas.solicitudCamposVacios);
+                $('#panelMensajes').modal('show');
+
+                return;
+            }
+
+            //  
+
+            $('.deshabilitable').prop('disabled', true);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idPosicion = document.getElementById('txtIdTipoUsuario').value
+            params.idPrestamo = loansEdit.idPrestamo;
+            params.nota = $('#txtNotaAprobacion').val();
+            params.accion = loansEdit.accion;
+            params = JSON.stringify(params);
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/LoanApprove.aspx/Approve`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+                    $('.deshabilitable').prop('disabled', false);
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+                        $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoRechazadaExito);
+                        $('#panelMensajeControlado').modal('show');
+
+                    }
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.deshabilitable').prop('disabled', false);
+
+
+                }
+
+            });
+
+
+        });
+
+
         $('#btnRechazar').on('click', (e) => {
             e.preventDefault();
 
@@ -347,10 +428,12 @@ const loansEdit = {
 
             //  
 
+            $('.deshabilitable').prop('disabled', true);
 
             let params = {};
             params.path = window.location.hostname;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPrestamo = loansEdit.idPrestamo;
             params.nota = $('#txtNotaAprobacion').val();
             params.accion = loansEdit.accion;
@@ -367,9 +450,11 @@ const loansEdit = {
                 success: function (msg) {
                     let valores = msg.d;
 
+                    $('.deshabilitable').prop('disabled', false);
+
                     if (parseInt(valores.CodigoError) === 0) {
 
-                        $('#spnMensajesControlado').html(mensajesAlertas.solicitudPrestamoRechazadaExito);
+                        $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoRechazadaExito);
                         $('#panelMensajeControlado').modal('show');
 
                     }

@@ -19,9 +19,10 @@ const loansEdit = {
         //console.log(`urlParams = ${urlParams['id']}`);
         if (urlParams && urlParams['id'] !== undefined) {
 
-            let id = urlParams['id'][0];
-            //console.log(`id = ${id}`);
-            loansEdit.edit(id);
+            let idPrestamo = urlParams['id'][0];
+
+            //console.log(`idPrestamo = ${idPrestamo}`);
+            loansEdit.edit(idPrestamo);
         }
 
 
@@ -90,17 +91,19 @@ const loansEdit = {
 
     },
 
-    edit: (idCliente) => {
+    edit: (idPrestamo) => {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
         $('#frmCustomer')[0].reset();
         $('#frmAval')[0].reset();
 
+        //$('#divLoading').show();
+        //$('.tab-pane').hide();
 
         let params = {};
         params.path = window.location.hostname;
-        params.idCliente = idCliente;
+        params.idPrestamo = idPrestamo;
         params = JSON.stringify(params);
 
         $.ajax({
@@ -112,46 +115,48 @@ const loansEdit = {
             async: true,
             success: function (msg) {
 
-                var item = msg.d;
+                let item = msg.d;
 
 
 
                 loansEdit.idSeleccionado = item.IdCliente;
                 //  cliente
-                $('#txtNombre').val(item.Nombre);
-                $('#txtPrimerApellido').val(item.PrimerApellido);
-                $('#txtSegundoApellido').val(item.SegundoApellido);
-                $('#txtCURP').val(item.Curp);
-                $('#txtTelefono').val(item.Telefono);
+                let itemCliente = item.Cliente;
 
-                $('#txtOcupacion').val(item.Ocupacion);
-                $('#txtNotaDeFoto').val(item.NotaFotografiaCliente);
+                $('#txtNombre').val(itemCliente.Nombre);
+                $('#txtPrimerApellido').val(itemCliente.PrimerApellido);
+                $('#txtSegundoApellido').val(itemCliente.SegundoApellido);
+                $('#txtCURP').val(itemCliente.Curp);
+                $('#txtTelefono').val(itemCliente.Telefono);
+
+                $('#txtOcupacion').val(itemCliente.Ocupacion);
+                $('#txtNotaDeFoto').val(itemCliente.NotaFotografiaCliente);
 
                 //  dirección cliente
-                $('#txtCalle').val(item.direccion.Calle);
-                $('#txtColonia').val(item.direccion.Colonia);
-                $('#txtMunicipio').val(item.direccion.Municipio);
-                $('#txtEstado').val(item.direccion.Estado);
-                $('#txtCodigoPostal').val(item.direccion.CodigoPostal);
-                $('#txtDireccionTrabajo').val(item.direccion.DireccionTrabajo);
+                $('#txtCalle').val(itemCliente.direccion.Calle);
+                $('#txtColonia').val(itemCliente.direccion.Colonia);
+                $('#txtMunicipio').val(itemCliente.direccion.Municipio);
+                $('#txtEstado').val(itemCliente.direccion.Estado);
+                $('#txtCodigoPostal').val(itemCliente.direccion.CodigoPostal);
+                $('#txtDireccionTrabajo').val(itemCliente.direccion.DireccionTrabajo);
 
 
                 //datos aval
-                $('#txtNombreAval').val(item.NombreAval);
-                $('#txtPrimerApellidoAval').val(item.PrimerApellidoAval);
-                $('#txtSegundoApellidoAval').val(item.SegundoApellidoAval);
-                $('#txtCURPAval').val(item.CurpAval);
-                $('#txtTelefonoAval').val(item.TelefonoAval);
-                $('#txtOcupacionAval').val(item.OcupacionAval);
-                $('#txtNotaDeFotoAval').val(item.NotaFotografiaAval);
+                $('#txtNombreAval').val(itemCliente.NombreAval);
+                $('#txtPrimerApellidoAval').val(itemCliente.PrimerApellidoAval);
+                $('#txtSegundoApellidoAval').val(itemCliente.SegundoApellidoAval);
+                $('#txtCURPAval').val(itemCliente.CurpAval);
+                $('#txtTelefonoAval').val(itemCliente.TelefonoAval);
+                $('#txtOcupacionAval').val(itemCliente.OcupacionAval);
+                $('#txtNotaDeFotoAval').val(itemCliente.NotaFotografiaAval);
 
                 //  dirección aval
-                $('#txtCalleAval').val(item.direccionAval.Calle);
-                $('#txtColoniaAval').val(item.direccionAval.Colonia);
-                $('#txtMunicipioAval').val(item.direccionAval.Municipio);
-                $('#txtEstadoAval').val(item.direccionAval.Estado);
-                $('#txtCodigoPostalAval').val(item.direccionAval.CodigoPostal);
-                $('#txtDireccionTrabajoAval').val(item.direccionAval.DireccionTrabajo);
+                $('#txtCalleAval').val(itemCliente.direccionAval.Calle);
+                $('#txtColoniaAval').val(itemCliente.direccionAval.Colonia);
+                $('#txtMunicipioAval').val(itemCliente.direccionAval.Municipio);
+                $('#txtEstadoAval').val(itemCliente.direccionAval.Estado);
+                $('#txtCodigoPostalAval').val(itemCliente.direccionAval.CodigoPostal);
+                $('#txtDireccionTrabajoAval').val(itemCliente.direccionAval.DireccionTrabajo);
 
                 loansEdit.getLocation('#txtUbicacion');
                 loansEdit.getLocation('#txtUbicacionAval');
@@ -159,16 +164,20 @@ const loansEdit = {
                 let relPrestamoAprobacion1 = item.listaRelPrestamoAprobacion[0];
                 let relPrestamoAprobacionAval2 = item.listaRelPrestamoAprobacion[1];
 
-                console.log(`NotaFotografiaCliente ${JSON.stringify(item.NotaFotografiaCliente)}`);
-                console.log(`NotaFotografiaAval ${JSON.stringify(item.NotaFotografiaAval)}`);
+                console.log(`NotaFotografiaCliente ${JSON.stringify(itemCliente.NotaFotografiaCliente)}`);
+                console.log(`NotaFotografiaAval ${JSON.stringify(itemCliente.NotaFotografiaAval)}`);
 
 
                 console.log(`NotaCliente ${JSON.stringify(relPrestamoAprobacion1.NotaCliente)}`);
                 console.log(`NotaAval ${JSON.stringify(relPrestamoAprobacion1.NotaAval)}`);
 
+                console.log(`item.IdStatusPrestamo ${JSON.stringify(item.IdStatusPrestamo)}`);
+
+
                 $('#txtNotaSupervisor').val(relPrestamoAprobacion1.NotaCliente);
                 $('#txtNotaSupervisorAval').val(relPrestamoAprobacion1.NotaAval);
 
+                loansEdit.tableApproveList(item.listaRelPrestamoAprobacion);
 
 
                 $('#panelTabla').hide();
@@ -195,11 +204,32 @@ const loansEdit = {
                 //  Deshabilitar y ocultar campos de acuerdo al tipo de usuario
 
                 let userTypeId = document.getElementById('txtIdTipoUsuario').value;
+
+                //----Analizar si van a estar los controles deshabilitados
+
+                //  Si el user es promotor
                 let disabled = (Number(userTypeId) === utils.POSICION_PROMOTOR);   //  true/ false
+
+                //  Si el prestamo está aprobado o rechazado
+                disabled = Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_RECHAZADO ||
+                    Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_APROBADO;
+
+                //  Si e user es supervisor y el préstamo esta en status pendiente de aprobacion por el ejecutivo
+                if (Number(userTypeId) === utils.POSICION_SUPERVISOR) {
+
+                    disabled = Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_PENDIENTE_EJECUTIVO;
+
+                }
+
+                //----Fin
+
+
                 loansEdit.disableFields(disabled);
 
                 panelGuarantee.view(item.IdPrestamo, disabled);
 
+                //$('#divLoading').hide();
+                //$('.tab-pane').show();
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -227,6 +257,45 @@ const loansEdit = {
         }
     },
 
+    tableApproveList(data) {
+
+        let tableAprobadores = $('#tableAprobadores').DataTable({
+            "destroy": true,
+            "pageLength": 50,
+            "processing": false,
+            "order": [],
+            data: data,
+            columns: [
+
+                { data: 'NombrePosicion' },
+                { data: 'StatusAprobacion' },
+                { data: 'NotasGenerales' }
+
+            ],
+            "language": textosEsp,
+            "columnDefs": [
+                {
+                    "targets": [-1],
+                    "orderable": false
+                },
+            ],
+            dom: 'rt',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    title: descargas,
+                    text: 'Xls', className: 'excelbtn'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    title: descargas,
+                    text: 'Pdf', className: 'pdfbtn'
+                }
+            ]
+
+        });
+
+    },
 
     getDocument(idCliente, idTipoDocumento, idControl) {
 
@@ -286,6 +355,126 @@ const loansEdit = {
 
         });
 
+        $('#btnAprobar').on('click', (e) => {
+            e.preventDefault();
+
+            let hasErrors = $('form[name="frmAprobacion"]').validator('validate').has('.has-error').length;
+
+            if (hasErrors) {
+
+                $('#spnMensajes').html(mensajesAlertas.solicitudCamposVacios);
+                $('#panelMensajes').modal('show');
+
+                return;
+            }
+
+            //  
+
+            $('.deshabilitable').prop('disabled', true);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idPosicion = document.getElementById('txtIdTipoUsuario').value
+            params.idPrestamo = loansEdit.idPrestamo;
+            params.nota = $('#txtNotaAprobacion').val();
+            params.accion = loansEdit.accion;
+            params = JSON.stringify(params);
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/LoanApprove.aspx/Approve`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+                    $('.deshabilitable').prop('disabled', false);
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+                        $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoRechazadaExito);
+                        $('#panelMensajeControlado').modal('show');
+
+                    }
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.deshabilitable').prop('disabled', false);
+
+
+                }
+
+            });
+
+
+        });
+
+
+        $('#btnRechazar').on('click', (e) => {
+            e.preventDefault();
+
+            let hasErrors = $('form[name="frmAprobacion"]').validator('validate').has('.has-error').length;
+
+            if (hasErrors) {
+
+                $('#spnMensajes').html(mensajesAlertas.solicitudCamposVacios);
+                $('#panelMensajes').modal('show');
+
+                return;
+            }
+
+            //  
+
+            $('.deshabilitable').prop('disabled', true);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idPosicion = document.getElementById('txtIdTipoUsuario').value
+            params.idPrestamo = loansEdit.idPrestamo;
+            params.nota = $('#txtNotaAprobacion').val();
+            params.accion = loansEdit.accion;
+            params = JSON.stringify(params);
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/LoanApprove.aspx/reject`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+                    $('.deshabilitable').prop('disabled', false);
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+                        $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoRechazadaExito);
+                        $('#panelMensajeControlado').modal('show');
+
+                    }
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+
+                }
+
+            });
+
+
+        });
+
+        $('#btnAceptarPanelMensajeControlado').on('click', (e) => {
+            e.preventDefault();
+
+            window.location = "LoansIndex.aspx";
+
+        });
 
         $('#btnGuardarCliente').on('click', (e) => {
             e.preventDefault();
@@ -391,8 +580,9 @@ const loansEdit = {
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
-                            $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
-                            $('#panelMensajeControlado').modal('show');
+                            $('#spnMensajes').html(mensajesAlertas.exitoGuardar);
+                            $('#panelMensajes').modal('show');
+
 
                             $('.deshabilitable').prop('disabled', false);
                             $('#btnGuardarCliente').html(`<i class="fa fa-save mr-1"></i>Guardar`);
@@ -532,10 +722,10 @@ const loansEdit = {
                         let time_ = 10000;
                         setTimeout(function () {
 
-                            utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+                            //utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
-                            $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
-                            $('#panelMensajeControlado').modal('show');
+                            $('#spnMensajes').html(mensajesAlertas.exitoGuardar);
+                            $('#panelMensajes').modal('show');
 
                             $('.deshabilitable').prop('disabled', false);
                             $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);

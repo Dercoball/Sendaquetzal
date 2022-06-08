@@ -92,7 +92,7 @@ namespace Plataforma.pages
                     //  Filtro para que el promotor solo vea sus prestamos 
                     if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString())
                     {
-                        sqlUsuario = " AND p.id_usuario = " + idUsuario;
+                        sqlUsuario = " AND p.id_empleado = " + user.IdEmpleado;
 
                     }
 
@@ -115,14 +115,25 @@ namespace Plataforma.pages
                     //  Filtro para que el ejecutivo vea los prestamos asignados a sus supervisores
                     else if (idTipoUsuario == Employees.POSICION_EJECUTIVO.ToString())
                     {
-                        sqlUsuario = @" AND p.id_usuario IN   
-                                        ( select u.id_usuario
-		                                    from empleado e
-                                            join empleado ejec ON (e.id_ejecutivo = ejec.id_empleado)
-                                            JOIN usuario u ON (u.id_empleado = e.id_empleado)
-		                                    WHERE ejec.id_empleado = " + user.IdEmpleado + @" )
+                        sqlUsuario =
+
+                            @" AND p.id_empleado IN   
+                                        ( select e.id_empleado
+		                                        from empleado e
+                                                join empleado superv ON (e.id_supervisor = superv.id_empleado)
+                                                WHERE e.id_supervisor IN   
+                                        
+                                                    ( select e.id_empleado
+		                                                from empleado e
+                                                        join empleado ejec ON (e.id_ejecutivo = ejec.id_empleado)
+		                                                WHERE ejec.id_empleado = " + user.IdEmpleado + @" 
+                                                    )
+                                        )
 
                             ";
+
+                        //  El segundo IN ( el mas interno) me da los supervisores que pertenecen al ejecutivo logueado,
+                        //  el primer In me da los empleados promotores de los supervisores
 
                     }
 

@@ -16,6 +16,8 @@ namespace Plataforma.Clases
 
         public String NotaAval;
         public String NotaCliente;
+        public String StatusAprobacion;
+        public String NombrePosicion;   
         public int IdPosicion;
         public int IdSupervisor;
         public int IdEjecutivo;

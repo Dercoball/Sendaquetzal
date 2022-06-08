@@ -1,0 +1,117 @@
+/* your styles go here */
+
+
+.with-errors {
+    color: tomato;
+}
+
+.sm100 {
+    width: 100px;
+}
+
+
+.sm200 {
+    width: 200px;
+}
+
+
+.claseError {
+    color: tomato;
+    font-weight: bold;
+}
+
+.texto-grande {
+    height: 100px !important;
+}
+
+.texto-rojo {
+    color: tomato !important;
+}
+
+.numero-dias, .numero-horas-extra, .dias {
+    font-size: .7rem;
+}
+
+.texto-hora {
+    font-size: 5.5em;
+    color: lightgreen;
+}
+
+.fondo-negro {
+    background-color: #000;
+}
+
+.csvbtn {
+    margin-left: 50px;
+    background-color: #2b90d9;
+    border-color: #28a745;
+    font-weight: 400;
+    border: 1px solid transparent;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    border-radius: 0;
+    color: #ffffff;
+    /*background-image: url(../../img/ico_xls.png) !important;*/
+    /*width: 48px !important;*/
+    /*height: 48px !important;*/
+}
+
+.excelbtn {
+    background-image: url(../../img/generic.png) !important;
+    width: 48px;
+    height: 48px;
+}
+
+
+.pdfbtn {
+    background-image: url(../../img/generic.png) !important;
+    width: 48px;
+    height: 48px;
+}
+
+.thumb {
+    width: 100px;
+    height: 100px;
+}
+
+
+.cuadro-rojo {
+    border: 1px solid;
+    border-color: #ff0000;
+}
+
+.noclick {
+    cursor: default;
+}
+
+.entregado {
+    background-color: darkgreen;
+}
+
+
+.aprobado {
+    background-color: darkseagreen;
+}
+
+.cancelado {
+    background-color: gray;
+}
+
+/*.modal .modal-header {
+    background-color: green;
+    color: white;
+}*/
+
+.img-social {
+    width: 40px;
+}
+
+
+.alto-textarea {
+    height: 100px !important;
+}
+
+.margen-derecho {
+    margin-right: 2px;
+}

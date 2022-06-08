@@ -13,6 +13,7 @@ let idUsuario = null;
 
 
 var mensajesAlertas = {
+    solicitudPrestamoRechazadaExito: 'La solicitud de préstamo fue rechazada correctamente.',
     solicitudPrestamoEnviada: 'Solicitud de préstamo guardada y enviada correctamente.',
     solicitudNoProcedenteCamposVacios: 'Solicitud no procedente: Existen campos sin llenar, por favor verifique.',
     solicitudCamposVacios: 'Existen campos sin llenar, por favor verifique.',

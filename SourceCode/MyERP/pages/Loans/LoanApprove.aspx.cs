@@ -39,6 +39,7 @@ namespace Plataforma.pages
 
 
         }
+
         [WebMethod]
         public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idEmpleado)
         {
@@ -101,6 +102,97 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+                response.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
+                response.CodigoError = 1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return response;
+
+
+        }
+
+
+        /// <summary>
+        /// Rechazo de un préstamo
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="idPrestamo"></param>
+        /// <param name="idUsuario"></param>
+        /// <param name="idEmpleado"></param>
+        /// <returns></returns>
+        [WebMethod]
+        public static DatosSalida Reject(string path, string idPrestamo, string idUsuario, string nota)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<StatusPrestamo> items = new List<StatusPrestamo>();
+            DatosSalida response = new DatosSalida();
+
+
+            SqlTransaction transaccion = null;
+
+            int r = 0;
+            try
+            {
+
+                conn.Open();
+                transaccion = conn.BeginTransaction();
+
+                //  Validaciones
+
+
+
+                //  Actualizar status del préstamo
+                string sql = @"  UPDATE prestamo
+                            SET id_status_prestamo = @id_status_prestamo, notas_generales = @notas_generales
+                            WHERE
+                            id_prestamo = @id_prestamo ";
+
+                Utils.Log("Actualizar NUEVO PRESTAMO " + sql);
+
+                SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
+                cmdUpdatePrestamo.CommandType = CommandType.Text;
+
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_RECHAZADO);
+                cmdUpdatePrestamo.Transaction = transaccion;
+                r += cmdUpdatePrestamo.ExecuteNonQuery();
+
+
+                ////  Traer los datos del préstamo y cliente
+                //Cliente prestamoData = GetLoanDataByCustomerId(path, idPrestamo, conn, transaccion);
+                ////prestamoData.IdCliente
+                ////prestamoData.IdTipoCliente
+
+                ////  Tipo de cliente
+                //TipoCliente customerType = GetCustomerTypeById(path, prestamoData.TipoCliente, conn, transaccion);
+
+
+                ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
+                //Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
+
+                response.MensajeError = "";
+                response.CodigoError = 0;
+
+                transaccion.Commit();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                transaccion.Rollback();
+
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 r = -1;

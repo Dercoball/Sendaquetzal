@@ -884,84 +884,83 @@
 
                             <div class="card">
 
-                                <div class="card-header">
-                                    Aprobación
-                                </div>
-
                                 <div class="card-body">
 
-                                    <div class="form-group col-md-12">
+                                    <form role="form" id="frmAprobacion" name="frmAprobacion" data-toggle="validator">
+
+                                        <div class="row mb-5">
+
+                                            <div class="form-group col-md-12">
 
 
-                                        <label for="txtNotaAprobacion">
-                                            Notas
-                                        </label>
-                                        <textarea class="form-control campo-textarea" id="txtNotaAprobacion" rows="6"></textarea>
-                                        <div class="help-block with-errors"></div>
+                                                <label for="txtNotaAprobacion">
+                                                    Notas
+                                                </label>
+                                                <textarea class="form-control campo-textarea" id="txtNotaAprobacion" rows="6"
+                                                    required="required" data-required-error='Requerido'></textarea>
+                                                <div class="help-block with-errors"></div>
 
-                                    </div>
-
-
-                                    <div class="row mt-3 mb-3">
-
-                                        <div class=" col-md-6 text-right">
-                                            <button id="btnAceptar" class="btn btn-secondary"><i class=""></i>Aceptar</button>
-                                        </div>
-
-                                        <div class=" col-md-6 ">
-                                            <button id="btnRechazar" class="btn btn-primary deshabilitable"><i class=""></i>Rechazar</button>
-                                        </div>
-
-                                    </div>
-
-
-
-                                    <div id="panelTableAprobadores">
-                                        <div class="table-responsive">
-
-                                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAprobadores">
-
-
-                                                <thead>
-                                                    <tr>
-                                                        <th>Aprobadores</th>
-                                                        <th>Estatus</th>
-                                                        <th>Notas</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
+                                            </div>
 
                                         </div>
-                                    </div>
 
 
-                                    <div class="row mt-3 mb-3">
 
-                                        <div class=" col-md-6 text-center">
-                                            <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                        <div id="panelTableAprobadores mt-5">
+                                            <div class="table-responsive">
+
+                                                <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAprobadores">
+
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Aprobadores</th>
+                                                            <th>Estatus</th>
+                                                            <th>Notas</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
                                         </div>
 
-                                        <div class=" col-md-6 text-center">
-                                            <button id="btnGuardarAprobacion" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
+
+                                        <div class="row mt-5 mb-3">
+
+                                            <div class=" col-md-4 text-center">
+                                                <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                            </div>
+
+
+                                            <div class=" col-md-4 text-center">
+                                                <button id="btnRechazar" class="btn btn-danger deshabilitable  boton-ocultable"><i class="fa fa-times mr-1"></i>Rechazar</button>
+                                            </div>
+
+
+                                            <div class=" col-md-4 text-center">
+                                                <button id="btnAprobar" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Aprobar</button>
+                                            </div>
+
                                         </div>
 
-                                    </div>
 
+                                    </form>
 
                                 </div>
+
 
                             </div>
 
-
-
                         </div>
+
+
+
                     </div>
-
-
-                    <%--</form>--%>
                 </div>
+
+
             </div>
 
         </section>
@@ -1188,6 +1187,48 @@
         </div>
     </div>
 
+    <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static" style="margin-top: 200px;">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Información</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <span id="spnMensajes"></span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panelMensajeControlado" class="modal fade" role="dialog" data-backdrop="static" style="margin-top: 200px;">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Información</h4>
+
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <span id="spnMensajeControlado"></span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btnAceptarPanelMensajeControlado">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="panelEliminar" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog">
@@ -1237,7 +1278,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/loans/loansedit.js"></script>
+    <script src="../../js/app/loans/loansApprove.js"></script>
     <script src="../../js/app/loans/panelguarantee.js"></script>
     <script src="../../js/app/general.js"></script>
 

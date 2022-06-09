@@ -39,8 +39,6 @@ const loansEdit = {
         $('#spnTituloForm').text('Nuevo');
         $('#txtDescripcion').val('');
 
-        $('#panelTabla').hide();
-        $('#panelForm').show();
         loansEdit.accion = "nuevo";
         loansEdit.idSeleccionado = -1;
 
@@ -180,11 +178,6 @@ const loansEdit = {
                 loansEdit.tableApproveList(item.listaRelPrestamoAprobacion);
 
 
-                $('#panelTabla').hide();
-                $('#panelFiltro').hide();
-                $('#btnNuevo').hide();
-
-                $('#panelForm').show();
                 loansEdit.accion = "editar";
 
                 loansEdit.idPrestamo = item.IdPrestamo;
@@ -211,8 +204,15 @@ const loansEdit = {
 
                 panelGuarantee.view(item.IdPrestamo, disabled);
 
-                $('#divLoading').hide();
-                $('#panelForm').show();
+                let time_ = 5000;
+                setTimeout(function () {
+
+                    $('#divLoading').hide();
+                    $('#panelForm').show();
+
+                }, time_);
+
+                
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -601,7 +601,7 @@ const loansEdit = {
 
                         });
 
-                        let time_ = 10000;
+                        let time_ = 5000;
                         setTimeout(function () {
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
@@ -746,7 +746,7 @@ const loansEdit = {
 
                         });
 
-                        let time_ = 10000;
+                        let time_ = 5000;
                         setTimeout(function () {
 
                             //utils.toast(mensajesAlertas.exitoGuardar, 'ok');

@@ -11,6 +11,7 @@ namespace Plataforma.Clases
         public int IdPago;
         public int IdPrestamo;
         public int IdUsuario;
+        public int NumeroSemana;
 
         public float Monto;
         public float Saldo;

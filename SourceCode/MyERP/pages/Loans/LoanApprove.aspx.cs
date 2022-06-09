@@ -41,7 +41,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idPosicion)
+        public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idPosicion, string nota)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -60,12 +60,12 @@ namespace Plataforma.pages
                 conn.Open();
                 transaccion = conn.BeginTransaction();
 
-                //  VALIDACIONES
 
                 //  Traer los datos del préstamo y cliente
                 Prestamo prestamo = LoanRequest.GetDataPrestamo(path, idPrestamo);
 
-                //  Validar campos vacíos
+                //  VALIDACIONES
+                // 1) Validar campos vacíos
                 var dataStringsValidations = ValidateCustomerData(prestamo.Cliente);
                 if (dataStringsValidations.Count > 0)
                 {
@@ -77,8 +77,7 @@ namespace Plataforma.pages
 
 
                 //  -------Validar que las fotos esten subidas para cliente y aval
-
-                //  Traer los documentos actuales del pr+éstamo
+                // 2) Traer los documentos actuales del pr+éstamo
                 List<Documento> documentsInLoan = GetDocumentsByCustomerId(path, prestamo.IdCliente, conn, transaccion);
 
 
@@ -114,7 +113,7 @@ namespace Plataforma.pages
                 float guaranteeAmmount = prestamo.Monto * customerType.GarantiasPorMonto;
                 Utils.Log("Monto A cubrir por las garantias = " + guaranteeAmmount);
 
-                //  Validar que la suma de los costos de los articulos en garantia del cliente,
+                // 3) Validar que la suma de los costos de los articulos en garantia del cliente,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
                 List<Garantia> guaranteeCustomerList = LoansIndex.GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString());
                 float guaranteeAmmountSumCustomer = 0;
@@ -127,13 +126,14 @@ namespace Plataforma.pages
                     response.MensajeError = "El total de las garantías del cliente no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
                         customerType.GarantiasPorMonto + "<br/><br/>" +
                         "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                        "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
                         "La suma de costos de las garantías es: " + guaranteeAmmountSumCustomer.ToString("C2");
 
                     response.CodigoError = 1;
                     return response;
                 }
 
-                //  Validar que la suma de los costos de los articulos en garantia del aval,
+                // 4) Validar que la suma de los costos de los articulos en garantia del aval,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
                 List<Garantia> guaranteeAvalList = LoansIndex.GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString());
                 float guaranteeAmmountSumAval = 0;
@@ -145,13 +145,15 @@ namespace Plataforma.pages
                 {
                     response.MensajeError = "El total de las garantías del aval no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
                         customerType.GarantiasPorMonto + "<br/><br/>" +
-                       " El monto del préstamo es: " + prestamo.Monto + "<br/>" +
+                       "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                       "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
                        "La suma de costos de las garantías es: " + guaranteeAmmountSumAval.ToString("C2");
 
                     response.CodigoError = 1;
                     return response;
                 }
 
+                //  Fin de validaciones
 
 
 
@@ -182,20 +184,24 @@ namespace Plataforma.pages
                     //  Generar semanas para pagos
                     ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
 
-                    DateTime startDate = prestamo.FechaSolicitudDate;
+                    //DateTime startDate = prestamo.FechaSolicitudDate;//Tomar fecha solicitud para semanas de pago
+                    DateTime startDate = prestamo.FechaSolicitudDate;   //Tomar fecha de aprobacion para semanas de pago
 
                     for (int i = 0; i < customerType.SemanasAPrestar; i++)
                     {
 
-                        DateTime nextDate  = startDate.AddDays(7);
+                        DateTime nextDate = startDate.AddDays(7);
 
                         Pago pago = new Pago();
                         pago.IdPrestamo = int.Parse(idPrestamo);
                         pago.Monto = pagoAmmount * customerType.PorcentajeSemanal;
+                        pago.NumeroSemana = (i + 1);
                         pago.Fecha = nextDate;
+                        pago.IdUsuario = int.Parse(idUsuario);
 
                         InsertPago(pago, conn, transaccion);
 
+                        startDate = nextDate;
 
                     }
 
@@ -206,6 +212,31 @@ namespace Plataforma.pages
                 cmdUpdatePrestamo.Transaction = transaccion;
                 r += cmdUpdatePrestamo.ExecuteNonQuery();
 
+
+                //  Actualizar relacion de aprobaciones
+                string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
+
+                sql = @"  UPDATE relacion_prestamo_aprobacion
+                                SET fecha = @fecha, notas_generales = @notas_generales, status_aprobacion = @status_aprobacion  "
+                                + sqlActualizaPosicion
+                                + @"WHERE id_prestamo = @id_prestamo AND
+                                id_posicion = " + idPosicion + " ";
+
+
+                Utils.Log("ACTUALIZAR RelacionPrestamoAprobacion " + sql);
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@notas_generales", nota);
+                cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
+                cmd.Parameters.AddWithValue("@status_aprobacion", "Aprobado");
+                cmd.Transaction = transaccion;
+
+                r += cmd.ExecuteNonQuery();
 
 
                 //
@@ -249,8 +280,8 @@ namespace Plataforma.pages
 
                 string sql = "";
 
-                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario) 
-                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario) ";
+                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana) 
+                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana) ";
 
 
 
@@ -263,6 +294,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_prestamo", item.IdPrestamo);
                 cmd.Parameters.AddWithValue("@monto", item.Monto);
                 cmd.Parameters.AddWithValue("@fecha", item.Fecha);
+                cmd.Parameters.AddWithValue("@numero_semana", item.NumeroSemana);
                 cmd.Parameters.AddWithValue("@id_status_pago", Pago.STATUS_PAGO_PENDIENTE);
                 cmd.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
                 cmd.Transaction = transaction;

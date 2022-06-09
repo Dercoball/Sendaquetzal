@@ -291,7 +291,7 @@ const panelGuarantee = {
 
         console.log('nuevo garantia aval');
 
-        //$('#frmGarantias')[0].reset();
+        $('#frmGarantiasAval')[0].reset();
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
 

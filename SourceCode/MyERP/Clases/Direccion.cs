@@ -20,7 +20,8 @@ namespace Plataforma.Clases
         public string Accion;
         public string ActivoStr;
         public string DireccionTrabajo;
-       
+        public string Ubicacion;
+
 
 
     }

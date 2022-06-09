@@ -741,7 +741,73 @@ namespace Plataforma.pages
         }
 
 
-        
+        /// <summary>
+        /// Obtener documentos de un préstamo
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="idCliente"></param>
+        /// <param name="idTipoDocumento"></param>
+        /// <returns></returns>
+        [WebMethod]
+        public static List<Documento> GetDocumentsByCustomerId(string path, string idCliente)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            List<Documento> items = new List<Documento>();
+
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_documento_colaborador, 
+                                    nombre, url, id_cliente, id_tipo_documento, fecha_ingreso
+                                  FROM documento    
+                                  WHERE id_cliente = @id ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("idCliente =  " + idCliente);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", idCliente);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Documento item = new Documento();
+                        item.IdDocumento = int.Parse(ds.Tables[0].Rows[i]["id_documento_colaborador"].ToString());
+                        item.IdTipoDocumento = int.Parse(ds.Tables[0].Rows[i]["id_tipo_documento"].ToString());
+                        item.Url = ds.Tables[0].Rows[i]["url"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+
 
 
 
@@ -814,10 +880,14 @@ namespace Plataforma.pages
                 conn.Open();
 
                 item = GetPrestamoById(path, idPrestamo, conn);
-                item.Cliente = GetItemClient(path, item.IdCliente, conn);
-                item.Cliente.direccion = GetAddress(path, item.IdCliente, 0, conn);
-                item.Cliente.direccionAval = GetAddress(path, item.IdCliente, 1, conn);
-                item.listaRelPrestamoAprobacion = GetRelPrestamoAprobacion(path, item.IdPrestamo, conn);
+
+                if (item != null)
+                {
+                    item.Cliente = GetItemClient(path, item.IdCliente, conn);
+                    item.Cliente.direccion = GetAddress(path, item.IdCliente, 0, conn);
+                    item.Cliente.direccionAval = GetAddress(path, item.IdCliente, 1, conn);
+                    item.listaRelPrestamoAprobacion = GetRelPrestamoAprobacion(path, item.IdPrestamo, conn);
+                }
 
                 return item;
 
@@ -1114,7 +1184,8 @@ namespace Plataforma.pages
             {
                 DataSet ds = new DataSet();
                 string query = @" SELECT id_direccion, id_empleado, id_cliente, id_aval, calleyno, colonia, municipio, estado, 
-                                    codigo_postal, id_municipio, id_estado, activo, ISNULL(aval, 0) aval, direccion_trabajo
+                                    codigo_postal, id_municipio, id_estado, activo, ISNULL(aval, 0) aval, direccion_trabajo,
+                                    ubicacion
                                     FROM direccion
                                     WHERE id_cliente =  @id_cliente AND aval = @aval
                                 ";
@@ -1146,6 +1217,7 @@ namespace Plataforma.pages
                         item.Estado = ds.Tables[0].Rows[i]["estado"].ToString();
                         item.CodigoPostal = ds.Tables[0].Rows[i]["codigo_postal"].ToString();
                         item.DireccionTrabajo = ds.Tables[0].Rows[i]["direccion_trabajo"].ToString();
+                        item.Ubicacion = ds.Tables[0].Rows[i]["ubicacion"].ToString();
 
 
 

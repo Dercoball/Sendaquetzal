@@ -9,6 +9,7 @@ namespace Plataforma.Clases
     {
 
         public int IdDocumento;
+        public int IdTipoDocumento;
         public String Nombre;
         public String Descripcion;
         public String Contenido;

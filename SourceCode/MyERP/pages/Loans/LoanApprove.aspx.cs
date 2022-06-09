@@ -60,7 +60,54 @@ namespace Plataforma.pages
                 conn.Open();
                 transaccion = conn.BeginTransaction();
 
-                //  Validaciones
+                //  VALIDACIONES
+
+                //  Traer los datos del préstamo y cliente
+                Prestamo p = LoanRequest.GetDataPrestamo(path, idPrestamo);
+
+                //  Validar campos vacíos
+                var dataStringsValidations = ValidateCustomerData(p.Cliente);
+                if (dataStringsValidations.Count > 0)
+                {
+                    response.MensajeError = "Se necesitan valores para los siguientes campos: " + string.Join(", ", dataStringsValidations.ToArray());
+                    response.CodigoError = 1;
+                    return response;
+                }
+
+                //  Validar que las fotos esten subidas para cliente y aval
+
+                //  Traer los documentos actuales del pr+éstamo
+                List<Documento> documentsInLoan = LoanRequest.GetDocumentsByCustomerId(path, p.IdCliente);
+
+
+                //  Traer todos los tipos de documenos necesarios para un prestamo
+                List<Documento> allDocumentTypes = GetDocumentCustomerTypes(path);
+                HashSet<int> docs = new HashSet<int>(documentsInLoan.Select(x => x.IdTipoDocumento));
+                //  Restar los documentos del documento a la lista de todos los documentos necesarios
+                allDocumentTypes.RemoveAll(x => docs.Contains(x.IdTipoDocumento));
+
+                //  Lista final de documentos faltantes
+                List<string> missingsDocs = new List<string>();
+                foreach (var item in allDocumentTypes)
+                {
+                    missingsDocs.Add("<li>" + item.Nombre + "</li>");
+                }
+
+                if (allDocumentTypes.Count > 0)
+                {
+                    response.MensajeError = "<p>Se necesita todos los documentos solicitados. </p><ul>" + string.Join(", ", missingsDocs.ToArray()) + "</ul>";
+                    response.CodigoError = 1;
+                    return response;
+                }
+
+
+                //  Tipo de cliente
+                //TipoCliente customerType = GetCustomerTypeById(path, p.Cliente.TipoCliente, conn, transaccion);
+
+
+                ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
+                //Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
+
 
 
 
@@ -89,21 +136,7 @@ namespace Plataforma.pages
                 cmdUpdatePrestamo.Transaction = transaccion;
                 r += cmdUpdatePrestamo.ExecuteNonQuery();
 
-
-                //  Traer los datos del préstamo y cliente
-                Cliente prestamoData = GetLoanDataByCustomerId(path, idPrestamo, conn, transaccion);
-                //prestamoData.IdCliente
-                //prestamoData.IdTipoCliente
-
-                //  Tipo de cliente
-                TipoCliente customerType = GetCustomerTypeById(path, prestamoData.TipoCliente, conn, transaccion);
-
-
-                //  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
-                Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
-
-
-                transaccion.Commit();
+                //transaccion.Commit();
 
 
 
@@ -132,6 +165,195 @@ namespace Plataforma.pages
 
         }
 
+
+        [WebMethod]
+        public static List<Documento> GetDocumentCustomerTypes(string path)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            List<Documento> items = new List<Documento>();
+
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_tipo_documento, nombre
+                                  FROM tipo_documento WHERE id_tipo_documento <> 5 ";   //todos excepto antecedentes penales porque es para empleado
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Documento item = new Documento();
+
+                        item.IdTipoDocumento = int.Parse(ds.Tables[0].Rows[i]["id_tipo_documento"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        public static List<string> ValidateCustomerData(Cliente prestamo)
+        {
+
+            List<string> errsList = new List<string>();
+
+            //  Customer
+            if (string.IsNullOrEmpty(prestamo.Curp))
+            {
+                errsList.Add("Curp cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.Nombre))
+            {
+                errsList.Add("Nombre cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.PrimerApellido))
+            {
+                errsList.Add("Primer apellido cliente");
+            }
+
+            if (string.IsNullOrEmpty(prestamo.Telefono))
+            {
+                errsList.Add("Teléfono cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.Ocupacion))
+            {
+                errsList.Add("Ocupación cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.NotaFotografiaCliente))
+            {
+                errsList.Add("Nota fotografía cliente");
+            }
+
+
+
+
+            //  customer address
+            if (string.IsNullOrEmpty(prestamo.direccion.Calle))
+            {
+                errsList.Add("Calle cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccion.Colonia))
+            {
+                errsList.Add("Colonia cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccion.Municipio))
+            {
+                errsList.Add("Municipio cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccion.Estado))
+            {
+                errsList.Add("Estado cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccion.CodigoPostal))
+            {
+                errsList.Add("Código postal cliente");
+            }
+
+            if (string.IsNullOrEmpty(prestamo.direccion.DireccionTrabajo))
+            {
+                errsList.Add("Direccion trabajo cliente");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccion.Ubicacion))
+            {
+                errsList.Add("Ubicacion cliente");
+            }
+
+
+            //  aval
+            if (string.IsNullOrEmpty(prestamo.CurpAval))
+            {
+                errsList.Add("Curp aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.NombreAval))
+            {
+                errsList.Add("Nombre aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.PrimerApellidoAval))
+            {
+                errsList.Add("Primer apellido aval");
+            }
+
+            if (string.IsNullOrEmpty(prestamo.TelefonoAval))
+            {
+                errsList.Add("Teléfono aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.OcupacionAval))
+            {
+                errsList.Add("Ocupación aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.NotaFotografiaAval))
+            {
+                errsList.Add("Nota fotografía aval");
+            }
+
+
+            //  AVAL address
+            if (string.IsNullOrEmpty(prestamo.direccionAval.Calle))
+            {
+                errsList.Add("Calle aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccionAval.Colonia))
+            {
+                errsList.Add("Colonia aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccionAval.Municipio))
+            {
+                errsList.Add("Municipio aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccionAval.Estado))
+            {
+                errsList.Add("Estado aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccionAval.CodigoPostal))
+            {
+                errsList.Add("Código postal aval");
+            }
+
+            if (string.IsNullOrEmpty(prestamo.direccionAval.DireccionTrabajo))
+            {
+                errsList.Add("Direccion trabajo aval");
+            }
+            if (string.IsNullOrEmpty(prestamo.direccionAval.Ubicacion))
+            {
+                errsList.Add("Ubicación aval");
+            }
+
+
+
+
+            return errsList;
+
+        }
 
         /// <summary>
         /// Rechazo de un préstamo
@@ -436,7 +658,7 @@ namespace Plataforma.pages
                 return item;
             }
 
-           
+
 
         }
 
@@ -564,7 +786,7 @@ namespace Plataforma.pages
                 //  Guardar direccion cliente
                 sql = @"  UPDATE direccion
                              SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
-                                codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
+                                codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo, ubicacion = @ubicacion
                             WHERE id_cliente = @id_cliente AND ISNULL(aval, 0) = 0
                         ";
 
@@ -581,6 +803,7 @@ namespace Plataforma.pages
                 cmdAddressEmployee.Parameters.AddWithValue("@estado", itemAddress.Estado);
                 cmdAddressEmployee.Parameters.AddWithValue("@codigo_postal", itemAddress.CodigoPostal);
                 cmdAddressEmployee.Parameters.AddWithValue("@direccion_trabajo", itemAddress.DireccionTrabajo);
+                cmdAddressEmployee.Parameters.AddWithValue("@ubicacion", itemAddress.Ubicacion);
                 cmdAddressEmployee.Transaction = transaccion;
 
                 r = cmdAddressEmployee.ExecuteNonQuery();
@@ -682,7 +905,7 @@ namespace Plataforma.pages
                 //  Guardar direccion aval
                 sql = @"  UPDATE direccion
                              SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
-                                codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
+                                codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo, ubicacion = @ubicacion
                             WHERE id_cliente = @id_cliente AND ISNULL(aval, 0) = 1
                         ";
 
@@ -700,6 +923,8 @@ namespace Plataforma.pages
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CodigoPostal);
                 cmdAddressEmployeeAval.Parameters.AddWithValue("@direccion_trabajo", itemAddressAval.DireccionTrabajo);
+                cmdAddressEmployeeAval.Parameters.AddWithValue("@ubicacion", itemAddressAval.Ubicacion);
+
                 cmdAddressEmployeeAval.Transaction = transaccion;
 
                 r = cmdAddressEmployeeAval.ExecuteNonQuery();

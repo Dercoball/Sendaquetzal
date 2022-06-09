@@ -98,8 +98,8 @@ const loansEdit = {
         $('#frmCustomer')[0].reset();
         $('#frmAval')[0].reset();
 
-        //$('#divLoading').show();
-        //$('.tab-pane').hide();
+        $('#divLoading').show();
+        $('#panelForm').hide();
 
         let params = {};
         params.path = window.location.hostname;
@@ -205,31 +205,14 @@ const loansEdit = {
 
                 let userTypeId = document.getElementById('txtIdTipoUsuario').value;
 
-                //----Analizar si van a estar los controles deshabilitados
-
-                //  Si el user es promotor
-                let disabled = (Number(userTypeId) === utils.POSICION_PROMOTOR);   //  true/ false
-
-                //  Si el prestamo está aprobado o rechazado
-                disabled = Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_RECHAZADO ||
-                    Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_APROBADO;
-
-                //  Si e user es supervisor y el préstamo esta en status pendiente de aprobacion por el ejecutivo
-                if (Number(userTypeId) === utils.POSICION_SUPERVISOR) {
-
-                    disabled = Number(item.IdStatusPrestamo) === utils.STATUS_PRESTAMO_PENDIENTE_EJECUTIVO;
-
-                }
-
-                //----Fin
-
+                let disabled = loansEdit.isDisabled(userTypeId, item.IdStatusPrestamo);
 
                 loansEdit.disableFields(disabled);
 
                 panelGuarantee.view(item.IdPrestamo, disabled);
 
-                //$('#divLoading').hide();
-                //$('.tab-pane').show();
+                $('#divLoading').hide();
+                $('#panelForm').show();
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -237,6 +220,45 @@ const loansEdit = {
 
         });
 
+
+    },
+
+    //----Analizar si van a estar los controles deshabilitados
+    isDisabled(idTipoUsuario, IdStatusPrestamo) {
+
+
+        //  Si el user es promotor
+        let disabled = (Number(idTipoUsuario) === utils.POSICION_PROMOTOR);   //  true/ false
+
+        if (disabled) {
+            return disabled;
+        }
+
+        //  Si el prestamo está aprobado o rechazado
+        disabled = Number(IdStatusPrestamo) === utils.STATUS_PRESTAMO_RECHAZADO ||
+            Number(IdStatusPrestamo) === utils.STATUS_PRESTAMO_APROBADO;
+        if (disabled) {
+            return disabled;
+        }
+
+
+        //  Si e user es supervisor y el préstamo esta en status pendiente de aprobacion por el ejecutivo
+        if (Number(idTipoUsuario) === utils.POSICION_SUPERVISOR) {
+            disabled = Number(IdStatusPrestamo) === utils.STATUS_PRESTAMO_PENDIENTE_EJECUTIVO;
+        }
+        if (disabled) {
+            return disabled;
+        }
+
+        //  Si e user es ejecutivo y el préstamo esta en status pendiente de aprobacion por el supervisor
+        if (Number(idTipoUsuario) === utils.POSICION_EJECUTIVO) {
+            disabled = Number(IdStatusPrestamo) === utils.STATUS_PRESTAMO_PENDIENTE_SUPERVISOR;
+        }
+
+
+        //----Fin
+
+        return disabled;
 
     },
 
@@ -396,9 +418,12 @@ const loansEdit = {
 
                     if (parseInt(valores.CodigoError) === 0) {
 
-                        $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoRechazadaExito);
+                        $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoAprobadaExito);
                         $('#panelMensajeControlado').modal('show');
 
+                    } else {
+                        $('#spnMensajes').html(valores.MensajeError);
+                        $('#panelMensajes').modal('show');
                     }
 
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -491,7 +516,7 @@ const loansEdit = {
 
             //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
             $('.deshabilitable').prop('disabled', true);
-            $('#btnGuardar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
+            $('#btnGuardarCliente').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
 
             let dataClient = {};
@@ -517,6 +542,7 @@ const loansEdit = {
             dataAddressClient.Estado = $('#txtEstado').val();
             dataAddressClient.CodigoPostal = $('#txtCodigoPostal').val();
             dataAddressClient.DireccionTrabajo = $('#txtDireccionTrabajo').val();
+            dataAddressClient.Ubicacion = $('#txtUbicacion').val();
 
 
 
@@ -609,7 +635,7 @@ const loansEdit = {
 
 
                     // VUELVE A CARGAR LOS DATOS
-                    loansEdit.edit(loansEdit.idSeleccionado);
+                    loansEdit.edit(loansEdit.idPrestamo);
 
 
 
@@ -642,7 +668,7 @@ const loansEdit = {
 
             //  Deshabilitamos boton de guardar, para que no vaya a enviar otro request de guardar mietnras se esta guardando
             $('.deshabilitable').prop('disabled', true);
-            $('#btnGuardar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
+            $('#btnGuardarAval').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
 
             let dataClient = {};
@@ -669,6 +695,7 @@ const loansEdit = {
             dataAddressClientAval.Estado = $('#txtEstadoAval').val();
             dataAddressClientAval.CodigoPostal = $('#txtCodigoPostalAval').val();
             dataAddressClientAval.DireccionTrabajo = $('#txtDireccionTrabajoAval').val();
+            dataAddressClientAval.Ubicacion = $('#txtUbicacionAval').val();
 
 
 
@@ -728,7 +755,7 @@ const loansEdit = {
                             $('#panelMensajes').modal('show');
 
                             $('.deshabilitable').prop('disabled', false);
-                            $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+                            $('#btnGuardarAval').html(`<i class="fa fa-save mr-1"></i>Guardar`);
 
                         }, time_);
 
@@ -752,7 +779,7 @@ const loansEdit = {
 
 
                     // VUELVE A CARGAR LOS DATOS
-                    loansEdit.edit(loansEdit.idSeleccionado);
+                    loansEdit.edit(loansEdit.idPrestamo);
 
 
 

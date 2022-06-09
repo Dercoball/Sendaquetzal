@@ -106,6 +106,13 @@
 
                 </header>
 
+                <div id="divLoading">
+                    <div class="d-flex justify-content-center mt-5">
+                        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
 
                 <div id="panelForm" style="overflow-y: auto;">
 
@@ -121,7 +128,7 @@
 
                     <div class="tab-content" id="nav-tabContent">
 
-                       
+
 
                         <%--Cliente--%>
                         <div class="tab-pane fade show active" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
@@ -487,7 +494,7 @@
                                     <div class="row mt-3 mb-3">
 
                                         <div class=" col-md-6 text-center">
-                                            <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                            <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                                         </div>
 
 
@@ -865,7 +872,7 @@
                                         <div class="row mt-3 mb-3">
 
                                             <div class=" col-md-6 text-center">
-                                                <button class="btn btn-secondary cancelar"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                                <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                                             </div>
 
                                             <div class=" col-md-6 text-center">

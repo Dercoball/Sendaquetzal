@@ -1,5 +1,4 @@
-﻿
-var accion = "";
+﻿var accion = "";
 var idSeleccionado = "-1";
 var table;
 var usuario = '';

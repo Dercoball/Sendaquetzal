@@ -13,6 +13,7 @@ namespace Plataforma.Clases
         public List<RelPrestamoAprobacion> listaRelPrestamoAprobacion;
 
         public string FechaSolicitud;
+        public DateTime FechaSolicitudDate;
         public float Monto;
         public string MontoFormateadoMx;
 

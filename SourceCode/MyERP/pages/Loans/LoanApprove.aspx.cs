@@ -63,10 +63,10 @@ namespace Plataforma.pages
                 //  VALIDACIONES
 
                 //  Traer los datos del préstamo y cliente
-                Prestamo p = LoanRequest.GetDataPrestamo(path, idPrestamo);
+                Prestamo prestamo = LoanRequest.GetDataPrestamo(path, idPrestamo);
 
                 //  Validar campos vacíos
-                var dataStringsValidations = ValidateCustomerData(p.Cliente);
+                var dataStringsValidations = ValidateCustomerData(prestamo.Cliente);
                 if (dataStringsValidations.Count > 0)
                 {
                     response.MensajeError = "Se necesitan valores para los siguientes campos: " + string.Join(", ", dataStringsValidations.ToArray());
@@ -74,10 +74,12 @@ namespace Plataforma.pages
                     return response;
                 }
 
-                //  Validar que las fotos esten subidas para cliente y aval
+
+
+                //  -------Validar que las fotos esten subidas para cliente y aval
 
                 //  Traer los documentos actuales del pr+éstamo
-                List<Documento> documentsInLoan = LoanRequest.GetDocumentsByCustomerId(path, p.IdCliente);
+                List<Documento> documentsInLoan = GetDocumentsByCustomerId(path, prestamo.IdCliente, conn, transaccion);
 
 
                 //  Traer todos los tipos de documenos necesarios para un prestamo
@@ -99,14 +101,57 @@ namespace Plataforma.pages
                     response.CodigoError = 1;
                     return response;
                 }
-
+                //  -------
 
                 //  Tipo de cliente
-                //TipoCliente customerType = GetCustomerTypeById(path, p.Cliente.TipoCliente, conn, transaccion);
+                TipoCliente customerType = GetCustomerTypeById(path, prestamo.Cliente.IdTipoCliente.ToString(), conn, transaccion);
 
 
-                ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
-                //Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
+                Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
+                Utils.Log("GarantiasPorMonto " + customerType.GarantiasPorMonto);
+                Utils.Log("prestamo.Monto " + prestamo.Monto);
+
+                float guaranteeAmmount = prestamo.Monto * customerType.GarantiasPorMonto;
+                Utils.Log("Monto A cubrir por las garantias = " + guaranteeAmmount);
+
+                //  Validar que la suma de los costos de los articulos en garantia del cliente,
+                //  sean mas o igual al monto del prestamo mas el porcentaje configurado
+                List<Garantia> guaranteeCustomerList = LoansIndex.GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString());
+                float guaranteeAmmountSumCustomer = 0;
+                foreach (var item in guaranteeCustomerList)
+                {
+                    guaranteeAmmountSumCustomer += item.Costo;
+                }
+                if (guaranteeAmmountSumCustomer < guaranteeAmmount)
+                {
+                    response.MensajeError = "El total de las garantías del cliente no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
+                        customerType.GarantiasPorMonto + "<br/><br/>" +
+                        "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                        "La suma de costos de las garantías es: " + guaranteeAmmountSumCustomer.ToString("C2");
+
+                    response.CodigoError = 1;
+                    return response;
+                }
+
+                //  Validar que la suma de los costos de los articulos en garantia del aval,
+                //  sean mas o igual al monto del prestamo mas el porcentaje configurado
+                List<Garantia> guaranteeAvalList = LoansIndex.GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString());
+                float guaranteeAmmountSumAval = 0;
+                foreach (var item in guaranteeAvalList)
+                {
+                    guaranteeAmmountSumAval += item.Costo;
+                }
+                if (guaranteeAmmountSumAval < guaranteeAmmount)
+                {
+                    response.MensajeError = "El total de las garantías del aval no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
+                        customerType.GarantiasPorMonto + "<br/><br/>" +
+                       " El monto del préstamo es: " + prestamo.Monto + "<br/>" +
+                       "La suma de costos de las garantías es: " + guaranteeAmmountSumAval.ToString("C2");
+
+                    response.CodigoError = 1;
+                    return response;
+                }
+
 
 
 
@@ -131,12 +176,40 @@ namespace Plataforma.pages
                 else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
                 {
                     cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_APROBADO);
+
+                    float pagoAmmount = prestamo.Monto / customerType.SemanasAPrestar;
+
+                    //  Generar semanas para pagos
+                    ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
+
+                    DateTime startDate = prestamo.FechaSolicitudDate;
+
+                    for (int i = 0; i < customerType.SemanasAPrestar; i++)
+                    {
+
+                        DateTime nextDate  = startDate.AddDays(7);
+
+                        Pago pago = new Pago();
+                        pago.IdPrestamo = int.Parse(idPrestamo);
+                        pago.Monto = pagoAmmount * customerType.PorcentajeSemanal;
+                        pago.Fecha = nextDate;
+
+                        InsertPago(pago, conn, transaccion);
+
+
+                    }
+
+
+
                 }
 
                 cmdUpdatePrestamo.Transaction = transaccion;
                 r += cmdUpdatePrestamo.ExecuteNonQuery();
 
-                //transaccion.Commit();
+
+
+                //
+                transaccion.Commit();
 
 
 
@@ -165,6 +238,106 @@ namespace Plataforma.pages
 
         }
 
+
+        [WebMethod]
+        public static int InsertPago(Pago item, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = "";
+
+                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario) 
+                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario) ";
+
+
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@id_prestamo", item.IdPrestamo);
+                cmd.Parameters.AddWithValue("@monto", item.Monto);
+                cmd.Parameters.AddWithValue("@fecha", item.Fecha);
+                cmd.Parameters.AddWithValue("@id_status_pago", Pago.STATUS_PAGO_PENDIENTE);
+                cmd.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
+                cmd.Transaction = transaction;
+
+                r = cmd.ExecuteNonQuery();
+
+
+                Utils.Log("Pago Insertado -> OK ");
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+            }
+
+
+            return r;
+
+        }
+
+
+        [WebMethod]
+        public static List<Documento> GetDocumentsByCustomerId(string path, string idCliente, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            List<Documento> items = new List<Documento>();
+
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_documento_colaborador, 
+                                    nombre, url, id_cliente, id_tipo_documento, fecha_ingreso
+                                  FROM documento    
+                                  WHERE id_cliente = @id ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("idCliente =  " + idCliente);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", idCliente);
+                adp.SelectCommand.Transaction = transaction;
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Documento item = new Documento();
+                        item.IdDocumento = int.Parse(ds.Tables[0].Rows[i]["id_documento_colaborador"].ToString());
+                        item.IdTipoDocumento = int.Parse(ds.Tables[0].Rows[i]["id_tipo_documento"].ToString());
+                        item.Url = ds.Tables[0].Rows[i]["url"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+
+        }
 
         [WebMethod]
         public static List<Documento> GetDocumentCustomerTypes(string path)
@@ -484,6 +657,7 @@ namespace Plataforma.pages
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", id);
+                adp.SelectCommand.Transaction = transaction;
 
                 adp.Fill(ds);
 

@@ -1138,6 +1138,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\Pago.cs" />
     <Compile Include="Clases\TipoDocumento.cs" />
     <Compile Include="Clases\Garantia.cs" />
     <Compile Include="Clases\DiaDeParo.cs" />

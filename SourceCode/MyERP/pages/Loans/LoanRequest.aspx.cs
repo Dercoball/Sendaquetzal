@@ -917,7 +917,7 @@ namespace Plataforma.pages
 
                 DataSet ds = new DataSet();
                 string query = @" SELECT p.monto, p.id_prestamo,
-                                         FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud,
+                                         FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud, fecha_solicitud fecha_solicitud_date,
                                          p.id_status_prestamo, p.id_cliente,
                                          st.nombre nombre_status_prestamo, st.color
                                     FROM prestamo p 
@@ -944,6 +944,7 @@ namespace Plataforma.pages
                         prestamoData.Color = ds.Tables[0].Rows[i]["color"].ToString();
                         prestamoData.NombreStatus = "<span class='" + prestamoData.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
                         prestamoData.FechaSolicitud = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
+                        prestamoData.FechaSolicitudDate = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_solicitud_date"].ToString());
                         prestamoData.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
                         prestamoData.MontoFormateadoMx = prestamoData.Monto.ToString("C2");
 

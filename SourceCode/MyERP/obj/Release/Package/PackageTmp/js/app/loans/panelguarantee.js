@@ -76,7 +76,7 @@ const panelGuarantee = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtip',
+                    dom: 'Rt',
                     buttons: [
                         {
                             extend: 'excelHtml5',
@@ -212,7 +212,7 @@ const panelGuarantee = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtip',
+                    dom: 'rt',
                     buttons: [
                         {
                             extend: 'excelHtml5',

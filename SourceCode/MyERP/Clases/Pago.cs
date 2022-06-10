@@ -21,6 +21,11 @@ namespace Plataforma.Clases
         public string FechaStr;
         public DateTime Fecha;
         public string FechaRegistroPago;
+        
+        public string NombreCliente;
+        public string Status;
+        public string Accion;
+
 
         public const int STATUS_PAGO_PENDIENTE = 1;
 

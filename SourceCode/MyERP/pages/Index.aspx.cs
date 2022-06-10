@@ -283,6 +283,11 @@ namespace Plataforma.pages
 
             }
 
+
+            //  Pagos
+            nav += AgregarItemRootMenu("15", pagina, listaPermisos, "fa fa-credit-card");
+
+
             //........MENU WEB
             //Agregar los numeros de paginas o permisos , de los tipo WEB
             List<string> paginasWeb = new List<string>

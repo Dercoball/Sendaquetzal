@@ -184,8 +184,10 @@ namespace Plataforma.pages
                     //  Generar semanas para pagos
                     ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
 
-                    //DateTime startDate = prestamo.FechaSolicitudDate;//Tomar fecha solicitud para semanas de pago
-                    DateTime startDate = prestamo.FechaSolicitudDate;   //Tomar fecha de aprobacion para semanas de pago
+                    
+                    //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
+
+                    DateTime startDate = new DateTime(2022, 04, 20);    //TEST
 
                     for (int i = 0; i < customerType.SemanasAPrestar; i++)
                     {

@@ -346,7 +346,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, costo, fotografia, 
+                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, IsNull(costo, 0) costo, fotografia, 
                             FORMAT(fecha_registro, 'dd/MM/yyyy') fecha_registro
                             FROM  garantia_prestamo 
                             WHERE id_prestamo = @id_prestamo AND
@@ -373,10 +373,11 @@ namespace Plataforma.pages
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
                         item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        item.CostoFormateadoMx = item.Costo.ToString("C2");
                         item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
                         item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
-                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
 
                         item.Accion = botones;
 
@@ -417,7 +418,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, costo, fotografia, 
+                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, IsNull(costo, 0) costo, fotografia, 
                             FORMAT(fecha_registro, 'dd/MM/yyyy') fecha_registro
                             FROM  garantia_prestamo
                             WHERE id_prestamo = @id_prestamo AND
@@ -444,10 +445,11 @@ namespace Plataforma.pages
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
                         item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        item.CostoFormateadoMx = item.Costo.ToString("C2");
                         item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
                         item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
-                        string botones = "&nbsp; <button  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
 
                         item.Accion = botones;
 

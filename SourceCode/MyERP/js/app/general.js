@@ -12,6 +12,8 @@ let idUsuario = null;
 
 
 var mensajesAlertas = {
+    
+    pagoRegistradoExito: 'El pago fue registrado correctamente.',
     solicitudPrestamoAprobadaExito: 'El préstamo fue aprobado correctamente.',
     solicitudPrestamoRechazadaExito: 'La solicitud de préstamo fue rechazada correctamente.',
     solicitudPrestamoEnviada: 'Solicitud de préstamo guardada y enviada correctamente.',

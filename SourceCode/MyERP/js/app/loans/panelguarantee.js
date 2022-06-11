@@ -48,6 +48,23 @@ const panelGuarantee = {
             success: function (msg) {
 
                 let data = msg.d;
+                //let items = msg.d;
+                //let opcion = '';
+
+                //for (let i = 0; i < items.length; i++) {
+                //    let item = items[i];
+
+                //    opcion += `<tr> `;
+                //    opcion += `<td>${item.Nombre}</td>`;
+                //    opcion += `<td>${item.NumeroSerie}</td>`;
+                //    opcion += `<td>${item.Costo}</td>`;
+                //    opcion += `<td>${item.Imagen}</td>`;
+                //    opcion += `<td>${item.Accion}</td>`;
+                //    opcion += `</tr> `;
+
+                //}
+
+                //$('#tableGarantias tbody').html(opcion);
 
                 //  si no tiene permisos
                 if (data == null) {
@@ -64,7 +81,7 @@ const panelGuarantee = {
 
                         { data: 'Nombre' },
                         { data: 'NumeroSerie' },
-                        { data: 'Costo' },
+                        { data: 'CostoFormateadoMx' },
                         { data: 'Imagen' },
                         { data: 'Accion' }
 
@@ -200,7 +217,7 @@ const panelGuarantee = {
 
                         { data: 'Nombre' },
                         { data: 'NumeroSerie' },
-                        { data: 'Costo' },
+                        { data: 'CostoFormateadoMx' },
                         { data: 'Imagen' },
                         { data: 'Accion' }
 

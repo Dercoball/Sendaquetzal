@@ -205,8 +205,7 @@
                                             <label for="txtSaldo">
                                                 Saldo
                                             </label>
-                                            <input type="number" class="form-control campo-input" id="txtSaldo"
-                                                required="required" data-required-error='Requerido' />
+                                            <input type="text" class="form-control campo-input" id="txtSaldo" disabled="disabled" />
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -216,7 +215,8 @@
                                             <label for="txtAbono">
                                                 Abono
                                             </label>
-                                            <input type="number" class="form-control campo-input" id="txtAbono" />
+                                            <input type="number" class="form-control campo-input" id="txtAbono" step="0.001"
+                                                required="required" data-required-error='Requerido' />
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -233,14 +233,31 @@
 
                                 </div>
 
+
                                 <div class="row mt-5 col-md-12">
                                     <span id="table_"></span>
+                                </div>
+
+                                <div class="row mt-5 ">
+                                    <div class=" col-md-6 text-left">
+                                        <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
+                                    </div>
+
+                                    <div class=" col-md-6 text-right">
+                                        <button id="btnCapturar" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Capturar</button>
+                                    </div>
                                 </div>
 
                             </div>
                         </div>
                     </form>
+
+
+
                 </div>
+
+            </div>
+
         </section>
 
         <footer class="main-footer">
@@ -295,9 +312,9 @@
 
                 </div>
                 <div class="modal-body">
-                    <p>
-                        <span id="spnMensajeControlado"></span>
-                    </p>
+
+                    <span id="spnMensajeControlado"></span>
+
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" id="btnAceptarPanelMensajeControlado">Aceptar</button>

@@ -141,7 +141,8 @@ namespace Plataforma.pages
                                 item.IdTipoUsuario == Employees.POSICION_SUPERVISOR || 
                                 item.IdTipoUsuario == Employees.POSICION_EJECUTIVO)
                         {
-                            Response.Redirect("Loans/LoansIndex.aspx");
+                            //Response.Redirect("Loans/LoansIndex.aspx");
+                            Response.Redirect("Loans/Payments.aspx");
                         }
                         else
                         {

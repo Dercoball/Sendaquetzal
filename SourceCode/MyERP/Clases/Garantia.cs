@@ -13,6 +13,7 @@ namespace Plataforma.Clases
 
         public string NumeroSerie;
         public float Costo;
+        public string CostoFormateadoMx;
         public string Fotografia;
         public string Fecha;
         public string Imagen;

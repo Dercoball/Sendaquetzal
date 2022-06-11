@@ -12,10 +12,10 @@ const payments = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-       
+
         payments.idSeleccionado = "-1";
         payments.idTipoUsuario = "-1";
-        payments.login = "-1";
+        payments.idPago = "-1";
         payments.accion = "";
 
         payments.fechaInicial = '';
@@ -70,8 +70,8 @@ const payments = {
                         { data: 'NombreCliente' },
                         { data: 'MontoFormateadoMx' },
                         { data: 'FechaStr' },
-                        { data: 'Status' },
-                        { data: 'Status' },
+                        { data: 'TotalFallaFormateadoMx' },
+                        { data: 'SemanasFalla' },
                         { data: 'Status' },
                         { data: 'Accion' }
 
@@ -120,79 +120,103 @@ const payments = {
 
 
 
-    loadComboStatusPrestamo: () => {
 
-        var params = {};
+    view(idPago) {
+
+        console.log(idPago);
+
+        $('#frmPago')[0].reset();
+
+        //  traer datos del pago e historial del préstamo
+        let params = {};
         params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPago = idPago;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/payments.aspx/GetListaStatusPrestamo",
+            url: "../../pages/Loans/Payments.aspx/GetPayment",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
-                let items = msg.d;
-                let opcion = '<option value="-1">Todos</option>';
+                let data = msg.d;
+                console.log(data);
 
-                for (let i = 0; i < items.length; i++) {
-                    let item = items[i];
+                $('#txtCliente').val(data.NombreCliente);
+                $('#txtCliente').attr('data-idcliente', data.IdCliente);
+                $('#txtCliente').attr('data-idprestamo', data.IdPrestamo);
 
-                    opcion += `<option value = '${item.IdStatusPrestamo}' > ${item.Nombre}</option > `;
+                $('#txtSaldo').val(data.MontoFormateadoMx);
+                $('#txtAbono').val(data.Monto);
 
+                $('#panelTabla').hide();
+                $('#panelForm').show();
+                payments.idPago = data.IdPago;
+
+                payments.historial(data.IdPrestamo, data.NumeroSemana);
+
+                if (Number(data.IdStatusPago) === 1) {
+                    $('#btnCapturar').show();
+                } else {
+                    $('#btnCapturar').hide();
                 }
 
-                $('#comboStatus').html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
             }
 
         });
-    },
-
-
-    view(idPago) {
-
-        console.log(idPago);
-
-
-        //  traer datos del pago e historial del préstamo
-
-        $('#panelTabla').hide();
-        $('#panelForm').show();
-
-
-        payments.historial(15);
-
 
     },
 
-    historial: (numeroSemanas) => {
+    historial: (idPrestamo, numeroSemanaActual) => {
 
-        console.log('Historial');
+        console.log(`Historial  idPrestamo ${idPrestamo}`);
 
-        payments.accion = "nuevo";
-        payments.idEquipoSeleccionado = -1;
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPrestamo = idPrestamo;
+        params.numeroSemanaActual = numeroSemanaActual;
+        params = JSON.stringify(params);
 
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Loans/Payments.aspx/GetPaymentsByIdPrestamo",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
 
-        let headers = '';
-        headers += `<th scope="col"></th>`;
+                let data = msg.d;
 
-        let rows = '';
-        rows += `<th scope="col"></th>`;
+                //console.log(data);
+                let headers = '';
 
+                let rows = '';
+                
 
-        for (var i = 1; i <= numeroSemanas; i++) {
-            headers += `<th scope="col text-center">${i}</th>`;
-            rows += `<th scope="col"></th>`;
-        }
+                for (var i = 0; i < data.length; i++) {
+                    headers += `<th scope="col text-center">${(i + 1)}</th>`;
+                    let pago = data[i];
+                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="width: 99%; background-color: ${pago.Color}">${pago.SaldoFormateadoMx}</th>`;
+                    
+                }
 
-        const htmlTable = `
-                <div class="responsive">
+                const htmlTable = `
+                
+                Semana actual: ${numeroSemanaActual}
+                <br/><br/>
+                Historial
+                <div class="table-responsive">
                 <table style="width: 100%!important;" class="table table-bordered table-hover table-striped text-center"
                     id="tableSolicitudes">
 
@@ -205,15 +229,24 @@ const payments = {
                         <tr>
                         ${rows}
                         </tr>
+                        
                     </tbody>
                 </table>
               </div>
         `;
 
 
-        $('#table_').html(htmlTable);
+                $('#table_').html(htmlTable);
 
 
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
 
 
 
@@ -274,6 +307,88 @@ const payments = {
 
 
 
+        $('#btnAceptarPanelMensajeControlado').on('click', (e) => {
+            e.preventDefault();
+
+            $('#panelMensajeControlado').modal('hide');
+
+            $('#panelTabla').show();
+            $('#panelForm').hide();
+
+
+
+        });
+
+
+        $('#btnCancelar').on('click', (e) => {
+            e.preventDefault();
+
+
+            $('#panelTabla').show();
+            $('#panelForm').hide();
+
+
+
+        });
+
+        $('#btnCapturar').on('click', (e) => {
+            e.preventDefault();
+
+            let hasErrors = $('form[name="frmPago"]').validator('validate').has('.has-error').length;
+
+            if (hasErrors) {
+
+                return;
+            }
+
+            //  
+
+            $('.deshabilitable').prop('disabled', true);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params.idPosicion = document.getElementById('txtIdTipoUsuario').value
+            params.idPago = payments.idPago;
+            params.abono = $('#txtAbono').val();
+            params.recuperado = $('#txtRecuperado').val();
+            params = JSON.stringify(params);
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/Payments.aspx/SavePayment`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+                    $('.deshabilitable').prop('disabled', false);
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+                        $('#spnMensajeControlado').html(mensajesAlertas.pagoRegistradoExito);
+                        $('#panelMensajeControlado').modal('show');
+
+                        payments.cargarItems();
+
+                    } else {
+                        $('#spnMensajes').html(valores.MensajeError);
+                        $('#panelMensajes').modal('show');
+                    }
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.deshabilitable').prop('disabled', false);
+
+
+                }
+
+            });
+
+
+        });
 
     }
 

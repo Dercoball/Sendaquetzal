@@ -181,15 +181,21 @@ namespace Plataforma.pages
 
                     float pagoAmmount = prestamo.Monto / customerType.SemanasAPrestar;
 
-                    //  Generar semanas para pagos
-                    ////  Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
+                    //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
 
-                    
+
                     //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
+                    DateTime startDate = new DateTime(2022, 05, 15);    //TODO: CAMBIAR ESTE TEST
 
-                    DateTime startDate = new DateTime(2022, 04, 20);    //TEST
 
-                    for (int i = 0; i < customerType.SemanasAPrestar; i++)
+                    //  Se agrega la semana extra por si le aplica
+                    int numSemanas = customerType.SemanasAPrestar;
+                    if (customerType.SemanasExtra == 1)
+                    {
+                        numSemanas++;  
+                    }
+
+                    for (int i = 0; i < numSemanas; i++)
                     {
 
                         DateTime nextDate = startDate.AddDays(7);
@@ -282,8 +288,8 @@ namespace Plataforma.pages
 
                 string sql = "";
 
-                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana) 
-                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana) ";
+                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana, pagado, saldo) 
+                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana, @pagado, @saldo) ";
 
 
 
@@ -294,7 +300,9 @@ namespace Plataforma.pages
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.AddWithValue("@id_prestamo", item.IdPrestamo);
-                cmd.Parameters.AddWithValue("@monto", item.Monto);
+                cmd.Parameters.AddWithValue("@monto", Math.Round(item.Monto, 2));
+                cmd.Parameters.AddWithValue("@pagado", 0);
+                cmd.Parameters.AddWithValue("@saldo", Math.Round(item.Monto, 2));
                 cmd.Parameters.AddWithValue("@fecha", item.Fecha);
                 cmd.Parameters.AddWithValue("@numero_semana", item.NumeroSemana);
                 cmd.Parameters.AddWithValue("@id_status_pago", Pago.STATUS_PAGO_PENDIENTE);

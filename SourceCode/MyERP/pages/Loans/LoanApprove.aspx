@@ -475,15 +475,14 @@
                                 <div class="card">
 
                                     <div class="card-header">
-                                        Notas supervisor
+                                        Notas supervisor/ejecutivo
                                     </div>
 
                                     <div class="card-body">
 
                                         <div class="form-group col-md-12">
 
-                                            <textarea class="form-control campo-textarea" id="txtNotaSupervisor"
-                                                required="required" data-required-error='Requerido'
+                                            <textarea class="form-control campo-textarea" id="txtNotaSupervisor"                                                
                                                 rows="4"></textarea>
                                             <div class="help-block with-errors"></div>
 
@@ -848,7 +847,7 @@
                                 <div class="card">
 
                                     <div class="card-header">
-                                        Notas supervisor
+                                        Notas supervisor/ejecutivo
                                     </div>
 
                                     <div class="card-body">

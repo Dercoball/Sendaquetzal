@@ -202,13 +202,13 @@ const payments = {
                 let headers = '';
 
                 let rows = '';
-                
+
 
                 for (var i = 0; i < data.length; i++) {
                     headers += `<th scope="col text-center">${(i + 1)}</th>`;
                     let pago = data[i];
                     rows += `<th scope="col" data-idpago="${pago.IdPago}" style="width: 99%; background-color: ${pago.Color}">${pago.SaldoFormateadoMx}</th>`;
-                    
+
                 }
 
                 const htmlTable = `
@@ -270,11 +270,16 @@ const payments = {
 
         //  fecha hoy (final)
         let today = new Date();
-        let dayMonth = today.getDate();
-        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
         let month = (today.getMonth() + 1);
+
         month = month.toString().length === 1 ? `0${month}` : month;
 
+        let endWeekDay = new Date();
+        let end_ = endWeekDay.getDay() + 1
+
+        endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
+
+        let dayMonth = endWeekDay.getDate();
 
         payments.fechaFinal = `${today.getFullYear()}-${month}-${dayMonth}`;
 
@@ -287,10 +292,14 @@ const payments = {
 
         let startMonth = (startWeekDay.getMonth() + 1);
         startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
+
         let startYear = (startWeekDay.getFullYear());
 
         payments.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
 
+
+        console.log(`fechaInicial ${payments.fechaInicial}`);
+        console.log(`fechaFinal ${payments.fechaFinal}`);
 
     },
 

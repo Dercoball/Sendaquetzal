@@ -132,21 +132,26 @@ namespace Plataforma.pages
                         int r = cmd.ExecuteNonQuery();
                         Utils.Log("Login Guardado -> OK ");
 
-                        Session["path"] = path.ToString();
-                        Session["usuario"] = login.ToString();
-                        Session["id_usuario"] = item.IdUsuario.ToString();
-                        Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
+                        if (r > 0)
+                        {
 
-                        if (item.IdTipoUsuario == Employees.POSICION_PROMOTOR || 
-                                item.IdTipoUsuario == Employees.POSICION_SUPERVISOR || 
-                                item.IdTipoUsuario == Employees.POSICION_EJECUTIVO)
-                        {
-                            //Response.Redirect("Loans/LoansIndex.aspx");
-                            Response.Redirect("Loans/Payments.aspx");
-                        }
-                        else
-                        {
-                            Response.Redirect("Index.aspx");
+                            Session["path"] = path.ToString();
+                            Session["usuario"] = login.ToString();
+                            Session["id_usuario"] = item.IdUsuario.ToString();
+                            Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
+
+                            if (item.IdTipoUsuario == Employees.POSICION_PROMOTOR ||
+                                    item.IdTipoUsuario == Employees.POSICION_SUPERVISOR ||
+                                    item.IdTipoUsuario == Employees.POSICION_EJECUTIVO)
+                            {
+                                Response.Redirect("Loans/LoansIndex.aspx", false);
+                                //Response.Redirect("Loans/Payments.aspx");
+                            }
+                            else
+                            {
+                                Response.Redirect("Index.aspx", false);
+                            }
+
                         }
 
                     }

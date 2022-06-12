@@ -44,37 +44,7 @@ var mensajesAlertas = {
     errorTipoArchivo: 'Debe ingregar un archivo de tipo csv.',
     errorSeleccionarCampo: 'Debe seleccionar un campo.',
     exitoEntregar: 'Se registró la entrega de combustible correctamente.',
-    exitoAprobar: 'Se aprobó la solicitud de combustible correctamente.',
-
-    errorNoStatusPendiente: 'El descargo ya no se encuentra en status pendiente.',
-    errorSeleccionarFecha: 'Debe indicar la nueva fecha.',
-    confirmacionCancelarRefaccion: 'Se cancelará la solicitud de refacción seleccionada No. {numrefaccion} ¿Desea continuar? ',
-    errorSeleccionarEquipo: 'Debe seleccionar un equipo',
-    errorSeleccionarObra: 'Debe seleccionar una obra',
-    errorSeleccionarUsuarioDiagnostico: 'Debe seleccionar un usuario para diagnóstico',
-    errorSeleccionarUsuarioColaborador: 'Debe seleccionar un usuario',
-    errorSeleccionarProveedor: 'Debe seleccionar un proveedor',
-    errorSeleccionarProveedorAlEnviar: 'La requisición actual no cuenta con un proveedor seleccionado, debe editarla y asignarle un proveedor',
-    errorSeleccionarProveedorUsuario: 'Debe seleccionar un proveedor a quien se será asignado este usuario',
-    errorSeleccionarMarca: 'Debe seleccionar una marca-proveedor',
-    errorSeleccionarOperador: 'Debe seleccionar un valor para el campo <strong>Operador actual</strong> ',
-    exitoResetStatus: 'Se resetearon los status de las Ots correctamente.',
-    errorResetStatus: 'No se pudo completar la operación.',
-    exitoAsignarColaboracion: 'Se ha registrado la relación de colaboración correctamente.',
-    exitoFinalizarColaboracion: 'Se ha finalizado la relación de colaboración correctamente.',
-    errorValorOrometro: 'Debe indicar el valor para el campo Horómetro/odómetro.',
-
-    exitoGenerarOtsManto: 'Se generaron correcamente las Ots de mantenimiento.',
-    errorGenerarOtsManto: 'No se pudo completar la operación correctamente.',
-
-
-    errorSeleccionarUbicacion: 'No se pudo completar la operación correctamente.',
-    errorSolicitudesCombustible: 'Debe asignar valores correctos (cantidades con valores positivos) a cada fila de la tabla de solicitudes.',
-    errorSolicitudesCombustibleCinchoActual: 'Debe asignar valor correcto para cincho actual (cantidades con valores positivos) a la fila a entregar.',
-    errorSolicitudesLitrosSurtidos: 'Debe asignar valor correcto para litros surtidos(cantidades con valores positivos) a la fila a entregar.',
-    errorSolicitudesHorometroEntrega: 'Debe asignar valor correcto para odómetro/horómetro en entrega (cantidades con valores positivos) a la fila a entregar.',
-    errorSolicitudesCombustibleOrometroAprobacion: 'Debe asignar valor correcto para odómetro/horómetro en aprobación (cantidades con valores positivos) a la fila a aprobar.',
-    errorSolicitudesCombustibleLitrosAprobacion: 'Debe asignar valor correcto para litros en entrega (cantidades con valores positivos) a la fila a aprobar.'
+    exitoAprobar: 'Se aprobó la solicitud de combustible correctamente.'
 
 
 };

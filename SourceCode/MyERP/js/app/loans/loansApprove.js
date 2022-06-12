@@ -393,6 +393,7 @@ const loansEdit = {
             //  
 
             $('.deshabilitable').prop('disabled', true);
+            $('#btnAprobar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
             let params = {};
             params.path = window.location.hostname;
@@ -415,6 +416,7 @@ const loansEdit = {
                     let valores = msg.d;
 
                     $('.deshabilitable').prop('disabled', false);
+                    $('#btnAprobar').html(`<i class="fa fa-save mr-1"></i>Aprobar`);
 
                     if (parseInt(valores.CodigoError) === 0) {
 

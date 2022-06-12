@@ -40,6 +40,16 @@ namespace Plataforma.pages
 
         }
 
+
+        /// <summary>
+        /// Aprobación de un préstamo por un supervisor o por un ejecutivo.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="idPrestamo"></param>
+        /// <param name="idUsuario"></param>
+        /// <param name="idPosicion"></param>
+        /// <param name="nota"></param>
+        /// <returns></returns>
         [WebMethod]
         public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idPosicion, string nota)
         {
@@ -50,6 +60,7 @@ namespace Plataforma.pages
             List<StatusPrestamo> items = new List<StatusPrestamo>();
             DatosSalida response = new DatosSalida();
 
+            Utils.Log("\n\n******************Inicia la aprobación del préstamo ");
 
             SqlTransaction transaccion = null;
 
@@ -82,7 +93,7 @@ namespace Plataforma.pages
 
 
                 //  Traer todos los tipos de documenos necesarios para un prestamo
-                List<Documento> allDocumentTypes = GetDocumentCustomerTypes(path);
+                List<Documento> allDocumentTypes = GetDocumentCustomerTypes(path, conn, transaccion);
                 HashSet<int> docs = new HashSet<int>(documentsInLoan.Select(x => x.IdTipoDocumento));
                 //  Restar los documentos del documento a la lista de todos los documentos necesarios
                 allDocumentTypes.RemoveAll(x => docs.Contains(x.IdTipoDocumento));
@@ -115,7 +126,7 @@ namespace Plataforma.pages
 
                 // 3) Validar que la suma de los costos de los articulos en garantia del cliente,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
-                List<Garantia> guaranteeCustomerList = LoansIndex.GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString());
+                List<Garantia> guaranteeCustomerList = GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaccion);
                 float guaranteeAmmountSumCustomer = 0;
                 foreach (var item in guaranteeCustomerList)
                 {
@@ -135,7 +146,7 @@ namespace Plataforma.pages
 
                 // 4) Validar que la suma de los costos de los articulos en garantia del aval,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
-                List<Garantia> guaranteeAvalList = LoansIndex.GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString());
+                List<Garantia> guaranteeAvalList = GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaccion);
                 float guaranteeAmmountSumAval = 0;
                 foreach (var item in guaranteeAvalList)
                 {
@@ -151,6 +162,23 @@ namespace Plataforma.pages
 
                     response.CodigoError = 1;
                     return response;
+                }
+
+
+                //  Validar el monto máximo al ser un préstamo inicial
+                List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaccion);
+                if (prestamosAnteriores.Count > 0)
+                {
+                    if (prestamo.Monto > customerType.PrestamoInicialMaximo)
+                    {
+                        response.MensajeError = "El monto para un préstamo inicial sobrepasa el monto configurado para este tipo de cliente (" + customerType.NombreTipoCliente  +  ").<br/><br/>" +
+                      "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                      "El préstamo inicial máximo: " + customerType.PrestamoInicialMaximo.ToString("C2") + "<br/>";
+
+                        response.CodigoError = 1;
+                        return response;
+                    }
+
                 }
 
                 //  Fin de validaciones
@@ -185,7 +213,7 @@ namespace Plataforma.pages
 
 
                     //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
-                    DateTime startDate = new DateTime(2022, 05, 15);    //TODO: CAMBIAR ESTE TEST
+                    DateTime startDate = new DateTime(2022, 05, 26);    //TODO: CAMBIAR ESTE TEST
 
 
                     //  Se agrega la semana extra por si le aplica
@@ -251,6 +279,7 @@ namespace Plataforma.pages
                 transaccion.Commit();
 
 
+                Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
 
 
                 return response;
@@ -276,6 +305,7 @@ namespace Plataforma.pages
 
 
         }
+
 
 
         [WebMethod]
@@ -382,17 +412,15 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static List<Documento> GetDocumentCustomerTypes(string path)
+        public static List<Documento> GetDocumentCustomerTypes(string path, SqlConnection conn, SqlTransaction transaction)
         {
 
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             List<Documento> items = new List<Documento>();
 
-            SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
-                conn.Open();
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT id_tipo_documento, nombre
                                   FROM tipo_documento WHERE id_tipo_documento <> 5 ";   //todos excepto antecedentes penales porque es para empleado
@@ -402,7 +430,7 @@ namespace Plataforma.pages
 
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
+                adp.SelectCommand.Transaction = transaction;
 
                 adp.Fill(ds);
 
@@ -429,10 +457,7 @@ namespace Plataforma.pages
                 return items;
             }
 
-            finally
-            {
-                conn.Close();
-            }
+         
 
         }
 
@@ -1257,6 +1282,223 @@ namespace Plataforma.pages
 
         }
 
+
+
+        /// <summary>
+        /// Obtener lista de prestamos de un cliente
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        [WebMethod]
+        public static List<Prestamo> GetLoansByCustomerId(string path, string customerId, SqlConnection conn, SqlTransaction transaction)
+        {
+
+          
+
+            //  Lista de datos a devolver
+            List<Prestamo> items = new List<Prestamo>();
+
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT c.id_cliente,
+                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
+                     c.telefono , c.curp, c.ocupacion, c.activo, p.id_prestamo, p.monto,
+                     FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud,
+                     st.nombre nombre_status_prestamo, st.color
+                     FROM cliente c 
+                     JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
+                     JOIN status_prestamo st ON (st.id_status_prestamo = p.id_status_prestamo) 
+                     WHERE p.id_cliente = @id_cliente ORDER BY p.id_prestamo DESC ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("id_cliente", customerId);
+                adp.SelectCommand.Transaction = transaction;
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+
+                        Prestamo item = new Prestamo();
+                        item.Cliente = new Cliente();
+                        item.Cliente.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
+                        item.Cliente.Curp = ds.Tables[0].Rows[i]["curp"].ToString();
+                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+
+                        item.Cliente.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+
+                        item.Color = ds.Tables[0].Rows[i]["color"].ToString();
+                        item.NombreStatus = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
+
+
+                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoFormateadoMx = item.Monto.ToString("C2");//moneda Mx -> $ 2.00
+
+                        item.FechaSolicitud = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
+
+                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+
+
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+         
+
+        }
+
+        public static List<Garantia> GetListGuaranteeCustomer(string path, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            List<Garantia> items = new List<Garantia>();
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, IsNull(costo, 0) costo, fotografia, 
+                            FORMAT(fecha_registro, 'dd/MM/yyyy') fecha_registro
+                            FROM  garantia_prestamo 
+                            WHERE id_prestamo = @id_prestamo AND
+                            aval = 0 AND eliminado = 0 
+                            ORDER by id_garantia_prestamo";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.SelectCommand.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                adp.SelectCommand.Transaction = transaction;
+
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Garantia item = new Garantia();
+                        item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
+
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
+                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        item.CostoFormateadoMx = item.Costo.ToString("C2");
+                        item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+                        item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
+
+                        string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
+
+                        item.Accion = botones;
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+       
+
+        }
+
+
+        public static List<Garantia> GetListGuaranteeAval(string path, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            List<Garantia> items = new List<Garantia>();
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_garantia_prestamo, nombre, numero_serie, IsNull(costo, 0) costo, fotografia, 
+                            FORMAT(fecha_registro, 'dd/MM/yyyy') fecha_registro
+                            FROM  garantia_prestamo
+                            WHERE id_prestamo = @id_prestamo AND
+                            aval = 1 AND eliminado = 0 
+                            ORDER by id_garantia_prestamo";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.SelectCommand.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                adp.SelectCommand.Transaction = transaction;
+
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Garantia item = new Garantia();
+                        item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
+
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
+                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        item.CostoFormateadoMx = item.Costo.ToString("C2");
+                        item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+                        item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
+
+                        string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
+
+                        item.Accion = botones;
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+          
+
+        }
 
 
 

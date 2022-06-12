@@ -197,13 +197,18 @@ const loansindex = {
 
         //  fecha hoy (final)
         let today = new Date();
-        let dayMonth = today.getDate();
-        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
         let month = (today.getMonth() + 1);
+
         month = month.toString().length === 1 ? `0${month}` : month;
 
-        $('#txtFechaFinal').val(`${today.getFullYear()}-${month}-${dayMonth}`);
+        let endWeekDay = new Date();
+        let end_ = endWeekDay.getDay() + 1
 
+        endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
+
+        let dayMonth = endWeekDay.getDate();
+
+        loansindex.fechaFinal = `${today.getFullYear()}-${month}-${dayMonth}`;
 
         //  fecha inicial
         let startWeekDay = new Date();
@@ -214,9 +219,18 @@ const loansindex = {
 
         let startMonth = (startWeekDay.getMonth() + 1);
         startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
+
         let startYear = (startWeekDay.getFullYear());
 
-        $('#txtFechaInicial').val(`${startYear}-${startMonth}-${startDayMonth}`);
+        loansindex.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
+
+
+        console.log(`fechaInicial ${loansindex.fechaInicial}`);
+        console.log(`fechaFinal ${loansindex.fechaFinal}`);
+
+
+        $('#txtFechaFinal').val(loansindex.fechaFinal);
+        $('#txtFechaInicial').val(loansindex.fechaInicial);
 
 
     },

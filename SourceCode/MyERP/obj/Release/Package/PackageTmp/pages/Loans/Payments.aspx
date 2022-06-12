@@ -226,7 +226,7 @@
                                             <label for="txtRecuperado">
                                                 Recuperado
                                             </label>
-                                            <input type="number" class="form-control campo-input" id="txtRecuperado" />
+                                            <input type="number" class="form-control campo-input" id="txtRecuperado" step="0.001" />
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>

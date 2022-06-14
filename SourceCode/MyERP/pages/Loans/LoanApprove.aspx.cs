@@ -62,14 +62,14 @@ namespace Plataforma.pages
 
             Utils.Log("\n\n******************Inicia la aprobación del préstamo ");
 
-            SqlTransaction transaccion = null;
+            SqlTransaction transaction = null;
 
             int r = 0;
             try
             {
 
                 conn.Open();
-                transaccion = conn.BeginTransaction();
+                transaction = conn.BeginTransaction();
 
 
                 //  Traer los datos del préstamo y cliente
@@ -89,11 +89,11 @@ namespace Plataforma.pages
 
                 //  -------Validar que las fotos esten subidas para cliente y aval
                 // 2) Traer los documentos actuales del pr+éstamo
-                List<Documento> documentsInLoan = GetDocumentsByCustomerId(path, prestamo.IdCliente, conn, transaccion);
+                List<Documento> documentsInLoan = GetDocumentsByCustomerId(path, prestamo.IdCliente, conn, transaction);
 
 
                 //  Traer todos los tipos de documenos necesarios para un prestamo
-                List<Documento> allDocumentTypes = GetDocumentCustomerTypes(path, conn, transaccion);
+                List<Documento> allDocumentTypes = GetDocumentCustomerTypes(path, conn, transaction);
                 HashSet<int> docs = new HashSet<int>(documentsInLoan.Select(x => x.IdTipoDocumento));
                 //  Restar los documentos del documento a la lista de todos los documentos necesarios
                 allDocumentTypes.RemoveAll(x => docs.Contains(x.IdTipoDocumento));
@@ -114,7 +114,7 @@ namespace Plataforma.pages
                 //  -------
 
                 //  Tipo de cliente
-                TipoCliente customerType = GetCustomerTypeById(path, prestamo.Cliente.IdTipoCliente.ToString(), conn, transaccion);
+                TipoCliente customerType = GetCustomerTypeById(path, prestamo.Cliente.IdTipoCliente.ToString(), conn, transaction);
 
 
                 Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
@@ -126,7 +126,7 @@ namespace Plataforma.pages
 
                 // 3) Validar que la suma de los costos de los articulos en garantia del cliente,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
-                List<Garantia> guaranteeCustomerList = GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaccion);
+                List<Garantia> guaranteeCustomerList = GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaction);
                 float guaranteeAmmountSumCustomer = 0;
                 foreach (var item in guaranteeCustomerList)
                 {
@@ -146,7 +146,7 @@ namespace Plataforma.pages
 
                 // 4) Validar que la suma de los costos de los articulos en garantia del aval,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
-                List<Garantia> guaranteeAvalList = GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaccion);
+                List<Garantia> guaranteeAvalList = GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaction);
                 float guaranteeAmmountSumAval = 0;
                 foreach (var item in guaranteeAvalList)
                 {
@@ -166,12 +166,12 @@ namespace Plataforma.pages
 
 
                 //  Validar el monto máximo al ser un préstamo inicial
-                List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaccion);
+                List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaction);
                 if (prestamosAnteriores.Count > 0)
                 {
                     if (prestamo.Monto > customerType.PrestamoInicialMaximo)
                     {
-                        response.MensajeError = "El monto para un préstamo inicial sobrepasa el monto configurado para este tipo de cliente (" + customerType.NombreTipoCliente  +  ").<br/><br/>" +
+                        response.MensajeError = "El monto para un préstamo inicial sobrepasa el monto configurado para este tipo de cliente (" + customerType.NombreTipoCliente?.Trim() + ").<br/><br/>" +
                       "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
                       "El préstamo inicial máximo: " + customerType.PrestamoInicialMaximo.ToString("C2") + "<br/>";
 
@@ -185,33 +185,60 @@ namespace Plataforma.pages
 
 
 
+                //  Validaciones para el supervisor y cración de alerta de límite de crédito
+                if(idPosicion == Employees.POSICION_SUPERVISOR.ToString())
+                {
+                    //  Traer datos del usuario para saber su id_empleado
+                    Usuario user = Usuarios.GetUsuario(path, idUsuario);
+
+
+                    //  Traer datos del empleado
+                    Empleado empleado = GetItemEmployee(user.IdEmpleado.ToString(), conn, transaction);
+
+                    if (empleado.MontoLimiteInicial < prestamo.Monto)
+                    {
+                        //  Insertar solicitud de aumento de limite de credito
+
+                        int rowsAffected = InsertarSolicitudLimiteCredito(idPrestamo, idUsuario, conn, transaction);
+                        Utils.Log("rowsAffected InsertarSolicitudLimiteCredito " + r);
+
+                        transaction.Commit();
+
+                        Utils.Log("\n\n******************Fin de la aprobación del préstamo debido a que el supervisor necesita aumento de crédito. ");
+
+                        response.MensajeError = "El monto límite de crédito con el que cuenta no es suficiente para aprobar el préstamo. Se ha generado una solicitud de aunmento de crédito que debera ser aprobada.";
+                        response.CodigoError = 2;
+                        return response;
+
+                    }
+
+
+                }
+
+
+
+
 
                 //  Actualizar status del préstamo
-                string sql = @"  UPDATE prestamo
-                            SET id_status_prestamo = @id_status_prestamo
-                            WHERE
-                            id_prestamo = @id_prestamo ";
-
-                Utils.Log("Actualizar NUEVO PRESTAMO " + sql);
-
-                SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
-                cmdUpdatePrestamo.CommandType = CommandType.Text;
-
-                cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE_EJECUTIVO);
+                    int rowsAffectedStatusPrestamo =  UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO, conn, transaction);
+                    
+                    Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
+
                 }
                 else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
                 {
-                    cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_APROBADO);
+
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_APROBADO, conn, transaction);
+                    
+                    Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
 
                     float pagoAmmount = prestamo.Monto / customerType.SemanasAPrestar;
 
+
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
-
-
                     //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
                     DateTime startDate = new DateTime(2022, 05, 26);    //TODO: CAMBIAR ESTE TEST
 
@@ -220,7 +247,7 @@ namespace Plataforma.pages
                     int numSemanas = customerType.SemanasAPrestar;
                     if (customerType.SemanasExtra == 1)
                     {
-                        numSemanas++;  
+                        numSemanas++;
                     }
 
                     for (int i = 0; i < numSemanas; i++)
@@ -235,7 +262,7 @@ namespace Plataforma.pages
                         pago.Fecha = nextDate;
                         pago.IdUsuario = int.Parse(idUsuario);
 
-                        InsertPago(pago, conn, transaccion);
+                        InsertPago(pago, conn, transaction);
 
                         startDate = nextDate;
 
@@ -245,14 +272,53 @@ namespace Plataforma.pages
 
                 }
 
-                cmdUpdatePrestamo.Transaction = transaccion;
-                r += cmdUpdatePrestamo.ExecuteNonQuery();
-
 
                 //  Actualizar relacion de aprobaciones
+                int rowsAffectedRPA = UpdateRelacionPrestamoAprobacion(idPrestamo, idUsuario, nota, idPosicion.ToString(), conn, transaction);
+
+
+                transaction.Commit();
+
+
+                Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
+
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                transaction.Rollback();
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+                response.MensajeError = "Se ha generado un error inesperado. No se pudo completar la operación. Por favor intente mas tarden.";
+                response.CodigoError = 1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return response;
+
+
+        }
+
+        public static int UpdateRelacionPrestamoAprobacion(string idPrestamo, string idUsuario, string nota, string idPosicion,
+          SqlConnection conn, SqlTransaction transaction) 
+        {
+
+            int r = 0;
+            try
+            {
+
                 string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
 
-                sql = @"  UPDATE relacion_prestamo_aprobacion
+
+                string sql = @"  UPDATE relacion_prestamo_aprobacion
                                 SET fecha = @fecha, notas_generales = @notas_generales, status_aprobacion = @status_aprobacion  "
                                 + sqlActualizaPosicion
                                 + @"WHERE id_prestamo = @id_prestamo AND
@@ -270,39 +336,120 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
                 cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
                 cmd.Parameters.AddWithValue("@status_aprobacion", "Aprobado");
-                cmd.Transaction = transaccion;
+                cmd.Transaction = transaction;
 
                 r += cmd.ExecuteNonQuery();
 
-
-                //
-                transaccion.Commit();
-
-
-                Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
-
-
-                return response;
             }
             catch (Exception ex)
             {
 
-                transaccion.Rollback();
 
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                r = -1;
-                response.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
-                response.CodigoError = 1;
+
+                throw ex;
+
+
             }
 
-            finally
+
+            return r;
+
+
+        }
+
+        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, int idStatus,
+           SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
             {
-                conn.Close();
+
+                string sql = @"  UPDATE prestamo
+                            SET activo = 1, id_status_prestamo = @id_status_prestamo, 
+                                notas_generales = @notas_generales, id_usuario = @id_usuario
+                            WHERE
+                            id_prestamo = @id_prestamo ";
+
+                Utils.Log("\nMétodo-> " +
+              System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
+                cmdUpdatePrestamo.CommandType = CommandType.Text;
+
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", idStatus);
+                cmdUpdatePrestamo.Transaction = transaction;
+
+                r += cmdUpdatePrestamo.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                throw ex;
+
+
             }
 
-            return response;
 
+            return r;
+
+
+        }
+
+        [WebMethod]
+        public static int InsertarSolicitudLimiteCredito(string idPrestamo, string idUsuario, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = "";
+
+                sql = @" INSERT INTO solicitud_aumento_credito (id_prestamo, fecha, id_usuario, id_status_solicitud_aumento_credito) 
+                    VALUES (@id_prestamo, @fecha, @id_usuario, @id_status_solicitud_aumento_credito) ";
+
+
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_status_solicitud_aumento_credito", SolicitudAumentoCredito.STATUS_SOLICITUD_CREADA);
+                cmd.Transaction = transaction;
+
+                r = cmd.ExecuteNonQuery();
+
+
+                Utils.Log("SolicitudLimiteCredito Insertada -> OK ");
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                throw ex;
+            }
+
+
+            return r;
 
         }
 
@@ -457,7 +604,7 @@ namespace Plataforma.pages
                 return items;
             }
 
-         
+
 
         }
 
@@ -1000,7 +1147,7 @@ namespace Plataforma.pages
                 sql = @"  UPDATE cliente
                                 SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
                                 segundo_apellido = @segundo_apellido, nota_fotografia = @nota_fotografia, 
-                                ocupacion = @ocupacion, telefono = @telefono, id_tipo_cliente = @id_tipo_cliente 
+                                ocupacion = @ocupacion, telefono = @telefono 
                           WHERE
                                 id_cliente = @id_cliente ";
 
@@ -1010,7 +1157,6 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@id_tipo_cliente", item.IdTipoCliente);
                 cmd.Parameters.AddWithValue("@curp", item.Curp);
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
@@ -1118,7 +1264,8 @@ namespace Plataforma.pages
 
                 sql = @"  UPDATE cliente
                                 SET curp_aval = @curp_aval, nombre_aval = @nombre_aval, primer_apellido_aval = @primer_apellido_aval, 
-                                segundo_apellido_aval = @segundo_apellido_aval, ocupacion_aval = @ocupacion_aval, nota_fotografia_aval = @nota_fotografia_aval, 
+                                segundo_apellido_aval = @segundo_apellido_aval, ocupacion_aval = @ocupacion_aval, 
+                                nota_fotografia_aval = @nota_fotografia_aval, 
                                 telefono_aval = @telefono_aval 
                                 WHERE
                                 id_cliente = @id_cliente ";
@@ -1294,7 +1441,7 @@ namespace Plataforma.pages
         public static List<Prestamo> GetLoansByCustomerId(string path, string customerId, SqlConnection conn, SqlTransaction transaction)
         {
 
-          
+
 
             //  Lista de datos a devolver
             List<Prestamo> items = new List<Prestamo>();
@@ -1365,7 +1512,7 @@ namespace Plataforma.pages
                 return items;
             }
 
-         
+
 
         }
 
@@ -1430,10 +1577,101 @@ namespace Plataforma.pages
                 return items;
             }
 
-       
+
 
         }
 
+
+        [WebMethod]
+        public static Empleado GetItemEmployee(string id, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            Empleado item = new Empleado();
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT 
+                                    id_empleado, id_tipo_usuario, id_comision_inicial, 
+                                    id_posicion, id_plaza, curp, email, 
+                                    nombre, primer_apellido, segundo_apellido, telefono, eliminado, 
+                                    activo, IsNull(id_supervisor, 0) id_supervisor, IsNull(id_ejecutivo, 0) id_ejecutivo, 
+                                    IsNull(id_coordinador, 0) id_coordinador, FORMAT(fecha_ingreso, 'yyyy-MM-dd') fecha_ingreso, 
+                                    FORMAT(fecha_nacimiento, 'yyyy-MM-dd') fecha_nacimiento,
+                                    monto_limite_inicial,
+                                    nombre_aval, primer_apellido_aval, segundo_apellido_aval, curp_aval, telefono_aval,
+                                    concat(nombre ,  ' ' , primer_apellido , ' ' , segundo_apellido) AS nombre_completo,
+                                    concat(nombre_aval ,  ' ' , primer_apellido_aval , ' ' , segundo_apellido_aval) AS nombre_completo_aval
+                                FROM empleado
+                                WHERE id_empleado =  @id_empleado 
+                                ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("id_empleado =  " + id);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_empleado", id);
+                adp.SelectCommand.Transaction = transaction;
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item = new Empleado();
+
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
+                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        item.IdComisionInicial = int.Parse(ds.Tables[0].Rows[i]["id_comision_inicial"].ToString());
+
+                        item.IdSupervisor = int.Parse(ds.Tables[0].Rows[i]["id_supervisor"].ToString());
+                        item.IdEjecutivo = int.Parse(ds.Tables[0].Rows[i]["id_ejecutivo"].ToString());
+                        item.IdCoordinador = int.Parse(ds.Tables[0].Rows[i]["id_coordinador"].ToString());
+
+                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+
+                        item.CURP = ds.Tables[0].Rows[i]["curp"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
+                        item.MontoLimiteInicial = float.Parse(ds.Tables[0].Rows[i]["monto_limite_inicial"].ToString());
+                        item.FechaIngreso = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
+                        item.FechaNacimiento = ds.Tables[0].Rows[i]["fecha_nacimiento"].ToString();
+
+                        item.CURPAval = ds.Tables[0].Rows[i]["curp_aval"].ToString();
+                        item.NombreAval = ds.Tables[0].Rows[i]["nombre_aval"].ToString();
+                        item.NombreCompletoAval = ds.Tables[0].Rows[i]["nombre_completo_aval"].ToString();
+                        item.PrimerApellidoAval = ds.Tables[0].Rows[i]["primer_apellido_aval"].ToString();
+                        item.SegundoApellidoAval = ds.Tables[0].Rows[i]["segundo_apellido_aval"].ToString();
+                        item.TelefonoAval = ds.Tables[0].Rows[i]["telefono_aval"].ToString();
+
+
+
+                    }
+                }
+
+
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+           
+
+        }
 
         public static List<Garantia> GetListGuaranteeAval(string path, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction)
         {
@@ -1496,7 +1734,7 @@ namespace Plataforma.pages
                 return items;
             }
 
-          
+
 
         }
 

@@ -149,7 +149,7 @@ namespace Plataforma.pages
 
                 //3.  Abonar lo recuperado a el o los pagos en status abono hasta completar lo abonado
                 //DataSet ds = new DataSet();
-                List<Pago> pagosFalla = GetPaymentsByIdPrestamoAndStatus(itemPago.IdPrestamo.ToString(), Pago.STATUS_PAGO_FALLA, conn, transaccion);
+                List<Pago> pagosFalla = GetPaymentsByIdPrestamoAndStatus(itemPago.IdPrestamo.ToString(), new int[] { Pago.STATUS_PAGO_FALLA }, conn, transaccion);
 
 
                 //  Acomodar el monto recuperado en los registros de fallas
@@ -201,6 +201,26 @@ namespace Plataforma.pages
 
                 }
 
+
+
+                //  Revisar que si todos los pagos  han sido realizados, abonado o pagado normal pasar el status del prestamo a pagado.                    
+                List<Pago> pagosDistintosAFalla = GetPaymentsByIdPrestamoAndStatus(itemPago.IdPrestamo.ToString(),
+                        new int[] { Pago.STATUS_PAGO_FALLA, Pago.STATUS_PAGO_PENDIENTE }, conn, transaccion);
+
+                if (pagosDistintosAFalla.Count < 1)
+                {
+                    Utils.Log("Actualizar status de préstamo a Pagado");
+
+                    string nota = "Todos los pagos del préstamo se encuentran cubiertos, el préstamo se pasa a status pagado." + DateTime.Now.ToString("g");
+
+                    int rowsAffectedPrestamo = UpdateStatusPrestamo(itemPago.IdPrestamo.ToString(),  idUsuario.ToString(), nota, conn, transaccion);
+
+                    Utils.Log("rowsAffectedPrestamo  ... " + rowsAffectedPrestamo);
+                }
+
+
+
+
                 //
                 transaccion.Commit();
 
@@ -211,8 +231,18 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
+                try
+                {
+                    transaccion.Rollback();
+                }
+                catch (Exception ex_)
+                {
 
-                transaccion.Rollback();
+                    r = -1;
+                    response.MensajeError = "Se ha generado un error, no se pudo finalizar la operación.";
+                    response.CodigoError = 1;
+                }
+
 
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
@@ -263,6 +293,7 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
             }
@@ -298,12 +329,13 @@ namespace Plataforma.pages
                 r = cmd.ExecuteNonQuery();
 
 
-                Utils.Log("Status Pago actualizado  " + (r>0).ToString());
+                Utils.Log("Status Pago actualizado  " + (r > 0).ToString());
 
 
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
             }
@@ -316,7 +348,7 @@ namespace Plataforma.pages
 
 
 
-        public static List<Pago> GetPaymentsByIdPrestamoAndStatus(string idPrestamo, int idStatusPago, SqlConnection conn, SqlTransaction transaction)
+        public static List<Pago> GetPaymentsByIdPrestamoAndStatus(string idPrestamo, int[] idsStatus, SqlConnection conn, SqlTransaction transaction)
         {
 
             List<Pago> items = new List<Pago>();
@@ -325,23 +357,17 @@ namespace Plataforma.pages
             {
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, IsNull(p.monto, 0) monto, IsNull(p.saldo, 0) saldo, IsNull(p.pagado, 0) pagado,
+                string query = @" SELECT p.id_pago, p.id_prestamo, IsNull(p.monto, 0) monto, IsNull(p.saldo, 0) saldo, 
+                                    IsNull(p.pagado, 0) pagado,
                                     p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
-                                    concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
-                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr, tc.semanas_a_prestar,            
-                                    st.nombre nombre_status_pago
+                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr   
                                     FROM pago p
-                                    JOIN prestamo prestamo ON (p.id_prestamo = prestamo.id_prestamo)                                            
-                                    JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
-                                    JOIN cliente c ON (c.id_cliente = prestamo.id_cliente) 
-                                    JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) 
-                                    WHERE prestamo.id_prestamo = @id_prestamo
-                                        AND p.id_status_pago = @id_status_pago
+                                    WHERE p.id_prestamo = @id_prestamo
+                                        AND p.id_status_pago IN (" + string.Join(",", idsStatus) + @")
                                     ORDER BY p.numero_semana  ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
-                adp.SelectCommand.Parameters.AddWithValue("id_status_pago", idStatusPago);
                 adp.SelectCommand.Transaction = transaction;
 
                 Utils.Log("\nMétodo-> " +
@@ -373,6 +399,7 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
             }
@@ -447,11 +474,11 @@ namespace Plataforma.pages
                                     				) As semanas_falla
 
                                     FROM pago p
-                                    JOIN prestamo prestamo ON (p.id_prestamo = prestamo.id_prestamo)                                            
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
                                     JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
-                                    JOIN cliente c ON (c.id_cliente = prestamo.id_cliente) "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"') "
-
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
+                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
+                                        AND pre.id_empleado = " + user.IdEmpleado + "  "                                      
                                     + sqlStatus
                                     + " ORDER BY p.id_pago ";
 
@@ -488,7 +515,7 @@ namespace Plataforma.pages
 
                         string botones = "";
 
-                        botones += "<button data-idprestamo = "+ item.IdPrestamo + " onclick='payments.view(" + item.IdPago + ")'  class='btn btn-outline-primary'> <span class='fa fa-folder-open mr-1'></span>Abrir</button>";
+                        botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.view(" + item.IdPago + ")'  class='btn btn-outline-primary'> <span class='fa fa-folder-open mr-1'></span>Abrir</button>";
 
                         item.Accion = botones;
 
@@ -724,6 +751,49 @@ namespace Plataforma.pages
             }
 
             return items;
+
+
+        }
+
+
+        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota,
+            SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = @"  UPDATE prestamo
+                            SET id_status_prestamo = @id_status_prestamo, notas_generales = @notas_generales, id_usuario = @id_usuario
+                            WHERE
+                            id_prestamo = @id_prestamo ";
+
+
+                SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
+                cmdUpdatePrestamo.CommandType = CommandType.Text;
+
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PAGADO);
+                cmdUpdatePrestamo.Transaction = transaction;
+
+                r += cmdUpdatePrestamo.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+
+            }
+
+
+            return r;
 
 
         }

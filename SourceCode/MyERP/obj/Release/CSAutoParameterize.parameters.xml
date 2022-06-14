@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <parameters>
-  <parameter name="127.0.0.1-Web.config Connection String" description="127.0.0.1 Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=Mc58BpX8!zt!" tags="SqlConnectionString">
+  <parameter name="127.0.0.1-Web.config Connection String" description="127.0.0.1 Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=SQ22@v1" tags="SqlConnectionString">
     <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='127.0.0.1']/@connectionString" />
   </parameter>
-  <parameter name="localhost-Web.config Connection String" description="localhost Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=Mc58BpX8!zt!" tags="SqlConnectionString">
+  <parameter name="localhost-Web.config Connection String" description="localhost Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=SQ22@v1" tags="SqlConnectionString">
     <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='localhost']/@connectionString" />
   </parameter>
-  <parameter name="sendaquetzal.gear.host-Web.config Connection String" description="sendaquetzal.gear.host Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=Mc58BpX8!zt!" tags="SqlConnectionString">
+  <parameter name="sendaquetzal.gear.host-Web.config Connection String" description="sendaquetzal.gear.host Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=SQ22@v1" tags="SqlConnectionString">
     <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sendaquetzal.gear.host']/@connectionString" />
   </parameter>
 </parameters>

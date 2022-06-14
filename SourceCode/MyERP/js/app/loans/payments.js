@@ -360,7 +360,7 @@ const payments = {
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPago = payments.idPago;
             params.abono = $('#txtAbono').val();
-            params.recuperado = $('#txtRecuperado').val();
+            params.recuperado = $('#txtRecuperado').val() === '' ? 0 : $('#txtRecuperado').val();
             params = JSON.stringify(params);
 
 
@@ -391,6 +391,8 @@ const payments = {
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                     $('.deshabilitable').prop('disabled', false);
 
+                    $('#spnMensajes').html(mensajesAlertas.errorInesperado);
+                    $('#panelMensajes').modal('show');
 
                 }
 

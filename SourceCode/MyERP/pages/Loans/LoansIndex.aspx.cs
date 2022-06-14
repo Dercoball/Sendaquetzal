@@ -101,8 +101,8 @@ namespace Plataforma.pages
                     {
 
                             //  La subquery arroja todos los id_usuario, que son empleados que dependen del supervisor logueado
-                        sqlUsuario = @" AND p.id_usuario IN   
-                                        ( select u.id_usuario
+                        sqlUsuario = @" AND p.id_empleado IN   
+                                        ( select u.id_empleado
 		                                        from empleado e
                                                 join empleado superv ON (e.id_supervisor = superv.id_empleado)
                                                 JOIN usuario u ON (u.id_empleado = e.id_empleado)
@@ -150,9 +150,16 @@ namespace Plataforma.pages
                      st.nombre nombre_status_prestamo, st.color
                      FROM cliente c 
                      JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
-                     JOIN status_prestamo st ON (st.id_status_prestamo = p.id_status_prestamo) 
+                     JOIN status_prestamo st ON (st.id_status_prestamo = p.id_status_prestamo)                      
                      WHERE  "
-                    + @" (p.fecha_solicitud >= '" + fechaInicial + @"' AND p.fecha_solicitud <= '" + fechaFinal + @"') "
+                    + @" (p.fecha_solicitud >= '" + fechaInicial + @"' AND p.fecha_solicitud <= '" + fechaFinal + @"')
+                        
+                      AND id_prestamo NOT IN (
+                        SELECT DISTINCT id_prestamo FROM solicitud_aumento_credito 
+                            WHERE id_status_solicitud_aumento_credito = 1
+                        )
+
+                    "
                     + sqlStatus
                     + sqlUsuario
                     + " ORDER BY p.id_prestamo ";

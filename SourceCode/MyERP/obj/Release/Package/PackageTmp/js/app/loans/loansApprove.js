@@ -212,7 +212,7 @@ const loansEdit = {
 
                 }, time_);
 
-                
+
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -421,6 +421,11 @@ const loansEdit = {
                     if (parseInt(valores.CodigoError) === 0) {
 
                         $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoAprobadaExito);
+                        $('#panelMensajeControlado').modal('show');
+                    }
+                    else if (parseInt(valores.CodigoError) === 2) {
+
+                        $('#spnMensajeControlado').html(valores.MensajeError);
                         $('#panelMensajeControlado').modal('show');
 
                     } else {

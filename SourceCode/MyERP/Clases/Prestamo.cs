@@ -34,6 +34,7 @@ namespace Plataforma.Clases
         public const int STATUS_PENDIENTE_EJECUTIVO = 2;
         public const int STATUS_RECHAZADO = 3;
         public const int STATUS_APROBADO = 4;
+        public const int STATUS_PAGADO = 5;
 
     }
 }

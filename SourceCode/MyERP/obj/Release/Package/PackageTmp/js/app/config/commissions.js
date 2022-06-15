@@ -17,7 +17,6 @@ const comission = {
         comission.idSeleccionado = -1;
         comission.accion = '';
 
-        comission.loadComboModulo();
         comission.loadContent();
         
 
@@ -54,7 +53,7 @@ const comission = {
                     columns: [
 
                         { data: 'IdComision' },
-                        { data: 'Modulo' },
+                        { data: 'Nombre' },
                         { data: 'Porcentaje' },
                         { data: 'ActivoStr' },
                         { data: 'Accion' }
@@ -114,6 +113,7 @@ const comission = {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
+        $('#frm')[0].reset();
 
         let params = {};
         params.path = window.location.hostname;
@@ -129,11 +129,10 @@ const comission = {
             async: true,
             success: function (msg) {
 
-                var item = msg.d;
+                let item = msg.d;
                 comission.idSeleccionado = item.IdComision;
 
-
-                $('#comboModulo').val(item.IdModulo);
+                $('#txtNombre').val(item.Nombre);
 
                 $('#txtPorcentaje').val(item.Porcentaje);
 
@@ -181,40 +180,6 @@ const comission = {
 
     },
 
-    loadComboModulo: () => {
-
-        var params = {};
-        params.path = window.location.hostname;
-        params = JSON.stringify(params);
-
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Config/Employees.aspx/GetListaItemsModulos",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-
-                let items = msg.d;
-                let opcion = '<option value="">Seleccione...</option>';
-
-                for (let i = 0; i < items.length; i++) {
-                    let item = items[i];
-
-                    opcion += `<option value = '${item.IdModulo}' > ${item.Nombre}</option > `;
-
-                }
-
-                $('#comboModulo').html(opcion);
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
-
-        });
-    },
-
 
 
     accionesBotones: () => {
@@ -238,7 +203,7 @@ const comission = {
                 //  Objeto con los valores a enviar
                 let item = {};
                 item.IdComision = comission.idSeleccionado;
-                item.IdModulo = $('#comboModulo').val();
+                item.Nombre = $('#txtNombre').val();
                 item.Porcentaje = $('#txtPorcentaje').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 

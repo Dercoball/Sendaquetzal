@@ -50,15 +50,14 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , m.id_modulo ,m.nombre 
-                         FROM comision c 
-                         INNER JOIN modulo m ON (c.id_modulo = m.id_modulo)
+                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , c.nombre 
+                         FROM comision c                          
                          WHERE 
                          c.id_comision = @id ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                Utils.Log("id_puesto =  " + id);
+                Utils.Log("id_comision =  " + id);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", id);
@@ -74,8 +73,7 @@ namespace Plataforma.pages
 
                         item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
                         item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
-                        item.IdModulo = int.Parse(ds.Tables[0].Rows[i]["id_modulo"].ToString());
-                        item.Modulo = (ds.Tables[0].Rows[i]["nombre"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
 
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
@@ -124,13 +122,13 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO comision(id_modulo, activo, eliminado, porcentaje) 
-                    VALUES (@id_modulo, @activo, 0, @porcentaje) ";
+                    sql = @" INSERT INTO comision(nombre, activo, eliminado, porcentaje) 
+                    VALUES (@nombre, @activo, 0, @porcentaje) ";
                 }
                 else
                 {
                     sql = @" UPDATE comision
-                          SET id_modulo = @id_modulo,
+                          SET nombre = @nombre,
                               activo = @activo,
                               porcentaje = @porcentaje
                           WHERE 
@@ -144,7 +142,7 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@id_modulo", item.IdModulo);
+                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@porcentaje", item.Porcentaje);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
                 cmd.Parameters.AddWithValue("@id", item.IdComision);
@@ -196,9 +194,8 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                    string query = @" SELECT c.id_comision, c.porcentaje, c.activo , m.id_modulo ,m.nombre 
-                         FROM comision c 
-                         INNER JOIN modulo m ON (c.id_modulo = m.id_modulo)
+                    string query = @" SELECT c.id_comision, c.porcentaje, c.activo, c.nombre 
+                         FROM comision c                          
                          WHERE 
                          ISNull(c.eliminado, 0) = 0
                          ORDER BY id_comision ";
@@ -216,9 +213,8 @@ namespace Plataforma.pages
                     {
                         Comision item = new Comision();
                         item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
-                        item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
-                        item.IdModulo = int.Parse(ds.Tables[0].Rows[i]["id_modulo"].ToString());
-                        item.Modulo = (ds.Tables[0].Rows[i]["nombre"].ToString());
+                        item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());                        
+                        item.Nombre  = (ds.Tables[0].Rows[i]["nombre"].ToString());
 
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
@@ -254,78 +250,6 @@ namespace Plataforma.pages
 
         }
 
-
-        [WebMethod]
-        public static List<Comision> LoadContentPublic(string path, string idUsuario)
-        {
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Comision> items = new List<Comision>();
-
-
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , m.id_modulo ,m.nombre 
-                         FROM comision c 
-                         INNER JOIN modulo m ON (c.id_modulo = m.id_modulo)
-                         WHERE 
-                         ISNull(c.eliminado, 0) = 0
-                         ORDER BY id_comision ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Comision item = new Comision();
-                        item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
-                        item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
-                        item.IdModulo = int.Parse(ds.Tables[0].Rows[i]["id_modulo"].ToString());
-                        item.Modulo = (ds.Tables[0].Rows[i]["nombre"].ToString());
-
-
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
-
-
-                        string botones = "<button  onclick='Commision.edit(" + item.IdComision + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='Commision.delete(" + item.IdComision + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-        }
 
 
         [WebMethod]

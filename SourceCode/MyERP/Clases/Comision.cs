@@ -10,7 +10,8 @@ namespace Plataforma.Clases
 
         public int IdComision;
         public int IdModulo;
-        public string Modulo;
+        //public string Modulo;
+        public string Nombre;
         public float Porcentaje;
         public int Activo;
         public string ActivoStr;

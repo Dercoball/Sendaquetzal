@@ -111,7 +111,7 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Modulo</th>
+                                    <th>Nombre</th>
                                     <th>Porcentaje</th>
                                     <th>Activo</th>
 
@@ -138,8 +138,8 @@
                             <div class="form-body">
                                 <h3 class="text-left">
                                     <span id="spnTituloForm"></span>
-                                    <hr />
                                 </h3>
+                                <hr />
 
 
 
@@ -151,11 +151,10 @@
 
 
                                     <div class="form-group col-md-6">
-                                        <label for="comboModulo">
-                                            Modulo
+                                        <label for="txtNombre">
+                                            Nombre
                                         </label>
-                                        <select class="form-control campo-combo" id="comboModulo" required="required" data-required-error='Requerido'>
-                                        </select>
+                                        <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 

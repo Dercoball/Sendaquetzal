@@ -76,12 +76,12 @@ namespace Plataforma.pages
                      concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_completo,
                      ISNull(e.activo, 1) activo, FORMAT(e.fecha_ingreso, 'dd/MM/yyyy') fecha_ingreso,
                      u.login , e.id_posicion,
-                     m.nombre nombre_modulo,  
+                     m.nombre nombre_comision,  
                      pos.nombre nombre_tipo_usuario,
                      p.nombre nombre_plaza
                      FROM empleado e 
                      JOIN usuario u ON (u.id_empleado = e.id_empleado) 
-                     JOIN modulo m ON (m.id_modulo = e.id_comision_inicial) 
+                     JOIN comision m ON (m.id_comision = e.id_comision_inicial) 
                      JOIN plaza p ON (p.id_plaza = e.id_plaza) 
                      JOIN posicion pos ON (pos.id_posicion = e.id_posicion)
                      WHERE isnull(e.eliminado, 0) != 1 
@@ -105,9 +105,8 @@ namespace Plataforma.pages
                         item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
                         item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
                         item.Login = ds.Tables[0].Rows[i]["login"].ToString();
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
                         item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
-                        item.NombreModulo = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
+                        item.NombreComision = ds.Tables[0].Rows[i]["nombre_comision"].ToString();
                         item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
                         item.FechaIngresoMx = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
 
@@ -191,7 +190,7 @@ namespace Plataforma.pages
                 return item;
             }
 
-         
+
 
         }
 
@@ -1002,20 +1001,22 @@ namespace Plataforma.pages
 
         }
 
+
+
         [WebMethod]
-        public static List<Modulo> GetListaItemsModulos(string path)
+        public static List<Comision> GetListaItemsComisiones(string path)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Modulo> items = new List<Modulo>();
+            List<Comision> items = new List<Comision>();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_modulo, nombre FROM  modulo WHERE IsNull(activo, 1) = 1  AND ISNull(eliminado, 0) = 0   ";
+                string query = @" SELECT id_comision, nombre FROM comision WHERE IsNull(activo, 1) = 1  AND ISNull(eliminado, 0) = 0   ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -1028,8 +1029,8 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Modulo item = new Modulo();
-                        item.IdModulo = int.Parse(ds.Tables[0].Rows[i]["id_modulo"].ToString());
+                        Comision item = new Comision();
+                        item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
 
                         items.Add(item);
@@ -1054,8 +1055,6 @@ namespace Plataforma.pages
             }
 
         }
-
-
 
         [WebMethod]
         public static Empleado GetDataEmployee(string path, string id)
@@ -1228,7 +1227,6 @@ namespace Plataforma.pages
 
 
                         //item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
-                        //item.NombreModulo = ds.Tables[0].Rows[i]["nombre_modulo"].ToString();
                         //item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
 
 

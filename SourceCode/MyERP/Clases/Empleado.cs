@@ -34,12 +34,13 @@ namespace Plataforma.Clases
         public String FechaNacimientoMx;
 
         public String Telefono;
-        public String NombreModulo;
+        //public String NombreModulo;
+        public String NombreComision;
         public String NombrePlaza;
         public String NombreUsuario;
         public String Password;
         public String NombreTipoUsuario;
-        public int IdModulo;
+        //public int IdModulo;
         public int IdPosicion;
         public int IdPlaza;
         public int IdDepartamento;

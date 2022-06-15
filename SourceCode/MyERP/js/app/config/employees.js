@@ -26,7 +26,7 @@ const employee = {
 
         employee.loadComboPosicion();
         employee.loadComboPlaza();
-        employee.loadComboModulo();
+        employee.loadComboComision();
         employee.loadComboEmployeesByPosicion(POSICION_EJECUTIVO, '#comboEjecutivo');
         employee.loadComboEmployeesByPosicion(POSICION_SUPERVISOR, '#comboSupervisor');
         employee.loadComboEmployeesByPosicion(POSICION_COORDINADOR, '#comboCoordinador');
@@ -70,7 +70,7 @@ const employee = {
                         { data: 'IdEmpleado' },
                         { data: 'NombreCompleto' },
                         { data: 'Login' },
-                        { data: 'NombreModulo' },
+                        { data: 'NombreComision' },
                         { data: 'NombreTipoUsuario' },
                         { data: 'NombrePlaza' },
                         { data: 'FechaIngresoMx' },
@@ -448,7 +448,7 @@ const employee = {
     },
 
 
-    loadComboModulo: () => {
+    loadComboComision: () => {
 
         var params = {};
         params.path = window.location.hostname;
@@ -456,7 +456,7 @@ const employee = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Employees.aspx/GetListaItemsModulos",
+            url: "../../pages/Config/Employees.aspx/GetListaItemsComisiones",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -469,7 +469,7 @@ const employee = {
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
 
-                    opcion += `<option value = '${item.IdModulo}' > ${item.Nombre}</option > `;
+                    opcion += `<option value = '${item.IdComision}' > ${item.Nombre}</option > `;
 
                 }
 

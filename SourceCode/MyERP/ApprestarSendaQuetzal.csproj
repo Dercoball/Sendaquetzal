@@ -196,6 +196,7 @@
     <Content Include="js\app\loans\loanrequest.min.js">
       <DependentUpon>loanrequest.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\creditIncreaseRequest.js" />
     <Content Include="js\app\loans\payments.js" />
     <Content Include="js\app\loans\panelguarantee.js" />
     <Content Include="js\app\loans\loansApprove.js" />
@@ -270,6 +271,7 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Customers\CustomerHistory.aspx" />
+    <Content Include="pages\Loans\CreditIncreaseRequest.aspx" />
     <Content Include="pages\Loans\Payments.aspx" />
     <Content Include="pages\Loans\LoanRequest.aspx" />
     <Content Include="pages\Config\DaysOff.aspx" />
@@ -1186,6 +1188,13 @@
     </Compile>
     <Compile Include="pages\Customers\CustomerHistory.aspx.designer.cs">
       <DependentUpon>CustomerHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Loans\CreditIncreaseRequest.aspx.cs">
+      <DependentUpon>CreditIncreaseRequest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Loans\CreditIncreaseRequest.aspx.designer.cs">
+      <DependentUpon>CreditIncreaseRequest.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Loans\Payments.aspx.cs">
       <DependentUpon>Payments.aspx</DependentUpon>

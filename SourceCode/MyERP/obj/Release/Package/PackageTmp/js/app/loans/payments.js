@@ -216,29 +216,29 @@ const payments = {
                 Semana actual: ${numeroSemanaActual}
                 <br/><br/>
                 Historial
-                <div class="table-responsive">
-                <table style="width: 100%!important;" class="table table-bordered table-hover table-striped text-center"
-                    id="tableSolicitudes">
 
-                    <thead class="thead-light">
+                <div class="table-responsive">                
+                    <table class="table table-bordered table-hover table-striped text-center"
+                        id="tableSolicitudes">
 
-                        ${headers}
+                        <thead class="thead-light">
+
+                            ${headers}
                        
-                    </thead>
-                    <tbody>
-                        <tr>
-                        ${rows}
-                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            ${rows}
+                            </tr>
                         
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
               </div>
         `;
 
 
                 $('#table_').html(htmlTable);
-
-
+            
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);

@@ -107,7 +107,6 @@ namespace Plataforma.pages
                                                 join empleado superv ON (e.id_supervisor = superv.id_empleado)
                                                 JOIN usuario u ON (u.id_empleado = e.id_empleado)
 		                                        WHERE superv.id_empleado = " + user.IdEmpleado + @" )
-
                             ";
 
                     }
@@ -129,7 +128,6 @@ namespace Plataforma.pages
 		                                                WHERE ejec.id_empleado = " + user.IdEmpleado + @" 
                                                     )
                                         )
-
                             ";
 
                         //  El segundo IN ( el mas interno) me da los supervisores que pertenecen al ejecutivo logueado,
@@ -153,12 +151,10 @@ namespace Plataforma.pages
                      JOIN status_prestamo st ON (st.id_status_prestamo = p.id_status_prestamo)                      
                      WHERE  "
                     + @" (p.fecha_solicitud >= '" + fechaInicial + @"' AND p.fecha_solicitud <= '" + fechaFinal + @"')
-                        
-                      AND id_prestamo NOT IN (
+                      AND p.id_prestamo NOT IN (
                         SELECT DISTINCT id_prestamo FROM solicitud_aumento_credito 
                             WHERE id_status_solicitud_aumento_credito = 1
                         )
-
                     "
                     + sqlStatus
                     + sqlUsuario

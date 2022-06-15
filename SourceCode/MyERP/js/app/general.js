@@ -12,7 +12,9 @@ let idUsuario = null;
 
 
 var mensajesAlertas = {
-    
+
+    solicitidAumentoAprobada: 'La solicitud de aumento de crédito ha sido aprobada correctamente.',
+    solicitidAumentoRechazada: 'La solicitud de aumento de crédito ha sido rechazada correctamente.',
     pagoRegistradoExito: 'El pago fue registrado correctamente.',
     solicitudPrestamoAprobadaExito: 'El préstamo fue aprobado correctamente.',
     solicitudPrestamoRechazadaExito: 'La solicitud de préstamo fue rechazada correctamente.',
@@ -332,7 +334,7 @@ var utils = {
     POSICION_SUPERVISOR: 4,
     POSICION_PROMOTOR: 5,
 
-    STATUS_PRESTAMO_PENDIENTE_SUPERVISOR : 1,
+    STATUS_PRESTAMO_PENDIENTE_SUPERVISOR: 1,
     STATUS_PRESTAMO_PENDIENTE_EJECUTIVO: 2,
     STATUS_PRESTAMO_RECHAZADO: 3,
     STATUS_PRESTAMO_APROBADO: 4,

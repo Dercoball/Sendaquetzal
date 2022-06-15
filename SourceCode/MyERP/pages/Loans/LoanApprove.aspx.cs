@@ -185,15 +185,12 @@ namespace Plataforma.pages
 
 
 
-                //  Validaciones para el supervisor y cración de alerta de límite de crédito
+                //  Validaciones para el promotor y creación de alerta de límite de crédito
                 if(idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    //  Traer datos del usuario para saber su id_empleado
-                    Usuario user = Usuarios.GetUsuario(path, idUsuario);
-
-
-                    //  Traer datos del empleado
-                    Empleado empleado = GetItemEmployee(user.IdEmpleado.ToString(), conn, transaction);
+                   
+                    //  Traer datos del empleado promotor
+                    Empleado empleado = GetItemEmployee(prestamo.IdEmpleado.ToString(), conn, transaction);
 
                     if (empleado.MontoLimiteInicial < prestamo.Monto)
                     {
@@ -206,7 +203,10 @@ namespace Plataforma.pages
 
                         Utils.Log("\n\n******************Fin de la aprobación del préstamo debido a que el supervisor necesita aumento de crédito. ");
 
-                        response.MensajeError = "El monto límite de crédito con el que cuenta no es suficiente para aprobar el préstamo. Se ha generado una solicitud de aunmento de crédito que debera ser aprobada.";
+                        response.MensajeError = "El monto límite de crédito con el que cuenta no es suficiente para aprobar el préstamo. " +
+                            "<br/>Monto límite del promotor: " + empleado.MontoLimiteInicial.ToString("C2") + 
+                            "<br/>Monto a solicitar: " + prestamo.Monto.ToString("C2") +
+                            "<br/>Se ha generado una solicitud de aumento de crédito que debera ser aprobada.";
                         response.CodigoError = 2;
                         return response;
 

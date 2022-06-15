@@ -18,6 +18,7 @@ namespace Plataforma.Clases
 
         public string NombrePromotor;
         public string NombreSupervisor;
+        
         public float LimiteCreditoActual;
         public string LimiteCreditoActualMx;
 

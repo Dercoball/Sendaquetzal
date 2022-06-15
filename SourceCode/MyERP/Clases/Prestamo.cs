@@ -10,6 +10,7 @@ namespace Plataforma.Clases
 
         public int IdPrestamo;
         public string IdCliente;
+        public int IdEmpleado;
         public List<RelPrestamoAprobacion> listaRelPrestamoAprobacion;
 
         public string FechaSolicitud;

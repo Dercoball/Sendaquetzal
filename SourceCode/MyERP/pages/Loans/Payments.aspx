@@ -234,8 +234,7 @@
                                 </div>
 
 
-                                <div class="row mt-5 col-md-12">
-                                    <span id="table_"></span>
+                                <div class="row mt-5 col-md-12" id="table_">
                                 </div>
 
                                 <div class="row mt-5 ">

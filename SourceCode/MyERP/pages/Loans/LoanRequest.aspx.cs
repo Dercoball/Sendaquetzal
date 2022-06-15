@@ -916,7 +916,7 @@ namespace Plataforma.pages
             {
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.monto, p.id_prestamo,
+                string query = @" SELECT p.monto, p.id_prestamo, IsNull(p.id_empleado, 0) id_empleado,
                                          FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud, fecha_solicitud fecha_solicitud_date,
                                          p.id_status_prestamo, p.id_cliente,
                                          st.nombre nombre_status_prestamo, st.color
@@ -939,6 +939,7 @@ namespace Plataforma.pages
                     {
                         prestamoData = new Prestamo();
                         prestamoData.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        prestamoData.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         prestamoData.IdCliente = ds.Tables[0].Rows[i]["id_cliente"].ToString();
                         prestamoData.IdStatusPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_status_prestamo"].ToString());
                         prestamoData.Color = ds.Tables[0].Rows[i]["color"].ToString();

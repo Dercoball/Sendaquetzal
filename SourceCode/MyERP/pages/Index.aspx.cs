@@ -330,6 +330,45 @@ namespace Plataforma.pages
             }
             //
 
+            List<string> paginasPrestamos = new List<string>
+                {
+                    "16" // SOLicitud de aumento de crédito
+                };
+
+
+            var espagia_Prestamos = paginasPrestamos.Find(x => x == pagina);
+            string active_Prestamos = espagia_Prestamos != null ? "class = 'active' " : "";
+
+            string htmlItemsPrestasmos = "";
+            foreach (var permiso in listaPermisos)
+            {
+
+                if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_PRESTAMOS)//5
+                {
+                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
+
+                    htmlItemsPrestasmos += "<li> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"fa fa-dollar\"></i>" + permiso.NombreRecurso + "</a> " +
+                           " </li> ";
+
+                }
+
+            }
+
+            if (htmlItemsPrestasmos != "")
+            {
+
+                nav += "<li " + active_Prestamos + "><a href=\"#liPrestamos\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
+                    " <i class=\"fa fa-dollar\"></i>Préstamos</a> " +
+                "  <ul id=\"liPrestamos\" class=\"collapse list-unstyled\"> ";
+
+
+                nav += htmlItemsPrestasmos;
+
+                nav += "</ul> ";
+                nav += "</li> ";
+            }
+
             //........MENU Configuracion
             //Agregar los numeros de paginas o permisos , de los tipo Configuracion
             List<string> paginasConfiguracion = new List<string>

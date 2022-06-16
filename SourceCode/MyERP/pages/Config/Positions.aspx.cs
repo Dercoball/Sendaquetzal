@@ -214,7 +214,7 @@ namespace Plataforma.pages
                 DataSet ds = new DataSet();
                 string query = "SELECT id_permiso,  nombre, nombre_interno, tipo_permiso" +
                     "  FROM permisos " +
-                    "  WHERE IsNull(activo, 0) = 1 ";
+                    "  WHERE IsNull(activo, 0) = 1 ORDER BY nombre_interno, id_permiso ";
 
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
@@ -284,7 +284,7 @@ namespace Plataforma.pages
                 string query = "  SELECT p.nombre, p.id_permiso, p.nombre_recurso, p.nombre_interno, p.tipo_permiso " +
                     " from permisos_tipo_usuario rel_ptu join permisos p on (p.id_permiso = rel_ptu .id_permiso) " +
                     " where rel_ptu.id_tipo_usuario  = @id_tipo_usuario " +
-                    " AND IsNull(p.activo, 0) = 1  ";
+                    " AND IsNull(p.activo, 0) = 1   ORDER BY p.nombre_interno, p.id_permiso ";
 
 
                 Utils.Log("\nMétodo-> " +

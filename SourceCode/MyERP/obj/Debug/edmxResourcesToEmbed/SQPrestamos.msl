@@ -1,0 +1,526 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="sistemacobranzasModelStoreContainer" CdmEntityContainer="sistemacobranzasEntities">
+    <EntitySetMapping Name="regla_evaluacion_modulo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.regla_evaluacion_modulo">
+        <MappingFragment StoreEntitySet="regla_evaluacion_modulo">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="id_comision" ColumnName="id_comision" />
+          <ScalarProperty Name="id_regla_evaluacion_modulo" ColumnName="id_regla_evaluacion_modulo" />
+          <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+          <ScalarProperty Name="ponderacion" ColumnName="ponderacion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="abono_pago">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.abono_pago">
+        <MappingFragment StoreEntitySet="abono_pago">
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="fecha" ColumnName="fecha" />
+          <ScalarProperty Name="monto" ColumnName="monto" />
+          <ScalarProperty Name="id_pago" ColumnName="id_pago" />
+          <ScalarProperty Name="id_abono_pago" ColumnName="id_abono_pago" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="calendario">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.calendario">
+        <MappingFragment StoreEntitySet="calendario">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="fecha" ColumnName="fecha" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="categoria">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.categoria">
+        <MappingFragment StoreEntitySet="categoria">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="cliente">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.cliente">
+        <MappingFragment StoreEntitySet="cliente">
+          <ScalarProperty Name="nota_fotografia_aval" ColumnName="nota_fotografia_aval" />
+          <ScalarProperty Name="nota_fotografia" ColumnName="nota_fotografia" />
+          <ScalarProperty Name="id_status_cliente" ColumnName="id_status_cliente" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="telefono_aval" ColumnName="telefono_aval" />
+          <ScalarProperty Name="ocupacion_aval" ColumnName="ocupacion_aval" />
+          <ScalarProperty Name="segundo_apellido_aval" ColumnName="segundo_apellido_aval" />
+          <ScalarProperty Name="primer_apellido_aval" ColumnName="primer_apellido_aval" />
+          <ScalarProperty Name="nombre_aval" ColumnName="nombre_aval" />
+          <ScalarProperty Name="curp_aval" ColumnName="curp_aval" />
+          <ScalarProperty Name="id_tipo_cliente" ColumnName="id_tipo_cliente" />
+          <ScalarProperty Name="telefono" ColumnName="telefono" />
+          <ScalarProperty Name="ocupacion" ColumnName="ocupacion" />
+          <ScalarProperty Name="segundo_apellido" ColumnName="segundo_apellido" />
+          <ScalarProperty Name="primer_apellido" ColumnName="primer_apellido" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="curp" ColumnName="curp" />
+          <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="comision">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.comision">
+        <MappingFragment StoreEntitySet="comision">
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="porcentaje" ColumnName="porcentaje" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="id_modulo" ColumnName="id_modulo" />
+          <ScalarProperty Name="id_comision" ColumnName="id_comision" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="configuracion">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.configuracion">
+        <MappingFragment StoreEntitySet="configuracion">
+          <ScalarProperty Name="ValorCadena" ColumnName="ValorCadena" />
+          <ScalarProperty Name="valor" ColumnName="valor" />
+          <ScalarProperty Name="fecha_ultima_modificacion" ColumnName="fecha_ultima_modificacion" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+          <ScalarProperty Name="id_configuracion" ColumnName="id_configuracion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="dias_paro">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.dias_paro">
+        <MappingFragment StoreEntitySet="dias_paro">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="id_tipo_paro" ColumnName="id_tipo_paro" />
+          <ScalarProperty Name="fecha_fin" ColumnName="fecha_fin" />
+          <ScalarProperty Name="fecha_inicio" ColumnName="fecha_inicio" />
+          <ScalarProperty Name="nota" ColumnName="nota" />
+          <ScalarProperty Name="id_dias_paro" ColumnName="id_dias_paro" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="direccion">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.direccion">
+        <MappingFragment StoreEntitySet="direccion">
+          <ScalarProperty Name="ubicacion" ColumnName="ubicacion" />
+          <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+          <ScalarProperty Name="direccion_trabajo" ColumnName="direccion_trabajo" />
+          <ScalarProperty Name="aval" ColumnName="aval" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="id_estado" ColumnName="id_estado" />
+          <ScalarProperty Name="id_municipio" ColumnName="id_municipio" />
+          <ScalarProperty Name="codigo_postal" ColumnName="codigo_postal" />
+          <ScalarProperty Name="telefono" ColumnName="telefono" />
+          <ScalarProperty Name="estado" ColumnName="estado" />
+          <ScalarProperty Name="municipio" ColumnName="municipio" />
+          <ScalarProperty Name="colonia" ColumnName="colonia" />
+          <ScalarProperty Name="calleyno" ColumnName="calleyno" />
+          <ScalarProperty Name="id_aval" ColumnName="id_aval" />
+          <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+          <ScalarProperty Name="id_direccion" ColumnName="id_direccion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="documento">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.documento">
+        <MappingFragment StoreEntitySet="documento">
+          <ScalarProperty Name="extension" ColumnName="extension" />
+          <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+          <ScalarProperty Name="fecha_ingreso" ColumnName="fecha_ingreso" />
+          <ScalarProperty Name="url" ColumnName="url" />
+          <ScalarProperty Name="id_aval" ColumnName="id_aval" />
+          <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="contenido" ColumnName="contenido" />
+          <ScalarProperty Name="id_tipo_documento" ColumnName="id_tipo_documento" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_documento_colaborador" ColumnName="id_documento_colaborador" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="forma_pago">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.forma_pago">
+        <MappingFragment StoreEntitySet="forma_pago">
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_forma_pago" ColumnName="id_forma_pago" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="garantia_prestamo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.garantia_prestamo">
+        <MappingFragment StoreEntitySet="garantia_prestamo">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="aval" ColumnName="aval" />
+          <ScalarProperty Name="fecha_registro" ColumnName="fecha_registro" />
+          <ScalarProperty Name="fotografia" ColumnName="fotografia" />
+          <ScalarProperty Name="costo" ColumnName="costo" />
+          <ScalarProperty Name="numero_serie" ColumnName="numero_serie" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+          <ScalarProperty Name="id_garantia_prestamo" ColumnName="id_garantia_prestamo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="historial_cliente">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.historial_cliente">
+        <MappingFragment StoreEntitySet="historial_cliente">
+          <ScalarProperty Name="falla" ColumnName="falla" />
+          <ScalarProperty Name="abonado" ColumnName="abonado" />
+          <ScalarProperty Name="atiempo" ColumnName="atiempo" />
+          <ScalarProperty Name="id_semana" ColumnName="id_semana" />
+          <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+          <ScalarProperty Name="id_historial_cliente" ColumnName="id_historial_cliente" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="log_cambios">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.log_cambios">
+        <MappingFragment StoreEntitySet="log_cambios">
+          <ScalarProperty Name="modulo" ColumnName="modulo" />
+          <ScalarProperty Name="fecha_hora" ColumnName="fecha_hora" />
+          <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="modulo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.modulo">
+        <MappingFragment StoreEntitySet="modulo">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_modulo" ColumnName="id_modulo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="pago">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.pago">
+        <MappingFragment StoreEntitySet="pago">
+          <ScalarProperty Name="semana_extra" ColumnName="semana_extra" />
+          <ScalarProperty Name="pagado" ColumnName="pagado" />
+          <ScalarProperty Name="numero_semana" ColumnName="numero_semana" />
+          <ScalarProperty Name="fecha_registro_pago" ColumnName="fecha_registro_pago" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="id_status_pago" ColumnName="id_status_pago" />
+          <ScalarProperty Name="fecha" ColumnName="fecha" />
+          <ScalarProperty Name="saldo" ColumnName="saldo" />
+          <ScalarProperty Name="monto" ColumnName="monto" />
+          <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+          <ScalarProperty Name="id_pago" ColumnName="id_pago" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="periodo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.periodo">
+        <MappingFragment StoreEntitySet="periodo">
+          <ScalarProperty Name="valor_periodo" ColumnName="valor_periodo" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_periodo" ColumnName="id_periodo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="permisos">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.permisos">
+        <MappingFragment StoreEntitySet="permisos">
+          <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+          <ScalarProperty Name="nombre_recurso" ColumnName="nombre_recurso" />
+          <ScalarProperty Name="nombre_interno" ColumnName="nombre_interno" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="tipo_permiso" ColumnName="tipo_permiso" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_permiso" ColumnName="id_permiso" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="permisos_tipo_usuario">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.permisos_tipo_usuario">
+        <MappingFragment StoreEntitySet="permisos_tipo_usuario">
+          <ScalarProperty Name="id_permiso" ColumnName="id_permiso" />
+          <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="plantilla">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.plantilla">
+        <MappingFragment StoreEntitySet="plantilla">
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="id_frecuencia_envio_mensaje" ColumnName="id_frecuencia_envio_mensaje" />
+          <ScalarProperty Name="id_tipo_plantilla" ColumnName="id_tipo_plantilla" />
+          <ScalarProperty Name="contenido" ColumnName="contenido" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="plaza">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.plaza">
+        <MappingFragment StoreEntitySet="plaza">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_plaza" ColumnName="id_plaza" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="prestamo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.prestamo">
+        <MappingFragment StoreEntitySet="prestamo">
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+          <ScalarProperty Name="notas_generales" ColumnName="notas_generales" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+          <ScalarProperty Name="id_status_prestamo" ColumnName="id_status_prestamo" />
+          <ScalarProperty Name="monto" ColumnName="monto" />
+          <ScalarProperty Name="fecha_solicitud" ColumnName="fecha_solicitud" />
+          <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="relacion_prestamo_aprobacion">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.relacion_prestamo_aprobacion">
+        <MappingFragment StoreEntitySet="relacion_prestamo_aprobacion">
+          <ScalarProperty Name="notas_generales" ColumnName="notas_generales" />
+          <ScalarProperty Name="status_aprobacion" ColumnName="status_aprobacion" />
+          <ScalarProperty Name="id_posicion" ColumnName="id_posicion" />
+          <ScalarProperty Name="notas_cliente" ColumnName="notas_cliente" />
+          <ScalarProperty Name="notas_aval" ColumnName="notas_aval" />
+          <ScalarProperty Name="id_ejecutivo" ColumnName="id_ejecutivo" />
+          <ScalarProperty Name="id_supervisor" ColumnName="id_supervisor" />
+          <ScalarProperty Name="fecha" ColumnName="fecha" />
+          <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+          <ScalarProperty Name="id_historial_aprobacion" ColumnName="id_historial_aprobacion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="solicitud_aumento_credito">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.solicitud_aumento_credito">
+        <MappingFragment StoreEntitySet="solicitud_aumento_credito">
+          <ScalarProperty Name="id_status_solicitud_aumento_credito" ColumnName="id_status_solicitud_aumento_credito" />
+          <ScalarProperty Name="id_director" ColumnName="id_director" />
+          <ScalarProperty Name="fecha" ColumnName="fecha" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+          <ScalarProperty Name="id_solicitud_aumento_credito" ColumnName="id_solicitud_aumento_credito" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="status_cliente">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.status_cliente">
+        <MappingFragment StoreEntitySet="status_cliente">
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_status_cliente" ColumnName="id_status_cliente" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="status_pago">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.status_pago">
+        <MappingFragment StoreEntitySet="status_pago">
+          <ScalarProperty Name="color" ColumnName="color" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_status_pago" ColumnName="id_status_pago" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="status_prestamo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.status_prestamo">
+        <MappingFragment StoreEntitySet="status_prestamo">
+          <ScalarProperty Name="color" ColumnName="color" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_status_prestamo" ColumnName="id_status_prestamo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="status_solicitud_aumento_credito">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.status_solicitud_aumento_credito">
+        <MappingFragment StoreEntitySet="status_solicitud_aumento_credito">
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_status_solicitud_aumento_credito" ColumnName="id_status_solicitud_aumento_credito" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="sysdiagrams">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.sysdiagrams">
+        <MappingFragment StoreEntitySet="sysdiagrams">
+          <ScalarProperty Name="definition" ColumnName="definition" />
+          <ScalarProperty Name="version" ColumnName="version" />
+          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tipo_cliente">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.tipo_cliente">
+        <MappingFragment StoreEntitySet="tipo_cliente">
+          <ScalarProperty Name="fecha_pago_domingo" ColumnName="fecha_pago_domingo" />
+          <ScalarProperty Name="fecha_pago_sabado" ColumnName="fecha_pago_sabado" />
+          <ScalarProperty Name="fecha_pago_viernes" ColumnName="fecha_pago_viernes" />
+          <ScalarProperty Name="fecha_pago_jueves" ColumnName="fecha_pago_jueves" />
+          <ScalarProperty Name="fecha_pago_miercoles" ColumnName="fecha_pago_miercoles" />
+          <ScalarProperty Name="fecha_pago_martes" ColumnName="fecha_pago_martes" />
+          <ScalarProperty Name="fecha_pago_lunes" ColumnName="fecha_pago_lunes" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="semana_extra" ColumnName="semana_extra" />
+          <ScalarProperty Name="cantidad_para_renovar" ColumnName="cantidad_para_renovar" />
+          <ScalarProperty Name="fechas_pago" ColumnName="fechas_pago" />
+          <ScalarProperty Name="garantias_por_monto" ColumnName="garantias_por_monto" />
+          <ScalarProperty Name="semanas_a_prestar" ColumnName="semanas_a_prestar" />
+          <ScalarProperty Name="porcentaje_semanal" ColumnName="porcentaje_semanal" />
+          <ScalarProperty Name="prestamo_inicial_maximo" ColumnName="prestamo_inicial_maximo" />
+          <ScalarProperty Name="tipo_cliente1" ColumnName="tipo_cliente" />
+          <ScalarProperty Name="id_tipo_cliente" ColumnName="id_tipo_cliente" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tipo_documento">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.tipo_documento">
+        <MappingFragment StoreEntitySet="tipo_documento">
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_tipo_documento" ColumnName="id_tipo_documento" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tipo_paro">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.tipo_paro">
+        <MappingFragment StoreEntitySet="tipo_paro">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_tipo_paro" ColumnName="id_tipo_paro" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="usuario">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.usuario">
+        <MappingFragment StoreEntitySet="usuario">
+          <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="telefono" ColumnName="telefono" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="password" ColumnName="password" />
+          <ScalarProperty Name="login" ColumnName="login" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="web_pregunta_frecuente">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.web_pregunta_frecuente">
+        <MappingFragment StoreEntitySet="web_pregunta_frecuente">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="ultima_modificacion" ColumnName="ultima_modificacion" />
+          <ScalarProperty Name="respuesta" ColumnName="respuesta" />
+          <ScalarProperty Name="pregunta" ColumnName="pregunta" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="empleado">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.empleado">
+        <MappingFragment StoreEntitySet="empleado">
+          <ScalarProperty Name="id_coordinador" ColumnName="id_coordinador" />
+          <ScalarProperty Name="monto_limite_inicial" ColumnName="monto_limite_inicial" />
+          <ScalarProperty Name="telefono_aval" ColumnName="telefono_aval" />
+          <ScalarProperty Name="curp_aval" ColumnName="curp_aval" />
+          <ScalarProperty Name="segundo_apellido_aval" ColumnName="segundo_apellido_aval" />
+          <ScalarProperty Name="primer_apellido_aval" ColumnName="primer_apellido_aval" />
+          <ScalarProperty Name="nombre_aval" ColumnName="nombre_aval" />
+          <ScalarProperty Name="fecha_ingreso" ColumnName="fecha_ingreso" />
+          <ScalarProperty Name="id_ejecutivo" ColumnName="id_ejecutivo" />
+          <ScalarProperty Name="id_supervisor" ColumnName="id_supervisor" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="fecha_nacimiento" ColumnName="fecha_nacimiento" />
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="telefono" ColumnName="telefono" />
+          <ScalarProperty Name="segundo_apellido" ColumnName="segundo_apellido" />
+          <ScalarProperty Name="primer_apellido" ColumnName="primer_apellido" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="curp" ColumnName="curp" />
+          <ScalarProperty Name="id_plaza" ColumnName="id_plaza" />
+          <ScalarProperty Name="id_posicion" ColumnName="id_posicion" />
+          <ScalarProperty Name="id_comision_inicial" ColumnName="id_comision_inicial" />
+          <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+          <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="frecuencia_envio_mensaje">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.frecuencia_envio_mensaje">
+        <MappingFragment StoreEntitySet="frecuencia_envio_mensaje">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_frecuencia_envio_mensaje" ColumnName="id_frecuencia_envio_mensaje" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="posicion">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.posicion">
+        <MappingFragment StoreEntitySet="posicion">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_posicion" ColumnName="id_posicion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tipo_plantilla">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.tipo_plantilla">
+        <MappingFragment StoreEntitySet="tipo_plantilla">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+          <ScalarProperty Name="id_tipo_plantilla" ColumnName="id_tipo_plantilla" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="web_acercade">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.web_acercade">
+        <MappingFragment StoreEntitySet="web_acercade">
+          <ScalarProperty Name="info" ColumnName="info" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="web_politicas_privacidad">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.web_politicas_privacidad">
+        <MappingFragment StoreEntitySet="web_politicas_privacidad">
+          <ScalarProperty Name="info" ColumnName="info" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="web_terminos_condiciones">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.web_terminos_condiciones">
+        <MappingFragment StoreEntitySet="web_terminos_condiciones">
+          <ScalarProperty Name="info" ColumnName="info" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="web_tutorial">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.web_tutorial">
+        <MappingFragment StoreEntitySet="web_tutorial">
+          <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="url_video" ColumnName="url_video" />
+          <ScalarProperty Name="titulo" ColumnName="titulo" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

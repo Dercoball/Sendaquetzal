@@ -288,133 +288,21 @@ namespace Plataforma.pages
             nav += AgregarItemRootMenu("15", pagina, listaPermisos, "fa fa-credit-card");
 
 
-            //........MENU WEB
-            //Agregar los numeros de paginas o permisos , de los tipo WEB
-            List<string> paginasWeb = new List<string>
-                {
-                    "2",//faq                                  
-                };
+
+            nav += GenerateMenu(new List<string> { "2", "3", "4", "5", "6", }, pagina, listaPermisos, "fa fa-dollar", "Web",
+               PermisoUsuario.TIPO_PERMISO_WEB, "Web");
 
 
-            var esPagina_Web = paginasWeb.Find(x => x == pagina);
-            string active_Web = esPagina_Web != null ? "class = 'active' " : "";
-
-            string htmlItemsWeb = "";
-            foreach (var permiso in listaPermisos)
-            {
-
-                if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_WEB)//4
-                {
-                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
-
-                    htmlItemsWeb += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"fa fa-internet-explorer\"></i>" + permiso.NombreRecurso + "</a> " +
-                           " </li> ";
-
-                }
-
-            }
-
-            if (htmlItemsWeb != "")
-            {
-
-                nav += "<li " + active_Web + "><a href=\"#liWeb\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"fa fa-internet-explorer\"></i>Web</a> " +
-                "  <ul id=\"liWeb\" class=\"collapse list-unstyled\"> ";
+            nav += GenerateMenu(new List<string> { "16" }, pagina, listaPermisos, "fa fa-dollar", "Préstamos",
+               PermisoUsuario.TIPO_PERMISO_PRESTAMOS, "Prestamos");
 
 
-                nav += htmlItemsWeb;
+            nav += GenerateMenu(new List<string>{ "17", "18" },pagina ,listaPermisos, "fa fa-percent", "Comisiones", 
+                PermisoUsuario.TIPO_PERMISO_COMISIONES, "Comisiones");
 
-                nav += "</ul> ";
-                nav += "</li> ";
-            }
-            //
+            nav += GenerateMenu(new List<string> { "7","8", "10", "11", "44", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración", 
+                PermisoUsuario.TIPO_PERMISO_CONFIGURACION, "Configuracion");
 
-            List<string> paginasPrestamos = new List<string>
-                {
-                    "16" // SOLicitud de aumento de crédito
-                };
-
-
-            var espagia_Prestamos = paginasPrestamos.Find(x => x == pagina);
-            string active_Prestamos = espagia_Prestamos != null ? "class = 'active' " : "";
-
-            string htmlItemsPrestasmos = "";
-            foreach (var permiso in listaPermisos)
-            {
-
-                if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_PRESTAMOS)//5
-                {
-                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
-
-                    htmlItemsPrestasmos += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"fa fa-dollar\"></i>" + permiso.NombreRecurso + "</a> " +
-                           " </li> ";
-
-                }
-
-            }
-
-            if (htmlItemsPrestasmos != "")
-            {
-
-                nav += "<li " + active_Prestamos + "><a href=\"#liPrestamos\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"fa fa-dollar\"></i>Préstamos</a> " +
-                "  <ul id=\"liPrestamos\" class=\"collapse list-unstyled\"> ";
-
-
-                nav += htmlItemsPrestasmos;
-
-                nav += "</ul> ";
-                nav += "</li> ";
-            }
-
-            //........MENU Configuracion
-            //Agregar los numeros de paginas o permisos , de los tipo Configuracion
-            List<string> paginasConfiguracion = new List<string>
-                {
-                    "7",//tipos de clientes     ,                             
-                    "44",
-                    "45",
-                    "8",
-                    "10",
-                };
-
-
-            var esPagina_Configuracion = paginasConfiguracion.Find(x => x == pagina);
-            string active_Configuracion = esPagina_Configuracion != null ? "class = 'active' " : "";
-
-            string htmlItemsConfiguracion = "";
-            foreach (var permiso in listaPermisos)
-            {
-
-                if (permiso.TipoPermiso == PermisoUsuario.TIPO_PERMISO_CONFIGURACION)//2
-                {
-                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
-
-                    htmlItemsConfiguracion += "<li> " +
-                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"fa fa-cog\"></i>" + permiso.NombreRecurso + "</a> " +
-                           " </li> ";
-
-                }
-
-            }
-
-            if (htmlItemsConfiguracion != "")
-            {
-
-                nav += "<li " + active_Configuracion + "><a href=\"#liConfiguracion\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"fa fa-cogs\"></i>Configuración</a> " +
-                "  <ul id=\"liConfiguracion\" class=\"collapse list-unstyled\"> ";
-
-
-                nav += htmlItemsConfiguracion;
-
-                nav += "</ul> ";
-                nav += "</li> ";
-            }
-            //.........FIN DE CONFIGURACION
-            //
 
 
             //  
@@ -459,6 +347,49 @@ namespace Plataforma.pages
             elementos.BarraSuperior = barraSuperior;
 
             return elementos;
+        }
+
+
+        private static string GenerateMenu(List<string> paginasArray, string pagina, List<PermisoUsuario> 
+            listaPermisos, string icono, string nombreMenu, string tipoPermiso, string nombreMenuSinACento)
+        {
+            
+            var espagia_ = paginasArray.Find(x => x == pagina);
+            string active = espagia_ != null ? "class = 'active' " : "";
+
+            string htmlItems = "";
+            foreach (var permiso in listaPermisos)
+            {
+
+                if (permiso.TipoPermiso == tipoPermiso)
+                {
+                    permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;
+
+                    htmlItems += "<li> " +
+                           " <a href=\"" + permiso.NombreInterno + "\"><i class=\"" + icono + "\"></i>" + permiso.NombreRecurso + "</a> " +
+                           " </li> ";
+
+                }
+
+            }
+
+            string nav = "";
+
+            if (htmlItems != "")
+            {
+
+                nav += "<li " + active + "><a href=\"#li" + nombreMenuSinACento + "\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
+                    " <i class=\"" + icono + "\"></i>" + nombreMenu+ "</a> " +
+                "  <ul id=\"li" + nombreMenuSinACento + "\" class=\"collapse list-unstyled\"> ";
+
+
+                nav += htmlItems;
+
+                nav += "</ul> ";
+                nav += "</li> ";
+            }
+
+            return nav;
         }
 
         private static string AgregarItemRootMenu(string paginaActual, string pagina, List<PermisoUsuario> listaPermisos, string icono)

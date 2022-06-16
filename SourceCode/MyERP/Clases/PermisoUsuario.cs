@@ -20,6 +20,7 @@ namespace Plataforma.Clases
         public const string TIPO_PERMISO_WEB = "4";
         public const string TIPO_PERMISO_LIBRE = "6";//libre
         public const string TIPO_PERMISO_PRESTAMOS = "7";
+        public const string TIPO_PERMISO_COMISIONES= "8";
         public const string TIPO_PERMISO_CONFIGURACION= "2";
         public const string TIPO_PERMISO_BOTON = "1";
         public const string TIPO_PERMISO_PANEL = "3";

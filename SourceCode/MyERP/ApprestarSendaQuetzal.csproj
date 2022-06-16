@@ -49,6 +49,12 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="itextsharp, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13.2\lib\itextsharp.dll</HintPath>
     </Reference>
@@ -62,6 +68,8 @@
       <HintPath>..\packages\QRCoder.1.4.1\lib\net40\QRCoder.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -146,6 +154,10 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\commissions\configrules.js" />
+    <Content Include="js\app\commissions\commissions.min.js">
+      <DependentUpon>configrules.js</DependentUpon>
+    </Content>
     <Content Include="js\app\config\days_off.js" />
     <Content Include="js\app\config\calendars.min.js">
       <DependentUpon>calendars.js</DependentUpon>
@@ -270,6 +282,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Commissions\ConfigRules.aspx" />
     <Content Include="pages\Customers\CustomerHistory.aspx" />
     <Content Include="pages\Loans\CreditIncreaseRequest.aspx" />
     <Content Include="pages\Loans\Payments.aspx" />
@@ -1182,6 +1195,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Commissions\ConfigRules.aspx.cs">
+      <DependentUpon>ConfigRules.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Commissions\ConfigRules.aspx.designer.cs">
+      <DependentUpon>ConfigRules.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Customers\CustomerHistory.aspx.cs">
       <DependentUpon>CustomerHistory.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1571,9 +1591,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DAL\" />
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
-    <Folder Include="pages\Request\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
@@ -1581,6 +1601,7 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -9,4 +9,7 @@
   <parameter name="sendaquetzal.gear.host-Web.config Connection String" description="sendaquetzal.gear.host Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=SQ22@v1" tags="SqlConnectionString">
     <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sendaquetzal.gear.host']/@connectionString" />
   </parameter>
+  <parameter name="sistemacobranzasEntities-Web.config Connection String" description="sistemacobranzasEntities Connection String used in web.config by the application to access the database." defaultValue="metadata=res://*/ReglaEvaluacion.csdl|res://*/ReglaEvaluacion.ssdl|res://*/ReglaEvaluacion.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=den1.mssql7.gear.host;initial catalog=sistemacobranzas;persist security info=True;user id=sistemacobranzas;pwd=SQ22@v1; MultipleActiveResultSets=True;App=EntityFramework&quot;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sistemacobranzasEntities']/@connectionString" />
+  </parameter>
 </parameters>

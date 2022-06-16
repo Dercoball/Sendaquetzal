@@ -1,0 +1,745 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="sistemacobranzasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="abono_pago">
+    <Key>
+      <PropertyRef Name="id_abono_pago" />
+    </Key>
+    <Property Name="id_abono_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_pago" Type="int" />
+    <Property Name="monto" Type="float" />
+    <Property Name="fecha" Type="date" />
+    <Property Name="id_usuario" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6013: The table/view 'sistemacobranzas.dbo.bitacora_login' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="bitacora_login">
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="fecha_hora" Type="datetime" />
+          <Property Name="comentario" Type="varchar" MaxLength="300" />
+          <Property Name="ip" Type="varchar" MaxLength="25" />
+          <Property Name="browser" Type="varchar" MaxLength="25" />
+        </EntityType>-->
+  <EntityType Name="calendario">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="200" />
+    <Property Name="fecha" Type="date" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="categoria">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="200" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="cliente">
+    <Key>
+      <PropertyRef Name="id_cliente" />
+    </Key>
+    <Property Name="id_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="curp" Type="varchar" MaxLength="100" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="primer_apellido" Type="varchar" MaxLength="100" />
+    <Property Name="segundo_apellido" Type="varchar" MaxLength="100" />
+    <Property Name="ocupacion" Type="varchar" MaxLength="200" />
+    <Property Name="telefono" Type="varchar" MaxLength="100" />
+    <Property Name="id_tipo_cliente" Type="int" />
+    <Property Name="curp_aval" Type="varchar" MaxLength="100" />
+    <Property Name="nombre_aval" Type="varchar" MaxLength="100" />
+    <Property Name="primer_apellido_aval" Type="varchar" MaxLength="100" />
+    <Property Name="segundo_apellido_aval" Type="varchar" MaxLength="100" />
+    <Property Name="ocupacion_aval" Type="varchar" MaxLength="200" />
+    <Property Name="telefono_aval" Type="varchar" MaxLength="100" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="id_status_cliente" Type="int" />
+    <Property Name="nota_fotografia" Type="varchar" MaxLength="500" />
+    <Property Name="nota_fotografia_aval" Type="varchar" MaxLength="500" />
+  </EntityType>
+  <EntityType Name="comision">
+    <Key>
+      <PropertyRef Name="id_comision" />
+    </Key>
+    <Property Name="id_comision" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_modulo" Type="int" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="porcentaje" Type="float" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="configuracion">
+    <Key>
+      <PropertyRef Name="id_configuracion" />
+    </Key>
+    <Property Name="id_configuracion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="descripcion" Type="varchar" MaxLength="250" />
+    <Property Name="eliminado" Type="bit" />
+    <Property Name="id_usuario" Type="int" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="fecha_ultima_modificacion" Type="datetime" />
+    <Property Name="valor" Type="float" />
+    <Property Name="ValorCadena" Type="varchar" MaxLength="250" />
+  </EntityType>
+  <EntityType Name="dias_paro">
+    <Key>
+      <PropertyRef Name="id_dias_paro" />
+    </Key>
+    <Property Name="id_dias_paro" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nota" Type="varchar" MaxLength="100" />
+    <Property Name="fecha_inicio" Type="date" />
+    <Property Name="fecha_fin" Type="date" />
+    <Property Name="id_tipo_paro" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="direccion">
+    <Key>
+      <PropertyRef Name="id_direccion" />
+    </Key>
+    <Property Name="id_direccion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_empleado" Type="int" />
+    <Property Name="id_aval" Type="int" />
+    <Property Name="calleyno" Type="varchar" MaxLength="100" />
+    <Property Name="colonia" Type="varchar" MaxLength="100" />
+    <Property Name="municipio" Type="varchar" MaxLength="100" />
+    <Property Name="estado" Type="varchar" MaxLength="100" />
+    <Property Name="telefono" Type="varchar" MaxLength="50" />
+    <Property Name="codigo_postal" Type="varchar" MaxLength="50" />
+    <Property Name="id_municipio" Type="int" />
+    <Property Name="id_estado" Type="int" />
+    <Property Name="activo" Type="int" />
+    <Property Name="aval" Type="int" />
+    <Property Name="direccion_trabajo" Type="varchar" MaxLength="250" />
+    <Property Name="id_cliente" Type="int" />
+    <Property Name="ubicacion" Type="varchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="documento">
+    <Key>
+      <PropertyRef Name="id_documento_colaborador" />
+    </Key>
+    <Property Name="id_documento_colaborador" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="250" />
+    <Property Name="id_tipo_documento" Type="int" />
+    <Property Name="contenido" Type="varchar(max)" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="id_empleado" Type="int" />
+    <Property Name="id_aval" Type="int" />
+    <Property Name="url" Type="varchar" MaxLength="150" />
+    <Property Name="fecha_ingreso" Type="date" />
+    <Property Name="id_cliente" Type="int" />
+    <Property Name="extension" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.empleado' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="empleado">
+    <Key>
+      <PropertyRef Name="id_empleado" />
+    </Key>
+    <Property Name="id_empleado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_tipo_usuario" Type="int" />
+    <Property Name="id_comision_inicial" Type="int" />
+    <Property Name="id_posicion" Type="int" />
+    <Property Name="id_plaza" Type="int" />
+    <Property Name="curp" Type="varchar" MaxLength="20" />
+    <Property Name="email" Type="varchar" MaxLength="50" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="primer_apellido" Type="varchar" MaxLength="100" />
+    <Property Name="segundo_apellido" Type="varchar" MaxLength="100" />
+    <Property Name="telefono" Type="varchar" MaxLength="50" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="fecha_nacimiento" Type="date" />
+    <Property Name="activo" Type="int" />
+    <Property Name="id_supervisor" Type="int" />
+    <Property Name="id_ejecutivo" Type="int" />
+    <Property Name="fecha_ingreso" Type="date" />
+    <Property Name="nombre_aval" Type="varchar" MaxLength="100" />
+    <Property Name="primer_apellido_aval" Type="varchar" MaxLength="100" />
+    <Property Name="segundo_apellido_aval" Type="varchar" MaxLength="100" />
+    <Property Name="curp_aval" Type="varchar" MaxLength="100" />
+    <Property Name="telefono_aval" Type="varchar" MaxLength="50" />
+    <Property Name="monto_limite_inicial" Type="float" />
+    <Property Name="id_coordinador" Type="int" />
+  </EntityType>
+  <EntityType Name="forma_pago">
+    <Key>
+      <PropertyRef Name="id_forma_pago" />
+    </Key>
+    <Property Name="id_forma_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="250" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.frecuencia_envio_mensaje' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="frecuencia_envio_mensaje">
+    <Key>
+      <PropertyRef Name="id_frecuencia_envio_mensaje" />
+    </Key>
+    <Property Name="id_frecuencia_envio_mensaje" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="garantia_prestamo">
+    <Key>
+      <PropertyRef Name="id_garantia_prestamo" />
+    </Key>
+    <Property Name="id_garantia_prestamo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_prestamo" Type="int" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="numero_serie" Type="varchar" MaxLength="100" />
+    <Property Name="costo" Type="float" />
+    <Property Name="fotografia" Type="varchar(max)" />
+    <Property Name="fecha_registro" Type="datetime" />
+    <Property Name="aval" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="historial_cliente">
+    <Key>
+      <PropertyRef Name="id_historial_cliente" />
+    </Key>
+    <Property Name="id_historial_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_cliente" Type="int" />
+    <Property Name="id_semana" Type="int" />
+    <Property Name="atiempo" Type="int" />
+    <Property Name="abonado" Type="int" />
+    <Property Name="falla" Type="int" />
+  </EntityType>
+  <EntityType Name="log_cambios">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_usuario" Type="int" />
+    <Property Name="descripcion" Type="varchar" MaxLength="1500" />
+    <Property Name="fecha_hora" Type="datetime" />
+    <Property Name="modulo" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="modulo">
+    <Key>
+      <PropertyRef Name="id_modulo" />
+    </Key>
+    <Property Name="id_modulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="pago">
+    <Key>
+      <PropertyRef Name="id_pago" />
+    </Key>
+    <Property Name="id_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_prestamo" Type="int" />
+    <Property Name="monto" Type="float" />
+    <Property Name="saldo" Type="float" />
+    <Property Name="fecha" Type="date" />
+    <Property Name="id_status_pago" Type="int" />
+    <Property Name="id_usuario" Type="int" />
+    <Property Name="fecha_registro_pago" Type="date" />
+    <Property Name="numero_semana" Type="int" />
+    <Property Name="pagado" Type="float" />
+    <Property Name="semana_extra" Type="int" />
+  </EntityType>
+  <EntityType Name="periodo">
+    <Key>
+      <PropertyRef Name="id_periodo" />
+    </Key>
+    <Property Name="id_periodo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="valor_periodo" Type="int" />
+  </EntityType>
+  <EntityType Name="permisos">
+    <Key>
+      <PropertyRef Name="id_permiso" />
+    </Key>
+    <Property Name="id_permiso" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="200" />
+    <Property Name="tipo_permiso" Type="int" />
+    <Property Name="activo" Type="bit" />
+    <Property Name="nombre_interno" Type="varchar" MaxLength="200" />
+    <Property Name="nombre_recurso" Type="varchar" MaxLength="100" />
+    <Property Name="id_tipo_usuario" Type="int" />
+  </EntityType>
+  <EntityType Name="permisos_tipo_usuario">
+    <Key>
+      <PropertyRef Name="id_tipo_usuario" />
+      <PropertyRef Name="id_permiso" />
+    </Key>
+    <Property Name="id_tipo_usuario" Type="int" Nullable="false" />
+    <Property Name="id_permiso" Type="int" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6013: The table/view 'sistemacobranzas.dbo.permisos_usuario' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="permisos_usuario">
+          <Property Name="id_permiso" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+        </EntityType>-->
+  <EntityType Name="plantilla">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="contenido" Type="text" />
+    <Property Name="id_tipo_plantilla" Type="int" />
+    <Property Name="id_frecuencia_envio_mensaje" Type="int" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="plaza">
+    <Key>
+      <PropertyRef Name="id_plaza" />
+    </Key>
+    <Property Name="id_plaza" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.posicion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="posicion">
+    <Key>
+      <PropertyRef Name="id_posicion" />
+    </Key>
+    <Property Name="id_posicion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="prestamo">
+    <Key>
+      <PropertyRef Name="id_prestamo" />
+    </Key>
+    <Property Name="id_prestamo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="fecha_solicitud" Type="date" />
+    <Property Name="monto" Type="float" />
+    <Property Name="id_status_prestamo" Type="int" />
+    <Property Name="id_cliente" Type="int" />
+    <Property Name="id_usuario" Type="int" />
+    <Property Name="notas_generales" Type="varchar" MaxLength="500" />
+    <Property Name="id_empleado" Type="int" />
+    <Property Name="activo" Type="int" />
+  </EntityType>
+  <EntityType Name="regla_evaluacion_modulo">
+    <Key>
+      <PropertyRef Name="id_regla_evaluacion_modulo" />
+    </Key>
+    <Property Name="id_regla_evaluacion_modulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="descripcion" Type="varchar" MaxLength="150" />
+    <Property Name="ponderacion" Type="int" />
+    <Property Name="id_comision" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="relacion_prestamo_aprobacion">
+    <Key>
+      <PropertyRef Name="id_historial_aprobacion" />
+    </Key>
+    <Property Name="id_historial_aprobacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_prestamo" Type="int" />
+    <Property Name="id_usuario" Type="int" />
+    <Property Name="id_empleado" Type="int" />
+    <Property Name="fecha" Type="datetime" />
+    <Property Name="id_supervisor" Type="int" />
+    <Property Name="id_ejecutivo" Type="int" />
+    <Property Name="notas_aval" Type="varchar" MaxLength="500" />
+    <Property Name="notas_cliente" Type="varchar" MaxLength="500" />
+    <Property Name="id_posicion" Type="int" />
+    <Property Name="status_aprobacion" Type="varchar" MaxLength="50" />
+    <Property Name="notas_generales" Type="varchar" MaxLength="500" />
+  </EntityType>
+  <EntityType Name="solicitud_aumento_credito">
+    <Key>
+      <PropertyRef Name="id_solicitud_aumento_credito" />
+    </Key>
+    <Property Name="id_solicitud_aumento_credito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_prestamo" Type="int" />
+    <Property Name="id_usuario" Type="int" />
+    <Property Name="fecha" Type="datetime" />
+    <Property Name="id_director" Type="int" />
+    <Property Name="id_status_solicitud_aumento_credito" Type="int" />
+  </EntityType>
+  <EntityType Name="status_cliente">
+    <Key>
+      <PropertyRef Name="id_status_cliente" />
+    </Key>
+    <Property Name="id_status_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="status_pago">
+    <Key>
+      <PropertyRef Name="id_status_pago" />
+    </Key>
+    <Property Name="id_status_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="250" />
+    <Property Name="color" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="status_prestamo">
+    <Key>
+      <PropertyRef Name="id_status_prestamo" />
+    </Key>
+    <Property Name="id_status_prestamo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+    <Property Name="color" Type="varchar" MaxLength="25" />
+  </EntityType>
+  <EntityType Name="status_solicitud_aumento_credito">
+    <Key>
+      <PropertyRef Name="id_status_solicitud_aumento_credito" />
+    </Key>
+    <Property Name="id_status_solicitud_aumento_credito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="tipo_cliente">
+    <Key>
+      <PropertyRef Name="id_tipo_cliente" />
+    </Key>
+    <Property Name="id_tipo_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="tipo_cliente" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="prestamo_inicial_maximo" Type="float" />
+    <Property Name="porcentaje_semanal" Type="float" />
+    <Property Name="semanas_a_prestar" Type="int" />
+    <Property Name="garantias_por_monto" Type="float" />
+    <Property Name="fechas_pago" Type="varchar" MaxLength="100" />
+    <Property Name="cantidad_para_renovar" Type="float" />
+    <Property Name="semana_extra" Type="int" />
+    <Property Name="eliminado" Type="int" />
+    <Property Name="fecha_pago_lunes" Type="int" />
+    <Property Name="fecha_pago_martes" Type="int" />
+    <Property Name="fecha_pago_miercoles" Type="int" />
+    <Property Name="fecha_pago_jueves" Type="int" />
+    <Property Name="fecha_pago_viernes" Type="int" />
+    <Property Name="fecha_pago_sabado" Type="int" />
+    <Property Name="fecha_pago_domingo" Type="int" />
+  </EntityType>
+  <EntityType Name="tipo_documento">
+    <Key>
+      <PropertyRef Name="id_tipo_documento" />
+    </Key>
+    <Property Name="id_tipo_documento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="tipo_paro">
+    <Key>
+      <PropertyRef Name="id_tipo_paro" />
+    </Key>
+    <Property Name="id_tipo_paro" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.tipo_plantilla' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="tipo_plantilla">
+    <Key>
+      <PropertyRef Name="id_tipo_plantilla" />
+    </Key>
+    <Property Name="id_tipo_plantilla" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="100" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <EntityType Name="usuario">
+    <Key>
+      <PropertyRef Name="id_usuario" />
+    </Key>
+    <Property Name="id_usuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_tipo_usuario" Type="int" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+    <Property Name="login" Type="varchar" MaxLength="50" />
+    <Property Name="password" Type="varchar" MaxLength="50" />
+    <Property Name="email" Type="varchar" MaxLength="50" />
+    <Property Name="telefono" Type="varchar" MaxLength="50" />
+    <Property Name="eliminado" Type="bit" />
+    <Property Name="id_empleado" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.web_acercade' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="web_acercade">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="info" Type="text" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.web_politicas_privacidad' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="web_politicas_privacidad">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="info" Type="text" />
+  </EntityType>
+  <EntityType Name="web_pregunta_frecuente">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pregunta" Type="varchar" MaxLength="250" />
+    <Property Name="respuesta" Type="varchar" MaxLength="500" />
+    <Property Name="ultima_modificacion" Type="datetime" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.web_terminos_condiciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="web_terminos_condiciones">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="info" Type="text" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'sistemacobranzas.dbo.web_tutorial' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="web_tutorial">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="titulo" Type="varchar" MaxLength="100" />
+    <Property Name="url_video" Type="varchar" MaxLength="250" />
+    <Property Name="activo" Type="int" />
+    <Property Name="eliminado" Type="int" />
+  </EntityType>
+  <Association Name="cliente_FK">
+    <End Role="tipo_cliente" Type="Self.tipo_cliente" Multiplicity="0..1" />
+    <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tipo_cliente">
+        <PropertyRef Name="id_tipo_cliente" />
+      </Principal>
+      <Dependent Role="cliente">
+        <PropertyRef Name="id_tipo_cliente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="comision_FK">
+    <End Role="modulo" Type="Self.modulo" Multiplicity="0..1" />
+    <End Role="comision" Type="Self.comision" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="modulo">
+        <PropertyRef Name="id_modulo" />
+      </Principal>
+      <Dependent Role="comision">
+        <PropertyRef Name="id_modulo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="dias_paro_FK">
+    <End Role="tipo_paro" Type="Self.tipo_paro" Multiplicity="0..1" />
+    <End Role="dias_paro" Type="Self.dias_paro" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tipo_paro">
+        <PropertyRef Name="id_tipo_paro" />
+      </Principal>
+      <Dependent Role="dias_paro">
+        <PropertyRef Name="id_tipo_paro" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <!--Errors Found During Generation:
+error 6004: The table 'sistemacobranzas.dbo.permisos_usuario' is referenced by a relationship, but cannot be found.
+        <Association Name="FK_permisosusuario_permisos" />-->
+  <!--Errors Found During Generation:
+error 6004: The table 'sistemacobranzas.dbo.permisos_usuario' is referenced by a relationship, but cannot be found.
+        <Association Name="FK_permisosusuario_usuario" />-->
+  <Association Name="prestamo_FK">
+    <End Role="cliente" Type="Self.cliente" Multiplicity="0..1" />
+    <End Role="prestamo" Type="Self.prestamo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="cliente">
+        <PropertyRef Name="id_cliente" />
+      </Principal>
+      <Dependent Role="prestamo">
+        <PropertyRef Name="id_cliente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="prestamo_statusprestamoFK">
+    <End Role="status_prestamo" Type="Self.status_prestamo" Multiplicity="0..1" />
+    <End Role="prestamo" Type="Self.prestamo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="status_prestamo">
+        <PropertyRef Name="id_status_prestamo" />
+      </Principal>
+      <Dependent Role="prestamo">
+        <PropertyRef Name="id_status_prestamo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="solicitudaumentocredito_prestamo_FK">
+    <End Role="prestamo" Type="Self.prestamo" Multiplicity="0..1" />
+    <End Role="solicitud_aumento_credito" Type="Self.solicitud_aumento_credito" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="prestamo">
+        <PropertyRef Name="id_prestamo" />
+      </Principal>
+      <Dependent Role="solicitud_aumento_credito">
+        <PropertyRef Name="id_prestamo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="solicitudaumentocredito_status_FK">
+    <End Role="status_solicitud_aumento_credito" Type="Self.status_solicitud_aumento_credito" Multiplicity="0..1" />
+    <End Role="solicitud_aumento_credito" Type="Self.solicitud_aumento_credito" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="status_solicitud_aumento_credito">
+        <PropertyRef Name="id_status_solicitud_aumento_credito" />
+      </Principal>
+      <Dependent Role="solicitud_aumento_credito">
+        <PropertyRef Name="id_status_solicitud_aumento_credito" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="sistemacobranzasModelStoreContainer">
+    <EntitySet Name="abono_pago" EntityType="Self.abono_pago" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="calendario" EntityType="Self.calendario" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="categoria" EntityType="Self.categoria" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="cliente" EntityType="Self.cliente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="comision" EntityType="Self.comision" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="configuracion" EntityType="Self.configuracion" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="dias_paro" EntityType="Self.dias_paro" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="direccion" EntityType="Self.direccion" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="documento" EntityType="Self.documento" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="forma_pago" EntityType="Self.forma_pago" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="garantia_prestamo" EntityType="Self.garantia_prestamo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="historial_cliente" EntityType="Self.historial_cliente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="log_cambios" EntityType="Self.log_cambios" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="modulo" EntityType="Self.modulo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="pago" EntityType="Self.pago" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="periodo" EntityType="Self.periodo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="permisos" EntityType="Self.permisos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="permisos_tipo_usuario" EntityType="Self.permisos_tipo_usuario" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="plantilla" EntityType="Self.plantilla" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="plaza" EntityType="Self.plaza" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="prestamo" EntityType="Self.prestamo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="regla_evaluacion_modulo" EntityType="Self.regla_evaluacion_modulo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="relacion_prestamo_aprobacion" EntityType="Self.relacion_prestamo_aprobacion" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="solicitud_aumento_credito" EntityType="Self.solicitud_aumento_credito" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="status_cliente" EntityType="Self.status_cliente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="status_pago" EntityType="Self.status_pago" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="status_prestamo" EntityType="Self.status_prestamo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="status_solicitud_aumento_credito" EntityType="Self.status_solicitud_aumento_credito" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tipo_cliente" EntityType="Self.tipo_cliente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tipo_documento" EntityType="Self.tipo_documento" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tipo_paro" EntityType="Self.tipo_paro" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="usuario" EntityType="Self.usuario" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="web_pregunta_frecuente" EntityType="Self.web_pregunta_frecuente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="empleado" EntityType="Self.empleado" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [empleado].[id_empleado] AS [id_empleado], 
+    [empleado].[id_tipo_usuario] AS [id_tipo_usuario], 
+    [empleado].[id_comision_inicial] AS [id_comision_inicial], 
+    [empleado].[id_posicion] AS [id_posicion], 
+    [empleado].[id_plaza] AS [id_plaza], 
+    [empleado].[curp] AS [curp], 
+    [empleado].[email] AS [email], 
+    [empleado].[nombre] AS [nombre], 
+    [empleado].[primer_apellido] AS [primer_apellido], 
+    [empleado].[segundo_apellido] AS [segundo_apellido], 
+    [empleado].[telefono] AS [telefono], 
+    [empleado].[eliminado] AS [eliminado], 
+    [empleado].[fecha_nacimiento] AS [fecha_nacimiento], 
+    [empleado].[activo] AS [activo], 
+    [empleado].[id_supervisor] AS [id_supervisor], 
+    [empleado].[id_ejecutivo] AS [id_ejecutivo], 
+    [empleado].[fecha_ingreso] AS [fecha_ingreso], 
+    [empleado].[nombre_aval] AS [nombre_aval], 
+    [empleado].[primer_apellido_aval] AS [primer_apellido_aval], 
+    [empleado].[segundo_apellido_aval] AS [segundo_apellido_aval], 
+    [empleado].[curp_aval] AS [curp_aval], 
+    [empleado].[telefono_aval] AS [telefono_aval], 
+    [empleado].[monto_limite_inicial] AS [monto_limite_inicial], 
+    [empleado].[id_coordinador] AS [id_coordinador]
+    FROM [dbo].[empleado] AS [empleado]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="frecuencia_envio_mensaje" EntityType="Self.frecuencia_envio_mensaje" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [frecuencia_envio_mensaje].[id_frecuencia_envio_mensaje] AS [id_frecuencia_envio_mensaje], 
+    [frecuencia_envio_mensaje].[nombre] AS [nombre], 
+    [frecuencia_envio_mensaje].[eliminado] AS [eliminado]
+    FROM [dbo].[frecuencia_envio_mensaje] AS [frecuencia_envio_mensaje]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="posicion" EntityType="Self.posicion" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [posicion].[id_posicion] AS [id_posicion], 
+    [posicion].[nombre] AS [nombre], 
+    [posicion].[activo] AS [activo], 
+    [posicion].[eliminado] AS [eliminado]
+    FROM [dbo].[posicion] AS [posicion]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="tipo_plantilla" EntityType="Self.tipo_plantilla" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [tipo_plantilla].[id_tipo_plantilla] AS [id_tipo_plantilla], 
+    [tipo_plantilla].[nombre] AS [nombre], 
+    [tipo_plantilla].[eliminado] AS [eliminado]
+    FROM [dbo].[tipo_plantilla] AS [tipo_plantilla]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="web_acercade" EntityType="Self.web_acercade" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [web_acercade].[id] AS [id], 
+    [web_acercade].[info] AS [info]
+    FROM [dbo].[web_acercade] AS [web_acercade]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="web_politicas_privacidad" EntityType="Self.web_politicas_privacidad" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [web_politicas_privacidad].[id] AS [id], 
+    [web_politicas_privacidad].[info] AS [info]
+    FROM [dbo].[web_politicas_privacidad] AS [web_politicas_privacidad]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="web_terminos_condiciones" EntityType="Self.web_terminos_condiciones" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [web_terminos_condiciones].[id] AS [id], 
+    [web_terminos_condiciones].[info] AS [info]
+    FROM [dbo].[web_terminos_condiciones] AS [web_terminos_condiciones]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="web_tutorial" EntityType="Self.web_tutorial" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [web_tutorial].[id] AS [id], 
+    [web_tutorial].[titulo] AS [titulo], 
+    [web_tutorial].[url_video] AS [url_video], 
+    [web_tutorial].[activo] AS [activo], 
+    [web_tutorial].[eliminado] AS [eliminado]
+    FROM [dbo].[web_tutorial] AS [web_tutorial]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="cliente_FK" Association="Self.cliente_FK">
+      <End Role="tipo_cliente" EntitySet="tipo_cliente" />
+      <End Role="cliente" EntitySet="cliente" />
+    </AssociationSet>
+    <AssociationSet Name="comision_FK" Association="Self.comision_FK">
+      <End Role="modulo" EntitySet="modulo" />
+      <End Role="comision" EntitySet="comision" />
+    </AssociationSet>
+    <AssociationSet Name="dias_paro_FK" Association="Self.dias_paro_FK">
+      <End Role="tipo_paro" EntitySet="tipo_paro" />
+      <End Role="dias_paro" EntitySet="dias_paro" />
+    </AssociationSet>
+    <AssociationSet Name="prestamo_FK" Association="Self.prestamo_FK">
+      <End Role="cliente" EntitySet="cliente" />
+      <End Role="prestamo" EntitySet="prestamo" />
+    </AssociationSet>
+    <AssociationSet Name="prestamo_statusprestamoFK" Association="Self.prestamo_statusprestamoFK">
+      <End Role="status_prestamo" EntitySet="status_prestamo" />
+      <End Role="prestamo" EntitySet="prestamo" />
+    </AssociationSet>
+    <AssociationSet Name="solicitudaumentocredito_prestamo_FK" Association="Self.solicitudaumentocredito_prestamo_FK">
+      <End Role="prestamo" EntitySet="prestamo" />
+      <End Role="solicitud_aumento_credito" EntitySet="solicitud_aumento_credito" />
+    </AssociationSet>
+    <AssociationSet Name="solicitudaumentocredito_status_FK" Association="Self.solicitudaumentocredito_status_FK">
+      <End Role="status_solicitud_aumento_credito" EntitySet="status_solicitud_aumento_credito" />
+      <End Role="solicitud_aumento_credito" EntitySet="solicitud_aumento_credito" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

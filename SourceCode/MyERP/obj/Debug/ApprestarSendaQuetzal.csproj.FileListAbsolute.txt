@@ -60,3 +60,7 @@ C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\bin\Microsoft.CodeDo
 C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\obj\Debug\ApprestarSendaQuetzal.csproj.CopyComplete
 C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\obj\Debug\ApprestarSendaQuetzal.dll
 C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\obj\Debug\ApprestarSendaQuetzal.pdb
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\bin\EntityFramework.dll
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\bin\EntityFramework.SqlServer.dll
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\bin\EntityFramework.xml
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\MyERP\bin\EntityFramework.SqlServer.xml

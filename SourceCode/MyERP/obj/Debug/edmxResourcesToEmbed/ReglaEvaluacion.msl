@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="sistemacobranzasModelStoreContainer" CdmEntityContainer="sistemacobranzasEntities">
+    <EntitySetMapping Name="regla_evaluacion_modulo">
+      <EntityTypeMapping TypeName="sistemacobranzasModel.regla_evaluacion_modulo">
+        <MappingFragment StoreEntitySet="regla_evaluacion_modulo">
+          <ScalarProperty Name="id_regla_evaluacion_modulo" ColumnName="id_regla_evaluacion_modulo" />
+          <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+          <ScalarProperty Name="ponderacion" ColumnName="ponderacion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

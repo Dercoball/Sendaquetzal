@@ -32,6 +32,23 @@
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
 </head>
 
 
@@ -181,7 +198,7 @@
 
 
 
-          
+
 
             </div>
 
@@ -240,8 +257,10 @@
 
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <%--<script src="../../js/front.js"></script>--%>
 
     <!-- DataTables JavaScript -->
     <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
@@ -260,7 +279,7 @@
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/loansindex.js"></script>
-  
+
     <script src="../../js/app/general.js"></script>
 
 

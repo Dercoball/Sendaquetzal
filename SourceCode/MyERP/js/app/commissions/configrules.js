@@ -6,23 +6,25 @@ let pagina = '17';
 
 
 
-const comission = {
+const configComissions = {
 
 
     init: () => {
 
+        $('.secciones').hide();
         $('#panelTabla').show();
-        $('#panelForm').hide();
 
-        comission.idSeleccionado = -1;
-        comission.accion = '';
+        configComissions.idReglaSeleccionada = -1;
+        configComissions.accion = '';
+        configComissions.idComision = -1;
+        configComissions.NombreComision = '';
 
-        comission.loadContent();
-        
+        configComissions.loadItems();
+
 
     },
 
-    loadContent() {
+    loadItems() {
 
         let params = {};
         params.path = window.location.hostname;
@@ -31,7 +33,7 @@ const comission = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Commissions/ConfigRules.aspx/GetItems",
+            url: "../../pages/Commissions/ConfigRules.aspx/GetItemsCommissions",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -45,43 +47,34 @@ const comission = {
                     window.location = "../../pages/Index.aspx";
                 }
 
-                //let table = $('#table').DataTable({
-                //    "destroy": true,
-                //    "processing": true,
-                //    "order": [],
-                //    data: data,
-                //    columns: [
+                let table = $('#table').DataTable({
+                    "destroy": true,
+                    "processing": true,
+                    "order": [],
+                    data: data,
+                    columns: [
+                        { data: 'Nombre' },
+                        { data: 'Accion' }
 
-                //        { data: 'IdComision' },
-                //        { data: 'Nombre' },
-                //        { data: 'Porcentaje' },
-                //        { data: 'ActivoStr' },
-                //        { data: 'Accion' }
 
-                        
-                //    ],
-                //    "language": textosEsp,
-                //    "columnDefs": [
-                //        {
-                //            "targets": [-1],
-                //            "orderable": false
-                //        },
-                //    ],
-                //    dom: 'frBtipl',
-                //    buttons: [
-                //        {
-                //            extend: 'excelHtml5',
-                //            title: descargas,
-                //            text: 'Xls', className: 'excelbtn'
-                //        },
-                //        {
-                //            extend: 'pdfHtml5',
-                //            title: descargas,
-                //            text: 'Pdf', className: 'pdfbtn'
-                //        }
-                //    ]
+                    ],
+                    "language": textosEsp,
+                    "columnDefs": [
+                        {
+                            "targets": [-1],
+                            "orderable": false
+                        },
+                    ],
+                    dom: 'frBtipl',
+                    buttons: [
+                        {
+                            extend: 'csvHtml5',
+                            title: descargas,
+                            text: '&nbsp;Csv', className: 'csvbtn'
+                        },
+                    ]
 
-                //});
+                });
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -96,9 +89,80 @@ const comission = {
 
     },
 
-    delete: (id) => {
 
-        comission.idSeleccionado = id;
+
+
+    open(idComision, nombreComision) {
+
+        //console.log(`idComision ${idComision}`);
+        configComissions.idComision = idComision;
+        configComissions.nombreComision = nombreComision;
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idComision = idComision;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Commissions/ConfigRules.aspx/GetItemsRulesByCommission",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.Descripcion}</td>`;
+                    html += `<td>${item.PonderacionStr}</td>`;
+                    html += `<td>${item.Accion}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Ponderacion;
+                });
+
+                html += `<tr>`;
+                html += `<th>Total</th>`;
+                html += `<th>${total}%</th>`;
+                html += `<th></th>`;
+                html += `</tr>`;
+
+                $('#tableReglas tbody').empty().append(html);
+
+
+
+                $('#nombreComision').html(configComissions.nombreComision);
+
+                $('.secciones').hide();
+                $('#panelTablaReglas').show();
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+    deleteRule: (id) => {
+
+        configComissions.idReglaSeleccionada = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -130,7 +194,7 @@ const comission = {
             success: function (msg) {
 
                 let item = msg.d;
-                comission.idSeleccionado = item.IdComision;
+                configComissions.idSeleccionado = item.IdComision;
 
                 $('#txtNombre').val(item.Nombre);
 
@@ -139,11 +203,11 @@ const comission = {
 
                 $('#chkActivo').prop('checked', item.Activo === 1);
 
-                $('#panelTabla').hide();
-                $('#panelForm').show();
+                $('.secciones').hide();
+                $('#panelTabla').show();
 
 
-                comission.accion = "editar";
+                configComissions.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -166,12 +230,14 @@ const comission = {
         $('#spnTituloForm').text('Nuevo');
 
 
+        $('#txtComision').val(configComissions.nombreComision);
 
 
-        $('#panelTabla').hide();
+        $('.secciones').hide();
         $('#panelForm').show();
-        comission.accion = "nuevo";
-        comission.idSeleccionado = -1;
+
+        configComissions.accion = "nuevo";
+        configComissions.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -187,7 +253,7 @@ const comission = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            comission.nuevo();
+            configComissions.nuevo();
 
         });
 
@@ -202,21 +268,22 @@ const comission = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdComision = comission.idSeleccionado;
-                item.Nombre = $('#txtNombre').val();
-                item.Porcentaje = $('#txtPorcentaje').val();
-                item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
+                item.IdReglaEvaluacionModulo = configComissions.idReglaSeleccionada;
+                item.IdComision = configComissions.idComision;
+                item.Descripcion = $('#txtNombre').val();
+                item.Ponderacion = $('#txtPonderacion').val();
+
 
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = comission.accion;
+                params.accion = configComissions.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/Commissions.aspx/Save",
+                    url: "../../pages/Commissions/ConfigRules.aspx/Save",
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -229,10 +296,11 @@ const comission = {
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
 
 
+                            $('.secciones').hide();
                             $('#panelTabla').show();
-                            $('#panelForm').hide();
 
-                            comission.loadContent();
+                            configComissions.open(configComissions.idComision, configComissions.nombreComision);
+
 
 
                         } else {
@@ -261,23 +329,31 @@ const comission = {
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
 
-            $('#panelTabla').show();
-            $('#panelForm').hide();
+            $('.secciones').hide();
+            $('#panelTablaReglas').show();
 
         });
 
+
+        $('#btnVolver').on('click', (e) => {
+            e.preventDefault();
+
+            $('.secciones').hide();
+            $('#panelTabla').show();
+
+        });
 
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = comission.idSeleccionado;
+            params.id = configComissions.idReglaSeleccionada;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Commissions.aspx/Delete",
+                url: "../../pages/Commissions/ConfigRules.aspx/DeleteRegla",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -290,7 +366,7 @@ const comission = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        comission.loadContent();
+                        configComissions.open(configComissions.idComision, configComissions.nombreComision);
 
                     } else {
 
@@ -319,9 +395,9 @@ const comission = {
 
 window.addEventListener('load', () => {
 
-    comission.init();
+    configComissions.init();
 
-    comission.accionesBotones();
+    configComissions.accionesBotones();
 
 });
 

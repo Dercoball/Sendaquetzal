@@ -37,9 +37,14 @@ namespace Plataforma.pages
         }
 
 
-
+        /// <summary>
+        /// Obtener comisiones o módulos
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="idUsuario"></param>
+        /// <returns></returns>
         [WebMethod]
-        public static List<Comision> GetItems(string path, string idUsuario)
+        public static List<Comision> GetItemsCommissions(string path, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -88,8 +93,7 @@ namespace Plataforma.pages
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                        string botones = "<button  onclick='comission.edit(" + item.IdComision + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='comission.delete(" + item.IdComision + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "<button  onclick='configComissions.open(" + item.IdComision + ", \"" + item.Nombre + "\")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Configurar</button>";
 
                         item.Accion = botones;
 
@@ -118,28 +122,105 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static Comision GetItem(string path, string id)
+        public static List<ReglaEvaluacionModulo> GetItemsRulesByCommission(string path, string idUsuario, string idComision)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            Comision item = new Comision();
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<ReglaEvaluacionModulo> items = new List<ReglaEvaluacionModulo>();
+
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT r.id_regla_evaluacion_modulo, r.descripcion, IsNull(r.ponderacion, 0) ponderacion, 
+                                    IsNull(r.id_comision, 0) id_comision, c.nombre
+                                    FROM regla_evaluacion_modulo r
+                                    JOIN comision c ON (c.id_comision = r.id_comision)
+                                    WHERE r.id_comision = @id_comision ";
+
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_comision", idComision);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        ReglaEvaluacionModulo item = new ReglaEvaluacionModulo();
+                        item.IdReglaEvaluacionModulo = int.Parse(ds.Tables[0].Rows[i]["id_regla_evaluacion_modulo"].ToString());
+                        item.Ponderacion = int.Parse(ds.Tables[0].Rows[i]["ponderacion"].ToString());
+                        item.PonderacionStr = item.Ponderacion + "%";
+                        item.Descripcion = (ds.Tables[0].Rows[i]["descripcion"].ToString());
+                        item.NombreComision = (ds.Tables[0].Rows[i]["nombre"].ToString());
+
+                        string botones = "";
+                        botones += "<button  onclick='configComissions.deleteRule(" + item.IdReglaEvaluacionModulo + ")'   class='btn btn-outline-primary btn-sm ml-1'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+
+                        item.Accion = botones;
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        [WebMethod]
+        public static ReglaEvaluacionModulo GetItem(string path, string id)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            ReglaEvaluacionModulo item = new ReglaEvaluacionModulo();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , c.nombre 
-                         FROM comision c                          
-                         WHERE 
-                         c.id_comision = @id ";
+                string query = @"  SELECT r.id_regla_evaluacion_modulo, r.descripcion, IsNull(r.ponderacion, 0) ponderacion, 
+                                    IsNull(r.id_comision, 0) id_comision, c.nombre
+                                    FROM regla_evaluacion_modulo r
+                                    WHERE r.id_regla_evaluacion_modulo = @id_regla_evaluacion_modulo ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_comision =  " + id);
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id", id);
+                adp.SelectCommand.Parameters.AddWithValue("@id_regla_evaluacion_modulo", id);
 
                 adp.Fill(ds);
 
@@ -148,14 +229,13 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item = new Comision();
+                        item = new ReglaEvaluacionModulo();
 
-                        item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
-                        item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.IdReglaEvaluacionModulo = int.Parse(ds.Tables[0].Rows[i]["id_regla_evaluacion_modulo"].ToString());
+                        item.Ponderacion = int.Parse(ds.Tables[0].Rows[i]["ponderacion"].ToString());
+                        item.Descripcion = (ds.Tables[0].Rows[i]["descripcion"].ToString());
+                        item.NombreComision = (ds.Tables[0].Rows[i]["nombre"].ToString());
 
-
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
 
                     }
@@ -180,7 +260,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static object Save(string path, Comision item, string accion, string idUsuario)
+        public static object Save(string path, ReglaEvaluacionModulo item, string accion, string idUsuario)
         {
 
             // verificar que tenga permisos para usar esta pagina
@@ -201,17 +281,17 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO comision(nombre, activo, eliminado, porcentaje) 
-                    VALUES (@nombre, @activo, 0, @porcentaje) ";
+                    sql = @" INSERT INTO regla_evaluacion_modulo(descripcion, id_comision, ponderacion) 
+                    VALUES (@descripcion, @id_comision, @ponderacion) ";
                 }
                 else
                 {
-                    sql = @" UPDATE comision
-                          SET nombre = @nombre,
-                              activo = @activo,
-                              porcentaje = @porcentaje
+                    sql = @" UPDATE regla_evaluacion_modulo
+                          SET descripcion = @descripcion,
+                              id_comision = @id_comision,
+                              ponderacion = @ponderacion
                           WHERE 
-                              id_comision = @id";
+                              id_regla_evaluacion_modulo = @id";
 
                 }
 
@@ -221,10 +301,10 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@porcentaje", item.Porcentaje);
-                cmd.Parameters.AddWithValue("@activo", item.Activo);
-                cmd.Parameters.AddWithValue("@id", item.IdComision);
+                cmd.Parameters.AddWithValue("@descripcion", item.Descripcion);
+                cmd.Parameters.AddWithValue("@ponderacion", item.Ponderacion);
+                cmd.Parameters.AddWithValue("@id_comision", item.IdComision);
+                cmd.Parameters.AddWithValue("@id", item.IdReglaEvaluacionModulo);
 
 
                 int r = cmd.ExecuteNonQuery();
@@ -238,7 +318,7 @@ namespace Plataforma.pages
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return -1; //Retornamos menos uno cuando se dió por alguna razón un error
+                return -1; 
             }
 
             finally
@@ -253,7 +333,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida Delete(string path, string id, string idUsuario)
+        public static DatosSalida DeleteRegla(string path, string id, string idUsuario)
         {
 
 
@@ -285,8 +365,8 @@ namespace Plataforma.pages
 
                 conn.Open();
 
-                string sql = @" UPDATE comision SET eliminado = 1  
-                                        WHERE id_comision = @id ";
+                string sql = @" DELETE FROM regla_evaluacion_modulo 
+                                        WHERE id_regla_evaluacion_modulo = @id ";
 
                 Utils.Log("\n-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");

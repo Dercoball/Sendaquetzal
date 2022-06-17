@@ -32,6 +32,22 @@
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -99,10 +115,10 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Reglas de evaluación</h1>
+                    <h1 class="h3 display">Configuración de reglas de evaluación</h1>
                 </header>
 
-                <div id="panelTabla">
+                <div id="panelTabla" class="secciones">
                     <div class="table-responsive">
 
                         <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
@@ -110,11 +126,33 @@
 
                             <thead>
                                 <tr>
-                                    <th>No.</th>
                                     <th>Nombre</th>
-                                    <th>Porcentaje</th>
-                                    <th>Activo</th>
+                                    <th></th>
 
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+                <div id="panelTablaReglas" class="secciones">
+
+                    <header>
+                        <span class="h3 display" id="nombreComision"></span>
+                    </header>
+
+                    <div class="table-responsive">
+
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="tableReglas">
+
+
+                            <thead>
+                                <tr>
+                                    <th>Regla</th>
+                                    <th>Ponderación</th>
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
                                     </th>
@@ -125,12 +163,21 @@
                         </table>
 
                     </div>
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-left">
+                            <button id="btnVolver" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver al listado principal</button>
+                        </div>
+
+
+                    </div>
+
+
                 </div>
 
 
-
-
-                <div id="panelForm">
+                <div id="panelForm" class="secciones">
 
                     <div class="modal-body form">
                         <form role="form" id="frm" name="frm">
@@ -141,50 +188,39 @@
                                 </h3>
                                 <hr />
 
-
-
-
-
                                 <div class="row">
 
-
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNombre">
-                                            Nombre
+                                    <div class="form-group col-md-12">
+                                        <label for="txtComision">
+                                            Comisión/módulo
                                         </label>
-                                        <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
+                                        <input type="text" class="form-control" id="txtComision" disabled="disabled" />
                                     </div>
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtPorcentaje">
-                                            Porcentaje  
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtPorcentaje" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
                                 </div>
-
 
                                 <div class="row">
 
                                     <div class="form-group col-md-12">
-                                        <div class="form-check ml-2">
-                                            <input id="chkActivo" class="form-check-input" type="checkbox" />
-                                            <label for="chkActivo" class="form-check-label">Activo</label>
-                                        </div>
+                                        <label for="txtNombre">
+                                            Regla
+                                        </label>
+                                        <textarea class="form-control" id="txtNombre" required="required" data-required-error='Requerido'></textarea>
+                                        <div class="help-block with-errors"></div>
                                     </div>
                                 </div>
 
 
+                                <div class="row">
 
+                                    <div class="form-group col-md-4">
+                                        <label for="txtPonderacion">
+                                            Ponderación
+                                        </label>
+                                        <input type="number" class="form-control" id="txtPonderacion" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
 
-
-
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -194,7 +230,7 @@
                     <div class="row mt-3 mb-3">
 
                         <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver al listado de reglas</button>
                         </div>
 
                         <div class=" col-md-6 text-right">
@@ -204,7 +240,6 @@
                     </div>
 
                 </div>
-
             </div>
 
         </section>
@@ -296,9 +331,14 @@
 
 
 
-    <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+
 
 
     <!-- DataTables JavaScript -->
@@ -316,15 +356,13 @@
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
 
-    <script src="../../js/front.js"></script>
-
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/commissions/configrules.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->
-    <link href="../../css/toastr.min.css" rel="stylesheet"/>
+    <link href="../../css/toastr.min.css" rel="stylesheet" />
     <script src="../../js/toastr.min.js"></script>
 
 </body>

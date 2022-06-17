@@ -5,23 +5,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
 
 
-    <link rel="shortcut icon" href="../img/sq.jpg">
+    <link rel="shortcut icon" href="../img/sq.jpg"/>
 
 
 
 
-    <link rel="stylesheet" href="../css/custom.css">
-    <link rel="stylesheet" href="../css/app/bootstrap.css">
-    <link rel="stylesheet" href="../css/app/spinelli.css">
+    <link rel="stylesheet" href="../css/custom.css"/>
+    <link rel="stylesheet" href="../css/app/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/app/spinelli.css"/>
 
 
     <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -29,7 +29,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <meta name="theme-color" content="#7952b3">
+    <meta name="theme-color" content="#7952b3"/>
 
 
 

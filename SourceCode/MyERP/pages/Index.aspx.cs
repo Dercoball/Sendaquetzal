@@ -289,7 +289,7 @@ namespace Plataforma.pages
 
 
 
-            nav += GenerateMenu(new List<string> { "2", "3", "4", "5", "6", }, pagina, listaPermisos, "fa fa-dollar", "Web",
+            nav += GenerateMenu(new List<string> { "2", "3", "4", "5", "6", }, pagina, listaPermisos, "fa fa-internet-explorer", "Web",
                PermisoUsuario.TIPO_PERMISO_WEB, "Web");
 
 

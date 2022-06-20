@@ -129,6 +129,8 @@ $(document).ready(function () {
 
                     $('#side-main-menu').html(elementosInterfaz.BarraLateral);
 
+                    $('#paginaName').html(elementosInterfaz.NombrePagina);
+
                 });
 
 

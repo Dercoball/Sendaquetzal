@@ -62,12 +62,13 @@ namespace Plataforma.pages
                 {
                     conn.Open();
                     DataSet ds = new DataSet();
-                    string query = @" SELECT id_usuario, id_tipo_usuario,  nombre, login, password, 
-                                     email, telefono, 
-                                     Isnull(id_empleado, 0) id_empleado 
-                                     FROM usuario 
-                                     WHERE login = @login and password = @password 
-                                     and IsNull(eliminado, 0) <> 1 
+                    string query = @" SELECT u.id_usuario, u.id_tipo_usuario,  u.nombre, u.login, u.password, 
+                                     u.email, u.telefono, 
+                                     Isnull(u.id_empleado, 0) id_empleado, p.pagina_entrada
+                                     FROM usuario u
+                                     JOIN posicion p ON (u.id_tipo_usuario = p.id_posicion)
+                                     WHERE u.login = @login and u.password = @password 
+                                     and IsNull(u.eliminado, 0) <> 1 
                                 ";
 
                     Utils.Log("\nMétodo-> " +
@@ -92,6 +93,7 @@ namespace Plataforma.pages
                             item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
                             item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                             item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                            item.PaginaEntrada = ds.Tables[0].Rows[i]["pagina_entrada"].ToString();
                             item.Login = ds.Tables[0].Rows[i]["login"].ToString();
                             item.Password = ds.Tables[0].Rows[i]["password"].ToString();
                             item.Email = ds.Tables[0].Rows[i]["email"].ToString();
@@ -140,17 +142,7 @@ namespace Plataforma.pages
                             Session["id_usuario"] = item.IdUsuario.ToString();
                             Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
 
-                            if (item.IdTipoUsuario == Employees.POSICION_PROMOTOR ||
-                                    item.IdTipoUsuario == Employees.POSICION_SUPERVISOR ||
-                                    item.IdTipoUsuario == Employees.POSICION_EJECUTIVO)
-                            {
-                                Response.Redirect("Loans/LoansIndex.aspx", false);
-                                //Response.Redirect("Loans/Payments.aspx");
-                            }
-                            else
-                            {
-                                Response.Redirect("Index.aspx", false);
-                            }
+                            Response.Redirect(item.PaginaEntrada, false);
 
                         }
 

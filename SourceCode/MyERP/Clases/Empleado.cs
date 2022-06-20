@@ -25,6 +25,8 @@ namespace Plataforma.Clases
         
         public String APaterno;
         public String NombreCompleto;
+        public String NombreCompletoSupervisor;
+        public String NombreCompletoEjecutivo;
         public String NombreCompletoAval;
         public String FechaIngreso;
         public String FechaNacimiento;

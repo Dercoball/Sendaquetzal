@@ -158,6 +158,7 @@
     <Content Include="js\app\commissions\commissions.min.js">
       <DependentUpon>configrules.js</DependentUpon>
     </Content>
+    <Content Include="js\app\commissions\employee_evaluation.js" />
     <Content Include="js\app\config\days_off.js" />
     <Content Include="js\app\config\calendars.min.js">
       <DependentUpon>calendars.js</DependentUpon>
@@ -283,6 +284,7 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Commissions\ConfigRules.aspx" />
+    <Content Include="pages\Commissions\EmployeeEvaluation.aspx" />
     <Content Include="pages\Customers\CustomerHistory.aspx" />
     <Content Include="pages\Loans\CreditIncreaseRequest.aspx" />
     <Content Include="pages\Loans\Payments.aspx" />
@@ -1202,6 +1204,13 @@
     </Compile>
     <Compile Include="pages\Commissions\ConfigRules.aspx.designer.cs">
       <DependentUpon>ConfigRules.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Commissions\EmployeeEvaluation.aspx.cs">
+      <DependentUpon>EmployeeEvaluation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Commissions\EmployeeEvaluation.aspx.designer.cs">
+      <DependentUpon>EmployeeEvaluation.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Customers\CustomerHistory.aspx.cs">
       <DependentUpon>CustomerHistory.aspx</DependentUpon>

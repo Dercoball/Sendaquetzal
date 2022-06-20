@@ -45,6 +45,7 @@ namespace Plataforma.pages
         {
             public string BarraLateral;
             public string BarraSuperior;
+            public string NombrePagina;
             public string Url = "";
 
 
@@ -197,6 +198,7 @@ namespace Plataforma.pages
 
             ElementosInterfaz elementos = new ElementosInterfaz();
 
+            PermisoUsuario permisoPaginaActual = null;
 
             if (idTipoUsuario == string.Empty)
             {
@@ -219,7 +221,7 @@ namespace Plataforma.pages
                     Utils.Log("Error " + ex.Message);
 
                 }
-                PermisoUsuario permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso == idPermiso);
+                permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso == idPermiso);
                 if (idPermiso == -1 || permisoPaginaActual == null)
                 {
                     //no tiene permisos para usar esta pagina
@@ -297,10 +299,10 @@ namespace Plataforma.pages
                PermisoUsuario.TIPO_PERMISO_PRESTAMOS, "Prestamos");
 
 
-            nav += GenerateMenu(new List<string>{ "17", "18" },pagina ,listaPermisos, "fa fa-percent", "Comisiones", 
+            nav += GenerateMenu(new List<string> { "17", "18" }, pagina, listaPermisos, "fa fa-percent", "Comisiones",
                 PermisoUsuario.TIPO_PERMISO_COMISIONES, "Comisiones");
 
-            nav += GenerateMenu(new List<string> { "7","8", "10", "11", "44", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración", 
+            nav += GenerateMenu(new List<string> { "7", "8", "10", "11", "44", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración",
                 PermisoUsuario.TIPO_PERMISO_CONFIGURACION, "Configuracion");
 
 
@@ -345,15 +347,19 @@ namespace Plataforma.pages
             elementos.BarraLateral = nav;
 
             elementos.BarraSuperior = barraSuperior;
+            if (permisoPaginaActual != null)
+            {
+                elementos.NombrePagina = permisoPaginaActual.NombreRecurso;
+            }
 
             return elementos;
         }
 
 
-        private static string GenerateMenu(List<string> paginasArray, string pagina, List<PermisoUsuario> 
+        private static string GenerateMenu(List<string> paginasArray, string pagina, List<PermisoUsuario>
             listaPermisos, string icono, string nombreMenu, string tipoPermiso, string nombreMenuSinACento)
         {
-            
+
             var espagia_ = paginasArray.Find(x => x == pagina);
             string active = espagia_ != null ? "class = 'active' " : "";
 
@@ -379,7 +385,7 @@ namespace Plataforma.pages
             {
 
                 nav += "<li " + active + "><a href=\"#li" + nombreMenuSinACento + "\" aria-expanded=\"false\" data-toggle=\"collapse\"> " +
-                    " <i class=\"" + icono + "\"></i>" + nombreMenu+ "</a> " +
+                    " <i class=\"" + icono + "\"></i>" + nombreMenu + "</a> " +
                 "  <ul id=\"li" + nombreMenuSinACento + "\" class=\"collapse list-unstyled\"> ";
 
 

@@ -906,7 +906,9 @@ namespace Plataforma.pages
                 DataSet ds = new DataSet();
                 string query = @" SELECT id_empleado,
                                     concat( nombre ,  ' ' , primer_apellido , ' ' ,  segundo_apellido) AS nombre_completo
-                                    FROM empleado WHERE ISNull(activo, 1) = 1  AND id_posicion = @id_posicion ";
+                                    FROM empleado WHERE ISNull(activo, 1) = 1  
+                                    AND ISNull(eliminado, 0) = 0
+                                    AND id_posicion = @id_posicion ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id_posicion", idTipoEmpleado);

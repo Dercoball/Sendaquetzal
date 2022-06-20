@@ -20,6 +20,7 @@ namespace Plataforma.Clases
         public string Accion;
         public string Msg;
         public string Token;
+        public string PaginaEntrada;
 
         public float TotalDias;
         public float Factor;

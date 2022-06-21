@@ -13,6 +13,7 @@ namespace Plataforma.Clases
         //public string Modulo;
         public string Nombre;
         public float Porcentaje;
+        public string PorcentajeStr;
         public int Activo;
         public string ActivoStr;
         public int Eliminado;

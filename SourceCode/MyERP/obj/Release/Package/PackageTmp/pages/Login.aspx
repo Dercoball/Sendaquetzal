@@ -135,7 +135,7 @@
                                 </asp:Panel>
 
                                 <div class="row text-right">
-                                    <div class="form-group col-md-12 d-flex">
+                                    <div class="col-md-12 d-flex">
                                         <asp:Button ID="Entrar" runat="server" class="btn btn-lg btn-primary"
                                             Text="Entrar" OnClick="Entrar_Click" UseSubmitBehavior="false" />
                                     </div>

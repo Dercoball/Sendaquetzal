@@ -61,6 +61,6 @@ namespace Plataforma.Clases
         public Direccion direccion;
         public Direccion direccionAval;
         public Usuario usuario;
-
+        public Comision nivelNomision;// comision o modulo
     }
 }

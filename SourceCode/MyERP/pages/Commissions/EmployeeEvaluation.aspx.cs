@@ -42,7 +42,8 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Empleado> GetListaItems(string path, string idUsuario)
+        public static List<Empleado> GetListaItems(string path, string idUsuario, string idPlaza, string idEjecutivo,
+            string idPromotor, string idSupervisor)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -58,6 +59,15 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
             List<Empleado> items = new List<Empleado>();
 
+
+            //  Filtro plaza
+            var sqlPlaza = "";
+            if (idPlaza != "" && idPlaza != "-1")
+            {
+                sqlPlaza = " AND plaza.id_plaza = '" + idPlaza + "'";
+            }
+
+
             try
             {
                 conn.Open();
@@ -66,15 +76,20 @@ namespace Plataforma.pages
                      concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_completo,
                      concat(superv.nombre ,  ' ' , superv.primer_apellido , ' ' , superv.segundo_apellido) AS nombre_completo_supervisor,
                      concat(ejec.nombre ,  ' ' , ejec.primer_apellido , ' ' , ejec.segundo_apellido) AS nombre_completo_ejecutivo,
-                     FORMAT(e.fecha_ingreso, 'dd/MM/yyyy') fecha_ingreso,
-                     plaza.nombre nombre_plaza, comis.nombre nombre_comision
+                     FORMAT(e.fecha_ingreso, 'dd/MM/yyyy') fecha_ingreso, IsNull(e.id_comision_inicial, 0) id_comision_inicial,
+                     plaza.nombre nombre_plaza, comis.nombre nombre_comision,
+                     IsNull(( SELECT SUM(valor.ponderacion) total  FROM relacion_evaluacion_colaborador_reglas valor
+                        WHERE valor.id_empleado = e.id_empleado AND comis.id_comision = valor.id_comision
+                        AND IsNull(valor.completado, 0) = 1
+                    ), 0)  porcentaje_total_completado
                      FROM empleado e 
                      join empleado superv ON (e.id_supervisor = superv.id_empleado)
                      join empleado ejec ON (superv.id_ejecutivo = ejec.id_empleado)
                      JOIN plaza plaza ON (plaza.id_plaza = e.id_plaza) 
                      JOIN comision comis ON (comis.id_comision = e.id_comision_inicial) 
-                     WHERE isnull(e.eliminado, 0) != 1 
-                    ";
+                     WHERE isnull(e.eliminado, 0) != 1 " +
+                    sqlPlaza +
+                    @"";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -88,16 +103,23 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         Empleado item = new Empleado();
+                        item.nivelNomision = new Comision();
+
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdComisionInicial = int.Parse(ds.Tables[0].Rows[i]["id_comision_inicial"].ToString());
+                        item.nivelNomision.Porcentaje = int.Parse(ds.Tables[0].Rows[i]["porcentaje_total_completado"].ToString());
+                        item.nivelNomision.PorcentajeStr = item.nivelNomision.Porcentaje.ToString() + "%";
                         item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.NombreCompletoSupervisor = ds.Tables[0].Rows[i]["nombre_completo_supervisor"].ToString();
                         item.NombreCompletoEjecutivo = ds.Tables[0].Rows[i]["nombre_completo_ejecutivo"].ToString();
                         item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
-                        item.NombreComision= ds.Tables[0].Rows[i]["nombre_comision"].ToString();
+                        item.NombreComision = ds.Tables[0].Rows[i]["nombre_comision"].ToString();
                         item.FechaIngresoMx = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
 
                         string botones = "";
-                        botones += "<button  onclick='employee.delete(" + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        botones += "<button  onclick='employeeEvaluation.open(" + item.IdComisionInicial +
+                            ", \"" + item.NombreComision + "\"" +
+                            ", \"" + item.NombreCompleto + "\"," + item.IdEmpleado + ")'   class='btn btn-outline-primary'> <span class='fa fa-check mr-1'></span>Evaluar</button>";
 
                         item.Accion = botones;
 
@@ -125,197 +147,251 @@ namespace Plataforma.pages
         }
 
 
-
-
         [WebMethod]
-        public static int ApproveRequest(string path, string idSolicitud, string idPrestamo, string idUsuario)
+        public static DatosSalida SaveEvaluation(string path, List<ValorReglaEvaluacionModulo> data, string accion, string idUsuario,
+            string idComision, string idEmpleado)
         {
+
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlTransaction transaction = null;
             SqlConnection conn = new SqlConnection(strConexion);
-            int response = 0;
+
+            DatosSalida salida = new DatosSalida();
+            SqlTransaction transaccion = null;
+
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
 
-            Utils.Log("\nMétodo-> " +
-            System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-
+            int r = 0;
             try
             {
+
+                string sql = "";
+
                 conn.Open();
-                transaction = conn.BeginTransaction();
+                transaccion = conn.BeginTransaction();
+
+                //  eliminar registro anterior
+                sql = @" DELETE FROM relacion_evaluacion_colaborador_reglas 
+                                WHERE id_comision = @id_comision AND id_empleado = @id_empleado
+                          ";
 
 
-                string nota = "Se aprueba la solicitud de aumento de crédito.";
-                response = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO.ToString(), conn, transaction);
-                response += UpdateStatuSolicitud(idSolicitud, idUsuario, SolicitudAumentoCredito.STATUS_SOLICITUD_APROBADA.ToString(), conn, transaction);
+                Utils.Log("\n" + sql);
 
-                transaction.Commit();
+                SqlCommand cmdDelete = new SqlCommand(sql, conn);
+                cmdDelete.CommandType = CommandType.Text;
+                cmdDelete.Transaction = transaccion;
 
-                Utils.Log("\nFinalizado correctamente");
+                cmdDelete.Parameters.AddWithValue("@id_comision", idComision);
+                cmdDelete.Parameters.AddWithValue("@id_empleado", idEmpleado);
+                r = cmdDelete.ExecuteNonQuery();
+
+
+                //  insertar nuevas calificaciones
+                var totalPonderacion = 0;
+                foreach (var item in data)
+                {
+
+                    if (item.IdComision != 0)
+                    {
+                        sql = @" INSERT INTO relacion_evaluacion_colaborador_reglas 
+                                (id_comision, id_empleado, ponderacion, completado, id_regla_evaluacion)
+                            VALUES
+                                (@id_comision, @id_empleado, @ponderacion, @completado, @id_regla_evaluacion);
+                          ";
+
+
+
+                        Utils.Log("\n" + sql);
+
+                        SqlCommand cmd = new SqlCommand(sql, conn);
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Transaction = transaccion;
+
+                        cmd.Parameters.AddWithValue("@id_comision", item.IdComision);
+                        cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                        cmd.Parameters.AddWithValue("@ponderacion", item.Ponderacion);
+                        cmd.Parameters.AddWithValue("@completado", item.Completado);
+                        cmd.Parameters.AddWithValue("@id_regla_evaluacion", item.IdReglaEvaluacionModulo);
+                        totalPonderacion += item.Ponderacion;
+
+                        r = cmd.ExecuteNonQuery();
+                    }
+
+                }
+
+                //  Si tiene el 100% subirlo de nivel
+                if (totalPonderacion == 100)
+                {
+
+                }
+
+
+
+                transaccion.Commit();
+
+
+                Utils.Log("Guardado -> OK ");
+
+
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
 
             }
             catch (Exception ex)
             {
                 try
                 {
-                    transaction.Rollback();
+                    transaccion.Rollback();
                 }
-                catch (Exception ex_)
+                catch (Exception excep)
                 {
-                    Utils.Log("Error ... " + ex.Message);
-                    Utils.Log(ex.StackTrace);
+
                 }
 
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-
+                r = -1;
+                salida.MensajeError = "No se pudo completar la operación.";
+                salida.CodigoError = 1;
             }
 
-            return response;
+            finally
+            {
+                conn.Close();
+            }
+
+            return salida;
 
 
         }
 
 
 
-        [WebMethod]
-        public static int RejectRequest(string path, string idSolicitud, string idPrestamo, string idUsuario)
+        public class Data
         {
+            public string Table;
+            public EvaluacionModulo evaluacion;
+            public int totalEvaluacionCompletada;
+            public List<ValorReglaEvaluacionModulo> Array = new List<ValorReglaEvaluacionModulo>();
+        }
+
+
+        [WebMethod]
+        public static Data GetItemsRulesByCommissionAndEmployee(string path, string idUsuario, string idEmpleado,
+            string idComision)
+        {
+
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-            SqlTransaction transaction = null;
             SqlConnection conn = new SqlConnection(strConexion);
-            int response = 0;
 
 
-            Utils.Log("\nMétodo-> " +
-            System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            string html = "";
+            Data data = new Data();
 
             try
             {
                 conn.Open();
-                transaction = conn.BeginTransaction();
+                DataSet ds = new DataSet();
+                string query = @" SELECT r.id_regla_evaluacion_modulo, r.descripcion, IsNull(r.ponderacion, 0) ponderacion, 
+                                    IsNull(r.id_comision, 0) id_comision, c.nombre,
+                                    IsNull(r.ponderacion, 0) ponderacion, IsNull(valor.completado , 0) completado
+                                    FROM regla_evaluacion_modulo r
+                                    JOIN comision c ON (c.id_comision = r.id_comision)
+                                    LEFT JOIN relacion_evaluacion_colaborador_reglas valor 
+                                        ON (valor.id_regla_evaluacion = r.id_regla_evaluacion_modulo AND c.id_comision = valor.id_comision
+                                        AND valor.id_empleado = @id_empleado)
+                                    WHERE r.id_comision = @id_comision ";
 
 
-                string nota = "Se rechaza la solicitud de aumento de crédito.";
-                response = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_RECHAZADO.ToString(), conn, transaction);
-                response += UpdateStatuSolicitud(idSolicitud, idUsuario, SolicitudAumentoCredito.STATUS_SOLICITUD_RECHAZADA.ToString(), conn, transaction);
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_comision", idComision);
+                adp.SelectCommand.Parameters.AddWithValue("@id_empleado", idEmpleado);
 
-                transaction.Commit();
-
-                Utils.Log("\nFinalizado correctamente");
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (Exception ex_)
-                {
-                    Utils.Log("Error ... " + ex.Message);
-                    Utils.Log(ex.StackTrace);
-                }
-
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-
-            }
-
-            return response;
-
-
-        }
-
-
-        public static int UpdateStatuSolicitud(string idSolicitud, string idUsuario, string idStatus,
-            SqlConnection conn, SqlTransaction transaction)
-        {
-
-            int r = 0;
-            try
-            {
-
-                string sql = @"  UPDATE solicitud_aumento_credito
-                            SET id_status_solicitud_aumento_credito = @id_status_solicitud_aumento_credito, id_usuario = @id_usuario
-                            WHERE
-                            id_solicitud_aumento_credito = @id_solicitud_aumento_credito ";
 
                 Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+                int totalPonderacion = 0;
+                int totalPonderacionCompletada = 0;
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        ValorReglaEvaluacionModulo item = new ValorReglaEvaluacionModulo();
+                        item.IdReglaEvaluacionModulo = int.Parse(ds.Tables[0].Rows[i]["id_regla_evaluacion_modulo"].ToString());
+                        item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
+                        item.Ponderacion = int.Parse(ds.Tables[0].Rows[i]["ponderacion"].ToString());
+                        item.PonderacionStr = item.Ponderacion + "%";
+                        item.CalificacionStr = item.Ponderacion + "%";
+                        item.Descripcion = (ds.Tables[0].Rows[i]["descripcion"].ToString());
+                        item.NombreComision = (ds.Tables[0].Rows[i]["nombre"].ToString());
+                        item.Completado = int.Parse(ds.Tables[0].Rows[i]["completado"].ToString());
+
+                        totalPonderacion += item.Ponderacion;
+
+                        if (item.Completado == 1)
+                        {
+                            totalPonderacionCompletada += item.Ponderacion;
+                        }
+
+                        string strChecked = " ";
+                        if (item.Completado == 1)
+                        {
+                            strChecked = " checked = 'checked' ";
+                        }
+
+                        html += "<tr>";
+                        html += "<td>" + item.Descripcion + "</td>";
+                        html += "<td>" + item.PonderacionStr + "</td>";
+                        html += "<td>" + item.CalificacionStr + "</td>";
+                        html += "<td><input type='checkbox' " + strChecked + " data-idregla=" + item.IdReglaEvaluacionModulo + " data-value=" + item.Ponderacion + " value='" + 1 + "' class='form-checked-control checks sm100'  id='chkChecked" + i + "'></td>";
+                        html += "</tr>";
+
+                        data.Array.Add(item);
+
+                    }
+
+                    html += "<tr>";
+                    html += "<td>Total</td>";
+                    html += "<td id=\"spanTotalPonderacion\">" + totalPonderacion + "%</td>";
+                    html += "<td id=\"spanTotalPonderacionObtenida\">" + totalPonderacionCompletada + "%</td>";
+                    html += "<td></td>";
+                    html += "</tr>";
+
+                }
 
 
-                SqlCommand cmdUpdate = new SqlCommand(sql, conn);
-                cmdUpdate.CommandType = CommandType.Text;
+                EvaluacionModulo evaluacion = new EvaluacionModulo();
+                evaluacion.IdEvaluacionModulo = int.Parse(idComision);
 
-                cmdUpdate.Parameters.AddWithValue("@id_solicitud_aumento_credito", idSolicitud);
-                cmdUpdate.Parameters.AddWithValue("@id_usuario", idUsuario);
-                cmdUpdate.Parameters.AddWithValue("@id_status_solicitud_aumento_credito", idStatus);
-                cmdUpdate.Transaction = transaction;
 
-                r += cmdUpdate.ExecuteNonQuery();
+                data.Table = html;
+                data.evaluacion = evaluacion;
+                data.totalEvaluacionCompletada = totalPonderacionCompletada;
 
+                return data;
             }
             catch (Exception ex)
             {
-
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-
-                throw ex;
-
+                return data;
             }
 
-            return r;
-
-        }
-
-
-        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, string idStatusPrestamo,
-           SqlConnection conn, SqlTransaction transaction)
-        {
-
-            int r = 0;
-            try
+            finally
             {
-
-
-
-                string sql = @"  UPDATE prestamo
-                            SET id_status_prestamo = @id_status_prestamo, notas_generales = @notas_generales, id_usuario = @id_usuario
-                            WHERE
-                            id_prestamo = @id_prestamo ";
-
-                Utils.Log("\nMétodo-> " +
-            System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
-
-
-                SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
-                cmdUpdatePrestamo.CommandType = CommandType.Text;
-
-                cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
-                cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
-                cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
-                cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", idStatusPrestamo);
-                cmdUpdatePrestamo.Transaction = transaction;
-
-                r += cmdUpdatePrestamo.ExecuteNonQuery();
-
+                conn.Close();
             }
-            catch (Exception ex)
-            {
-
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-
-                throw ex;
-
-            }
-
-
-            return r;
-
 
         }
 

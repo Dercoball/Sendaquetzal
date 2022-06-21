@@ -11,7 +11,11 @@ const employeeEvaluation = {
 
 
         employeeEvaluation.idSolicitud = -1;
-        employeeEvaluation.idPrestamo = -1;
+        employeeEvaluation.idEmpleado = -1;
+        employeeEvaluation.idComision = -1;
+        employeeEvaluation.NombreComision = '';
+        employeeEvaluation.NombreEmpleado = '';
+
         employeeEvaluation.loadComboPlaza();
         employeeEvaluation.loadComboEmployeesByPosicion(utils.POSICION_PROMOTOR, '#comboPromotor');
         employeeEvaluation.loadComboEmployeesByPosicion(utils.POSICION_EJECUTIVO, '#comboEjecutivo');
@@ -19,7 +23,10 @@ const employeeEvaluation = {
 
         employeeEvaluation.cargarItems();
 
+        $('.secciones').hide();
+        $('#panelTabla').show();
 
+        employeeEvaluation.calificacionTotal = 0;
     },
 
     cargarItems: () => {
@@ -28,6 +35,10 @@ const employeeEvaluation = {
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
+        params.idPlaza = document.getElementById('comboPlaza').value;
+        params.idPromotor = document.getElementById('comboPromotor').value;
+        params.idSupervisor = document.getElementById('comboSupervisor').value;
+        params.idEjecutivo = document.getElementById('comboEjecutivo').value;
         params.fechaInicial = employeeEvaluation.fechaInicial;
         params.fechaFinal = employeeEvaluation.fechaFinal;
         params.idStatus = status;
@@ -61,7 +72,7 @@ const employeeEvaluation = {
                         { data: 'NombrePlaza' },
                         { data: 'FechaIngresoMx' },
                         { data: 'NombreComision' },
-                        { data: 'NombreCompleto' },
+                        { data: 'nivelNomision.PorcentajeStr' },
                         { data: 'Accion' }
 
 
@@ -115,7 +126,7 @@ const employeeEvaluation = {
             success: function (msg) {
 
                 let items = msg.d;
-                let opcion = '<option value="">Todos</option>';
+                let opcion = '<option value="-1">Todos</option>';
 
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
@@ -149,7 +160,7 @@ const employeeEvaluation = {
             success: function (msg) {
 
                 let items = msg.d;
-                let opcion = '<option value="">Todos</option>';
+                let opcion = '<option value="-1">Todos</option>';
 
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
@@ -168,136 +179,201 @@ const employeeEvaluation = {
     },
 
 
+    open(idComision, nombreComision, nombreEmpleado, idEmpleado) {
 
-    approve(idSolicitud, idPrestamo) {
+        console.log(`idComision ${idComision}`);
+        employeeEvaluation.idComision = idComision;
+        employeeEvaluation.nombreComision = nombreComision;
+        employeeEvaluation.nombreEmpleado = nombreEmpleado;
+        employeeEvaluation.idEmpleado = idEmpleado;
 
-        console.log(idSolicitud);
-        console.log(idPrestamo);
-        employeeEvaluation.idSolicitud = idSolicitud;
-        employeeEvaluation.idPrestamo = idPrestamo;
+        employeeEvaluation.calificacionTotal = 0;
 
-        $('#msgAprobar').html('¿Desea aprobar la solicitud?');
-        $('#panelAprobar').modal('show');
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idComision = idComision;
+        params.idEmpleado = idEmpleado;
+        params = JSON.stringify(params);
 
-    },
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Commissions/EmployeeEvaluation.aspx/GetItemsRulesByCommissionAndEmployee",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
 
+                let data = msg.d;
+                console.table(data.table);
 
-    reject(idSolicitud, idPrestamo) {
-
-        console.log(idSolicitud);
-        console.log(idPrestamo);
-        employeeEvaluation.idSolicitud = idSolicitud;
-        employeeEvaluation.idPrestamo = idPrestamo;
-
-        $('#msgRechazar').html('¿Desea rechazar la solicitud?');
-        $('#panelRechazar').modal('show');
-
-    },
-
-
-    accionesBotones: () => {
-
-        
-
-        $('#btnAprobarOk').on('click', (e) => {
-            e.preventDefault();
-
-            let params = {};
-            params.path = window.location.hostname;
-            params.idUsuario = document.getElementById('txtIdUsuario').value;
-            params.idPrestamo = employeeEvaluation.idPrestamo;
-            params.idSolicitud = employeeEvaluation.idSolicitud;
-            params = JSON.stringify(params);
-
-            $('.deshabilitable').prop('disabled', true);
-
-            $.ajax({
-                type: "POST",
-                url: `../../pages/Loans/CreditIncreaseRequest.aspx/ApproveRequest`,
-                data: params,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: true,
-                success: function (msg) {
-                    let valores = msg.d;
-                    $('#panelAprobar').modal('hide');
-
-                    $('.deshabilitable').prop('disabled', false);
-
-                    if (parseInt(valores)> 0) {
-
-                        utils.toast(mensajesAlertas.solicitidAumentoAprobada, 'ok');
-                        
-                        employeeEvaluation.cargarItems();
-
-                    } else {
-                        util.toast(mensajesAlertas.errorInesperado, 'error');
-                        
-
-                    }
-
-                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    $('.deshabilitable').prop('disabled', false);
-
-                    utils.toast(mensajesAlertas.errorInesperado, 'error');
-
-
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
                 }
 
-            });
 
+                $('#tableReglas tbody').empty().append(data.Table);
+                employeeEvaluation.calificacionTotal = Number(data.totalEvaluacionCompletada);
+
+                //if (Number(employeeEvaluation.calificacionTotal) > 0) {
+                //    $('#spanTotalPonderacionObtenida').text(employeeEvaluation.calificacionTotal + '%');
+                //}
+
+
+                $('#nombreComision').html(employeeEvaluation.nombreComision);
+                $('#nombreEmpleado').html(employeeEvaluation.nombreEmpleado);
+
+                $('.secciones').hide();
+                $('#panelForm').show();
+
+                $(`.checks`).on('change', (e) => {
+                    e.preventDefault();
+
+                    let id = e.currentTarget.id
+                    console.log(`${id}`);
+                    console.log('check');
+
+                    let checked = $(`#${id}`).prop('checked');
+                    let value = $(`#${id}`).attr('data-value');
+
+                    //console.log('checked ' + checked);
+                    //console.log('value ' + value);
+
+                    if (checked) {
+                        employeeEvaluation.calificacionTotal += Number(value);
+                    } else {
+                        employeeEvaluation.calificacionTotal -= Number(value);
+                    }
+                    if (Number(employeeEvaluation.calificacionTotal) > 0) {
+                        $('#spanTotalPonderacionObtenida').text(employeeEvaluation.calificacionTotal + '%');
+                    }
+
+                });
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
 
         });
 
 
-        $('#btnRechazarOk').on('click', (e) => {
+    },
+
+
+
+    accionesBotones: () => {
+
+
+
+
+        $('#btnGuardar').on('click', (e) => {
             e.preventDefault();
 
-            let params = {};
-            params.path = window.location.hostname;
-            params.idUsuario = document.getElementById('txtIdUsuario').value;
-            params.idPrestamo = employeeEvaluation.idPrestamo;
-            params.idSolicitud = employeeEvaluation.idSolicitud;
-            params = JSON.stringify(params);
+            let valoresTabla = [];
+            // recolectar los datos
+            const numRows = $('#tableReglas tbody tr').length;
 
-            $('.deshabilitable').prop('disabled', true);
+            for (let index = 0; index < numRows - 1; index++) {
+
+                let checked = $(`#chkChecked${index}`).prop('checked');
+                let value = $(`#chkChecked${index}`).attr('data-value');
+                let idReglaEvaluacion = $(`#chkChecked${index}`).attr('data-idregla');
+
+                let newRow = {
+                    IdComision: employeeEvaluation.idComision,
+                    IdReglaEvaluacionModulo: idReglaEvaluacion,
+                    IdEmpleado: employeeEvaluation.idEmpleado,
+                    Ponderacion: value,
+                    Completado: checked ? 1 : 0,
+                };
+
+                if (checked) {
+                    employeeEvaluation.calificacionTotal += Number(value);
+                } else {
+                    employeeEvaluation.calificacionTotal -= Number(value);
+                }
+
+                valoresTabla.push(newRow);
+
+            }
+
+            console.table(valoresTabla);
+
+
+            let parametros = {};
+            parametros.path = window.location.hostname;
+            parametros.data = valoresTabla;
+            parametros.idComision = employeeEvaluation.idComision;
+            parametros.idEmpleado = employeeEvaluation.idEmpleado;
+            parametros.idUsuario = document.getElementById('txtIdUsuario').value;
+            parametros.accion = 'insert';
+            parametros = JSON.stringify(parametros);
+
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/CreditIncreaseRequest.aspx/RejectRequest`,
-                data: params,
+                url: "../../pages/Commissions/EmployeeEvaluation.aspx/SaveEvaluation",
+                data: parametros,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
                 success: function (msg) {
-                    let valores = msg.d;
-                    $('#panelRechazar').modal('hide');
+                    var valores = msg.d;
 
-                    $('.deshabilitable').prop('disabled', false);
 
-                    if (parseInt(valores) > 0) {
 
-                        $('#spnMensajes').html(mensajesAlertas.solicitidAumentoRechazada);
-                        $('#panelMensajes').modal('show');
+                    if (valores.CodigoError == 0) {
 
                         employeeEvaluation.cargarItems();
 
+                        utils.toast(mensajesAlertas.exitoGuardar, 'ok')
+                        $('.secciones').hide();
+                        $('#panelTabla').show();
+
                     } else {
-                        $('#spnMensajes').html(mensajesAlertas.errorInesperado);
+
+                        $('#spnMensajes').html(valores.MensajeError);
                         $('#panelMensajes').modal('show');
+
 
                     }
 
-                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    $('.deshabilitable').prop('disabled', false);
 
-                    $('#spnMensajes').html(mensajesAlertas.errorInesperado);
-                    $('#panelMensajes').modal('show');
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+
+
 
                 }
 
             });
 
+        });
+
+
+        $('#btnCancelar').on('click', (e) => {
+            e.preventDefault();
+
+            $('.secciones').hide();
+            $('#panelTabla').show();
+
+        });
+
+        $('#btnFiltrar').on('click', (e) => {
+            e.preventDefault();
+
+            employeeEvaluation.cargarItems();
 
         });
 

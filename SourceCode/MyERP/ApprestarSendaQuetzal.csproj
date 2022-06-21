@@ -1157,6 +1157,8 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\EvaluacionModulo.cs" />
+    <Compile Include="Clases\ValorReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\ReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\SolicitudAumentoCredito.cs" />
     <Compile Include="Clases\Pago.cs" />

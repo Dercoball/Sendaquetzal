@@ -255,11 +255,13 @@ namespace Plataforma.pages
                 var esPagina_HomePromotor = paginaHomePromotor.Find(x => x == pagina);
                 PermisoUsuario loadIndex = listaPermisos.Find(x => x.IdPermiso == 13);
                 string active_HomePromotor = esPagina_HomePromotor != null ? "class = 'active' " : "";
-
-                nav += "<li " + active_HomePromotor +
-                  "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + loadIndex.NombreInterno + "\"> " +
-                  " <i class=\"fa fa-home\"></i>Home</a>   ";
-                nav += "</li> ";
+                if (loadIndex != null)
+                {
+                    nav += "<li " + active_HomePromotor +
+                      "  id='liHome'><a href=\"" + HttpContext.Current.Server.UrlPathEncode("/pages/") + loadIndex.NombreInterno + "\"> " +
+                      " <i class=\"fa fa-home\"></i>Home</a>   ";
+                    nav += "</li> ";
+                }
 
             }
 

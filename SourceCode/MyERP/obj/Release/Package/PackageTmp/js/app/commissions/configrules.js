@@ -258,7 +258,7 @@ const configComissions = {
         });
 
 
-        $('#btnGuardar').click(function (e) {
+        $('#btnGuardar').on('click', function (e) {
 
             e.preventDefault();
 

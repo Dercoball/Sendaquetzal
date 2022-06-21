@@ -97,87 +97,130 @@
 
             <div class="container-fluid">
 
+                <div id="panelTabla" class="secciones">
 
-                <header>
-                    <h1 class="h3 display" id="paginaName"></h1>
 
-                </header>
+                    <header>
+                        <h1 class="h3 display" id="paginaName"></h1>
 
-                <div id="panelFiltro">
+                    </header>
 
-                    <div class="mt-2 mb-4">
+                    <div id="panelFiltro">
 
-                        <div class="row mt-3 mb-3">
+                        <div class="mt-2 mb-4">
 
-                            <div class="form-group col-md-3">
-                                <label for="comboPlaza">
-                                    Plaza
-                                </label>
-                                <select id="comboPlaza" class="form-control">
-                                </select>
+                            <div class="row mt-3 mb-3">
+
+                                <div class="form-group col-md-3">
+                                    <label for="comboPlaza">
+                                        Plaza
+                                    </label>
+                                    <select id="comboPlaza" class="form-control">
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label for="comboEjecutivo">
+                                        Ejecutivo
+                                    </label>
+                                    <select id="comboEjecutivo" class="form-control">
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label for="comboSupervisor">
+                                        Supervisor
+                                    </label>
+                                    <select id="comboSupervisor" class="form-control">
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label for="comboPromotor">
+                                        Promotor
+                                    </label>
+                                    <select id="comboPromotor" class="form-control">
+                                    </select>
+                                </div>
+
+
                             </div>
 
-                            <div class="form-group col-md-3">
-                                <label for="comboEjecutivo">
-                                    Ejecutivo
-                                </label>
-                                <select id="comboEjecutivo" class="form-control">
-                                </select>
+
+                            <div class="row mt-3 mb-3">
+
+                                <div class=" col-md-3">
+                                    <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
+                                </div>
+
                             </div>
-
-                            <div class="form-group col-md-3">
-                                <label for="comboSupervisor">
-                                    Supervisor
-                                </label>
-                                <select id="comboSupervisor" class="form-control">
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label for="comboPromotor">
-                                    Promotor
-                                </label>
-                                <select id="comboPromotor" class="form-control">
-                                </select>
-                            </div>
-
-
                         </div>
 
-
-                        <div class="row mt-3 mb-3">
-
-                            <div class=" col-md-3">
-                                <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
-                            </div>
-
-                        </div>
                     </div>
 
+
+
+                    <div class="table-responsive">
+
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="table">
+
+                            <thead>
+                                <tr>
+                                    <th>Promotor</th>
+                                    <th>Supervisor</th>
+                                    <th>Ejecutivo</th>
+                                    <th>Plaza</th>
+                                    <th>Fecha de ingreso</th>
+                                    <th>Comisión</th>
+                                    <th>% de nivel</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                    </div>
                 </div>
 
+                <div id="panelForm" class="secciones">
 
 
-                <div class="table-responsive">
+                      <header>
+                        <span class="h3 display" id="nombreEmpleado"></span>
+                    </header>
 
-                    <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="table">
+                    <div class="table-responsive">
 
-                        <thead>
-                            <tr>
-                                <th>Promotor</th>
-                                <th>Supervisor</th>
-                                <th>Ejecutivo</th>
-                                <th>Plaza</th>
-                                <th>Fecha de ingreso</th>
-                                <th>Comisión</th>
-                                <th>% de nivel</th>
-                                <th>Evaluar</th>
-                            </tr>
-                        </thead>
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="tableReglas">
 
-                        <tbody>
-                        </tbody>
-                    </table>
+
+                            <thead>
+                                <tr>
+                                    <th id="nombreComision"></th>
+                                    <th>Ponderación</th>
+                                    <th>Calificación</th>
+                                    <th>Completado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-left">
+                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                        </div>
+
+                        <div class=" col-md-6 text-right">
+                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                        </div>
+
+                    </div>
 
                 </div>
             </div>
@@ -228,50 +271,6 @@
     </div>
 
 
-
-    <div id="panelAprobar" class="modal fade" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title text-center">Confirmación</h4>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <span id="msgAprobar"></span>
-                </div>
-                <div class="modal-footer">
-                    <button id="btnAprobarOk" class="btn btn-danger">Aceptar</button>
-                    <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div id="panelRechazar" class="modal fade" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title text-center">Confirmación</h4>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <span id="msgRechazar"></span>
-                </div>
-                <div class="modal-footer">
-                    <button id="btnRechazarOk" class="btn btn-danger">Aceptar</button>
-                    <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <!-- JavaScript files-->

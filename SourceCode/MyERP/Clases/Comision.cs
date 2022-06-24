@@ -10,6 +10,7 @@ namespace Plataforma.Clases
 
         public int IdComision;
         public int IdModulo;
+        public int Nivel;   //Nivel orden o prelacion
         //public string Modulo;
         public string Nombre;
         public float Porcentaje;

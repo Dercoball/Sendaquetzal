@@ -52,7 +52,7 @@ const comission = {
                     data: data,
                     columns: [
 
-                        { data: 'IdComision' },
+                        { data: 'Nivel' },
                         { data: 'Nombre' },
                         { data: 'Porcentaje' },
                         { data: 'ActivoStr' },
@@ -135,6 +135,7 @@ const comission = {
                 $('#txtNombre').val(item.Nombre);
 
                 $('#txtPorcentaje').val(item.Porcentaje);
+                $('#txtNivel').val(item.Nivel);
 
 
                 $('#chkActivo').prop('checked', item.Activo === 1);
@@ -205,6 +206,7 @@ const comission = {
                 item.IdComision = comission.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
                 item.Porcentaje = $('#txtPorcentaje').val();
+                item.Nivel = $('#txtNivel').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};

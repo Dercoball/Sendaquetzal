@@ -59,7 +59,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo, c.nombre 
+                string query = @" SELECT c.id_comision, c.porcentaje, c.activo, c.nombre, IsNull(c.nivel, 0) nivel
                          FROM comision c                          
                          WHERE 
                          ISNull(c.eliminado, 0) = 0
@@ -79,6 +79,7 @@ namespace Plataforma.pages
                         Comision item = new Comision();
                         item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
                         item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
+                        item.Nivel = int.Parse(ds.Tables[0].Rows[i]["nivel"].ToString());
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
 
 
@@ -128,7 +129,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , c.nombre 
+                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , c.nombre, IsNull(c.nivel, 0) nivel
                          FROM comision c                          
                          WHERE 
                          c.id_comision = @id ";
@@ -152,6 +153,7 @@ namespace Plataforma.pages
                         item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
                         item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.Nivel = int.Parse(ds.Tables[0].Rows[i]["nivel"].ToString());
 
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
@@ -200,14 +202,15 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO comision(nombre, activo, eliminado, porcentaje) 
-                    VALUES (@nombre, @activo, 0, @porcentaje) ";
+                    sql = @" INSERT INTO comision(nombre, activo, eliminado, porcentaje, nivel) 
+                    VALUES (@nombre, @activo, 0, @porcentaje, @nivel) ";
                 }
                 else
                 {
                     sql = @" UPDATE comision
                           SET nombre = @nombre,
                               activo = @activo,
+                              nivel = @nivel,
                               porcentaje = @porcentaje
                           WHERE 
                               id_comision = @id";
@@ -222,6 +225,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@porcentaje", item.Porcentaje);
+                cmd.Parameters.AddWithValue("@nivel", item.Nivel);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
                 cmd.Parameters.AddWithValue("@id", item.IdComision);
 

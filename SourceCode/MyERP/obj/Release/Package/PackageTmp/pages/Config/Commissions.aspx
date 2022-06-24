@@ -172,20 +172,26 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
+                                        <label for="txtNivel">
+                                            Nivel  
+                                        </label>
+                                        <input type="number" step="1" class="form-control" id="txtNivel" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-6">
                                         <div class="form-check ml-2">
                                             <input id="chkActivo" class="form-check-input" type="checkbox" />
                                             <label for="chkActivo" class="form-check-label">Activo</label>
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-
-
-                            </div>
                         </form>
                     </div>
 
@@ -204,7 +210,6 @@
                     </div>
 
                 </div>
-
             </div>
 
         </section>

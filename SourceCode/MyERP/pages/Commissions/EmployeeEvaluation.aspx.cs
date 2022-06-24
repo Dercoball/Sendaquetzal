@@ -67,6 +67,24 @@ namespace Plataforma.pages
                 sqlPlaza = " AND plaza.id_plaza = '" + idPlaza + "'";
             }
 
+            var sqlEjecutivo = "";
+            if (idEjecutivo != "" && idEjecutivo != "-1")
+            {
+                sqlEjecutivo = " AND superv.id_ejecutivo = '" + idEjecutivo + "'";
+            }
+
+            var sqlPromotor = "";
+            if (idPromotor != "" && idPromotor != "-1")
+            {
+                sqlPromotor = " AND e.id_empleado = '" + idPromotor + "'";
+            }
+
+            var sqlSupervisor = "";
+            if (idSupervisor != "" && idSupervisor != "-1")
+            {
+                sqlSupervisor = " AND e.id_supervisor = '" + idSupervisor + "'";
+            }
+
 
             try
             {
@@ -89,6 +107,9 @@ namespace Plataforma.pages
                      JOIN comision comis ON (comis.id_comision = e.id_comision_inicial) 
                      WHERE isnull(e.eliminado, 0) != 1 " +
                     sqlPlaza +
+                    sqlEjecutivo +
+                    sqlSupervisor +
+                    sqlPromotor +
                     @"";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);

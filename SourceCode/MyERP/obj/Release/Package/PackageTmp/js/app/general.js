@@ -13,6 +13,7 @@ let idUsuario = null;
 
 var mensajesAlertas = {
 
+    errorSeleccionarPromotor: 'Debe seleccionar un promotor para poder generar el reporte.',
     solicitidAumentoAprobada: 'La solicitud de aumento de crédito ha sido aprobada correctamente.',
     solicitidAumentoRechazada: 'La solicitud de aumento de crédito ha sido rechazada correctamente.',
     pagoRegistradoExito: 'El pago fue registrado correctamente.',
@@ -319,7 +320,7 @@ function number_format(amount, decimals, simbolo = '$') {
     while (regexp.test(amount_parts[0]))
         amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
 
-    var r = sign ? '-' + simbolo + ' ' + amount_parts.join('.') : simbolo + ' ' + amount_parts.join('.');
+    var r = sign ? '-' + simbolo + '' + amount_parts.join('.') : simbolo + '' + amount_parts.join('.');
 
     return r;
 }
@@ -340,6 +341,11 @@ var utils = {
     STATUS_PRESTAMO_PENDIENTE_EJECUTIVO: 2,
     STATUS_PRESTAMO_RECHAZADO: 3,
     STATUS_PRESTAMO_APROBADO: 4,
+
+    STATUS_PAGO_PENDIENTE: 1,
+    STATUS_PAGO_FALLA: 2,
+    STATUS_PAGO_ABONADO: 3,
+    STATUS_PAGO_PAGADO: 4,
 
     getDocumentos: (params) => {
 

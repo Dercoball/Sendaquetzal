@@ -186,9 +186,9 @@ namespace Plataforma.pages
 
 
                 //  Validaciones para el promotor y creación de alerta de límite de crédito
-                if(idPosicion == Employees.POSICION_SUPERVISOR.ToString())
+                if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                   
+
                     //  Traer datos del empleado promotor
                     Empleado empleado = GetItemEmployee(prestamo.IdEmpleado.ToString(), conn, transaction);
 
@@ -204,7 +204,7 @@ namespace Plataforma.pages
                         Utils.Log("\n\n******************Fin de la aprobación del préstamo debido a que el supervisor necesita aumento de crédito. ");
 
                         response.MensajeError = "El monto límite de crédito con el que cuenta no es suficiente para aprobar el préstamo. " +
-                            "<br/>Monto límite del promotor: " + empleado.MontoLimiteInicial.ToString("C2") + 
+                            "<br/>Monto límite del promotor: " + empleado.MontoLimiteInicial.ToString("C2") +
                             "<br/>Monto a solicitar: " + prestamo.Monto.ToString("C2") +
                             "<br/>Se ha generado una solicitud de aumento de crédito que debera ser aprobada.";
                         response.CodigoError = 2;
@@ -223,8 +223,8 @@ namespace Plataforma.pages
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    int rowsAffectedStatusPrestamo =  UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO, conn, transaction);
-                    
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO, conn, transaction);
+
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
 
                 }
@@ -232,7 +232,7 @@ namespace Plataforma.pages
                 {
 
                     int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_APROBADO, conn, transaction);
-                    
+
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
 
                     float pagoAmmount = prestamo.Monto / customerType.SemanasAPrestar;
@@ -261,6 +261,10 @@ namespace Plataforma.pages
                         pago.NumeroSemana = (i + 1);
                         pago.Fecha = nextDate;
                         pago.IdUsuario = int.Parse(idUsuario);
+
+                        bool isExtraWeek = (customerType.SemanasExtra == 1 && (i + 1) == numSemanas);
+
+                        pago.SemanaExtra = isExtraWeek ? 1 : 0;
 
                         InsertPago(pago, conn, transaction);
 
@@ -308,7 +312,7 @@ namespace Plataforma.pages
         }
 
         public static int UpdateRelacionPrestamoAprobacion(string idPrestamo, string idUsuario, string nota, string idPosicion,
-          SqlConnection conn, SqlTransaction transaction) 
+          SqlConnection conn, SqlTransaction transaction)
         {
 
             int r = 0;
@@ -391,7 +395,7 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
-                
+
 
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
@@ -466,8 +470,8 @@ namespace Plataforma.pages
 
                 string sql = "";
 
-                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana, pagado, saldo) 
-                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana, @pagado, @saldo) ";
+                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana, pagado, saldo, semana_extra) 
+                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana, @pagado, @saldo, @semana_extra) ";
 
 
 
@@ -485,6 +489,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@numero_semana", item.NumeroSemana);
                 cmd.Parameters.AddWithValue("@id_status_pago", Pago.STATUS_PAGO_PENDIENTE);
                 cmd.Parameters.AddWithValue("@id_usuario", item.IdUsuario);
+                cmd.Parameters.AddWithValue("@semana_extra", item.SemanaExtra);
                 cmd.Transaction = transaction;
 
                 r = cmd.ExecuteNonQuery();
@@ -1670,7 +1675,7 @@ namespace Plataforma.pages
                 throw ex;
             }
 
-           
+
 
         }
 

@@ -4,121 +4,172 @@ let descargas = "Reportes" + date.getFullYear() + "_" + date.getMonth() + "_" + 
 let pagina = '19';
 
 
-const employeeEvaluation = {
+const report = {
 
 
     init: () => {
 
 
-        employeeEvaluation.idSolicitud = -1;
-        employeeEvaluation.idEmpleado = -1;
-        employeeEvaluation.idComision = -1;
-        employeeEvaluation.NombreComision = '';
-        employeeEvaluation.NombreEmpleado = '';
+        report.idSolicitud = -1;
+        report.idEmpleado = -1;
+        report.idComision = -1;
+        report.NombreComision = '';
+        report.NombreEmpleado = '';
+        report.fechaInicial = '';
+        report.fechaFinal = '';
 
-        employeeEvaluation.loadComboPlaza();
-        employeeEvaluation.loadComboEmployeesByPosicion(utils.POSICION_PROMOTOR, '#comboPromotor');
-        employeeEvaluation.loadComboEmployeesByPosicion(utils.POSICION_EJECUTIVO, '#comboEjecutivo');
-        employeeEvaluation.loadComboEmployeesByPosicion(utils.POSICION_SUPERVISOR, '#comboSupervisor');
+        report.totalDebeEntregar = '';
+        report.totalFalla = '';
+        report.porcentajeComision = '';
+        report.comision = '';
+        report.venta = '';
 
-        //employeeEvaluation.cargarItems();
+        $('#txtFechaSemana').val(report.fechaHoy());
+
+        report.loadComboPlaza();
+
+        report.loadComboEjecutivosByPlaza("-1", '#comboEjecutivo');
 
         $('.secciones').hide();
+        $('#divReporteFalla').hide();
+        $('#divLoading').hide();
         $('#panelTabla').show();
 
-        employeeEvaluation.calificacionTotal = 0;
     },
 
-    cargarItems: () => {
+    fechaHoy() {
+        let today = new Date();
 
-        let params = {};
+        let dayMonth = today.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
+        let month = (today.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
+
+        return `${today.getFullYear()}-${month}-${dayMonth}`;
+
+    },
+
+    fechasHoy(yearSelected, monthSelected, daySelected) {
+        console.log('fechasHoy');
+        monthSelected--;
+
+        //  fecha (final)
+
+        let endWeekDay = new Date(yearSelected, monthSelected, daySelected);
+        let end_ = endWeekDay.getDay() + 1
+
+        endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
+
+        let dayMonth = endWeekDay.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
+
+        let month = (endWeekDay.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
+
+        report.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
+
+        //  fecha inicial
+        let startWeekDay = new Date(yearSelected, monthSelected, daySelected);
+        startWeekDay.setDate(startWeekDay.getDate() - startWeekDay.getDay() + 1);
+
+        let startDayMonth = startWeekDay.getDate();
+        startDayMonth = startDayMonth.toString().length === 1 ? `0${startDayMonth}` : startDayMonth;
+
+        let startMonth = (startWeekDay.getMonth() + 1);
+        startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
+
+        let startYear = (startWeekDay.getFullYear());
+
+        report.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
+
+
+        console.log(`fechaInicial ${report.fechaInicial}`);
+        console.log(`fechaFinal ${report.fechaFinal}`);
+
+    },
+
+    loadComboEjecutivosByPlaza: (idPlaza, control) => {
+
+        var params = {};
         params.path = window.location.hostname;
-        params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
-        params.idPlaza = document.getElementById('comboPlaza').value;
-        params.idPromotor = document.getElementById('comboPromotor').value;
-        params.idSupervisor = document.getElementById('comboSupervisor').value;
-        params.idEjecutivo = document.getElementById('comboEjecutivo').value;
-        params.fechaInicial = employeeEvaluation.fechaInicial;
-        params.fechaFinal = employeeEvaluation.fechaFinal;
-        params.idStatus = status;
+        params.idPlaza = idPlaza;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Commissions/EmployeeEvaluation.aspx/GetListaItems",
+            url: "../../pages/Reports/Reports.aspx/GetListaEjecutivosByPlaza",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
 
-                let data = msg.d;
+                let items = msg.d;
+                let opcion = '<option value="-1">Todos</option>';
 
-                //  si no tiene permisos
-                if (data == null) {
-                    window.location = "../../pages/Index.aspx";
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdEmpleado}' > ${item.Nombre}</option > `;
+
                 }
 
-                let table = $('#table').DataTable({
-                    "destroy": true,
-                    "processing": true,
-                    "order": [],
-                    data: data,
-                    columns: [
-                        { data: 'NombreCompleto' },
-                        { data: 'NombreCompletoSupervisor' },
-                        { data: 'NombreCompletoEjecutivo' },
-                        { data: 'NombrePlaza' },
-                        { data: 'FechaIngresoMx' },
-                        { data: 'NombreComision' },
-                        { data: 'nivelNomision.PorcentajeStr' },
-                        { data: 'Accion' }
-
-
-                    ],
-                    "language": textosEsp,
-                    "columnDefs": [
-                        {
-                            "targets": [-1],
-                            "orderable": false
-                        }
-                    ],
-                    dom: 'fBrtipl',
-                    buttons: [
-                        {
-                            extend: 'csvHtml5',
-                            title: descargas,
-                            text: '&nbsp;Csv', className: 'csvbtn'
-                        }
-                    ]
-
-
-                });
-
+                $(`${control}`).html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
-
-
             }
 
         });
-
-
     },
 
 
-    loadComboEmployeesByPosicion: (idTipoEmpleado, control) => {
+    loadComboSupervisoresByEjecutivo: (idEjecutivo, control) => {
 
         var params = {};
         params.path = window.location.hostname;
-        params.idTipoEmpleado = idTipoEmpleado;
+        params.idEjecutivo = idEjecutivo;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Employees.aspx/GetListaItemsEmpleadoByPosicion",
+            url: "../../pages/Reports/Reports.aspx/GetListaSupervisoresByEjecutivo",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="-1">Todos</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdEmpleado}' > ${item.Nombre}</option > `;
+
+                }
+
+                $(`${control}`).html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+
+    loadComboPromotoresBySupervisor: (idSupervisor, control) => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params.idSupervisor = idSupervisor;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetListaPromotoresBySupervisor",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -179,26 +230,20 @@ const employeeEvaluation = {
     },
 
 
-    open(idComision, nombreComision, nombreEmpleado, idEmpleado) {
+    getData(idPromotor, fechaInicial, fechaFinal) {
 
-        console.log(`idComision ${idComision}`);
-        employeeEvaluation.idComision = idComision;
-        employeeEvaluation.nombreComision = nombreComision;
-        employeeEvaluation.nombreEmpleado = nombreEmpleado;
-        employeeEvaluation.idEmpleado = idEmpleado;
-
-        employeeEvaluation.calificacionTotal = 0;
 
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.idComision = idComision;
-        params.idEmpleado = idEmpleado;
+        params.idPromotor = idPromotor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Commissions/EmployeeEvaluation.aspx/GetItemsRulesByCommissionAndEmployee",
+            url: "../../pages/Reports/Reports.aspx/GetTotals",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -206,51 +251,20 @@ const employeeEvaluation = {
             success: function (msg) {
 
                 let data = msg.d;
-                console.table(data.table);
 
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
                 }
 
+                console.log(data);
 
-                $('#tableReglas tbody').empty().append(data.Table);
-                employeeEvaluation.calificacionTotal = Number(data.totalEvaluacionCompletada);
+                $(`#cell_totalDebeEntregar`).text(data[0].totalStr);
+                $(`#cell_totalFalla`).text(data[1].totalStr);
 
-                //if (Number(employeeEvaluation.calificacionTotal) > 0) {
-                //    $('#spanTotalPonderacionObtenida').text(employeeEvaluation.calificacionTotal + '%');
-                //}
+                //  calcular subtotal
+                $(`#cell_subtotal`).text(number_format(data[0].total - data[1].total, 2, '$'));
 
-
-                $('#nombreComision').html(employeeEvaluation.nombreComision);
-                $('#nombreEmpleado').html(employeeEvaluation.nombreEmpleado);
-
-                $('.secciones').hide();
-                $('#panelForm').show();
-
-                $(`.checks`).on('change', (e) => {
-                    e.preventDefault();
-
-                    let id = e.currentTarget.id
-                    console.log(`${id}`);
-                    console.log('check');
-
-                    let checked = $(`#${id}`).prop('checked');
-                    let value = $(`#${id}`).attr('data-value');
-
-                    //console.log('checked ' + checked);
-                    //console.log('value ' + value);
-
-                    if (checked) {
-                        employeeEvaluation.calificacionTotal += Number(value);
-                    } else {
-                        employeeEvaluation.calificacionTotal -= Number(value);
-                    }
-                    if (Number(employeeEvaluation.calificacionTotal) > 0) {
-                        $('#spanTotalPonderacionObtenida').text(employeeEvaluation.calificacionTotal + '%');
-                    }
-
-                });
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -266,16 +280,299 @@ const employeeEvaluation = {
 
 
 
+    getTotalByStatusPayment(idPromotor, idStatusPago, fechaInicial, fechaFinal, htmlControl) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.idStatusPago = idStatusPago;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetTotalByPaymentStatus",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                console.log(data);
+
+                $(`${htmlControl}`).text(data.totalStr);
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+
+    GetTotalLoanByPromotor(idPromotor, fechaInicial, fechaFinal, htmlControl) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetTotalLoanByPromotor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+
+
+                $(`${htmlControl}`).text(data.totalStr);
+                report.venta = data.total;
+
+                //  Datos de la comision, necesarios en este punto para calcular la comisión a pagar
+                report.getPromotorWithCommissionData(idPromotor);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+    getPromotorWithCommissionData: (id) => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.id = id;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPromotorDataById",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let item = msg.d;
+
+                //console.log(`Promotor data = ${item}`);
+
+                $(`#cell_porcentajeComision`).text(`${item.PorcentajeComision}%`);
+                report.porcentajeComision = item.PorcentajeComision;
+
+                report.comision = report.venta * item.PorcentajeComision / 100;
+
+                $(`#cell_totalComision`).text(`${number_format(report.comision, 2, '$')}`);
+
+
+                //  final de generacion del reporte
+                $('#divReporteFalla').show();
+                $('#divLoading').hide();
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+
+
+    },
+
+    getSubtotal(totalEntregar, totalFalla, htmlControl) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.totalEntregar = totalEntregar;
+        params.totalFalla = totalFalla;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetSubtotal",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                $(`${htmlControl}`).text(data.totalStr);
+
+                return data.total;
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+    getTableSemanaExtra(idPromotor, idStatus, fechaInicial, fechaFinal) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.idStatus = idStatus;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotorAndSemanaExtra",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                console.log(data);
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.FechaStr}</td>`;
+                    html += `<td>${item.NombreCliente}</td>`;
+                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                html += `<tr>`;
+                html += `<th></th>`;
+                html += `<th>Total</th>`;
+                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `</tr>`;
+
+                $('#tableSemanaExtra tbody').empty().append(html);
+
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
     accionesBotones: () => {
 
 
+        $('#comboPlaza').on('change', (e) => {
+            e.preventDefault();
 
+            report.loadComboEjecutivosByPlaza($('#comboPlaza').val(), '#comboEjecutivo');
 
-        
-        $('#btnReporteFalla').on('click', (e) => {
+        });
+
+        $('#comboEjecutivo').on('change', (e) => {
+            e.preventDefault();
+
+            report.loadComboSupervisoresByEjecutivo($('#comboEjecutivo').val(), '#comboSupervisor');
+
+        });
+
+        $('#comboSupervisor').on('change', (e) => {
+            e.preventDefault();
+
+            report.loadComboPromotoresBySupervisor($('#comboSupervisor').val(), '#comboPromotor');
+
+        });
+        $('#btnReporteFalla').on('click', async (e) => {
             e.preventDefault();
 
             console.log('btnReporteFalla');
+
+            $('#divReporteFalla').hide();
+            $('#divLoading').show();
+
+            //let idPromotor = $('#comboPromotor').val();
+            let idPromotor = 33;    //  TODO: Solo para test
+
+            if (!idPromotor) {
+
+                utils.toast(mensajesAlertas.errorSeleccionarPromotor, 'error');
+                return;
+            }
+
+            $('#txtEjecutivo').val($('#comboEjecutivo option:selected').text());
+            $('#txtPromotor').val($('#comboPromotor option:selected').text());
+
+            let formatedDate = `${$('#txtFechaSemana').val().split('-')[2]}/${$('#txtFechaSemana').val().split('-')[1]}/${$('#txtFechaSemana').val().split('-')[0]}`;
+
+            let date = $('#txtFechaSemana').val();
+            report.fechasHoy(`${$('#txtFechaSemana').val().split('-')[0]}`, `${$('#txtFechaSemana').val().split('-')[1]}`, `${$('#txtFechaSemana').val().split('-')[2]}`);
+
+            $('#txtFecha').val(formatedDate);
+
+            report.getData(idPromotor, report.fechaInicial, report.fechaFinal);
+            report.getTotalByStatusPayment(idPromotor, 3, report.fechaInicial, report.fechaFinal, '#cell_totalRecuperacion');
+            report.GetTotalLoanByPromotor(idPromotor, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
+            report.getTableSemanaExtra(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
+
+            return;
 
             var element = document.getElementById('divReporteFalla');
             html2pdf(element);
@@ -289,9 +586,9 @@ const employeeEvaluation = {
 
 window.addEventListener('load', () => {
 
-    employeeEvaluation.init();
+    report.init();
 
-    employeeEvaluation.accionesBotones();
+    report.accionesBotones();
 
 });
 

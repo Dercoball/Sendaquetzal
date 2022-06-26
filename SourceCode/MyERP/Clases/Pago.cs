@@ -14,6 +14,7 @@ namespace Plataforma.Clases
         public int IdUsuario;
         public int NumeroSemana;
         public int NumeroSemanas;
+        public int SemanaExtra;
 
         public double Monto;
         public float Pagado; // Lo actual abonado

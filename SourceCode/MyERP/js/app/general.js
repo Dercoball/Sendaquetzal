@@ -342,6 +342,11 @@ var utils = {
     STATUS_PRESTAMO_RECHAZADO: 3,
     STATUS_PRESTAMO_APROBADO: 4,
 
+    STATUS_PAGO_PENDIENTE: 1,
+    STATUS_PAGO_FALLA: 2,
+    STATUS_PAGO_ABONADO: 3,
+    STATUS_PAGO_PAGADO: 4,
+
     getDocumentos: (params) => {
 
 

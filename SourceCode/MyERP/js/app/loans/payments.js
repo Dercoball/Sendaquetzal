@@ -238,7 +238,7 @@ const payments = {
 
 
                 $('#table_').html(htmlTable);
-            
+
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -280,8 +280,9 @@ const payments = {
         endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
 
         let dayMonth = endWeekDay.getDate();
+        month = (endWeekDay.getMonth() + 1);
 
-        payments.fechaFinal = `${today.getFullYear()}-${month}-${dayMonth}`;
+        payments.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
 
         //  fecha inicial
         let startWeekDay = new Date();

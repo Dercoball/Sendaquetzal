@@ -207,8 +207,13 @@ const loansindex = {
         endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
 
         let dayMonth = endWeekDay.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
 
-        loansindex.fechaFinal = `${today.getFullYear()}-${month}-${dayMonth}`;
+
+        month = (endWeekDay.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
+
+        loansindex.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
 
         //  fecha inicial
         let startWeekDay = new Date();

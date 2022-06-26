@@ -53,12 +53,7 @@ const report = {
         console.log('fechasHoy');
         monthSelected--;
 
-        //  fecha hoy (final)
-        let today = new Date(yearSelected, monthSelected, daySelected);
-
-        let month = (today.getMonth() + 1);
-
-        month = month.toString().length === 1 ? `0${month}` : month;
+        //  fecha (final)
 
         let endWeekDay = new Date(yearSelected, monthSelected, daySelected);
         let end_ = endWeekDay.getDay() + 1
@@ -66,8 +61,12 @@ const report = {
         endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
 
         let dayMonth = endWeekDay.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
 
-        report.fechaFinal = `${today.getFullYear()}-${month}-${dayMonth}`;
+        let month = (endWeekDay.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
+
+        report.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
 
         //  fecha inicial
         let startWeekDay = new Date(yearSelected, monthSelected, daySelected);
@@ -393,7 +392,7 @@ const report = {
 
                 let item = msg.d;
 
-                console.log(`Promotor data = ${item}`);
+                //console.log(`Promotor data = ${item}`);
 
                 $(`#cell_porcentajeComision`).text(`${item.PorcentajeComision}%`);
                 report.porcentajeComision = item.PorcentajeComision;
@@ -454,20 +453,21 @@ const report = {
     },
 
 
-    getTableSemanaExtra(idPromotor, fechaInicial, fechaFinal) {
+    getTableSemanaExtra(idPromotor, idStatus, fechaInicial, fechaFinal) {
 
 
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
+        params.idStatus = idStatus;
         params.fechaInicial = fechaInicial;
         params.fechaFinal = fechaFinal;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotor",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotorAndSemanaExtra",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -483,7 +483,27 @@ const report = {
 
                 console.log(data);
 
-       
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.FechaStr}</td>`;
+                    html += `<td>${item.NombreCliente}</td>`;
+                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                html += `<tr>`;
+                html += `<th></th>`;
+                html += `<th>Total</th>`;
+                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `</tr>`;
+
+                $('#tableSemanaExtra tbody').empty().append(html);
+
+
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -550,6 +570,7 @@ const report = {
             report.getData(idPromotor, report.fechaInicial, report.fechaFinal);
             report.getTotalByStatusPayment(idPromotor, 3, report.fechaInicial, report.fechaFinal, '#cell_totalRecuperacion');
             report.GetTotalLoanByPromotor(idPromotor, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
+            report.getTableSemanaExtra(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
 
             return;
 

@@ -112,6 +112,13 @@
                             <div class="row mt-3 mb-3">
 
                                 <div class="form-group col-md-3">
+                                    <label for="txtFechaSemana">
+                                        Semana
+                                    </label>
+                                    <input type="date" class="form-control" id="txtFechaSemana" />
+                                </div>
+
+                                <div class="form-group col-md-2">
                                     <label for="comboPlaza">
                                         Plaza
                                     </label>
@@ -119,7 +126,7 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="comboEjecutivo">
                                         Ejecutivo
                                     </label>
@@ -127,19 +134,21 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="comboSupervisor">
                                         Supervisor
                                     </label>
                                     <select id="comboSupervisor" class="form-control">
+                                        <option value="">Seleccione</option>
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="comboPromotor">
                                         Promotor
                                     </label>
                                     <select id="comboPromotor" class="form-control">
+                                        <option value="">Seleccione</option>
                                     </select>
                                 </div>
 
@@ -163,7 +172,16 @@
 
                     <hr />
 
-                    <div class="table-responsive" id="divReporteFalla" style="font-size: .9em;">
+                    <div id="divLoading">
+                        <div class="d-flex justify-content-center mt-5">
+                            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="table-responsive" id="divReporteFalla">
 
                         <div class="container">
 
@@ -172,10 +190,10 @@
 
 
                                 <div class="form-group col-md-2">
-                                    <label for="txtSupervisor">
-                                        Supervisor
+                                    <label for="txtEjecutivo">
+                                        Ejecutivo
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtSupervisor" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtEjecutivo" class="form-control" />
                                 </div>
 
                                 <div class="form-group col-md-2">
@@ -214,25 +232,25 @@
                                         <tbody>
                                             <tr>
                                                 <td>Debe entregar</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalDebeEntregar"></th>
                                                 <td>Adelanto entrada</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalAdelantoEntrada"></th>
                                                 <td>Venta</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalVenta"></th>
                                             </tr>
 
                                             <tr>
                                                 <td>Falla</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalFalla"></th>
                                                 <td>Adelanto salida</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalAdelantoSalida"></th>
                                                 <td>Comisión %</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_porcentajeComision"></th>
                                             </tr>
 
                                             <tr>
                                                 <td>Subtotal</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_subtotal"></th>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -241,11 +259,11 @@
 
                                             <tr>
                                                 <td>Recuperación</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalRecuperacion"></th>
                                                 <td>Total de entregar</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalEntregar"></th>
                                                 <td>Comisión</td>
-                                                <td></td>
+                                                <th class="text-right" id="cell_totalComision"></th>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -254,28 +272,73 @@
                             </div>
 
                         </div>
+
+
+                        <div class="container">
+
+                            <h1 class="h3 display">Semana extra</h1>
+                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm mb-3" id="tableSemanaExtra">
+
+                                <thead>
+                                    <tr>
+                                        <th>Fecha de crédito</th>
+                                        <th>Nombre</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+                            <h1 class="h3 display">Recuperado</h1>
+                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm mb-3" id="tableRecuperado">
+
+                                <thead>
+                                    <tr>
+                                        <th>Fecha de crédito</th>
+                                        <th>Nombre</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+                            <h1 class="h3 display">Falla</h1>
+                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm mb-3" id="tableFalla">
+
+                                <thead>
+                                    <tr>
+                                        <th>Fecha de crédito</th>
+                                        <th>Nombre</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+
+                            <%-- <h1 class="h3 display">Adelantos</h1>
+                    <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAdelanto">
+
+                        <thead>
+                            <tr>
+                                <th>Fecha de crédito</th>
+                                <th>Nombre</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+                    </table>--%>
+                        </div>
                     </div>
-
-
-
-                    <%-- <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="table">
-
-                            <thead>
-                                <tr>
-                                    <th>Promotor</th>
-                                    <th>Supervisor</th>
-                                    <th>Ejecutivo</th>
-                                    <th>Plaza</th>
-                                    <th>Fecha de ingreso</th>
-                                    <th>Comisión</th>
-                                    <th>% de nivel</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                            </tbody>
-                        </table>--%>
                 </div>
 
             </div>

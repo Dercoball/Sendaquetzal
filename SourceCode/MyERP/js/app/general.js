@@ -13,6 +13,7 @@ let idUsuario = null;
 
 var mensajesAlertas = {
 
+    errorSeleccionarPromotor: 'Debe seleccionar un promotor para poder generar el reporte.',
     solicitidAumentoAprobada: 'La solicitud de aumento de crédito ha sido aprobada correctamente.',
     solicitidAumentoRechazada: 'La solicitud de aumento de crédito ha sido rechazada correctamente.',
     pagoRegistradoExito: 'El pago fue registrado correctamente.',
@@ -319,7 +320,7 @@ function number_format(amount, decimals, simbolo = '$') {
     while (regexp.test(amount_parts[0]))
         amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
 
-    var r = sign ? '-' + simbolo + ' ' + amount_parts.join('.') : simbolo + ' ' + amount_parts.join('.');
+    var r = sign ? '-' + simbolo + '' + amount_parts.join('.') : simbolo + '' + amount_parts.join('.');
 
     return r;
 }

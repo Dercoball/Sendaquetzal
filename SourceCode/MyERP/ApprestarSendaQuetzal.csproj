@@ -221,6 +221,7 @@
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
     </Content>
+    <Content Include="js\app\reports\fault_report.js" />
     <Content Include="js\app\termsandconditions.js" />
     <Content Include="js\app\faqs.js" />
     <Content Include="js\app\faq.min.js">
@@ -283,6 +284,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Reports\Reports.aspx" />
     <Content Include="pages\Commissions\ConfigRules.aspx" />
     <Content Include="pages\Commissions\EmployeeEvaluation.aspx" />
     <Content Include="pages\Customers\CustomerHistory.aspx" />
@@ -463,6 +465,12 @@
     <Content Include="vendor\font-awesome\css\font-awesome.min.css" />
     <Content Include="vendor\font-awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="vendor\font-awesome\HELP-US-OUT.txt" />
+    <Content Include="vendor\html2pdf\html2pdf.bundle.js" />
+    <Content Include="vendor\html2pdf\html2pdf.bundle.min.js" />
+    <Content Include="vendor\html2pdf\html2pdf.bundle.min.js.LICENSE.txt" />
+    <Content Include="vendor\html2pdf\html2pdf.js" />
+    <Content Include="vendor\html2pdf\html2pdf.min.js" />
+    <Content Include="vendor\html2pdf\html2pdf.min.js.LICENSE.txt" />
     <Content Include="vendor\jquery-validation\additional-methods.js" />
     <Content Include="vendor\jquery-validation\additional-methods.min.js" />
     <Content Include="vendor\jquery-validation\jquery.validate.js" />
@@ -1200,6 +1208,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Reports\Reports.aspx.cs">
+      <DependentUpon>Reports.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Reports\Reports.aspx.designer.cs">
+      <DependentUpon>Reports.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Commissions\ConfigRules.aspx.cs">
       <DependentUpon>ConfigRules.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1595,6 +1610,8 @@
     <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.eot" />
     <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.ttf" />
     <Content Include="vendor\tinymce\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="vendor\html2pdf\html2pdf.bundle.min.js.map" />
+    <Content Include="vendor\html2pdf\html2pdf.min.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -5,23 +5,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
-    <link rel="shortcut icon" href="../img/sq.jpg"/>
+    <link rel="shortcut icon" href="../img/sq.jpg" />
 
 
 
 
-    <link rel="stylesheet" href="../css/custom.css"/>
-    <link rel="stylesheet" href="../css/app/bootstrap.css"/>
-    <link rel="stylesheet" href="../css/app/spinelli.css"/>
+    <link rel="stylesheet" href="../css/custom.css" />
+    <link rel="stylesheet" href="../css/app/bootstrap.css" />
+    <link rel="stylesheet" href="../css/app/spinelli.css" />
 
 
     <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -29,7 +29,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <meta name="theme-color" content="#7952b3"/>
+    <meta name="theme-color" content="#7952b3" />
 
 
 
@@ -43,41 +43,39 @@
 </head>
 <body>
 
-    <   >
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <img src="../img/sq.jpg" class="img-responsive" style="border-radius: 50%; width: 70px; height: 70px;" />
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="Home.aspx">Inicio</a></li>
-                        <li><a href="../pages/Aboutus.aspx">Nosotros</a></li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right links2">
-                        <li><a href="../pages/Login.aspx">Iniciar sesión</a></li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right redes">
-                        <li><a href="#">
-                            <img src="../img/facebook-logo-button.png" class="img-social" /></a></li>
-                        <li><a href="#">
-                            <img src="../img/i-twitter.png" class="img-social" /></a></li>
-                        <li><a href="#">
-                            <img src="../img/instagram.png" class="img-social" /></a></li>
-                        <li><a href="#">
-                            <img src="../img/mail.png" class="img-social" /></a></li>
-                    </ul>
-                </div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img src="../img/sq.jpg" class="img-responsive" style="border-radius: 50%; width: 70px; height: 70px;" />
             </div>
-        </nav>
-    </>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="Home.aspx">Inicio</a></li>
+                    <li><a href="../pages/Aboutus.aspx">Nosotros</a></li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right links2">
+                    <li><a href="../pages/Login.aspx">Iniciar sesión</a></li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right redes">
+                    <li><a href="#">
+                        <img src="../img/facebook-logo-button.png" class="img-social" /></a></li>
+                    <li><a href="#">
+                        <img src="../img/i-twitter.png" class="img-social" /></a></li>
+                    <li><a href="#">
+                        <img src="../img/instagram.png" class="img-social" /></a></li>
+                    <li><a href="#">
+                        <img src="../img/mail.png" class="img-social" /></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
 
     <img src="../img/brand.png" class="img-responsive  center-block" style="margin-top: 70px;" />
@@ -143,7 +141,7 @@
         </div>
     </section>--%>
 
-   
+
     <section class="pasos">
         <div class="container">
             <%--    <div class="col-md-12">

@@ -241,11 +241,7 @@ namespace Plataforma.pages
 
                 }
 
-                //  Si tiene el 100% subirlo de nivel
-                if (totalPonderacion == 100)
-                {
-
-                }
+                
 
 
 

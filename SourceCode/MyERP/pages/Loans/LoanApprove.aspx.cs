@@ -368,7 +368,7 @@ namespace Plataforma.pages
             {
 
                 string sql = @"  UPDATE prestamo
-                            SET activo = 1, id_status_prestamo = @id_status_prestamo, 
+                            SET activo = 1, id_status_prestamo = @id_status_prestamo, fecha_aprobacion = @fecha_aprobacion,
                                 notas_generales = @notas_generales, id_usuario = @id_usuario
                             WHERE
                             id_prestamo = @id_prestamo ";
@@ -381,6 +381,7 @@ namespace Plataforma.pages
 
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@fecha_aprobacion", DateTime.Now);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", idStatus);
                 cmdUpdatePrestamo.Transaction = transaction;

@@ -54,6 +54,7 @@ namespace Plataforma.Clases
         public int IdComisionInicial;   //modulo
         public string SalarioMensual;
         public float MontoLimiteInicial;
+        public float PorcentajeComision;
         public int Activo;
         public string Accion;
         public string ActivoStr;

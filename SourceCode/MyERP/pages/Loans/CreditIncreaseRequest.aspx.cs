@@ -163,6 +163,7 @@ namespace Plataforma.pages
                 string nota = "Se aprueba la solicitud de aumento de crédito.";
                 response = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO.ToString(), conn, transaction);
                 response += UpdateStatuSolicitud(idSolicitud, idUsuario, SolicitudAumentoCredito.STATUS_SOLICITUD_APROBADA.ToString(), conn, transaction);
+                response += UpdateRelacionPrestamoAprobacion(idPrestamo, idUsuario, nota, Employees.POSICION_SUPERVISOR.ToString(), conn, transaction);
 
                 transaction.Commit();
 
@@ -191,6 +192,59 @@ namespace Plataforma.pages
 
         }
 
+
+
+        public static int UpdateRelacionPrestamoAprobacion(string idPrestamo, string idUsuario, string nota, string idPosicion,
+          SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
+
+
+                string sql = @"  UPDATE relacion_prestamo_aprobacion
+                                SET fecha = @fecha, notas_generales = @notas_generales, status_aprobacion = @status_aprobacion  "
+                                + sqlActualizaPosicion
+                                + @"WHERE id_prestamo = @id_prestamo AND
+                                id_posicion = " + idPosicion + " ";
+
+
+                Utils.Log("ACTUALIZAR RelacionPrestamoAprobacion " + sql);
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@notas_generales", nota);
+                cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
+                cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
+                cmd.Parameters.AddWithValue("@status_aprobacion", "Aprobado");
+                cmd.Transaction = transaction;
+
+                r += cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                throw ex;
+
+
+            }
+
+
+            return r;
+
+
+        }
 
 
         [WebMethod]

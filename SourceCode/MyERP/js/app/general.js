@@ -25,6 +25,7 @@ var mensajesAlertas = {
     solicitudCamposVaciosEnTablaHistorial: 'Existen campos vacíos en la tabla de historial, por favor verifique.',
     errorSubirCsv: 'Debe ingregar un archivo de tipo csv.',
     errorGuardar: 'Se ha producido un error al almacenar los datos. Los datos no fueron almacenados.',
+    exitoGuardarGarantia: 'Los datos de la garantía ingresada se almacenaron correctamente.',
     exitoGuardar: 'Los datos se almacenaron correctamente.',
     exitoGuardarHistorial: 'Los datos del historial se almacenaron correctamente.',
     errorSeleccionarSupervisor: 'Debe seleccionar un supervisor para poder continuar.',

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plataforma.pages.Loans
+namespace Plataforma.pages
 {
     /**
      * Validación de solicitud de préstamo
@@ -251,6 +251,52 @@ namespace Plataforma.pages.Loans
 
         }
 
+        //  Buscar prestamo por curp del cliente, PRESTAMO con status activo 4 
+        public Prestamo GetPrestamoActiveByCURP(string path, string CURP, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        {
+
+            Prestamo item = null;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT TOP 1 p.id_prestamo, c.curp
+                                FROM prestamo p JOIN cliente c ON (c.id_cliente = p.id_cliente)
+                                WHERE c.curp = @curp AND p.id_status_prestamo IN (1, 2) ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("CURP =  " + CURP);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@curp", CURP);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    item = new Prestamo();
+                    item.IdPrestamo = int.Parse(ds.Tables[0].Rows[0]["id_prestamo"].ToString());
+
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+
+
+        }
+
 
         //  Historial con falla o abonado por curp
         public Boolean GetHistorialFallaOAbonadoByCustomerCurp(string path, string curp, SqlConnection conn, string strConexion, SqlTransaction transaction)
@@ -330,9 +376,41 @@ namespace Plataforma.pages.Loans
 
         }
 
+        public class WeekData
+        {
+            public string fechaInicial;
+            public string fechaFinal;
+        }
+
+        public WeekData GetFechas()
+        {
+
+            //  fechas
+            DateTime endWeekDate = DateTime.Now;
+            var numDayOfweek = (int)endWeekDate.DayOfWeek;
+            endWeekDate = new DateTime(endWeekDate.Year, endWeekDate.Month, endWeekDate.Day);
+            endWeekDate = endWeekDate.AddDays(7);
+            endWeekDate = endWeekDate.AddDays(-numDayOfweek);
+            Utils.Log("Fecha final de la semana: " + endWeekDate);
+
+            DateTime startWeekDate = DateTime.Now;
+            var numDayOfweek2 = (int)startWeekDate.DayOfWeek;
+            startWeekDate = startWeekDate.AddDays(-numDayOfweek2);
+            Utils.Log("Fecha inicial de la semana : " + startWeekDate);
 
 
+            string startDateStr = startWeekDate.Year.ToString() + "-" + startWeekDate.Month.ToString() + "-" + startWeekDate.Day.ToString();
+            string endDateStr = endWeekDate.Year.ToString() + "-" + endWeekDate.Month.ToString() + "-" + endWeekDate.Day.ToString();
 
+            WeekData week = new WeekData();
+            week.fechaInicial = startDateStr;
+            week.fechaFinal = endDateStr;
+
+            return week;
 
         }
+
+
+
     }
+}

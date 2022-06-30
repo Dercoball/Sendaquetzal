@@ -181,7 +181,7 @@
                     </div>
 
 
-                    <div class="table-responsive" id="divReporteFalla">
+                    <div class="table-responsive reporteFalla" id="divReporteFalla">
 
                         <div class="container">
 
@@ -338,7 +338,20 @@
                         </tbody>
                     </table>--%>
                         </div>
+
                     </div>
+
+                    <div class="row mt-3 mb-3 reporteFalla">
+
+                        <div class=" col-md-6 text-center">
+                            <button class="btn btn-outline btn-primary" id="btnCancelar"><i class="fa fa-search mr-1"></i>Volver</button>
+                        </div>
+                        <div class=" col-md-6 text-center">
+                            <button class="btn btn-outline btn-primary" id="btnGuardar"><i class="fa fa-search mr-1"></i>Guardar e imprimir</button>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>

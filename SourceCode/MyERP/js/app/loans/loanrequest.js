@@ -534,6 +534,7 @@ const client = {
                         setTimeout(function () {
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+                            $(`.documentos`).attr('src', '../../img/upload.png');
 
                             $('#spnMensajeControlado').html(mensajesAlertas.solicitudPrestamoEnviada);
                             $('#panelMensajeControlado').modal('show');

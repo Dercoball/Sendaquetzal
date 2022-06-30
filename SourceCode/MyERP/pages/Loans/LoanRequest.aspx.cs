@@ -1,5 +1,4 @@
 ﻿using Plataforma.Clases;
-using Plataforma.pages.Loans;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -230,7 +229,9 @@ namespace Plataforma.pages
                     return salida;
                 }
 
-                //  Validar que en su historial todo esté en Pagado. En caso contrario no dejar guardar el nuevo préstamo.
+
+
+                //  Validar que en su historial todo esté en Pagado. En caso contrario no dejar guardar el nuevo préstamo. TODO: validar tambien en prestamo anterior
                 Boolean historialFallaOAbonado = validations.GetHistorialFallaOAbonadoByCustomerCurp(path, item.Curp, conn, strConexion, transaccion);
                 if (historialFallaOAbonado)
                 {
@@ -439,6 +440,8 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
 
             Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            
+            Usuario user = Usuarios.GetUsuario(path, idUsuario);
 
 
             //verificar que tenga permisos para usar esta pagina
@@ -600,10 +603,10 @@ namespace Plataforma.pages
 
                 //  Guardar prestamo
                 sql = @"  INSERT INTO prestamo
-                            (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo)
+                            (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo, id_empleado)
                             OUTPUT INSERTED.id_prestamo
                             VALUES
-                            (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo);
+                            (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo, @id_empleado);
                         ";
 
                 Utils.Log("GUARDAR NUEVO PRESTAMO " + sql);
@@ -614,6 +617,7 @@ namespace Plataforma.pages
                 cmdInsertPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
                 cmdInsertPrestamo.Parameters.AddWithValue("@monto", item.Monto);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdInsertPrestamo.Parameters.AddWithValue("@id_empleado", user.IdEmpleado);
                 cmdInsertPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);// un nuevo prestamo nace con status 1 = PENDIENTE
                 cmdInsertPrestamo.Transaction = transaccion;
 

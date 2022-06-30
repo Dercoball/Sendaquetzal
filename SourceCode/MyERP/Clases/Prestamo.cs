@@ -18,6 +18,9 @@ namespace Plataforma.Clases
         public float Monto;
         public string MontoFormateadoMx;
 
+        public float Saldo;             //Deuda actual de este prestamo
+        public string SaldoFormateadoMx;
+
         public int IdStatusPrestamo;
 
         public Cliente Cliente;

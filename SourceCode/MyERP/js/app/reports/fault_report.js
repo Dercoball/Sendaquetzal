@@ -30,8 +30,8 @@ const report = {
 
         report.loadComboEjecutivosByPlaza("-1", '#comboEjecutivo');
 
-        $('.secciones').hide();
-        $('#divReporteFalla').hide();
+        $('.secciones').hide();        
+        $('.reporteFalla').hide();
         $('#divLoading').hide();
         $('#panelTabla').show();
 
@@ -403,7 +403,8 @@ const report = {
 
 
                 //  final de generacion del reporte
-                $('#divReporteFalla').show();
+                
+                $('.reporteFalla').show();
                 $('#divLoading').hide();
 
 
@@ -519,6 +520,14 @@ const report = {
 
     accionesBotones: () => {
 
+        $('#btnGuardar').on('click', (e) => {
+            e.preventDefault();
+
+            var element = document.getElementById('divReporteFalla');
+            html2pdf(element);
+
+        });
+
 
         $('#comboPlaza').on('change', (e) => {
             e.preventDefault();
@@ -545,11 +554,11 @@ const report = {
 
             console.log('btnReporteFalla');
 
-            $('#divReporteFalla').hide();
+            $('.reporteFalla').hide();
             $('#divLoading').show();
 
-            //let idPromotor = $('#comboPromotor').val();
-            let idPromotor = 33;    //  TODO: Solo para test
+            let idPromotor = $('#comboPromotor').val();
+            //let idPromotor = 33;    //  TODO: Solo para test
 
             if (!idPromotor) {
 
@@ -572,10 +581,13 @@ const report = {
             report.GetTotalLoanByPromotor(idPromotor, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
             report.getTableSemanaExtra(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
 
-            return;
+            //return;
 
-            var element = document.getElementById('divReporteFalla');
-            html2pdf(element);
+            setTimeout(() => {
+
+            
+
+            }, 5000);
 
         });
 

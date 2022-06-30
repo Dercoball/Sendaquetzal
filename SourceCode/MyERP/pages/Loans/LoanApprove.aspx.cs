@@ -165,7 +165,7 @@ namespace Plataforma.pages
                 }
 
 
-                //  Validar el monto máximo al ser un préstamo inicial
+                //  5) Validar el monto máximo al ser un préstamo inicial
                 List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaction);
                 if (prestamosAnteriores.Count > 0)
                 {
@@ -181,11 +181,10 @@ namespace Plataforma.pages
 
                 }
 
-                //  Fin de validaciones
 
 
 
-                //  Validaciones para el promotor y creación de alerta de límite de crédito
+                // 6) Validar que el promotor no exceda el límite de crédito que puede otorgar y creación de alerta de límite de crédito
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
 
@@ -215,15 +214,61 @@ namespace Plataforma.pages
 
                 }
 
+                //  Para recalcular el monto a prestar restandole el monto pendiente de un anterior préstamo si es que tuviese uno
+                //float newMonto = prestamo.Monto;
+
+                // Traer al prestamo actual(anterior, no este nuevo que estamos aprobando)
+                Prestamo currentLoan = GetPrestamoByIdCliente(prestamo.IdCliente.ToString(), conn, transaction);
+
+                if (currentLoan != null)
+                {
+
+                    //   Tiene un prestamo activo anterior 
+                    //  Traer pagos del prestamo actual, con fecha de hasta este fin de semana
+                    LoanValidation validations = new LoanValidation();
+                    LoanValidation.WeekData currentWeek = validations.GetFechas();
 
 
+                    // Traer pagos sin importar el status
+                    List<Pago> paymentsByCurrentLoan = GetPaymentsByIdPrestamoAndDate(false, currentLoan.IdPrestamo.ToString(), currentWeek.fechaFinal, conn, transaction);
+
+                    //  7) Validar que préstamo anterior se encuentre en la semana>=10, 
+                    if (paymentsByCurrentLoan.Count < 10)
+                    {
+                        response.MensajeError = "El cliente cuenta con un préstamo activo en la semana número " + paymentsByCurrentLoan.Count + ".<br/>" +
+                       "Para poder ser aprobado debe estar en la semana 10 o posterior.<br/><br/>" +
+                       "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
+
+                        response.CodigoError = 1;
+                        return response;
+
+                    }
+
+                    //  8) Validar que no tenga pagos en falla o abonados en prestamo actual sin importar la semana
+                    var paymentsInFail = paymentsByCurrentLoan.Find(x => x.IdStatusPago == Pago.STATUS_PAGO_ABONADO || x.IdStatusPago == Pago.STATUS_PAGO_FALLA);
+                    if (paymentsInFail != null)
+                    {
+                        response.MensajeError = "El cliente cuenta con un préstamo activo y este tiene pagos con status de falla o abonado.<br/><br/>" +
+                       "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
+
+                        response.CodigoError = 1;
+                        return response;
+                    }
 
 
-                //  Actualizar status del préstamo
+                    //  Obtener la deuda actual
+                    Prestamo deudaActual = CurrentDebtByIdLoan(currentLoan.IdPrestamo.ToString(), conn, transaction);
+                    prestamo.Monto = deudaActual.Saldo;
+
+                    //  TODO: Validar que El nuevo prestamo no exceda X ...
+
+                }
+
+                //  Actualizar status y monto del préstamo
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO, conn, transaction);
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
 
@@ -231,7 +276,7 @@ namespace Plataforma.pages
                 else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
                 {
 
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_APROBADO, conn, transaction);
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_APROBADO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
 
@@ -240,7 +285,7 @@ namespace Plataforma.pages
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
                     //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
-                    DateTime startDate = new DateTime(2022, 05, 26);    //TODO: CAMBIAR ESTE TEST
+                    DateTime startDate = new DateTime(2022, 04, 14);    //TODO: CAMBIAR ESTE TEST
 
 
                     //  Se agrega la semana extra por si le aplica
@@ -281,7 +326,7 @@ namespace Plataforma.pages
                 int rowsAffectedRPA = UpdateRelacionPrestamoAprobacion(idPrestamo, idUsuario, nota, idPosicion.ToString(), conn, transaction);
 
 
-                transaction.Commit();
+                //transaction.Commit();
 
 
                 Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
@@ -297,7 +342,7 @@ namespace Plataforma.pages
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 r = -1;
-                response.MensajeError = "Se ha generado un error inesperado. No se pudo completar la operación. Por favor intente mas tarden.";
+                response.MensajeError = "Se ha generado un error inesperado. No se pudo completar la operación. Por favor intente mas tarde.";
                 response.CodigoError = 1;
             }
 
@@ -307,6 +352,181 @@ namespace Plataforma.pages
             }
 
             return response;
+
+
+        }
+
+
+
+        /// <summary>
+        /// Traer los pagos de un préstamo con fecha <= a este fin de semana actual 
+        /// </summary>
+        /// <param name="byStatus"></param>
+        /// <param name="fechaInicial"></param>
+        /// <param name="fechaFinal"></param>
+        /// <param name="conn"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        [WebMethod]
+        public static List<Pago> GetPaymentsByIdPrestamoAndDate(bool byStatus, string idPrestamo, string fechaFinal, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            List<Pago> items = new List<Pago>();
+
+            try
+            {
+
+                var sqlStatus = "";
+                if (byStatus) // solo los del status indicado
+                {
+                    sqlStatus = " AND p.id_status_pago IN(1, 2, 3)  ";
+
+                }
+
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,                                    
+                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr
+                                    FROM pago p
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
+                                    WHERE p.id_prestamo = @id_prestamo AND (p.fecha <= '" + fechaFinal + @"') "
+                                    + sqlStatus
+                                    + " ORDER BY p.id_pago ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
+                adp.SelectCommand.Transaction = transaction;
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Pago item = new Pago();
+                        item.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
+                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
+                        item.IdStatusPago = int.Parse(ds.Tables[0].Rows[i]["id_status_pago"].ToString());
+
+                        items.Add(item);
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+
+
+        }
+
+        /// <summary>
+        /// Traer saldo o deuda actual de un préstamo 
+        /// </summary>
+        /// <param name="byStatus"></param>
+        /// <param name="idPrestamo"></param>
+        /// <param name="fechaFinal"></param>
+        /// <param name="conn"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        [WebMethod]
+        public static Prestamo CurrentDebtByIdLoan(string idPrestamo, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            Prestamo item = null;
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT IsNull(SUM(saldo), 0) saldo
+                                    FROM pago                                    
+                                    WHERE id_prestamo = @id_prestamo ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
+                adp.SelectCommand.Transaction = transaction;
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    item = new Prestamo();
+                    item.IdPrestamo = int.Parse(ds.Tables[0].Rows[0]["id_prestamo"].ToString());
+                    item.Saldo = float.Parse(ds.Tables[0].Rows[0]["saldo"].ToString());
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+            }
+
+            return item;
+
+
+        }
+
+
+
+        //  Buscar prestamos aprobados (4) del cliente
+        public static Prestamo GetPrestamoByIdCliente(string idCliente, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            Prestamo item = null;
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT TOP 1 p.id_prestamo, c.curp
+                                FROM prestamo p JOIN cliente c ON (c.id_cliente = p.id_cliente)
+                                WHERE p.id_cliente = @id_cliente AND p.id_status_prestamo IN (4) ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("idCliente =  " + idCliente);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_cliente", idCliente);
+                adp.SelectCommand.Transaction = transaction;
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    item = new Prestamo();
+                    item.IdPrestamo = int.Parse(ds.Tables[0].Rows[0]["id_prestamo"].ToString());
+
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
 
 
         }
@@ -363,7 +583,7 @@ namespace Plataforma.pages
 
         }
 
-        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, int idStatus,
+        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, int idStatus, float monto,
            SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -373,6 +593,7 @@ namespace Plataforma.pages
 
                 string sql = @"  UPDATE prestamo
                             SET activo = 1, id_status_prestamo = @id_status_prestamo, fecha_aprobacion = @fecha_aprobacion,
+                                monto = @monto,
                                 notas_generales = @notas_generales, id_usuario = @id_usuario
                             WHERE
                             id_prestamo = @id_prestamo ";
@@ -387,6 +608,7 @@ namespace Plataforma.pages
                 cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@fecha_aprobacion", DateTime.Now);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@monto", monto);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", idStatus);
                 cmdUpdatePrestamo.Transaction = transaction;
 

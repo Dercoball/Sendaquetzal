@@ -219,6 +219,7 @@ namespace Plataforma.pages
 
                 // Traer al prestamo actual(anterior, no este nuevo que estamos aprobando)
                 Prestamo currentLoan = GetPrestamoByIdCliente(prestamo.IdCliente.ToString(), conn, transaction);
+                Prestamo deudaActual = null;
 
                 if (currentLoan != null)
                 {
@@ -257,10 +258,23 @@ namespace Plataforma.pages
 
 
                     //  Obtener la deuda actual
-                    Prestamo deudaActual = CurrentDebtByIdLoan(currentLoan.IdPrestamo.ToString(), conn, transaction);
-                    prestamo.Monto = deudaActual.Saldo;
+                    deudaActual = CurrentDebtByIdLoan(currentLoan.IdPrestamo.ToString(), conn, transaction);
 
-                    //  TODO: Validar que El nuevo prestamo no exceda X ...
+
+                    //  Validar que el monto de la deuda actual sea menor al monto del prestamo nuevo solicitado
+                    if (prestamo.Monto < deudaActual.Saldo)
+                    {
+                        response.MensajeError = "El cliente cuenta con un préstamo activo con un saldo total por pagar de " + deudaActual.Saldo.ToString("C2") + " .<br/><br/>" +
+                        "El nuevo préstamo es por la cantidad de " + prestamo.Monto.ToString("C2") + ", no alcanza a cubrir la deuda actual.<br/><br/>" +
+                        "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
+
+                        response.CodigoError = 1;
+                        return response;
+                    }
+
+
+
+
 
                 }
 
@@ -275,6 +289,26 @@ namespace Plataforma.pages
                 }
                 else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
                 {
+
+                    //  Si se esta cubriendo deuda restante anterior de un prestamo con el nuevo que se esta aprobando
+                    if (currentLoan != null && deudaActual != null)
+                    {
+                        //  Nuevo monto
+                        prestamo.Monto = prestamo.Monto - deudaActual.Saldo;
+
+                        //  Efectuar los pagos para cada Pago semanal pendiente
+                        int rowsPago = UpdatePago(currentLoan.IdPrestamo.ToString(), idPrestamo, conn, transaction);
+                        Utils.Log("\nrowsPago affected " + rowsPago);
+
+
+                        //  Pasar a status pagado el prestamo anterior
+                        string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. " ;
+                        
+                        int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);                        
+                        Utils.Log("\nrowsPago rowsAffectedStatusPrestamoAnterior " + rowsAffectedStatusPrestamoAnterior);
+
+                    }
+
 
                     int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_APROBADO, prestamo.Monto, conn, transaction);
 
@@ -326,7 +360,7 @@ namespace Plataforma.pages
                 int rowsAffectedRPA = UpdateRelacionPrestamoAprobacion(idPrestamo, idUsuario, nota, idPosicion.ToString(), conn, transaction);
 
 
-                //transaction.Commit();
+                transaction.Commit();
 
 
                 Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
@@ -466,7 +500,6 @@ namespace Plataforma.pages
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     item = new Prestamo();
-                    item.IdPrestamo = int.Parse(ds.Tables[0].Rows[0]["id_prestamo"].ToString());
                     item.Saldo = float.Parse(ds.Tables[0].Rows[0]["saldo"].ToString());
                 }
 
@@ -583,6 +616,54 @@ namespace Plataforma.pages
 
         }
 
+        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus, 
+        SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = @"  UPDATE prestamo
+                            SET activo = 0, id_status_prestamo = @id_status_prestamo,
+                                notas_generales = @notas_generales, id_usuario = @id_usuario
+                            WHERE
+                            id_prestamo = @id_prestamo ";
+
+                Utils.Log("\nMétodo-> " +
+              System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
+                cmdUpdatePrestamo.CommandType = CommandType.Text;
+
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@notas_generales", nota);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", idStatus);
+                cmdUpdatePrestamo.Transaction = transaction;
+
+                r += cmdUpdatePrestamo.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                throw ex;
+
+
+            }
+
+
+            return r;
+
+
+        }
+
+
         public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, int idStatus, float monto,
            SqlConnection conn, SqlTransaction transaction)
         {
@@ -630,6 +711,47 @@ namespace Plataforma.pages
 
             return r;
 
+
+        }
+
+
+        [WebMethod]
+        public static int UpdatePago(string idPrestamo, string idPrestamoAdelanto, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = @" UPDATE pago SET pagado = monto, saldo = 0, id_status_pago = 4, pagado_con_adelanto = 1, fecha_registro_pago = @fecha_registro_pago,
+                                    id_prestamo_adelanto = @id_prestamo_adelanto
+                                    WHERE pagado < monto OR saldo > 0 AND id_prestamo = @id_prestamo ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                cmd.Parameters.AddWithValue("@fecha_registro_pago", DateTime.Now);
+                cmd.Parameters.AddWithValue("@id_prestamo_adelanto", idPrestamoAdelanto);
+                cmd.Transaction = transaction;
+
+                r = cmd.ExecuteNonQuery();
+
+                Utils.Log("Pago actualizado -> OK ");
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+            }
+
+
+            return r;
 
         }
 

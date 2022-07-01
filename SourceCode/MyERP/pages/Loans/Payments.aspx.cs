@@ -174,7 +174,7 @@ namespace Plataforma.pages
                         }
                         Utils.Log("montoAAbonar ... " + montoAAbonar);
 
-                        int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar, conn, transaccion);
+                        int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar,true, conn, transaccion);
 
                         Utils.Log("rowsAffected de pago " + pago.IdPago + " ... " + rowsUpdateds);
 
@@ -263,15 +263,20 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static int UpdatePago(int idPago, double abono, SqlConnection conn, SqlTransaction transaction)
+        public static int UpdatePago(int idPago, double abono, bool esRecuperacion, SqlConnection conn, SqlTransaction transaction)
         {
 
             int r = 0;
             try
             {
+                string sqlEsRecuperacion = "";
+                if (esRecuperacion)
+                {
+                    sqlEsRecuperacion += " ,es_recuperado = 1 ";
+                }
 
-                string sql = @" UPDATE pago SET pagado = pagado+@abono, saldo = saldo-@abono 
-                            WHERE id_pago = @id_pago ";
+                string sql = @" UPDATE pago SET pagado = pagado+@abono, saldo = saldo-@abono " + sqlEsRecuperacion + 
+                             @" WHERE id_pago = @id_pago ";
 
 
                 Utils.Log("\nMétodo-> " +

@@ -277,7 +277,7 @@
                         <div class="container">
 
                             <h1 class="h3 display">Semana extra</h1>
-                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm mb-3" id="tableSemanaExtra">
+                            <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableSemanaExtra">
 
                                 <thead>
                                     <tr>
@@ -293,7 +293,7 @@
 
 
                             <h1 class="h3 display">Recuperado</h1>
-                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm mb-3" id="tableRecuperado">
+                            <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableRecuperado">
 
                                 <thead>
                                     <tr>
@@ -309,7 +309,7 @@
 
 
                             <h1 class="h3 display">Falla</h1>
-                            <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm mb-3" id="tableFalla">
+                            <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableFalla">
 
                                 <thead>
                                     <tr>

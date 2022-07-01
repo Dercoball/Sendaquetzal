@@ -482,7 +482,7 @@
 
                                         <div class="form-group col-md-12">
 
-                                            <textarea class="form-control campo-textarea" id="txtNotaSupervisor"                                                
+                                            <textarea class="form-control campo-textarea" id="txtNotaSupervisor"
                                                 rows="4"></textarea>
                                             <div class="help-block with-errors"></div>
 
@@ -745,14 +745,24 @@
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
-
                                             <div class="form-group col-md-6">
-                                                <label for="txtUbicacionAval">
-                                                    Ubicación
+
+                                                <label for="txtUbicacion">
+                                                    Ubicación (lat, lng)
                                                 </label>
-                                                <input type="text" class="form-control campo-input" id="txtUbicacionAval"
-                                                    required="required" data-required-error='Requerido' />
-                                                <div class="help-block with-errors"></div>
+
+                                                <div class="input-group mb-3">
+
+                                                    <input type="text" class="form-control campo-input" id="txtUbicacionAval"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+
+                                                    <div class="input-group-append">
+                                                        <button class="input-group-text" id="btnReloadLocationAval">
+                                                            <span class="fa fa-map-marker"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -1030,7 +1040,7 @@
                                     <label for="txtNumeroSerie">
                                         Número de serie
                                     </label>
-                                    <input type="number" class="form-control" id="txtNumeroSerie" step="0.1"
+                                    <input type="text" class="form-control" id="txtNumeroSerie"
                                         required="required" data-required-error='Requerido' />
                                     <div class="help-block with-errors"></div>
                                 </div>
@@ -1129,7 +1139,7 @@
                                     <label for="txtNumeroSerieAval">
                                         Número de serie
                                     </label>
-                                    <input type="number" class="form-control" id="txtNumeroSerieAval" step="0.1"
+                                    <input type="text" class="form-control" id="txtNumeroSerieAval"
                                         required="required" data-required-error='Requerido' />
                                     <div class="help-block with-errors"></div>
                                 </div>

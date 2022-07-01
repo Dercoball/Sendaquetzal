@@ -67,9 +67,9 @@ const loansEdit = {
         function success(pos) {
             var crd = pos.coords;
 
-            //console.log('Your current position is:');
-            //console.log('Latitude : ' + crd.latitude);
-            //console.log('Longitude: ' + crd.longitude);
+            console.log('Your current position is:');
+            console.log('Latitude : ' + crd.latitude);
+            console.log('Longitude: ' + crd.longitude);
             //console.log('More or less ' + crd.accuracy + ' meters.');
 
 
@@ -137,6 +137,7 @@ const loansEdit = {
                 $('#txtEstado').val(itemCliente.direccion.Estado);
                 $('#txtCodigoPostal').val(itemCliente.direccion.CodigoPostal);
                 $('#txtDireccionTrabajo').val(itemCliente.direccion.DireccionTrabajo);
+                $('#txtUbicacion').val(itemCliente.direccion.Ubicacion);
 
 
                 //datos aval
@@ -155,9 +156,10 @@ const loansEdit = {
                 $('#txtEstadoAval').val(itemCliente.direccionAval.Estado);
                 $('#txtCodigoPostalAval').val(itemCliente.direccionAval.CodigoPostal);
                 $('#txtDireccionTrabajoAval').val(itemCliente.direccionAval.DireccionTrabajo);
+                $('#txtUbicacionAval').val(itemCliente.direccionAval.Ubicacion);
 
-                loansEdit.getLocation('#txtUbicacion');
-                loansEdit.getLocation('#txtUbicacionAval');
+                //loansEdit.getLocation('#txtUbicacion');
+                //loansEdit.getLocation('#txtUbicacionAval');
 
                 let relPrestamoAprobacion1 = item.listaRelPrestamoAprobacion[0];
                 let relPrestamoAprobacionAval2 = item.listaRelPrestamoAprobacion[1];
@@ -339,7 +341,8 @@ const loansEdit = {
                 let doc = foto.d;
 
                 if (doc.IdDocumento) {
-                    if (doc.Extension === 'png' || doc.Extension === 'PNG' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
+                    if (doc.Extension === 'png' || doc.Extension === 'PNG' || doc.Extension === 'jpg' || doc.Extension === 'jpeg'
+                        || doc.Extension === 'bmp' || doc.Extension === 'jfif') {
                         $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
                     } else if (doc.Extension === 'pdf') {
                         $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
@@ -814,6 +817,12 @@ const loansEdit = {
 
         });
 
+        $('#btnReloadLocationAval').on('click', (e) => {
+            e.preventDefault();
+
+            loansEdit.getLocation('#txtUbicacionAval');
+
+        });
 
     }
 

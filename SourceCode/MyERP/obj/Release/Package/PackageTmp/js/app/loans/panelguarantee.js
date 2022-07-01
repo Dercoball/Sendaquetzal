@@ -48,23 +48,7 @@ const panelGuarantee = {
             success: function (msg) {
 
                 let data = msg.d;
-                //let items = msg.d;
-                //let opcion = '';
 
-                //for (let i = 0; i < items.length; i++) {
-                //    let item = items[i];
-
-                //    opcion += `<tr> `;
-                //    opcion += `<td>${item.Nombre}</td>`;
-                //    opcion += `<td>${item.NumeroSerie}</td>`;
-                //    opcion += `<td>${item.Costo}</td>`;
-                //    opcion += `<td>${item.Imagen}</td>`;
-                //    opcion += `<td>${item.Accion}</td>`;
-                //    opcion += `</tr> `;
-
-                //}
-
-                //$('#tableGarantias tbody').html(opcion);
 
                 //  si no tiene permisos
                 if (data == null) {
@@ -121,8 +105,6 @@ const panelGuarantee = {
 
                     let idGarantia = item.dataset['idgarantia'];
                     let id = item.id;
-                    //console.log(`idGarantia ${idGarantia}`);
-                    //console.log(`id ${id}`);
 
                     panelGuarantee.getGuaranteePhoto(idGarantia, `#${id}`);
 
@@ -161,17 +143,8 @@ const panelGuarantee = {
                 let doc = foto.d;
 
                 if (doc.IdGarantia) {
-                    //if (doc.Extension === 'png' || doc.Extension === 'jpg' || doc.Extension === 'jpeg' || doc.Extension === 'bmp') {
                     $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Fotografia}`);
-                    //} else if (doc.Extension === 'pdf') {
-                    //    $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
-                    //} else {
-                    //    $(`${idControl}`).attr('src', '../../img/ico_doc.png');
-                    //}
-
-                    //$(`#href_${idTipoDocumento}`).css('cursor', 'pointer');
-                } else {
-                    //$(`#href_${idTipoDocumento}`).css('cursor', 'default');
+                    
                 }
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -256,8 +229,6 @@ const panelGuarantee = {
 
                     let idGarantia = item.dataset['idgarantia'];
                     let id = item.id;
-                    //console.log(`idGarantia ${idGarantia}`);
-                    //console.log(`id ${id}`);
 
                     panelGuarantee.getGuaranteePhoto(idGarantia, `#${id}`);
 
@@ -436,13 +407,7 @@ const panelGuarantee = {
 
                     if (parseInt(valores.CodigoError) == 0) {
 
-                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
-
-
-
-
-
-
+                        utils.toast(mensajesAlertas.exitoGuardarGarantia, 'ok');
 
                         //guardar foto
                         $('.file-garantiacliente').each(function (documento) {
@@ -450,20 +415,15 @@ const panelGuarantee = {
                             let file;
                             if (file = this.files[0]) {
 
-
                                 utils.sendFileEmployee(file, 'garantia', valores.IdItem, 0, "garantia");
 
                             }
 
                         });
 
-
-
                         panelGuarantee.cargarItemsCustomer(panelGuarantee.idPrestamo);
 
                         $('#panelFormGarantias').modal('hide');
-
-
 
                     } else {
 
@@ -522,13 +482,7 @@ const panelGuarantee = {
 
                     if (parseInt(valores.CodigoError) == 0) {
 
-                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
-
-
-
-                        //console.log("se guardo con el id" + valores.IdItem);
-
-
+                        utils.toast(mensajesAlertas.exitoGuardarGarantia, 'ok');
 
                         //guardar foto
                         $('.file-garantiaaval').each(function (documento) {
@@ -544,15 +498,10 @@ const panelGuarantee = {
 
                         });
 
-
-
                         panelGuarantee.cargarItemsAval(panelGuarantee.idPrestamo);
 
                         $('#panelFormGarantiasAval').modal('hide');
                         
-
-
-
                     } else {
 
                         utils.toast(mensajesAlertas.errorGuardar, 'error');

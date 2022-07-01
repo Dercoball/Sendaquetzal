@@ -23,6 +23,12 @@ const report = {
         report.porcentajeComision = '';
         report.comision = '';
         report.venta = '';
+        report.adelantoEntrada = '';
+        report.adelantoSalida = '';
+        report.totalDeEntregar = '';
+        report.subtotal = '';
+        report.totalRecuperacion = '';
+
 
         $('#txtFechaSemana').val(report.fechaHoy());
 
@@ -30,7 +36,7 @@ const report = {
 
         report.loadComboEjecutivosByPlaza("-1", '#comboEjecutivo');
 
-        $('.secciones').hide();        
+        $('.secciones').hide();
         $('.reporteFalla').hide();
         $('#divLoading').hide();
         $('#panelTabla').show();
@@ -230,7 +236,7 @@ const report = {
     },
 
 
-    getData(idPromotor, fechaInicial, fechaFinal) {
+    getDataDebeEntregarYFalla(idPromotor, fechaInicial, fechaFinal) {
 
 
         let params = {};
@@ -262,9 +268,13 @@ const report = {
                 $(`#cell_totalDebeEntregar`).text(data[0].totalStr);
                 $(`#cell_totalFalla`).text(data[1].totalStr);
 
-                //  calcular subtotal
-                $(`#cell_subtotal`).text(number_format(data[0].total - data[1].total, 2, '$'));
 
+                //  calcular subtotal
+                report.subtotal = data[0].total - data[1].total;
+                $(`#cell_subtotal`).text(number_format(report.subtotal, 2, '$'));
+
+
+                report.getTotalByStatusPayment(idPromotor, 3, report.fechaInicial, report.fechaFinal, '#cell_totalRecuperacion');
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -310,8 +320,11 @@ const report = {
 
                 console.log(data);
 
+                report.totalRecuperacion = data.total;
+
                 $(`${htmlControl}`).text(data.totalStr);
 
+                report.getAdelantoEntrada(idPromotor, report.fechaInicial, report.fechaFinal, '#cell_totalAdelantoEntrada');
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -403,7 +416,7 @@ const report = {
 
 
                 //  final de generacion del reporte
-                
+
                 $('.reporteFalla').show();
                 $('#divLoading').hide();
 
@@ -518,6 +531,228 @@ const report = {
 
     },
 
+
+    getTableFalla(idPromotor, idStatus, fechaInicial, fechaFinal) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.idStatus = idStatus;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusFallaAndPromotor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+             
+                console.log(data);
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.FechaStr}</td>`;
+                    html += `<td>${item.NombreCliente}</td>`;
+                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                html += `<tr>`;
+                html += `<th></th>`;
+                html += `<th>Total</th>`;
+                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `</tr>`;
+
+                $('#tableFalla tbody').empty().append(html);
+
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+    getTableRecuperado(idPromotor, idStatus, fechaInicial, fechaFinal) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.idStatus = idStatus;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusFallaRecuperado",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+
+                console.log(data);
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.FechaStr}</td>`;
+                    html += `<td>${item.NombreCliente}</td>`;
+                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                html += `<tr>`;
+                html += `<th></th>`;
+                html += `<th>Total</th>`;
+                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `</tr>`;
+
+                $('#tableRecuperado tbody').empty().append(html);
+
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+    getAdelantoEntrada(idPromotor, fechaInicial, fechaFinal, htmlControl) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotorAndSemanaEntrante",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                console.log(data);
+
+                $(`${htmlControl}`).text(data.totalStr);
+                report.adelantoEntrada = data.total;
+
+
+                report.getAdelantoSaliente(idPromotor, report.fechaInicial, report.fechaFinal, '#cell_totalAdelantoSalida');
+
+                report.totalDeEntregar = report.subtotal + report.totalRecuperacion + report.adelantoEntrada - report.adelantoSalida;
+
+                $('#cell_totalEntregar').text(number_format(report.totalDeEntregar, 2, '$'));
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+    getAdelantoSaliente(idPromotor, fechaInicial, fechaFinal, htmlControl) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotorAndSemanaSaliente",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                console.log(data);
+
+                $(`${htmlControl}`).text(data.totalStr);
+                report.adelantoSalida = data.total;
+
+
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
     accionesBotones: () => {
 
         $('#btnGuardar').on('click', (e) => {
@@ -554,11 +789,10 @@ const report = {
 
             console.log('btnReporteFalla');
 
-            $('.reporteFalla').hide();
-            $('#divLoading').show();
 
-            let idPromotor = $('#comboPromotor').val();
-            //let idPromotor = 33;    //  TODO: Solo para test
+
+            //let idPromotor = $('#comboPromotor').val();
+            let idPromotor = 33;    //  TODO: Solo para test
 
             if (!idPromotor) {
 
@@ -566,28 +800,29 @@ const report = {
                 return;
             }
 
+            $('.reporteFalla').hide();
+            $('#divLoading').show();
+
             $('#txtEjecutivo').val($('#comboEjecutivo option:selected').text());
             $('#txtPromotor').val($('#comboPromotor option:selected').text());
 
             let formatedDate = `${$('#txtFechaSemana').val().split('-')[2]}/${$('#txtFechaSemana').val().split('-')[1]}/${$('#txtFechaSemana').val().split('-')[0]}`;
 
-            let date = $('#txtFechaSemana').val();
             report.fechasHoy(`${$('#txtFechaSemana').val().split('-')[0]}`, `${$('#txtFechaSemana').val().split('-')[1]}`, `${$('#txtFechaSemana').val().split('-')[2]}`);
 
             $('#txtFecha').val(formatedDate);
 
-            report.getData(idPromotor, report.fechaInicial, report.fechaFinal);
-            report.getTotalByStatusPayment(idPromotor, 3, report.fechaInicial, report.fechaFinal, '#cell_totalRecuperacion');
+            report.getDataDebeEntregarYFalla(idPromotor, report.fechaInicial, report.fechaFinal);
+
             report.GetTotalLoanByPromotor(idPromotor, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
-            report.getTableSemanaExtra(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal, '#cell_totalVenta');
 
-            //return;
 
-            setTimeout(() => {
+            report.getTableSemanaExtra(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal);
+            report.getTableFalla(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal);
+            report.getTableRecuperado(idPromotor, utils.STATUS_PAGO_ABONADO, report.fechaInicial, report.fechaFinal);
 
-            
 
-            }, 5000);
+
 
         });
 

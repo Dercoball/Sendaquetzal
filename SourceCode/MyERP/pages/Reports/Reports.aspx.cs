@@ -224,6 +224,135 @@ namespace Plataforma.pages
 
 
         [WebMethod]
+        public static Total GetTotalByStatusAndPromotorAndSemanaEntrante(string path, string idUsuario,
+            string fechaInicial, string fechaFinal, string idPromotor)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            Total item = new Total();
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+
+                conn.Open();
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                                    FROM pago p
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
+                                    + @" WHERE (p.fecha_registro_pago >= '" + fechaInicial + @"' AND p.fecha_registro_pago <= '" + fechaFinal + @"')                                 
+                                        AND pre.id_empleado = " + idPromotor + "  "
+                                    + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
+                                    + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
+                                    + "  ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    adp.Fill(ds);
+
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
+                        item.totalStr = item.total.ToString("C2");
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return item;
+
+
+        }
+
+        [WebMethod]
+        public static Total GetTotalByStatusAndPromotorAndSemanaSaliente(string path, string idUsuario,
+          string fechaInicial, string fechaFinal, string idPromotor)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            Total item = new Total();
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+
+                conn.Open();
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                                    FROM pago p
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
+                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
+                                        AND pre.id_empleado = " + idPromotor + "  "
+                                    + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
+                                    + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
+                                    + "  ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    adp.Fill(ds);
+
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
+                        item.totalStr = item.total.ToString("C2");
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return item;
+
+
+        }
+
+
+        [WebMethod]
         public static List<Empleado> GetListaEjecutivosByPlaza(string path,
         string idPlaza)
         {
@@ -762,7 +891,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Pago> GetPaymentsByStatusFallaAndPromotor(string path, 
+        public static List<Pago> GetPaymentsByStatusFallaAndPromotor(string path,
               string fechaInicial, string fechaFinal, string idPromotor)
         {
 
@@ -779,7 +908,7 @@ namespace Plataforma.pages
 
                 conn.Open();
 
-            
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
@@ -789,7 +918,7 @@ namespace Plataforma.pages
                                     JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
                                     + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
                                         AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND p.id_status_pago  =  " + Pago.STATUS_PAGO_FALLA + "  " 
+                                    + " AND p.id_status_pago  =  " + Pago.STATUS_PAGO_FALLA + "  "
                                     + " AND IsNull(p.semana_extra, 0) = 0 " +
                                     " ORDER BY p.id_pago ";
 
@@ -866,8 +995,8 @@ namespace Plataforma.pages
                                     + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
                                         AND pre.id_empleado = " + idPromotor + "  "
                                     + " AND p.id_status_pago  =  " + Pago.STATUS_PAGO_ABONADO + "  "
-                                    + " AND IsNull(p.semana_extra, 0) = 0 " 
-                                    + " AND IsNull(p.es_recuperado, 0) = 1 " 
+                                    + " AND IsNull(p.semana_extra, 0) = 0 "
+                                    + " AND IsNull(p.es_recuperado, 0) = 1 "
                                     + " ORDER BY p.id_pago ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
@@ -915,15 +1044,17 @@ namespace Plataforma.pages
         }
 
 
-
         [WebMethod]
-        public static Total GetPaymentsByStatusAndPromotorAndSemanaEntrante(string path, string idUsuario,
-            string fechaInicial, string fechaFinal, string idPromotor)
+        public static List<Pago> GetPaymentsByStatusAdelantoEntrante(string path,
+           string fechaInicial, string fechaFinal, string idPromotor)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-            Total item = new Total();
+
+            //  Lista de datos a devolver
+            List<Pago> items = new List<Pago>();
+
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
@@ -931,16 +1062,19 @@ namespace Plataforma.pages
 
                 conn.Open();
 
+
                 DataSet ds = new DataSet();
-                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                                    concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
+                                    FORMAT(p.fecha_registro_pago, 'dd/MM/yyyy') fechastr
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
                                     JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha_registro_pago >= '" + fechaInicial + @"' AND p.fecha_registro_pago <= '" + fechaFinal + @"')                                 
+                                  + @" WHERE (p.fecha_registro_pago >= '" + fechaInicial + @"' AND p.fecha_registro_pago <= '" + fechaFinal + @"')                                 
                                         AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
-                                    + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
-                                    + "  ";
+                                  + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
+                                  + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO;
+
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -951,23 +1085,32 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-
-                    adp.Fill(ds);
-
-                    if (ds.Tables[0].Rows.Count > 0)
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
-                        item.totalStr = item.total.ToString("C2");
-                    }
+                        Pago item = new Pago();
+                        item.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
+                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
+                        item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoFormateadoMx = item.Monto.ToString("C2");
 
+                        item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
+
+                        items.Add(item);
+
+
+                    }
                 }
 
 
+                return items;
             }
             catch (Exception ex)
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
+                return items;
             }
 
             finally
@@ -975,19 +1118,22 @@ namespace Plataforma.pages
                 conn.Close();
             }
 
-            return item;
-
-
         }
 
+
+
+
         [WebMethod]
-        public static Total GetPaymentsByStatusAndPromotorAndSemanaSaliente(string path, string idUsuario,
-          string fechaInicial, string fechaFinal, string idPromotor)
+        public static List<Pago> GetPaymentsByStatusAdelantoSaliente(string path,
+           string fechaInicial, string fechaFinal, string idPromotor)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-            Total item = new Total();
+
+            //  Lista de datos a devolver
+            List<Pago> items = new List<Pago>();
+
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
@@ -995,10 +1141,13 @@ namespace Plataforma.pages
 
                 conn.Open();
 
+
                 DataSet ds = new DataSet();
-                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                                    concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
+                                    FORMAT(p.fecha, 'dd/MM/yyyy') fechastr
                                     FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
+                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
                                     JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
                                     + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
                                         AND pre.id_empleado = " + idPromotor + "  "
@@ -1006,6 +1155,7 @@ namespace Plataforma.pages
                                     + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
                                     + "  ";
 
+
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
                 Utils.Log("\nMétodo-> " +
@@ -1015,23 +1165,32 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-
-                    adp.Fill(ds);
-
-                    if (ds.Tables[0].Rows.Count > 0)
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
-                        item.totalStr = item.total.ToString("C2");
-                    }
+                        Pago item = new Pago();
+                        item.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
+                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
+                        item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoFormateadoMx = item.Monto.ToString("C2");
 
+                        item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
+
+                        items.Add(item);
+
+
+                    }
                 }
 
 
+                return items;
             }
             catch (Exception ex)
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
+                return items;
             }
 
             finally
@@ -1039,12 +1198,93 @@ namespace Plataforma.pages
                 conn.Close();
             }
 
-            return item;
-
-
         }
 
 
+
+        [WebMethod]
+        public static DatosSalida SaveReport(string path, string idUsuario, string fecha)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+
+
+            DatosSalida salida = new DatosSalida();
+            SqlTransaction transaccion = null;
+
+            try
+            {
+
+                conn.Open();
+                transaccion = conn.BeginTransaction();
+
+                string sql = "";
+
+                sql = @"  INSERT INTO reporte
+                                (id_usuario, fecha)                             
+                                OUTPUT INSERTED.id_reporte                                
+                                VALUES (@id_usuario, @fecha)";
+
+
+                Utils.Log("insert reporte " + sql);
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@id_usuario", idUsuario);
+                cmd.Parameters.AddWithValue("@fecha", fecha);
+                cmd.Transaction = transaccion;
+
+                int idGenerado = (int)cmd.ExecuteScalar();
+
+                Utils.Log("Guardado -> OK ");
+
+
+                transaccion.Commit();
+
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
+                salida.IdItem = idGenerado.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    transaccion.Rollback();
+                }
+                catch (Exception exRollBack)
+                {
+                    Utils.Log("Error ... " + exRollBack.Message);
+                }
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                
+                salida.MensajeError = "Se ha generado un error.";
+                salida.CodigoError = 1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return salida;
+
+
+        }
 
 
     }

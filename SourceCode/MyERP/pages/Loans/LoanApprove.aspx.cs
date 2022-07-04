@@ -282,7 +282,9 @@ namespace Plataforma.pages
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
+                    
+                    //  -1 para montoConInteres porque no queremos actualizar ese valor aún
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1,  Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
 
@@ -295,9 +297,9 @@ namespace Plataforma.pages
                     {
                         //  Nuevo monto
                         prestamo.Monto = prestamo.Monto - deudaActual.Saldo;
-
+                        
                         //  Efectuar los pagos para cada Pago semanal pendiente
-                        int rowsPago = UpdatePago(currentLoan.IdPrestamo.ToString(), idPrestamo, conn, transaction);
+                        int rowsPago = UpdatePagos(currentLoan.IdPrestamo.ToString(), idPrestamo, conn, transaction);
                         Utils.Log("\nrowsPago affected " + rowsPago);
 
 
@@ -305,16 +307,19 @@ namespace Plataforma.pages
                         string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. " ;
                         
                         int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);                        
+
                         Utils.Log("\nrowsPago rowsAffectedStatusPrestamoAnterior " + rowsAffectedStatusPrestamoAnterior);
 
                     }
 
+                    float pagoAmmountWithInteres = prestamo.Monto + (prestamo.Monto * customerType.PorcentajeSemanal / 100);
 
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, Prestamo.STATUS_APROBADO, prestamo.Monto, conn, transaction);
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, pagoAmmountWithInteres, Prestamo.STATUS_APROBADO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
 
-                    float pagoAmmount = prestamo.Monto / customerType.SemanasAPrestar;
+                    //  Pago semanal incluyendo interes
+                    float pagoAmmount = pagoAmmountWithInteres  / customerType.SemanasAPrestar;
 
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
@@ -336,7 +341,7 @@ namespace Plataforma.pages
 
                         Pago pago = new Pago();
                         pago.IdPrestamo = int.Parse(idPrestamo);
-                        pago.Monto = pagoAmmount * customerType.PorcentajeSemanal;
+                        pago.Monto = pagoAmmount;
                         pago.NumeroSemana = (i + 1);
                         pago.Fecha = nextDate;
                         pago.IdUsuario = int.Parse(idUsuario);
@@ -664,7 +669,7 @@ namespace Plataforma.pages
         }
 
 
-        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, int idStatus, float monto,
+        public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota, float ammountWithInteres, int idStatus, float monto,
            SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -672,9 +677,15 @@ namespace Plataforma.pages
             try
             {
 
+                string sqlMontoWithinteres = "";
+                if (ammountWithInteres != -1)
+                {
+                    sqlMontoWithinteres = " ,monto_con_interes = @monto_con_interes ";
+                }
+
                 string sql = @"  UPDATE prestamo
-                            SET activo = 1, id_status_prestamo = @id_status_prestamo, fecha_aprobacion = @fecha_aprobacion,
-                                monto = @monto,
+                            SET activo = 1, id_status_prestamo = @id_status_prestamo, fecha_aprobacion = @fecha_aprobacion " + sqlMontoWithinteres + @"
+                                ,monto = @monto,
                                 notas_generales = @notas_generales, id_usuario = @id_usuario
                             WHERE
                             id_prestamo = @id_prestamo ";
@@ -690,6 +701,7 @@ namespace Plataforma.pages
                 cmdUpdatePrestamo.Parameters.AddWithValue("@fecha_aprobacion", DateTime.Now);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@monto", monto);
+                cmdUpdatePrestamo.Parameters.AddWithValue("@monto_con_interes", ammountWithInteres);
                 cmdUpdatePrestamo.Parameters.AddWithValue("@id_status_prestamo", idStatus);
                 cmdUpdatePrestamo.Transaction = transaction;
 
@@ -716,7 +728,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static int UpdatePago(string idPrestamo, string idPrestamoAdelanto, SqlConnection conn, SqlTransaction transaction)
+        public static int UpdatePagos(string idPrestamo, string idPrestamoAdelanto, SqlConnection conn, SqlTransaction transaction)
         {
 
             int r = 0;
@@ -725,7 +737,7 @@ namespace Plataforma.pages
 
                 string sql = @" UPDATE pago SET pagado = monto, saldo = 0, id_status_pago = 4, pagado_con_adelanto = 1, fecha_registro_pago = @fecha_registro_pago,
                                     id_prestamo_adelanto = @id_prestamo_adelanto
-                                    WHERE pagado < monto OR saldo > 0 AND id_prestamo = @id_prestamo ";
+                                    WHERE pagado < monto OR saldo > 0 AND id_prestamo = @id_prestamo AND IsNull(semana_extra, 0) = 0  ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
@@ -814,8 +826,8 @@ namespace Plataforma.pages
 
                 string sql = "";
 
-                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana, pagado, saldo, semana_extra) 
-                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana, @pagado, @saldo, @semana_extra) ";
+                sql = @" INSERT INTO pago (id_prestamo, monto, fecha, id_status_pago, id_usuario, numero_semana, pagado, saldo, semana_extra, pagado_con_adelanto, id_prestamo_adelanto, es_recuperado) 
+                    VALUES (@id_prestamo, @monto, @fecha, @id_status_pago, @id_usuario, @numero_semana, @pagado, @saldo, @semana_extra, 0, 0, 0) ";
 
 
 

@@ -653,6 +653,125 @@ const report = {
 
     },
 
+    getTableAdelantoEntrada(idPromotor, idStatus, fechaInicial, fechaFinal) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAdelantoEntrante",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+
+                console.log(data);
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.FechaStr}</td>`;
+                    html += `<td>${item.NombreCliente}</td>`;
+                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                html += `<tr>`;
+                html += `<th></th>`;
+                html += `<th>Total</th>`;
+                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `</tr>`;
+
+                $('#tableAdelantoEntrante tbody').empty().append(html);
+
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
+
+    getTableAdelantoSaliente(idPromotor, idStatus, fechaInicial, fechaFinal) {
+
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idPromotor = idPromotor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAdelantoSaliente",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+
+                console.log(data);
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.FechaStr}</td>`;
+                    html += `<td>${item.NombreCliente}</td>`;
+                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                html += `<tr>`;
+                html += `<th></th>`;
+                html += `<th>Total</th>`;
+                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `</tr>`;
+
+                $('#tableAdelantoSaliente tbody').empty().append(html);
+
+
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+
+    },
+
 
     getAdelantoEntrada(idPromotor, fechaInicial, fechaFinal, htmlControl) {
 
@@ -667,7 +786,7 @@ const report = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotorAndSemanaEntrante",
+            url: "../../pages/Reports/Reports.aspx/GetTotalByStatusAndPromotorAndSemanaEntrante",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -719,7 +838,7 @@ const report = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Reports/Reports.aspx/GetPaymentsByStatusAndPromotorAndSemanaSaliente",
+            url: "../../pages/Reports/Reports.aspx/GetTotalByStatusAndPromotorAndSemanaSaliente",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -755,11 +874,69 @@ const report = {
 
     accionesBotones: () => {
 
+        function getPDF() {
+
+            var HTML_Width = $("#divReporteFalla").width();
+            var HTML_Height = $("#divReporteFalla").height();
+            var top_left_margin = 15;
+            var PDF_Width = HTML_Width + (top_left_margin * 2);
+            var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+            var canvas_image_width = HTML_Width;
+            var canvas_image_height = HTML_Height;
+
+            var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+            html2canvas($("#divReporteFalla")[0], { allowTaint: true }).then(function (canvas) {
+                canvas.getContext('2d');
+
+                console.log(canvas.height + "  " + canvas.width);
+
+
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+                for (var i = 1; i <= totalPDFPages; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                }
+
+                pdf.save("HTML-Document.pdf");
+            });
+
+        };
         $('#btnGuardar').on('click', (e) => {
             e.preventDefault();
 
-            var element = document.getElementById('divReporteFalla');
-            html2pdf(element);
+            //var element = document.getElementById('divReporteFalla'); html2pdf(element);
+            console.log(`...`);
+
+            getPDF();
+
+            //var element = document.getElementById('divReporteFalla');
+            //var opt = {
+            //    margin: -3,
+            //    filename: 'myfile.pdf',
+            //    image: { type: 'jpeg', quality: 0.98 },
+            //    html2canvas: { scale: 1 },
+            //    jsPDF: { unit: 'ml', format: 'letter', orientation: 'portrait' }
+            //};
+
+            //// New Promise-based usage:
+            //html2pdf().set({
+            //    margin: -3,
+            //    filename: 'myfile.pdf',
+            //    image: { type: 'jpeg', quality: 0.98 },
+            //    html2canvas: { scale: 1 },
+            //    jsPDF: { unit: 'ml', format: 'letter', orientation: 'portrait' }
+            //}).from(element).save();
+
+            // Old monolithic-style usage:
+            //html2pdf(document.getElementById('divReporteFalla'), opt);
+
+
 
         });
 
@@ -818,8 +995,14 @@ const report = {
 
 
             report.getTableSemanaExtra(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal);
+
             report.getTableFalla(idPromotor, utils.STATUS_PAGO_PAGADO, report.fechaInicial, report.fechaFinal);
+
             report.getTableRecuperado(idPromotor, utils.STATUS_PAGO_ABONADO, report.fechaInicial, report.fechaFinal);
+
+            report.getTableAdelantoEntrada(idPromotor, utils.STATUS_PAGO_ABONADO, report.fechaInicial, report.fechaFinal);
+
+            report.getTableAdelantoSaliente(idPromotor, utils.STATUS_PAGO_ABONADO, report.fechaInicial, report.fechaFinal);
 
 
 

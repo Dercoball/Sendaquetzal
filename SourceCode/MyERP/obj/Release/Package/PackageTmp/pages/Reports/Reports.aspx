@@ -276,69 +276,102 @@
 
                         <div class="container">
 
-                            <h1 class="h3 display">Semana extra</h1>
-                            <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableSemanaExtra">
+                            <div class="row">
+                                <div class="col-md-6">
 
-                                <thead>
-                                    <tr>
-                                        <th>Fecha de crédito</th>
-                                        <th>Nombre</th>
-                                        <th>Monto</th>
-                                    </tr>
-                                </thead>
+                                    <h1 class="h3 display">Semana extra</h1>
+                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableSemanaExtra">
 
-                                <tbody>
-                                </tbody>
-                            </table>
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de crédito</th>
+                                                <th>Nombre</th>
+                                                <th class="text-right">Monto</th>
+                                            </tr>
+                                        </thead>
 
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                            <h1 class="h3 display">Recuperado</h1>
-                            <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableRecuperado">
+                                <div class="col-md-6">
 
-                                <thead>
-                                    <tr>
-                                        <th>Fecha de crédito</th>
-                                        <th>Nombre</th>
-                                        <th>Monto</th>
-                                    </tr>
-                                </thead>
+                                    <h1 class="h3 display">Recuperado</h1>
+                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableRecuperado">
 
-                                <tbody>
-                                </tbody>
-                            </table>
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de crédito</th>
+                                                <th>Nombre</th>
+                                                <th class="text-right">Monto</th>
+                                            </tr>
+                                        </thead>
 
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
-                            <h1 class="h3 display">Falla</h1>
-                            <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableFalla">
+                                </div>
+                            </div>
 
-                                <thead>
-                                    <tr>
-                                        <th>Fecha de crédito</th>
-                                        <th>Nombre</th>
-                                        <th>Monto</th>
-                                    </tr>
-                                </thead>
+                            <div class="row">
+                                <div class="col-md-6">
 
-                                <tbody>
-                                </tbody>
-                            </table>
+                                    <h1 class="h3 display">Falla</h1>
+                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableFalla">
 
-                            <%-- <h1 class="h3 display">Adelantos</h1>
-                    <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableAdelanto">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de crédito</th>
+                                                <th>Nombre</th>
+                                                <th class="text-right">Monto</th>
+                                            </tr>
+                                        </thead>
 
-                        <thead>
-                            <tr>
-                                <th>Fecha de crédito</th>
-                                <th>Nombre</th>
-                                <th>Monto</th>
-                            </tr>
-                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                        <tbody>
-                        </tbody>
-                    </table>--%>
+                                <div class="col-md-6">
+
+                                    <h1 class="h3 display">Adelanto entrante</h1>
+                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoEntrante">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de crédito</th>
+                                                <th>Nombre</th>
+                                                <th>Monto</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h1 class="h3 display">Adelanto saliente</h1>
+                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoSaliente">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de crédito</th>
+                                                <th>Nombre</th>
+                                                <th>Monto</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
 
                     <div class="row mt-3 mb-3 reporteFalla">
@@ -353,7 +386,6 @@
                     </div>
 
                 </div>
-
             </div>
         </section>
 
@@ -427,8 +459,9 @@
     <script src="../../js/app/reports/fault_report.js"></script>
     <script src="../../js/app/general.js"></script>
 
-    <script src="../../vendor/html2pdf/html2pdf.bundle.js"></script>
-
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet" />

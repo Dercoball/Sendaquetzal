@@ -221,6 +221,7 @@
     <Content Include="js\app\noticyofprivacy.min.js">
       <DependentUpon>noticeofprivacy.js</DependentUpon>
     </Content>
+    <Content Include="js\app\reports\funds_report.js" />
     <Content Include="js\app\reports\fault_report.js" />
     <Content Include="js\app\termsandconditions.js" />
     <Content Include="js\app\faqs.js" />
@@ -284,7 +285,8 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
-    <Content Include="pages\Reports\Reports.aspx" />
+    <Content Include="pages\Reports\ReportFundsDet.aspx" />
+    <Content Include="pages\Reports\ReportDefault.aspx" />
     <Content Include="pages\Commissions\ConfigRules.aspx" />
     <Content Include="pages\Commissions\EmployeeEvaluation.aspx" />
     <Content Include="pages\Customers\CustomerHistory.aspx" />
@@ -1208,12 +1210,19 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
-    <Compile Include="pages\Reports\Reports.aspx.cs">
-      <DependentUpon>Reports.aspx</DependentUpon>
+    <Compile Include="pages\Reports\ReportFundsDet.aspx.cs">
+      <DependentUpon>ReportFundsDet.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="pages\Reports\Reports.aspx.designer.cs">
-      <DependentUpon>Reports.aspx</DependentUpon>
+    <Compile Include="pages\Reports\ReportFundsDet.aspx.designer.cs">
+      <DependentUpon>ReportFundsDet.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Reports\ReportDefault.aspx.cs">
+      <DependentUpon>ReportDefault.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Reports\ReportDefault.aspx.designer.cs">
+      <DependentUpon>ReportDefault.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Commissions\ConfigRules.aspx.cs">
       <DependentUpon>ConfigRules.aspx</DependentUpon>

@@ -1,7 +1,7 @@
 ﻿'use strict';
 let date = new Date();
 let descargas = "Reportes" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '19';
+let pagina = '20';
 
 
 const report = {
@@ -1032,7 +1032,6 @@ const report = {
             }
 
             $('.reporteFalla').hide();
-            $('.reporteDeterminacion').hide();
             $('#divLoading').show();
 
             $('#txtEjecutivo').val($('#comboEjecutivo option:selected').text());
@@ -1065,37 +1064,6 @@ const report = {
 
 
         });
-
-        $('#btnReporteDeterminacion').on('click', async (e) => {
-            e.preventDefault();
-
-            console.log('btnReporteDeterminacion');
-
-
-
-            //let idPromotor = $('#comboPromotor').val();
-            let idPromotor = 33;    //  TODO: Solo para test
-
-            if (!idPromotor) {
-
-                utils.toast(mensajesAlertas.errorSeleccionarPromotor, 'error');
-                return;
-            }
-
-            $('.reporteFalla').hide();
-            $('.reporteDeterminacion').hide();
-            $('#divLoading').show();
-
-            $('#txtEjecutivo').val($('#comboEjecutivo option:selected').text());
-            $('#txtPromotor').val($('#comboPromotor option:selected').text());
-
-
-            $('.reporteDeterminacion').show();
-            $('#divLoading').hide();
-
-
-        });
-
 
     }
 

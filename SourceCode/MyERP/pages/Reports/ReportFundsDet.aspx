@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Reports.aspx.cs" Inherits="Plataforma.pages.Reports" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReportFundsDet.aspx.cs" Inherits="Plataforma.pages.ReportFundsDet" %>
 
 <!DOCTYPE html>
 
@@ -190,8 +190,8 @@
 
 
                                 <div class="form-group col-md-2">
-                                    <label for="txtEjecutivo">
-                                        Ejecutivo
+                                    <label for="txtPlaza">
+                                        Plaza
                                     </label>
                                     <input type="text" disabled="disabled" id="txtEjecutivo" class="form-control" />
                                 </div>
@@ -224,52 +224,6 @@
 
                             </div>
 
-                            <div class="row mt-3 mb-3">
-                                <div class="container">
-
-                                    <table style="width: 100%!important;" class="table table-bordered table-sm" id="table1">
-
-                                        <tbody>
-                                            <tr>
-                                                <td>Debe entregar</td>
-                                                <th class="text-right" id="cell_totalDebeEntregar"></th>
-                                                <td>Adelanto entrada</td>
-                                                <th class="text-right" id="cell_totalAdelantoEntrada"></th>
-                                                <td>Venta</td>
-                                                <th class="text-right" id="cell_totalVenta"></th>
-                                            </tr>
-
-                                            <tr>
-                                                <td>Falla</td>
-                                                <th class="text-right" id="cell_totalFalla"></th>
-                                                <td>Adelanto salida</td>
-                                                <th class="text-right" id="cell_totalAdelantoSalida"></th>
-                                                <td>Comisión %</td>
-                                                <th class="text-right" id="cell_porcentajeComision"></th>
-                                            </tr>
-
-                                            <tr>
-                                                <td>Subtotal</td>
-                                                <th class="text-right" id="cell_subtotal"></th>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>Recuperación</td>
-                                                <th class="text-right" id="cell_totalRecuperacion"></th>
-                                                <td>Total de entregar</td>
-                                                <th class="text-right" id="cell_totalEntregar"></th>
-                                                <td>Comisión</td>
-                                                <th class="text-right" id="cell_totalComision"></th>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
 
                         </div>
 
@@ -279,14 +233,21 @@
                             <div class="row">
                                 <div class="col-md-6">
 
-                                    <h1 class="h3 display">Semana extra</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableSemanaExtra">
+                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tablePrincipal">
 
                                         <thead>
                                             <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th class="text-right">Monto</th>
+                                                <th>Promotor</th>
+                                                <th>Comisión</th>
+                                                <th>Debe entregar</th>
+                                                <th>Falla</th>
+                                                <th>Efectivo</th>
+                                                <th>Recuperado</th>
+                                                <th>Abono entrante</th>
+                                                <th>Total</th>
+                                                <th>Abono saliente</th>
+                                                <th>Total</th>
+                                                <th>% Falla</th>
                                             </tr>
                                         </thead>
 
@@ -295,65 +256,8 @@
                                     </table>
                                 </div>
 
-                                <div class="col-md-6">
 
-                                    <h1 class="h3 display">Recuperado</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableRecuperado">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th class="text-right">Monto</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-
-                                    <h1 class="h3 display">Falla</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableFalla">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th class="text-right">Monto</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <div class="col-md-6">
-
-                                    <h1 class="h3 display">Adelanto entrante</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoEntrante">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th>Monto</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="row">
+                           <%-- <div class="row">
                                 <div class="col-md-6">
                                     <h1 class="h3 display">Adelanto saliente</h1>
                                     <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoSaliente">
@@ -370,7 +274,8 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </div>--%>
+
                         </div>
 
                         <div class="row mt-3">
@@ -407,7 +312,7 @@
                     <div class="row mt-3 mb-3 reporteFalla">
 
                         <div class=" col-md-12 text-center">
-                            <button class="btn btn-outline btn-primary deshabilitable" id="btnGuardar"><i class="fa fa-search mr-1"></i>Guardar e imprimir</button>
+                            <button class="btn btn-outline btn-primary deshabilitable" id="btnGuardar"><i class="fa fa-save mr-1"></i>Guardar e imprimir</button>
                         </div>
 
                     </div>
@@ -483,7 +388,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/reports/fault_report.js"></script>
+    <script src="../../js/app/reports/funds_report.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>

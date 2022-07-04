@@ -12,7 +12,7 @@ using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
-    public partial class Reports : System.Web.UI.Page
+    public partial class ReportDefault : System.Web.UI.Page
     {
         const string pagina = "19";
 

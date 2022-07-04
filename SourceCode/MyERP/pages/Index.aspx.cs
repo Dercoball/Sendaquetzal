@@ -300,7 +300,10 @@ namespace Plataforma.pages
             nav += GenerateMenu(new List<string> { "16" }, pagina, listaPermisos, "fa fa-dollar", "Préstamos",
                PermisoUsuario.TIPO_PERMISO_PRESTAMOS, "Prestamos");
 
+
+            //  reporte
             nav += AgregarItemRootMenu("19", pagina, listaPermisos, "fa fa-file-pdf-o");
+
 
 
             nav += GenerateMenu(new List<string> { "17", "18" }, pagina, listaPermisos, "fa fa-percent", "Comisiones",

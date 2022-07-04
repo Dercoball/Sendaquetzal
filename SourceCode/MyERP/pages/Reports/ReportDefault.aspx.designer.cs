@@ -11,7 +11,7 @@ namespace Plataforma.pages
 {
 
 
-    public partial class Reports
+    public partial class ReportDefault
     {
 
         /// <summary>

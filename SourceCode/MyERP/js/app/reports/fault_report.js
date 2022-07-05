@@ -1163,8 +1163,8 @@ const report = {
 
 
 
-            //let idPromotor = $('#comboPromotor').val();
-            let idPromotor = 33;    //  TODO: Solo para test
+            let idPromotor = $('#comboPromotor').val();
+            //let idPromotor = 33;    //  TODO: Solo para test
 
             if (!idPromotor || Number(idPromotor) === -1) {
 
@@ -1216,8 +1216,8 @@ const report = {
 
 
 
-            //let idSupervisor = $('#comboSupervisor').val();
-            let idSupervisor = 32;    //  TODO: Solo para test
+            let idSupervisor = $('#comboSupervisor').val();
+            //let idSupervisor = 32;    //  TODO: Solo para test
 
             if (!idSupervisor || Number(idSupervisor) === -1) {
 

@@ -342,10 +342,10 @@
 
                             <div class="row mt-3 mb-3">
 
-                                <div class="col-md-12">
+                                <div class="col-md-8">
 
                                     <div class="table-responsive">
-                                        <table style="width: 100%!important;" class="table table-bordered table-sm mb-3">
+                                        <table style="width: 100%!important;" class="table table-bordered table-striped table-sm mb-3">
 
                                             <tbody>
                                                 <tr>
@@ -355,8 +355,6 @@
                                                     <th class="text-right">Adelanto entrada</th>
                                                     <th class="text-right mr-3" id="cell_totalAdelantoEntrada"></th>
                                                     <th class="text-center">+</th>
-                                                    <th class="text-right">Venta</th>
-                                                    <th class="text-right mr-3" id="cell_totalVenta"></th>
                                                 </tr>
 
                                                 <tr>
@@ -366,16 +364,12 @@
                                                     <th class="text-right">Adelanto salida</th>
                                                     <th class="text-right mr-3" id="cell_totalAdelantoSalida"></th>
                                                     <th class="text-center">-</th>
-                                                    <th class="text-right">Comisión %</th>
-                                                    <th class="text-right mr-3" id="cell_porcentajeComision"></th>
                                                 </tr>
 
                                                 <tr>
                                                     <th class="text-right">Subtotal</th>
                                                     <th class="text-right mr-3" id="cell_subtotal"></th>
                                                     <th class="text-center">=</th>
-                                                    <th></th>
-                                                    <th></th>
                                                     <th></th>
                                                     <th></th>
                                                     <th></th>
@@ -388,6 +382,38 @@
                                                     <th class="text-right">Total de entregar</th>
                                                     <th class="text-right mr-3" id="cell_totalEntregar"></th>
                                                     <th class="text-center">=</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                </div>
+
+                                <div class="col-md-3">
+
+                                    <div class="table-responsive">
+                                        <table style="width: 100%!important;" class="table table-bordered bg-light table-sm mb-3">
+
+                                            <tbody>
+                                                <tr>
+                                                    <th class="text-right">Venta</th>
+                                                    <th class="text-right mr-3" id="cell_totalVenta"></th>
+                                                </tr>
+
+                                                <tr>
+                                                    <th class="text-right">Comisión %</th>
+                                                    <th class="text-right mr-3" id="cell_porcentajeComision"></th>
+                                                </tr>
+
+                                                <tr>
+                                                    <th>&nbsp;</th>
+                                                    <th></th>
+                                                </tr>
+
+                                                <tr>
                                                     <th class="text-right">Comisión</th>
                                                     <th class="text-right mr-3" id="cell_totalComision"></th>
                                                 </tr>
@@ -396,6 +422,7 @@
 
                                     </div>
                                 </div>
+
                             </div>
 
                         </div>

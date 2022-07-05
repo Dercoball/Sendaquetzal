@@ -310,8 +310,11 @@ function number_format(amount, decimals, simbolo = '$') {
 
     decimals = decimals || 0;
 
-    if (isNaN(amount) || amount === 0)
+    if (isNaN(amount))
         return parseFloat(0).toFixed(decimals);
+
+    if (Number(amount) === 0)
+        return simbolo + '' + "0.00";
 
     amount = '' + amount.toFixed(decimals);
 

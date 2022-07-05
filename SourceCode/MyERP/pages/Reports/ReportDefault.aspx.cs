@@ -46,6 +46,32 @@ namespace Plataforma.pages
             public string totalStr;
         }
 
+        public class LineaDeterminacion
+        {
+            public string Promotor;
+            public string Comision;
+            public float DebeEntregar;
+            public float Falla;
+            public float Efectivo;
+            public float Recuperado;
+            public float AbonoEntrante;
+            public float Total;
+            public float AbonoSaliente;
+            public float Total2;
+            public float PorcentajeFalla;
+
+            public string DebeEntregarFormateadoMx;
+            public string FallaFormateadoMx;
+            public string EfectivoFormateadoMx;
+            public string RecuperadoFormateadoMx;
+            public string AbonoEntranteFormateadoMx;
+            public string TotalFormateadoMx;
+            public string AbonoSalienteFormateadoMx;
+            public string Total2FormateadoMx;
+            public string PorcentajeFallaFormateadoMx;
+
+        }
+
         /// <summary>
         /// Debe entregar y falla
         /// </summary>
@@ -1203,7 +1229,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static DatosSalida SaveReport(string path, string idUsuario, string fecha)
+        public static DatosSalida SaveReport(string path, string idUsuario, string fecha, string idTipoReporte)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -1232,9 +1258,9 @@ namespace Plataforma.pages
                 string sql = "";
 
                 sql = @"  INSERT INTO reporte
-                                (id_usuario, fecha)                             
+                                (id_usuario, fecha, id_tipo_reporte)                             
                                 OUTPUT INSERTED.id_reporte                                
-                                VALUES (@id_usuario, @fecha)";
+                                VALUES (@id_usuario, @fecha, @id_tipo_reporte)";
 
 
                 Utils.Log("insert reporte " + sql);
@@ -1244,6 +1270,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@id_usuario", idUsuario);
                 cmd.Parameters.AddWithValue("@fecha", fecha);
+                cmd.Parameters.AddWithValue("@id_tipo_reporte", idTipoReporte);
                 cmd.Transaction = transaccion;
 
                 int idGenerado = (int)cmd.ExecuteScalar();
@@ -1271,7 +1298,7 @@ namespace Plataforma.pages
 
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                
+
                 salida.MensajeError = "Se ha generado un error.";
                 salida.CodigoError = 1;
             }
@@ -1283,6 +1310,164 @@ namespace Plataforma.pages
 
             return salida;
 
+
+        }
+
+
+
+        [WebMethod]
+        public static List<LineaDeterminacion> getTablePrincipalFondos(string path, string idUsuario, string idSupervisor,
+           string fechaInicial, string fechaFinal)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            List<LineaDeterminacion> items = new List<LineaDeterminacion>();
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+
+                //debe entregar
+                string query = @" 
+                    SELECT concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS promotor,
+ 						c.porcentaje comision,
+						IsNull(SUM(p.monto) , 0) total_debe_entregar,
+                        
+                         (SELECT IsNull(SUM(pp.monto) , 0)  total
+                                    FROM pago pp
+                                    JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)                                                                                       
+                                    WHERE 
+                                        (pp.fecha >= '" + fechaInicial + @"' AND pp.fecha <= '" + fechaFinal + @"')                                            
+                                        AND pre2.id_empleado = e.id_empleado
+                                        AND pp.id_status_pago = " + Pago.STATUS_PAGO_FALLA + @")                    total_falla,
+                                                                                
+                         (SELECT IsNull(SUM(p3.monto) , 0)  total
+                                    FROM pago p3
+                                    JOIN prestamo pre3 ON (p3.id_prestamo = pre3.id_prestamo)                                                                                       
+                                    WHERE 
+                                        (p3.fecha >= '" + fechaInicial + @"' AND p3.fecha <= '" + fechaFinal + @"')
+                                        AND pre3.id_empleado = e.id_empleado
+                                        AND p3.id_status_pago = " + Pago.STATUS_PAGO_ABONADO + @")                  total_recuperado,
+                                        
+                         (SELECT IsNull(SUM(pagoEntrante.monto) , 0)  total
+                                    FROM pago pagoEntrante
+                                    JOIN prestamo preEntrante ON (pagoEntrante.id_prestamo = preEntrante.id_prestamo)                                                                                       
+                                    WHERE
+                                        (pagoEntrante.fecha_registro_pago >= '" + fechaInicial + @"' AND pagoEntrante.fecha_registro_pago <= '" + fechaFinal + @"')
+                                        AND preEntrante.id_empleado = e.id_empleado
+                                        AND IsNull(pagoEntrante.pagado_con_adelanto, 0) = 1
+                         				AND pagoEntrante.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_abono_entrante,
+                                                                                
+                         (SELECT IsNull(SUM(pagoSaliente.monto) , 0)  total
+                                    FROM pago pagoSaliente
+                                    JOIN prestamo preSaliente ON (pagoSaliente.id_prestamo = preSaliente.id_prestamo)                                                                                       
+                                    WHERE 
+                                        (pagoSaliente.fecha >= '" + fechaInicial + @"' AND pagoSaliente.fecha <= '" + fechaFinal + @"')
+                                        AND preSaliente.id_empleado = e.id_empleado
+                                        AND IsNull(pagoSaliente.pagado_con_adelanto, 0) = 1
+                         				AND pagoSaliente.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_abono_saliente
+                                        
+                                    FROM pago p
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
+                                    JOIN empleado e ON (e.id_empleado = pre.id_empleado)  
+                                    JOIN comision c ON (c.id_comision = e.id_comision_inicial)  
+                                    WHERE 
+                                        (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')     
+                                        AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @" 
+                                        AND e.id_supervisor = " + idSupervisor + @" 
+                                  	GROUP BY 
+                                    e.id_empleado,
+                                    concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido), 
+                                    c.porcentaje ";
+
+                using (SqlDataAdapter adp = new SqlDataAdapter(query, conn))
+                {
+
+                    Utils.Log("\nMétodo-> " +
+                    System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                    adp.Fill(ds);
+
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                        {
+
+                            LineaDeterminacion item = new LineaDeterminacion();
+                            item.Promotor = ds.Tables[0].Rows[i]["promotor"].ToString();
+                            item.Comision = ds.Tables[0].Rows[i]["comision"].ToString() + "%";
+                            item.DebeEntregar = float.Parse(ds.Tables[0].Rows[i]["total_debe_entregar"].ToString());
+                            item.DebeEntregarFormateadoMx = item.DebeEntregar.ToString("C2");
+
+                            item.Falla = float.Parse(ds.Tables[0].Rows[i]["total_falla"].ToString());
+                            item.FallaFormateadoMx  = item.Falla.ToString("C2");
+
+                            item.Efectivo = 999;
+                            item.EfectivoFormateadoMx = item.Efectivo.ToString("C2");
+
+                            item.Recuperado= float.Parse(ds.Tables[0].Rows[i]["total_recuperado"].ToString());
+                            item.RecuperadoFormateadoMx = item.Recuperado.ToString("C2");
+
+                            item.AbonoEntrante = float.Parse(ds.Tables[0].Rows[i]["total_abono_entrante"].ToString());
+                            item.AbonoEntranteFormateadoMx = item.AbonoEntrante.ToString("C2");
+
+                            item.Total = 999;
+                            item.TotalFormateadoMx = item.Total.ToString("C2");
+
+                            item.AbonoSaliente = float.Parse(ds.Tables[0].Rows[i]["total_abono_saliente"].ToString());
+                            item.AbonoSalienteFormateadoMx = item.AbonoSaliente.ToString("C2");
+
+                            item.Total2 = 999;
+                            item.Total2FormateadoMx = item.Total2.ToString("C2");
+
+                            if (item.Falla > 0)
+                            {
+                                item.PorcentajeFalla = item.DebeEntregar / item.Falla;
+                                item.PorcentajeFallaFormateadoMx = item.PorcentajeFalla.ToString("#.##") + "%";
+                            }
+                            else
+                            {
+                                item.PorcentajeFalla = 0;
+                                item.PorcentajeFallaFormateadoMx =  "0%";
+                            }
+
+
+                            items.Add(item);
+
+                        }
+                    }
+
+
+                }
+
+
+
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
 
         }
 

@@ -504,7 +504,7 @@ const report = {
                     html += `<tr>`;
                     html += `<td>${item.FechaStr}</td>`;
                     html += `<td>${item.NombreCliente}</td>`;
-                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.MontoFormateadoMx}</td>`;
                     html += `</tr>`;
 
                     total += item.Monto;
@@ -513,7 +513,7 @@ const report = {
                 html += `<tr>`;
                 html += `<th></th>`;
                 html += `<th>Total</th>`;
-                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `<th class='text-right'>${number_format(total, 2, '$')}</th>`;
                 html += `</tr>`;
 
                 $('#tableSemanaExtra tbody').empty().append(html);
@@ -565,7 +565,7 @@ const report = {
                     html += `<tr>`;
                     html += `<td>${item.FechaStr}</td>`;
                     html += `<td>${item.NombreCliente}</td>`;
-                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.MontoFormateadoMx}</td>`;
                     html += `</tr>`;
 
                     total += item.Monto;
@@ -574,7 +574,7 @@ const report = {
                 html += `<tr>`;
                 html += `<th></th>`;
                 html += `<th>Total</th>`;
-                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `<th class='text-right'>${number_format(total, 2, '$')}</th>`;
                 html += `</tr>`;
 
                 $('#tableFalla tbody').empty().append(html);
@@ -626,7 +626,7 @@ const report = {
                     html += `<tr>`;
                     html += `<td>${item.FechaStr}</td>`;
                     html += `<td>${item.NombreCliente}</td>`;
-                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.MontoFormateadoMx}</td>`;
                     html += `</tr>`;
 
                     total += item.Monto;
@@ -635,7 +635,7 @@ const report = {
                 html += `<tr>`;
                 html += `<th></th>`;
                 html += `<th>Total</th>`;
-                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `<th class='text-right'>${number_format(total, 2, '$')}</th>`;
                 html += `</tr>`;
 
                 $('#tableRecuperado tbody').empty().append(html);
@@ -685,7 +685,7 @@ const report = {
                     html += `<tr>`;
                     html += `<td>${item.FechaStr}</td>`;
                     html += `<td>${item.NombreCliente}</td>`;
-                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.MontoFormateadoMx}</td>`;
                     html += `</tr>`;
 
                     total += item.Monto;
@@ -694,7 +694,7 @@ const report = {
                 html += `<tr>`;
                 html += `<th></th>`;
                 html += `<th>Total</th>`;
-                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `<th class='text-right'>${number_format(total, 2, '$')}</th>`;
                 html += `</tr>`;
 
                 $('#tableAdelantoEntrante tbody').empty().append(html);
@@ -745,7 +745,7 @@ const report = {
                     html += `<tr>`;
                     html += `<td>${item.FechaStr}</td>`;
                     html += `<td>${item.NombreCliente}</td>`;
-                    html += `<td>${item.MontoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.MontoFormateadoMx}</td>`;
                     html += `</tr>`;
 
                     total += item.Monto;
@@ -754,7 +754,7 @@ const report = {
                 html += `<tr>`;
                 html += `<th></th>`;
                 html += `<th>Total</th>`;
-                html += `<th>${number_format(total, 2, '$')}</th>`;
+                html += `<th class='text-right'>${number_format(total, 2, '$')}</th>`;
                 html += `</tr>`;
 
                 $('#tableAdelantoSaliente tbody').empty().append(html);
@@ -873,54 +873,125 @@ const report = {
 
     },
 
-    accionesBotones: () => {
-
-        function getPDF() {
-
-            var HTML_Width = $("#divReporteFalla").width();
-            var HTML_Height = $("#divReporteFalla").height();
-            var top_left_margin = 15;
-            var PDF_Width = HTML_Width + (top_left_margin * 2);
-            var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
-            var canvas_image_width = HTML_Width;
-            var canvas_image_height = HTML_Height;
-
-            var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
 
 
-            html2canvas($("#divReporteFalla")[0], { allowTaint: true }).then(function (canvas) {
-                canvas.getContext('2d');
 
-                console.log(canvas.height + "  " + canvas.width);
+    getTablePrincipalFondos(idSupervisor, fechaInicial, fechaFinal) {
 
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idSupervisor = idSupervisor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
 
-                var imgData = canvas.toDataURL("image/jpeg", 1.0);
-                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/ReportDefault.aspx/getTablePrincipalFondos",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
 
+                let data = msg.d;
 
-                for (var i = 1; i <= totalPDFPages; i++) {
-                    pdf.addPage(PDF_Width, PDF_Height);
-                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
                 }
 
-                pdf.save("HTML-Document.pdf");
+                console.table(data);
+
+                let html = '';
+                //let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.Promotor}</td>`;
+                    html += `<td class='text-right'>${item.Comision}</td>`;
+                    html += `<td class='text-right'>${item.DebeEntregarFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.FallaFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.EfectivoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.RecuperadoFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.AbonoEntranteFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.TotalFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.AbonoSalienteFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.Total2FormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.PorcentajeFallaFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    //total += item.Monto;
+                });
 
 
-                $('.deshabilitable').prop('disabled', false);
-                $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
-
-                $('.reporteFalla').hide();
-                $('#divLoading').hide();
-
-            });
+                $('#tablePrincipal tbody').empty().append(html);
 
 
 
-            
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
 
 
-        };
+            }
+
+        });
+    },
+
+    getPDF: (div) => {
+
+        var HTML_Width = $(`${div}`).width();
+        var HTML_Height = $(`${div}`).height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + (top_left_margin * 2);
+        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+        html2canvas($(`${div}`)[0], { allowTaint: true }).then(function (canvas) {
+            canvas.getContext('2d');
+
+            console.log(canvas.height + "  " + canvas.width);
+
+
+            var imgData = canvas.toDataURL("image/jpeg", 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+            }
+
+            pdf.save("HTML-Document.pdf");
+
+
+            $('.deshabilitable').prop('disabled', false);
+            $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+            $('#btnGuardarDeterminacion').html(`<i class="fa fa-save mr-1"></i>Guardar`);
+
+            $('.reporteDeterminacion').hide();
+            $('.reporteFalla').hide();
+            $('#divLoading').hide();
+
+        });
+
+
+
+
+
+
+    },
+
+
+
+    accionesBotones: () => {
+
 
 
         $('#btnGuardar').on('click', (e) => {
@@ -932,6 +1003,7 @@ const report = {
             let params = {};
             params.path = window.location.hostname;
             params.fecha = $('#txtFechaSemana').val();
+            params.idTipoReporte = 1;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
@@ -946,7 +1018,7 @@ const report = {
                 success: function (msg) {
                     let valores = msg.d;
 
-                  
+
 
                     //  si no tiene permisos
                     if (valores == null) {
@@ -962,7 +1034,7 @@ const report = {
 
                             setTimeout(function () {
 
-                                getPDF();
+                                report.getPDF('#divReporteFalla');
 
                             }, time_);
 
@@ -992,6 +1064,75 @@ const report = {
 
         });
 
+        $('#btnGuardarDeterminacion').on('click', (e) => {
+            e.preventDefault();
+
+            $('.deshabilitable').prop('disabled', true);
+            $('#btnGuardarDeterminacion').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.fecha = $('#txtFechaSemana').val();
+            params.idTipoReporte = 2;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params = JSON.stringify(params);
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Reports/ReportDefault.aspx/SaveReport`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+
+
+
+                    //  si no tiene permisos
+                    if (valores == null) {
+                        window.location = "../../pages/Index.aspx";
+                    }
+
+                    if (parseInt(valores.CodigoError) === 0) {
+
+                        $('#txtFolio').val(valores.IdItem);
+
+                        let time_ = 5000;
+                        setTimeout(function () {
+
+                            setTimeout(function () {
+
+                                report.getPDF('#divReporteDeterminacion');
+
+                            }, time_);
+
+                        }, time_);
+
+
+
+                    } else {
+
+                        $('.deshabilitable').prop('disabled', false);
+
+                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                        return;
+
+                    }
+
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                }
+
+            });
+
+        });
 
 
         $('#comboPlaza').on('change', (e) => {
@@ -1025,8 +1166,10 @@ const report = {
             //let idPromotor = $('#comboPromotor').val();
             let idPromotor = 33;    //  TODO: Solo para test
 
-            if (!idPromotor) {
+            if (!idPromotor || Number(idPromotor) === -1) {
 
+                $('.reporteFalla').hide();
+                $('.reporteDeterminacion').hide();
                 utils.toast(mensajesAlertas.errorSeleccionarPromotor, 'error');
                 return;
             }
@@ -1073,12 +1216,14 @@ const report = {
 
 
 
-            //let idPromotor = $('#comboPromotor').val();
-            let idPromotor = 33;    //  TODO: Solo para test
+            //let idSupervisor = $('#comboSupervisor').val();
+            let idSupervisor = 32;    //  TODO: Solo para test
 
-            if (!idPromotor) {
+            if (!idSupervisor || Number(idSupervisor) === -1) {
 
-                utils.toast(mensajesAlertas.errorSeleccionarPromotor, 'error');
+                $('.reporteFalla').hide();
+                $('.reporteDeterminacion').hide();
+                utils.toast(mensajesAlertas.errorSeleccionarSupervisor, 'error');
                 return;
             }
 
@@ -1086,9 +1231,18 @@ const report = {
             $('.reporteDeterminacion').hide();
             $('#divLoading').show();
 
-            $('#txtEjecutivo').val($('#comboEjecutivo option:selected').text());
-            $('#txtPromotor').val($('#comboPromotor option:selected').text());
+            $('#txtPlaza').val($('#comboPlaza option:selected').text());
+            $('#txtSupervisor').val($('#comboSupervisor option:selected').text());
 
+            //console.log(`dia =  ${$('#txtFechaSemana').val().split('-')[2]}`);
+
+            let formatedDate = `${$('#txtFechaSemana').val().split('-')[2]}/${$('#txtFechaSemana').val().split('-')[1]}/${$('#txtFechaSemana').val().split('-')[0]}`;
+
+            report.fechasHoy(`${$('#txtFechaSemana').val().split('-')[0]}`, `${$('#txtFechaSemana').val().split('-')[1]}`, `${$('#txtFechaSemana').val().split('-')[2]}`);
+
+            $('#txtFechaFondos').val(formatedDate);
+
+            report.getTablePrincipalFondos(idSupervisor, report.fechaInicial, report.fechaFinal);
 
             $('.reporteDeterminacion').show();
             $('#divLoading').hide();

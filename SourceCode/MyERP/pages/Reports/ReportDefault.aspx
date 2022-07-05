@@ -189,32 +189,32 @@
 
 
 
-                                <div class="form-group col-md-2">
+                                <div class="form-group col-md-4">
                                     <label for="txtPlaza">
                                         Plaza
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtPlaza" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtPlaza" class="form-control form-control-sm" />
                                 </div>
 
-                                <div class="form-group col-md-2">
+                                <div class="form-group col-md-4">
                                     <label for="txtSupervisor">
                                         Supervisor
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtSupervisor" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtSupervisor" class="form-control form-control-sm" />
                                 </div>
 
                                 <div class="form-group col-md-2">
                                     <label for="txtSemana">
                                         Semana
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtSemana" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtSemana" class="form-control form-control-sm" />
                                 </div>
 
                                 <div class="form-group col-md-2">
                                     <label for="txtFechaFondos">
                                         Fecha
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtFechaFondos" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtFechaFondos" class="form-control form-control-sm" />
                                 </div>
 
 
@@ -290,7 +290,12 @@
 
                     <div class="row mt-3 mb-3 reporteDeterminacion">
 
-                        <div class=" col-md-12 text-center">
+
+                        <div class=" col-md-6 text-center">
+                            <button id="btnCancelar" class="btn btn-secondary volver"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                        </div>
+
+                        <div class=" col-md-6 text-center">
                             <button class="btn btn-outline btn-primary deshabilitable" id="btnGuardarDeterminacion"><i class="fa fa-save mr-1"></i>Guardar e imprimir</button>
                         </div>
 
@@ -301,46 +306,57 @@
 
                         <div>
 
-                            <div class="row mt-3 mb-3">
+                            <div class="row mt-3 text-center">
 
-
-
-                                <div class="form-group col-md-2">
-                                    <label for="txtEjecutivo">
-                                        Ejecutivo
-                                    </label>
-                                    <input type="text" disabled="disabled" id="txtEjecutivo" class="form-control" />
+                                <div class="col-md-3">
                                 </div>
 
-                                <div class="form-group col-md-2">
-                                    <label for="txtPromotor">
-                                        Promotor
-                                    </label>
-                                    <input type="text" disabled="disabled" id="txtPromotor" class="form-control" />
-                                </div>
-
-                                <div class="form-group col-md-4">
+                                <div class="col-md-6">
                                     <img src="../../img/brand.png" class="img-responsive" style="width: 90%; height: 90%;" />
                                 </div>
 
-                                <div class="form-group col-md-2">
+                                <div class="col-md-3">
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+
+
+
+                                <div class="form-group col-md-4">
+                                    <label for="txtEjecutivo">
+                                        Ejecutivo
+                                    </label>
+                                    <input type="text" disabled="disabled" id="txtEjecutivo" class="form-control form-control-sm" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="txtPromotor">
+                                        Promotor
+                                    </label>
+                                    <input type="text" disabled="disabled" id="txtPromotor" class="form-control form-control-sm" />
+                                </div>
+
+
+
+                                <div class="col-md-2">
                                     <label for="txtFecha">
                                         Fecha
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtFecha" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtFecha" class="form-control form-control-sm" />
                                 </div>
 
-                                <div class="form-group col-md-2">
+                                <div class="col-md-2">
                                     <label for="txtFolio">
                                         Folio
                                     </label>
-                                    <input type="text" disabled="disabled" id="txtFolio" class="form-control" />
+                                    <input type="text" disabled="disabled" id="txtFolio" class="form-control form-control-sm" />
                                 </div>
 
 
                             </div>
 
-                            <div class="row mt-3 mb-3">
+                            <div class="row mt-5 mb-3">
 
                                 <div class="col-md-8">
 
@@ -560,7 +576,12 @@
 
                     <div class="row mt-3 mb-3 reporteFalla">
 
-                        <div class=" col-md-12 text-center">
+
+                        <div class=" col-md-6 text-center">
+                            <button class="btn btn-secondary volver"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                        </div>
+
+                        <div class=" col-md-6 text-center">
                             <button class="btn btn-outline btn-primary deshabilitable" id="btnGuardar"><i class="fa fa-save mr-1"></i>Guardar e imprimir</button>
                         </div>
 

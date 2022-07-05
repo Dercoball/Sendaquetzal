@@ -417,8 +417,9 @@ const report = {
 
 
                 //  final de generacion del reporte
-
+                
                 $('.reporteFalla').show();
+                $('#panelFiltro').hide();
                 $('#divLoading').hide();
 
 
@@ -927,7 +928,9 @@ const report = {
 
                 $('#tablePrincipal tbody').empty().append(html);
 
-
+                $('.reporteDeterminacion').show();
+                $('#panelFiltro').hide();
+                $('#divLoading').hide();
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -975,6 +978,7 @@ const report = {
             $('#btnGuardar').html(`<i class="fa fa-save mr-1"></i>Guardar`);
             $('#btnGuardarDeterminacion').html(`<i class="fa fa-save mr-1"></i>Guardar`);
 
+            $('#panelFiltro').show();
             $('.reporteDeterminacion').hide();
             $('.reporteFalla').hide();
             $('#divLoading').hide();
@@ -993,6 +997,17 @@ const report = {
     accionesBotones: () => {
 
 
+        $('.volver').on('click', async (e) => {
+            e.preventDefault();
+
+
+            $('.reporteFalla').hide();
+            $('.reporteDeterminacion').hide();
+            $('#divLoading').hide();
+            $('#panelFiltro').show();
+
+
+        });
 
         $('#btnGuardar').on('click', (e) => {
             e.preventDefault();
@@ -1163,8 +1178,8 @@ const report = {
 
 
 
-            let idPromotor = $('#comboPromotor').val();
-            //let idPromotor = 33;    //  TODO: Solo para test
+            //let idPromotor = $('#comboPromotor').val();
+            let idPromotor = 33;    //  TODO: Solo para test
 
             if (!idPromotor || Number(idPromotor) === -1) {
 
@@ -1216,8 +1231,8 @@ const report = {
 
 
 
-            let idSupervisor = $('#comboSupervisor').val();
-            //let idSupervisor = 32;    //  TODO: Solo para test
+            //let idSupervisor = $('#comboSupervisor').val();
+            let idSupervisor = 32;    //  TODO: Solo para test
 
             if (!idSupervisor || Number(idSupervisor) === -1) {
 
@@ -1244,8 +1259,7 @@ const report = {
 
             report.getTablePrincipalFondos(idSupervisor, report.fechaInicial, report.fechaFinal);
 
-            $('.reporteDeterminacion').show();
-            $('#divLoading').hide();
+            
 
 
         });

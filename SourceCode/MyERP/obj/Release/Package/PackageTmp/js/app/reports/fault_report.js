@@ -28,7 +28,7 @@ const report = {
         report.totalDeEntregar = '';
         report.subtotal = '';
         report.totalRecuperacion = '';
-
+        report.numeroSemana = '';
 
         $('#txtFechaSemana').val(report.fechaHoy());
 
@@ -87,6 +87,15 @@ const report = {
 
         let startYear = (startWeekDay.getFullYear());
 
+
+        //  Week number
+        let startDate = new Date(startWeekDay.getFullYear(), 0, 1);
+        let days = Math.floor((startWeekDay - startDate) / (24 * 60 * 60 * 1000));
+
+        let weekNumber = Math.ceil(days / 7);
+        console.log(`weekNumber = ${weekNumber}`);
+        //
+        report.numeroSemana = weekNumber;
         report.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
 
 
@@ -417,8 +426,9 @@ const report = {
 
 
                 //  final de generacion del reporte
-                
+
                 $('.reporteFalla').show();
+                $('.reporteDeterminacion').hide();
                 $('#panelFiltro').hide();
                 $('#divLoading').hide();
 
@@ -906,29 +916,41 @@ const report = {
                 console.table(data);
 
                 let html = '';
-                //let total = 0;
                 data.forEach((item, i) => {
                     html += `<tr>`;
                     html += `<td>${item.Promotor}</td>`;
-                    html += `<td class='text-right'>${item.Comision}</td>`;
+                    html += `<td class='text-right'>${item.ComisionFormateado}</td>`;
                     html += `<td class='text-right'>${item.DebeEntregarFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.FallaFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.EfectivoFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.RecuperadoFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.AbonoEntranteFormateadoMx}</td>`;
-                    html += `<td class='text-right'>${item.TotalFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.AbonoSalienteFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.Total2FormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.PorcentajeFallaFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.VentaFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.ComisionesFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.TotalFinalFormateadoMx}</td>`;
                     html += `</tr>`;
 
-                    //total += item.Monto;
                 });
 
 
                 $('#tablePrincipal tbody').empty().append(html);
 
+
+                html = '';
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td>${item.Promotor}</td>`;
+                    html += `<td class='text-right'>${item.Total2FormateadoMx}</td>`;
+                    html += `</tr>`;
+                });
+                $('#tablePromotoraTotal tbody').empty().append(html);
+
+
                 $('.reporteDeterminacion').show();
+                $('.reporteFalla').hide();
                 $('#panelFiltro').hide();
                 $('#divLoading').hide();
 
@@ -1178,8 +1200,8 @@ const report = {
 
 
 
-            //let idPromotor = $('#comboPromotor').val();
-            let idPromotor = 33;    //  TODO: Solo para test
+            let idPromotor = $('#comboPromotor').val();
+            //let idPromotor = 33;    //  TODO: Solo para test
 
             if (!idPromotor || Number(idPromotor) === -1) {
 
@@ -1231,8 +1253,8 @@ const report = {
 
 
 
-            //let idSupervisor = $('#comboSupervisor').val();
-            let idSupervisor = 32;    //  TODO: Solo para test
+            let idSupervisor = $('#comboSupervisor').val();
+            //let idSupervisor = 32;    //  TODO: Solo para test
 
             if (!idSupervisor || Number(idSupervisor) === -1) {
 
@@ -1256,10 +1278,11 @@ const report = {
             report.fechasHoy(`${$('#txtFechaSemana').val().split('-')[0]}`, `${$('#txtFechaSemana').val().split('-')[1]}`, `${$('#txtFechaSemana').val().split('-')[2]}`);
 
             $('#txtFechaFondos').val(formatedDate);
+            $('#txtSemana').val(report.numeroSemana);
 
             report.getTablePrincipalFondos(idSupervisor, report.fechaInicial, report.fechaFinal);
 
-            
+
 
 
         });

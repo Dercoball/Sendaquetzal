@@ -49,7 +49,8 @@ namespace Plataforma.pages
         public class LineaDeterminacion
         {
             public string Promotor;
-            public string Comision;
+            public float Comision;
+            public string ComisionFormateado;
             public float DebeEntregar;
             public float Falla;
             public float Efectivo;
@@ -69,6 +70,16 @@ namespace Plataforma.pages
             public string AbonoSalienteFormateadoMx;
             public string Total2FormateadoMx;
             public string PorcentajeFallaFormateadoMx;
+
+            public float Venta;
+            public string VentaFormateadoMx;
+
+            public float Comisiones;
+            public string ComisionesFormateadoMx;
+
+            public float TotalFinal;
+            public string TotalFinalFormateadoMx;
+
 
         }
 
@@ -1344,6 +1355,15 @@ namespace Plataforma.pages
  						c.porcentaje comision,
 						IsNull(SUM(p.monto) , 0) total_debe_entregar,
                         
+                            (SELECT IsNull(SUM(nuevosPrestamos.monto), 0)  total                                    
+                                    FROM prestamo nuevosPrestamos                                                                                       
+                                    WHERE 
+                                        (nuevosPrestamos.fecha_aprobacion >= '" + fechaInicial +
+                                        @"' AND nuevosPrestamos.fecha_aprobacion <= '" + fechaFinal + @"')                                            
+                                        AND nuevosPrestamos.id_empleado = e.id_empleado
+                                        AND nuevosPrestamos.id_status_prestamo = " + Prestamo.STATUS_APROBADO + @")                    
+                                                                                                                    total_venta,
+                     
                          (SELECT IsNull(SUM(pp.monto) , 0)  total
                                     FROM pago pp
                                     JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)                                                                                       
@@ -1406,14 +1426,17 @@ namespace Plataforma.pages
 
                             LineaDeterminacion item = new LineaDeterminacion();
                             item.Promotor = ds.Tables[0].Rows[i]["promotor"].ToString();
-                            item.Comision = ds.Tables[0].Rows[i]["comision"].ToString() + "%";
+
+                            item.Comision = float.Parse(ds.Tables[0].Rows[i]["comision"].ToString());
+                            item.ComisionFormateado = item.Comision + "%";
+
                             item.DebeEntregar = float.Parse(ds.Tables[0].Rows[i]["total_debe_entregar"].ToString());
                             item.DebeEntregarFormateadoMx = item.DebeEntregar.ToString("C2");
 
                             item.Falla = float.Parse(ds.Tables[0].Rows[i]["total_falla"].ToString());
                             item.FallaFormateadoMx  = item.Falla.ToString("C2");
 
-                            item.Efectivo = 999;
+                            item.Efectivo = item.DebeEntregar - item.Falla;
                             item.EfectivoFormateadoMx = item.Efectivo.ToString("C2");
 
                             item.Recuperado= float.Parse(ds.Tables[0].Rows[i]["total_recuperado"].ToString());
@@ -1428,8 +1451,17 @@ namespace Plataforma.pages
                             item.AbonoSaliente = float.Parse(ds.Tables[0].Rows[i]["total_abono_saliente"].ToString());
                             item.AbonoSalienteFormateadoMx = item.AbonoSaliente.ToString("C2");
 
-                            item.Total2 = 999;
+                            item.Total2 = item.Efectivo + item.Recuperado + item.AbonoEntrante - item.AbonoSaliente;
                             item.Total2FormateadoMx = item.Total2.ToString("C2");
+
+                            item.Venta = float.Parse(ds.Tables[0].Rows[i]["total_venta"].ToString());
+                            item.VentaFormateadoMx = item.AbonoSaliente.ToString("C2");
+
+                            item.Comisiones = item.Venta * item.Comision / 100;
+                            item.ComisionesFormateadoMx = item.AbonoSaliente.ToString("C2");
+
+                            item.TotalFinal = item.Venta - item.Comisiones;
+                            item.TotalFinalFormateadoMx = item.TotalFinal.ToString("C2");
 
                             if (item.Falla > 0)
                             {

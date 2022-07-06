@@ -154,6 +154,10 @@
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\commissions.min - Copy.js">
+      <DependentUpon>bills.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\bills.js" />
     <Content Include="js\app\commissions\configrules.js" />
     <Content Include="js\app\commissions\commissions.min.js">
       <DependentUpon>configrules.js</DependentUpon>
@@ -284,6 +288,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Bills.aspx" />
     <Content Include="pages\Reports\ReportDefault.aspx" />
     <Content Include="pages\Commissions\ConfigRules.aspx" />
     <Content Include="pages\Commissions\EmployeeEvaluation.aspx" />
@@ -1165,6 +1170,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\Gasto.cs" />
     <Compile Include="Clases\EvaluacionModulo.cs" />
     <Compile Include="Clases\ValorReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\ReglaEvaluacionModulo.cs" />
@@ -1208,6 +1214,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Bills.aspx.cs">
+      <DependentUpon>Bills.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Bills.aspx.designer.cs">
+      <DependentUpon>Bills.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Reports\ReportDefault.aspx.cs">
       <DependentUpon>ReportDefault.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

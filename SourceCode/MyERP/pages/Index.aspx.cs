@@ -319,6 +319,8 @@ namespace Plataforma.pages
             //  historial
             nav += AgregarItemRootMenu("14", pagina, listaPermisos, "fa fa-calendar-check-o");
 
+            //  gastos
+            nav += AgregarItemRootMenu("20", pagina, listaPermisos, "fa fa-th-list");
 
 
             Configuracion nombreEmpresa = new Configuracion();

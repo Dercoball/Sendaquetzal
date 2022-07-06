@@ -222,12 +222,12 @@
 
                             </div>
 
-                            <div class="row mt-3 mb-3">
+                            <div class="row mt-5 mb-3">
 
                                 <div class="col-md-12">
 
                                     <div class="table-responsive">
-                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tablePrincipal">
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tablePrincipal">
 
                                             <thead>
                                                 <tr>
@@ -238,10 +238,13 @@
                                                     <th>Efectivo</th>
                                                     <th>Recuperado</th>
                                                     <th>Abono entrante</th>
-                                                    <th>Total</th>
+                                                    <%--<th>Total 1</th>--%>
                                                     <th>Abono saliente</th>
                                                     <th>Total</th>
                                                     <th>% Falla</th>
+                                                    <th>Venta</th>
+                                                    <th>Comisiones</th>
+                                                    <th>Total final</th>
                                                 </tr>
                                             </thead>
 
@@ -253,6 +256,82 @@
 
                             </div>
 
+
+                            <div class="row mt-5">
+                                <div class="col-md-6">
+                                    <div class="table-responsive">
+
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tablePromotoraTotal">
+
+                                            <thead>
+                                                <tr>
+                                                    <th>Promotor</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="table-responsive">
+
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableGastos">
+
+                                            <thead>
+                                                <tr>
+                                                    <th>Concepto</th>
+                                                    <th>Gasto</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mt-5">
+                                <div class="col-md-6">
+                                    <div class="table-responsive">
+
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableConcentrado">
+
+                                            <thead>
+                                                <tr>
+                                                    <th>Concentrado</th>
+                                                    <th>Monto</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                    <th class="text-right">Gastos</th>
+                                                    <th class="text-right" id="cell_ConcentradoGastos"></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-right">Fondo</th>
+                                                    <th class="text-right" id="cell_ConcentradoFondo"></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-right">Debe entregar</th>
+                                                    <th class="text-right" id="cell_ConcentradoDebeEntregar"></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-right">Total</th>
+                                                    <th class="text-right" id="cell_ConcentradoTotal"></th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="row mt-3">
                             </div>
@@ -450,37 +529,41 @@
                                 <div class="col-md-6">
 
                                     <h1 class="h3 display">Semana extra</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableSemanaExtra">
+                                    <div class="table-responsive">
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableSemanaExtra">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th class="text-right">Monto</th>
-                                            </tr>
-                                        </thead>
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha de crédito</th>
+                                                    <th>Nombre</th>
+                                                    <th class="text-right">Monto</th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
 
                                     <h1 class="h3 display">Recuperado</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableRecuperado">
+                                    <div class="table-responsive">
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableRecuperado">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th>Monto</th>
-                                            </tr>
-                                        </thead>
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha de crédito</th>
+                                                    <th>Nombre</th>
+                                                    <th>Monto</th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
 
                                 </div>
                             </div>
@@ -489,56 +572,62 @@
                                 <div class="col-md-6">
 
                                     <h1 class="h3 display">Falla</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableFalla">
+                                    <div class="table-responsive">
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm mb-3" id="tableFalla">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th class="text-right">Monto</th>
-                                            </tr>
-                                        </thead>
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha de crédito</th>
+                                                    <th>Nombre</th>
+                                                    <th class="text-right">Monto</th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
 
                                     <h1 class="h3 display">Adelanto entrante</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoEntrante">
+                                    <div class="table-responsive">
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoEntrante">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th>Monto</th>
-                                            </tr>
-                                        </thead>
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha de crédito</th>
+                                                    <th>Nombre</th>
+                                                    <th>Monto</th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <h1 class="h3 display">Adelanto saliente</h1>
-                                    <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoSaliente">
+                                    <div class="table-responsive">
+                                        <table style="width: 100%!important;" class="table table-striped table-bordered table-sm" id="tableAdelantoSaliente">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de crédito</th>
-                                                <th>Nombre</th>
-                                                <th>Monto</th>
-                                            </tr>
-                                        </thead>
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha de crédito</th>
+                                                    <th>Nombre</th>
+                                                    <th>Monto</th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

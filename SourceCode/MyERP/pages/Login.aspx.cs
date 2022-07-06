@@ -140,6 +140,7 @@ namespace Plataforma.pages
                             Session["path"] = path.ToString();
                             Session["usuario"] = login.ToString();
                             Session["id_usuario"] = item.IdUsuario.ToString();
+                            Session["id_empleado"] = item.IdEmpleado.ToString();
                             Session["id_tipo_usuario"] = item.IdTipoUsuario.ToString();
 
                             Response.Redirect(item.PaginaEntrada, false);

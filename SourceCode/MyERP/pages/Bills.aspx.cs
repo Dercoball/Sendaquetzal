@@ -86,7 +86,7 @@ namespace Plataforma.pages
                         Gasto item = new Gasto();
                         item.IdGasto = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
-                        item.MontoFormateadaMx = item.Monto.ToString("C2");
+                        item.MontoFormateadoMx = item.Monto.ToString("C2");
                         item.Concepto = (ds.Tables[0].Rows[i]["concepto"].ToString());
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
 

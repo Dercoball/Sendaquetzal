@@ -17,7 +17,7 @@ namespace Plataforma.Clases
         public DateTime FechaDate;
         public string FechaFormateadaMx;
         public float Monto;
-        public string MontoFormateadaMx;
+        public string MontoFormateadoMx;
 
 
         public string Accion;

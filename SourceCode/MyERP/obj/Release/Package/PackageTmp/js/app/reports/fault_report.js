@@ -28,7 +28,11 @@ const report = {
         report.totalDeEntregar = '';
         report.subtotal = '';
         report.totalRecuperacion = '';
+
+        //  determinacion
         report.numeroSemana = '';
+        report.totalGastos = '';
+        report.totalPromotor = '';
 
         $('#txtFechaSemana').val(report.fechaHoy());
 
@@ -913,7 +917,6 @@ const report = {
                     window.location = "../../pages/Index.aspx";
                 }
 
-                console.table(data);
 
                 let html = '';
                 data.forEach((item, i) => {
@@ -940,19 +943,24 @@ const report = {
 
 
                 html = '';
+                let total = 0;
                 data.forEach((item, i) => {
                     html += `<tr>`;
                     html += `<td>${item.Promotor}</td>`;
-                    html += `<td class='text-right'>${item.Total2FormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.TotalFormateadoMx}</td>`;
                     html += `</tr>`;
+
+                    total += item.Total2;
                 });
                 $('#tablePromotoraTotal tbody').empty().append(html);
 
+                $('#cell_ConcentradoFondo').html(number_format(total, 2, '$'));
 
-                $('.reporteDeterminacion').show();
-                $('.reporteFalla').hide();
-                $('#panelFiltro').hide();
-                $('#divLoading').hide();
+                report.totalPromotor = total;
+
+                report.getTableGastos(idSupervisor, report.fechaInicial, report.fechaFinal);
+
+
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -963,6 +971,72 @@ const report = {
 
         });
     },
+
+
+    getTableGastos(idSupervisor, fechaInicial, fechaFinal) {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idSupervisor = idSupervisor;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Reports/ReportDefault.aspx/GetItemsGastos",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+
+                let html = '';
+                let total = 0;
+                data.forEach((item, i) => {
+                    html += `<tr>`;
+                    html += `<td class='text-right'>${item.Concepto}</td>`;
+                    html += `<td class='text-right'>${item.MontoFormateadoMx}</td>`;
+                    html += `</tr>`;
+
+                    total += item.Monto;
+                });
+
+                console.log(`total = ${total}`);
+                report.totalGastos = total;
+
+                $('#tableGastos tbody').empty().append(html);
+
+                $('#cell_ConcentradoGastos').html(number_format(report.totalGastos, 2, '$'));
+
+
+                let totalFinal = report.totalGastos + report.totalPromotor;
+                $('#cell_ConcentradoTotal').html(number_format(totalFinal, 2, '$'));
+
+
+                $('.reporteDeterminacion').show();
+                $('.reporteFalla').hide();
+                $('#panelFiltro').hide();
+                $('#divLoading').hide();
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+    },
+
 
     getPDF: (div) => {
 
@@ -1281,6 +1355,7 @@ const report = {
             $('#txtSemana').val(report.numeroSemana);
 
             report.getTablePrincipalFondos(idSupervisor, report.fechaInicial, report.fechaFinal);
+
 
 
 

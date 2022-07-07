@@ -185,6 +185,11 @@
 
                         <div>
 
+
+                            <h1 class="h3 display text-center">Determinación de fondos</h1>
+
+
+
                             <div class="row mt-3 mb-3">
 
 
@@ -244,7 +249,7 @@
                                                     <th>% Falla</th>
                                                     <th>Venta</th>
                                                     <th>Comisiones</th>
-                                                    <th>Total final</th>
+                                                    <th>Resultado venta</th>
                                                 </tr>
                                             </thead>
 
@@ -266,7 +271,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Promotor</th>
-                                                    <th>Total</th>
+                                                    <th>Total final</th>
                                                 </tr>
                                             </thead>
 

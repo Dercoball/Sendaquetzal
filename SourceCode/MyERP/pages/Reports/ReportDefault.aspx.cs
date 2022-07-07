@@ -1352,9 +1352,16 @@ namespace Plataforma.pages
                 //debe entregar
                 string query = @" 
                     SELECT concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS promotor,
- 						c.porcentaje comision,
-						IsNull(SUM(p.monto) , 0) total_debe_entregar,
-                        
+ 						c.porcentaje comision,                     
+
+                         (SELECT IsNull(SUM(pp.monto) , 0)  total
+                                    FROM pago pp
+                                    JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)                                                                                       
+                                    WHERE 
+                                        (pp.fecha >= '" + fechaInicial + @"' AND pp.fecha <= '" + fechaFinal + @"')                                            
+                                        AND pre2.id_empleado = e.id_empleado
+                                        AND pp.id_status_pago = " + Pago.STATUS_PAGO_PENDIENTE + @")                total_debe_entregar,
+
                             (SELECT IsNull(SUM(nuevosPrestamos.monto), 0)  total                                    
                                     FROM prestamo nuevosPrestamos                                                                                       
                                     WHERE 
@@ -1398,14 +1405,9 @@ namespace Plataforma.pages
                                         AND IsNull(pagoSaliente.pagado_con_adelanto, 0) = 1
                          				AND pagoSaliente.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_abono_saliente
                                         
-                                    FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN empleado e ON (e.id_empleado = pre.id_empleado)  
+                                    FROM empleado e 
                                     JOIN comision c ON (c.id_comision = e.id_comision_inicial)  
-                                    WHERE 
-                                        (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')     
-                                        AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @" 
-                                        AND e.id_supervisor = " + idSupervisor + @" 
+                                    WHERE e.id_supervisor = " + idSupervisor + @" 
                                   	GROUP BY 
                                     e.id_empleado,
                                     concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido), 
@@ -1445,9 +1447,7 @@ namespace Plataforma.pages
                             item.AbonoEntrante = float.Parse(ds.Tables[0].Rows[i]["total_abono_entrante"].ToString());
                             item.AbonoEntranteFormateadoMx = item.AbonoEntrante.ToString("C2");
 
-                            item.Total = 999;
-                            item.TotalFormateadoMx = item.Total.ToString("C2");
-
+                            
                             item.AbonoSaliente = float.Parse(ds.Tables[0].Rows[i]["total_abono_saliente"].ToString());
                             item.AbonoSalienteFormateadoMx = item.AbonoSaliente.ToString("C2");
 
@@ -1455,13 +1455,17 @@ namespace Plataforma.pages
                             item.Total2FormateadoMx = item.Total2.ToString("C2");
 
                             item.Venta = float.Parse(ds.Tables[0].Rows[i]["total_venta"].ToString());
-                            item.VentaFormateadoMx = item.AbonoSaliente.ToString("C2");
+                            item.VentaFormateadoMx = item.Venta.ToString("C2");
 
-                            item.Comisiones = item.Venta * item.Comision / 100;
-                            item.ComisionesFormateadoMx = item.AbonoSaliente.ToString("C2");
+                            item.Comisiones = (item.Venta * item.Comision) / 100;
+                            item.ComisionesFormateadoMx = item.Comisiones.ToString("C2");
 
-                            item.TotalFinal = item.Venta - item.Comisiones;
+                            item.TotalFinal = item.Venta + item.Comisiones;
                             item.TotalFinalFormateadoMx = item.TotalFinal.ToString("C2");
+
+                            item.Total = item.Venta - item.Total2;
+                            item.TotalFormateadoMx = item.Total.ToString("C2");
+
 
                             if (item.Falla > 0)
                             {
@@ -1485,6 +1489,70 @@ namespace Plataforma.pages
 
 
 
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        [WebMethod]
+        public static List<Gasto> GetItemsGastos(string path, string idSupervisor, string fechaInicial, string fechaFinal)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Gasto> items = new List<Gasto>();
+
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id, concepto, monto, id_usuario, id_empleado,
+                                FORMAT(fecha, 'dd/MM/yyyy') fecha 
+                                FROM gasto " +
+                                 @" WHERE (fecha >= '" + fechaInicial + @"' AND fecha <= '" + fechaFinal + @"')   
+                                AND id_empleado = " + idSupervisor + @"
+                                ORDER BY id ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Gasto item = new Gasto();
+                        item.IdGasto = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoFormateadoMx = item.Monto.ToString("C2");
+                        item.Concepto = (ds.Tables[0].Rows[i]["concepto"].ToString());
+                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
+
+
+                        items.Add(item);
+
+
+                    }
+                }
 
 
                 return items;

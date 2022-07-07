@@ -68,7 +68,7 @@ const billsRegister = {
                     columns: [
                         { data: 'Concepto' },
                         { data: 'Fecha' },
-                        { data: 'MontoFormateadaMx' },
+                        { data: 'MontoFormateadoMx' },
                         { data: 'Accion' }
 
 

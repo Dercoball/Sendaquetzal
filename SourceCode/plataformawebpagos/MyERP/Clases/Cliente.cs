@@ -51,8 +51,11 @@ namespace Plataforma.Clases
 
 
         public string Accion;
-       
 
+        public const int STATUS_INACTIVO = 1;
+        public const int STATUS_ACTIVO = 2;
+        public const int STATUS_VENCIDO = 3;
+        public const int STATUS_CONDONADO = 4;
 
     }
 }

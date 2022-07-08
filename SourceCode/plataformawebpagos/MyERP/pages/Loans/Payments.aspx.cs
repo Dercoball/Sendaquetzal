@@ -88,7 +88,7 @@ namespace Plataforma.pages
                 string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                      FORMAT(p.fecha, 'dd/MM/yyyy') fechastr, tc.semanas_a_prestar,            
-                                    st.nombre nombre_status_pago
+                                    st.nombre nombre_status_pago, c.id_cliente
                                     FROM pago p
                                     JOIN prestamo prestamo ON (p.id_prestamo = prestamo.id_prestamo)                                            
                                     JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
@@ -110,6 +110,7 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         itemPago.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
+                        itemPago.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
                         itemPago.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
                         itemPago.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
                         itemPago.NumeroSemanas = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
@@ -216,6 +217,12 @@ namespace Plataforma.pages
                     int rowsAffectedPrestamo = UpdateStatusPrestamo(itemPago.IdPrestamo.ToString(),  idUsuario.ToString(), nota, conn, transaccion);
 
                     Utils.Log("rowsAffectedPrestamo  ... " + rowsAffectedPrestamo);
+
+                    //  Pasar el status del cliente a inactivo
+                    rowsAffectedPrestamo  = UpdateStatusCustomer(itemPago.IdCliente.ToString(), idUsuario.ToString(), Cliente.STATUS_INACTIVO, conn, transaccion);
+                    Utils.Log("rowsAffectedCliente ... " + rowsAffectedPrestamo);
+
+
                 }
 
 
@@ -298,9 +305,12 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
+
+                throw ex;
+
             }
 
 
@@ -340,9 +350,12 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
+
+                throw ex;
+
             }
 
 
@@ -404,9 +417,11 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
+
+                throw ex;
             }
 
 
@@ -789,7 +804,6 @@ namespace Plataforma.pages
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
 
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
@@ -803,6 +817,48 @@ namespace Plataforma.pages
 
         }
 
+
+        public static int UpdateStatusCustomer(string idCliente, string idUsuario, int idStatus, 
+            SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = @"  UPDATE cliente
+                            SET id_status_cliente = @id_status_cliente, id_usuario = @id_usuario
+                            WHERE
+                                id_cliente = @id_cliente ";
+
+
+                using (SqlCommand cmdUpdate = new SqlCommand(sql, conn))
+                {
+                    cmdUpdate.CommandType = CommandType.Text;
+
+                    cmdUpdate.Parameters.AddWithValue("@id_cliente", idCliente);
+                    cmdUpdate.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdUpdate.Parameters.AddWithValue("@id_status_cliente", idStatus);
+                    cmdUpdate.Transaction = transaction;
+
+                    r += cmdUpdate.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+
+            }
+
+
+            return r;
+
+
+        }
 
 
     }

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <parameters>
   <parameter name="localhost-Web.config Connection String" description="localhost Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=SQ22@v1" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='localhost']/@connectionString" />
+    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\plataformawebpagos\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='localhost']/@connectionString" />
   </parameter>
   <parameter name="sendaquetzal.gear.host-Web.config Connection String" description="sendaquetzal.gear.host Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=SQ22@v1" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sendaquetzal.gear.host']/@connectionString" />
+    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\plataformawebpagos\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sendaquetzal.gear.host']/@connectionString" />
   </parameter>
 </parameters>

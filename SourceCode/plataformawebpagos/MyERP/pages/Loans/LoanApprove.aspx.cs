@@ -324,7 +324,7 @@ namespace Plataforma.pages
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
                     //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
-                    DateTime startDate = new DateTime(2022, 04, 14);    //TODO: CAMBIAR ESTE TEST
+                    DateTime startDate = new DateTime(2022, 06, 15);    //TODO: CAMBIAR ESTE TEST
 
 
                     //  Se agrega la semana extra por si le aplica
@@ -355,6 +355,11 @@ namespace Plataforma.pages
                         startDate = nextDate;
 
                     }
+
+
+                    //  Pasar el status del cliente a ACTIVO
+                    int rowsAffectedPrestamo = UpdateStatusCustomer(prestamo.IdCliente, idUsuario, Cliente.STATUS_ACTIVO, conn, transaction);
+                    Utils.Log("rowsAffectedCliente ... " + rowsAffectedPrestamo);
 
 
 
@@ -395,7 +400,48 @@ namespace Plataforma.pages
 
         }
 
+        public static int UpdateStatusCustomer(string idCliente, string idUsuario, int idStatus,
+          SqlConnection conn, SqlTransaction transaction)
+        {
 
+            int r = 0;
+            try
+            {
+
+                string sql = @"  UPDATE cliente
+                            SET id_status_cliente = @id_status_cliente
+                            WHERE
+                                id_cliente = @id_cliente ";
+
+
+                using (SqlCommand cmdUpdate = new SqlCommand(sql, conn))
+                {
+                    cmdUpdate.CommandType = CommandType.Text;
+
+                    cmdUpdate.Parameters.AddWithValue("@id_cliente", idCliente);
+                    cmdUpdate.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdUpdate.Parameters.AddWithValue("@id_status_cliente", idStatus);
+                    cmdUpdate.Transaction = transaction;
+
+                    r += cmdUpdate.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                throw ex;
+
+            }
+
+
+            return r;
+
+
+        }
 
         /// <summary>
         /// Traer los pagos de un préstamo con fecha <= a este fin de semana actual 

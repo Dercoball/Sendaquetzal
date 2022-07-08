@@ -10,6 +10,7 @@ namespace Plataforma.Clases
 
 
         public int Id;
+        public int IdStatus;
         public String Nombre;
         
 

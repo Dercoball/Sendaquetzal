@@ -210,6 +210,7 @@
       <DependentUpon>usuarios.js</DependentUpon>
     </Content>
     <Content Include="js\app\customers\customerhistory.js" />
+    <Content Include="js\app\customers\customers.js" />
     <Content Include="js\app\loans\loanrequest.min.js">
       <DependentUpon>loanrequest.js</DependentUpon>
     </Content>
@@ -289,6 +290,7 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Bills.aspx" />
+    <Content Include="pages\Customers\Customers.aspx" />
     <Content Include="pages\Reports\ReportDefault.aspx" />
     <Content Include="pages\Commissions\ConfigRules.aspx" />
     <Content Include="pages\Commissions\EmployeeEvaluation.aspx" />
@@ -1221,6 +1223,13 @@
     <Compile Include="pages\Bills.aspx.designer.cs">
       <DependentUpon>Bills.aspx</DependentUpon>
     </Compile>
+    <Compile Include="pages\Customers\Customers.aspx.cs">
+      <DependentUpon>Customers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Customers\Customers.aspx.designer.cs">
+      <DependentUpon>Customers.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Reports\ReportDefault.aspx.cs">
       <DependentUpon>ReportDefault.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1538,38 +1547,6 @@
     <Content Include="vendor\jquery.cookie\cookie.jquery.json" />
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
     <Content Include="pages\FileUploader.ashx" />
-    <None Include="Properties\PublishProfiles\sendaquetzal - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP1.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP10.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP11.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP12.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP13.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP14.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP2.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP3.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP4.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP5.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP6.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP7.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP8.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - FTP9.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy1.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy10.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy11.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy12.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy13.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy14.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy2.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy3.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy4.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy5.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy6.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy7.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy8.pubxml" />
-    <None Include="Properties\PublishProfiles\urbanissa - Web Deploy9.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -1636,6 +1613,7 @@
     <Folder Include="DAL\" />
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>

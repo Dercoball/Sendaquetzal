@@ -26,6 +26,7 @@ namespace Plataforma.Clases
         public String Celular;
         public String Correo_Electronico;
         public String NombreCompleto;
+        public String NombreStatus;
 
         public int Activo;
         public int ClienteExistente;

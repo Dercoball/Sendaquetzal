@@ -296,6 +296,9 @@ namespace Plataforma.pages
             nav += GenerateMenu(new List<string> { "2", "3", "4", "5", "6", }, pagina, listaPermisos, "fa fa-internet-explorer", "Web",
                PermisoUsuario.TIPO_PERMISO_WEB, "Web");
 
+            //  clientes
+            nav += AgregarItemRootMenu("21", pagina, listaPermisos, "fa fa-user");
+
 
             nav += GenerateMenu(new List<string> { "16" }, pagina, listaPermisos, "fa fa-dollar", "Préstamos",
                PermisoUsuario.TIPO_PERMISO_PRESTAMOS, "Prestamos");

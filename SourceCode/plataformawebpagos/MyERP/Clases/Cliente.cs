@@ -27,6 +27,7 @@ namespace Plataforma.Clases
         public String Correo_Electronico;
         public String NombreCompleto;
         public String NombreStatus;
+        public int IdStatusCliente;
 
         public int Activo;
         public int ClienteExistente;

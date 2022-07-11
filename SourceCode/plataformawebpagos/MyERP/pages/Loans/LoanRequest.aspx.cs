@@ -153,7 +153,7 @@ namespace Plataforma.pages
             {
                 return null;//No tiene permisos
             }
-            
+
 
             Usuario user = Usuarios.GetUsuario(path, idUsuario);
 
@@ -175,6 +175,7 @@ namespace Plataforma.pages
                 Cliente customerExists = validations.GetClienteByCURP(path, item.Curp, conn, strConexion, transaccion);
                 if (customerExists != null)
                 {
+
                     salida.MensajeError = "Ya existe el cliente con CURP " + item.Curp + " por favor verifique e intente de nuevo.";
                     salida.CodigoError = 1;
                     return salida;
@@ -440,7 +441,7 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
 
             Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-            
+
             Usuario user = Usuarios.GetUsuario(path, idUsuario);
 
 
@@ -463,8 +464,21 @@ namespace Plataforma.pages
 
                 conn.Open();
                 transaccion = conn.BeginTransaction();
+                
+                //  Validar status del cliente
+                Cliente customerExists = validations.GetClienteByCURP(path, item.Curp, conn, strConexion, transaccion);
+                if (customerExists != null)
+                {
 
-                //  Validar que el nuevo cliente no sea AVAL de otro préstamo en tabla de clientes
+                    if (customerExists.IdStatusCliente == Cliente.STATUS_CONDONADO || customerExists.IdStatusCliente == Cliente.STATUS_VENCIDO)
+                    {
+                        salida.MensajeError = "El cliente se encuentra con alguno de los siguientes status (vencido, condonado), no es posible continuar con la solicitud.";
+                        salida.CodigoError = 1;
+                        return salida;
+                    }
+                }
+
+                //  Validar que el cliente no sea AVAL de otro préstamo en tabla de clientes
                 Cliente customerAval = validations.GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
                 if (customerAval != null)
                 {

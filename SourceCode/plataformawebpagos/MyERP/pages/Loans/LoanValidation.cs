@@ -27,7 +27,7 @@ namespace Plataforma.pages
             try
             {
                 DataSet ds = new DataSet();
-                string query = @" SELECT TOP 1 id_cliente, curp
+                string query = @" SELECT TOP 1 id_cliente, curp, IsNull(id_status_cliente, 0) id_status_cliente 
                                 FROM cliente 
                                 WHERE curp = @curp";
 
@@ -47,6 +47,7 @@ namespace Plataforma.pages
 
                     item = new Cliente();
                     item.IdCliente = int.Parse(ds.Tables[0].Rows[0]["id_cliente"].ToString());
+                    item.IdStatusCliente = int.Parse(ds.Tables[0].Rows[0]["id_status_cliente"].ToString());
 
                 }
 

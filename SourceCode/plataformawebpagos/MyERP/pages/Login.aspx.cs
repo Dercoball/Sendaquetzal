@@ -27,8 +27,7 @@ namespace Plataforma.pages
 
         static string GetIP()
         {
-            string Str = "";
-            Str = System.Net.Dns.GetHostName();
+            string Str = System.Net.Dns.GetHostName();
             IPHostEntry ipEntry = System.Net.Dns.GetHostEntry(Str);
             IPAddress[] addr = ipEntry.AddressList;
             return addr[addr.Length - 1].ToString();

@@ -17,6 +17,8 @@ const payments = {
         payments.idTipoUsuario = "-1";
         payments.idPago = "-1";
         payments.accion = "";
+        payments.idPrestamo = "-1";
+        payments.numeroSemana = "-1";
 
         payments.fechaInicial = '';
         payments.fechaFinal = '';
@@ -157,6 +159,9 @@ const payments = {
                 $('#panelForm').show();
                 payments.idPago = data.IdPago;
 
+                payments.idPrestamo = data.IdPrestamo;
+                payments.numeroSemana = data.NumeroSemana;
+
                 payments.historial(data.IdPrestamo, data.NumeroSemana);
 
                 if (Number(data.IdStatusPago) === 1) {
@@ -183,6 +188,7 @@ const payments = {
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.idPrestamo = idPrestamo;
         params.numeroSemanaActual = numeroSemanaActual;
         params = JSON.stringify(params);
@@ -207,7 +213,10 @@ const payments = {
                 for (var i = 0; i < data.length; i++) {
                     headers += `<th scope="col text-center">${(i + 1)}</th>`;
                     let pago = data[i];
-                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="width: 99%; background-color: ${pago.Color}">${pago.SaldoFormateadoMx}</th>`;
+                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="background-color: ${pago.Color}">
+                                ${pago.SaldoFormateadoMx}
+                                ${pago.Accion}
+                            </th>`;
 
                 }
 
@@ -302,6 +311,60 @@ const payments = {
         console.log(`fechaInicial ${payments.fechaInicial}`);
         console.log(`fechaFinal ${payments.fechaFinal}`);
 
+    },
+
+    updatePayment(idPago, idStatus) {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.idPago = idPago;
+        params.idStatus = idStatus;
+        params = JSON.stringify(params);
+
+
+        $.ajax({
+            type: "POST",
+            url: `../../pages/Loans/Payments.aspx/UpdateStatusPagoByPagoAndStatus`,
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                let valores = msg.d;
+
+                console.log(valores);
+                payments.historial(payments.idPrestamo, payments.numeroSemana);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+            }
+
+        });
+
+    },
+
+    updatePendiente(idPago) {
+        console.log(`updatePendiente`);
+
+        payments.updatePayment(idPago, utils.STATUS_PAGO_PENDIENTE);
+    },
+
+    updateFalla(idPago) {
+        console.log(`updateFalla`);
+
+        payments.updatePayment(idPago, utils.STATUS_PAGO_FALLA);
+    },
+
+    updateAbonado(idPago) {
+        console.log(`updateAbonado`);
+
+        payments.updatePayment(idPago, utils.STATUS_PAGO_ABONADO);
+    },
+
+    updatePagado(idPago) {
+        console.log(`updatePagado`);
+
+        payments.updatePayment(idPago, utils.STATUS_PAGO_PAGADO);
     },
 
 

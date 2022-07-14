@@ -1547,6 +1547,8 @@
     <Content Include="vendor\jquery.cookie\cookie.jquery.json" />
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
     <Content Include="pages\FileUploader.ashx" />
+    <None Include="Properties\PublishProfiles\sendaquetzal - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -1613,7 +1615,6 @@
     <Folder Include="DAL\" />
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>

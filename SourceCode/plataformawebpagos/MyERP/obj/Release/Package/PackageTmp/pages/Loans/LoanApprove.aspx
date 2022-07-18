@@ -490,18 +490,6 @@
                                     </div>
 
 
-                                    <div class="row mt-3 mb-3">
-
-                                        <div class=" col-md-6 text-center">
-                                            <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                                        </div>
-
-
-                                        <div class=" col-md-6 text-center">
-                                            <button id="btnGuardarCliente" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                        </div>
-
-                                    </div>
 
                                 </div>
 
@@ -975,6 +963,21 @@
                         </div>
 
 
+
+                    </div>
+
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-center">
+                            <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Volver a préstamos</button>
+                            <button class="btn btn-secondary volver deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Volver a clientes</button>
+                        </div>
+
+
+                        <div class=" col-md-6 text-center">
+                            <button id="btnGuardarCliente" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                        </div>
 
                     </div>
 

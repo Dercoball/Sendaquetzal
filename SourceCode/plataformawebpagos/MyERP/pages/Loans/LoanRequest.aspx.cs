@@ -478,6 +478,19 @@ namespace Plataforma.pages
                     }
                 }
 
+                //  UN aval tampoco debe ser utilizado cuando el préstamo esta condonado o vencido.
+                Cliente customerExistsAval = validations.GetClienteByCURP(path, item.CurpAval, conn, strConexion, transaccion);
+                if (customerExistsAval != null)
+                {
+
+                    if (customerExistsAval.IdStatusCliente == Cliente.STATUS_CONDONADO || customerExistsAval.IdStatusCliente == Cliente.STATUS_VENCIDO)
+                    {
+                        salida.MensajeError = "La Curp del aval esta asociada a otro préstamo cuyo cliente se encuentra con alguno de los siguientes status (vencido, condonado), no es posible continuar con la solicitud.";
+                        salida.CodigoError = 1;
+                        return salida;
+                    }
+                }
+
                 //  Validar que el cliente no sea AVAL de otro préstamo en tabla de clientes
                 Cliente customerAval = validations.GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, transaccion);
                 if (customerAval != null)

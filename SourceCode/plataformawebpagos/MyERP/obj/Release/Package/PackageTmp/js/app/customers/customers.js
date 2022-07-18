@@ -17,10 +17,10 @@ const customers = {
         customers.accion = "";
 
         customers.loadComboStatus();
-
+        customers.selectedCustomerId = '';
         customers.cargarItems();
 
-    
+
 
     },
 
@@ -109,7 +109,33 @@ const customers = {
 
     },
 
+    condonate(customerId) {
 
+        $('#condonatePanelMsg').html(`¿Desea pasar a condonado el préstamo actual del cliente seleccionado. (No. ${customerId}) ?`);
+        $('#condonatePanel').modal('show');
+
+        customers.selectedCustomerId = customerId;
+
+    },
+
+    //  demanda
+    claim(customerId) {
+
+        $('#claimPanelMsg').html(`¿Desea pasar a demanda al cliente seleccionado. (No. ${customerId}) ?`);
+        $('#claimPanel').modal('show');
+
+        customers.selectedCustomerId = customerId;
+
+    },
+
+    view(loadId) {
+        console.log('Abir datos del idPrestamo ' + loadId);
+
+
+        window.location = `../Loans/LoanApprove.aspx?id=${loadId}&idf=${pagina}`;
+
+
+    },
 
     loadComboStatus: () => {
 
@@ -173,6 +199,94 @@ const customers = {
         });
 
 
+        $('#btnOkCondonate').on('click', (e) => {
+            e.preventDefault();
+
+            let parametros = {};
+            parametros.path = window.location.hostname;
+            parametros.userId = document.getElementById('txtIdUsuario').value;
+            parametros.statusId = utils.cliente.STATUS_CONDONADO;
+            parametros.customerId = customers.selectedCustomerId;
+            parametros = JSON.stringify(parametros);
+
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Customers/Customers.aspx/UpdateStatusCustomer",
+                data: parametros,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    var valores = msg.d;
+                    console.log(valores);
+
+                    if (valores.CodigoError === 0) {
+                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
+                        $('#condonatePanel').modal('hide');
+
+                        customers.cargarItems();
+
+                    }
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                }
+
+            });
+
+
+        });
+
+
+        $('#btnOkClaim').on('click', (e) => {
+            e.preventDefault();
+
+            let parametros = {};
+            parametros.path = window.location.hostname;
+            parametros.userId = document.getElementById('txtIdUsuario').value;
+            parametros.statusId = utils.cliente.STATUS_DEMANDA;
+            parametros.customerId = customers.selectedCustomerId;
+            parametros = JSON.stringify(parametros);
+
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Customers/Customers.aspx/UpdateStatusCustomer",
+                data: parametros,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    var valores = msg.d;
+                    console.log(valores);
+
+                    if (valores.CodigoError === 0) {
+                        utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
+                        $('#claimPanel').modal('hide');
+
+                        customers.cargarItems();
+
+                    }
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+                    utils.toast(mensajesAlertas.errorGuardar, 'error');
+
+                }
+
+            });
+
+
+        });
 
 
     }

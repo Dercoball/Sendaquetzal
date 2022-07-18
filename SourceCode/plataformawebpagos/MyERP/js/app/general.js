@@ -351,6 +351,15 @@ var utils = {
     STATUS_PAGO_ABONADO: 3, // Recuperado
     STATUS_PAGO_PAGADO: 4,
 
+
+    cliente: {
+        STATUS_INACTIVO: 1,
+        STATUS_ACTIVO: 2,
+        STATUS_VENCIDO: 3,
+        STATUS_CONDONADO: 4,
+        STATUS_DEMANDA: 5,
+    },
+
     getDocumentos: (params) => {
 
 

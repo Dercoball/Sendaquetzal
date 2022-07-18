@@ -61,7 +61,7 @@ const report = {
     },
 
     fechasHoy(yearSelected, monthSelected, daySelected) {
-        console.log('fechasHoy');
+        //console.log('fechasHoy');
         monthSelected--;
 
         //  fecha (final)
@@ -97,14 +97,14 @@ const report = {
         let days = Math.floor((startWeekDay - startDate) / (24 * 60 * 60 * 1000));
 
         let weekNumber = Math.ceil(days / 7);
-        console.log(`weekNumber = ${weekNumber}`);
+        //console.log(`weekNumber = ${weekNumber}`);
         //
         report.numeroSemana = weekNumber;
         report.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
 
 
-        console.log(`fechaInicial ${report.fechaInicial}`);
-        console.log(`fechaFinal ${report.fechaFinal}`);
+        //console.log(`fechaInicial ${report.fechaInicial}`);
+        //console.log(`fechaFinal ${report.fechaFinal}`);
 
     },
 
@@ -277,7 +277,7 @@ const report = {
                     window.location = "../../pages/Index.aspx";
                 }
 
-                console.log(data);
+                //console.log(data);
 
                 $(`#cell_totalDebeEntregar`).text(data[0].totalStr);
                 $(`#cell_totalFalla`).text(data[1].totalStr);
@@ -332,7 +332,7 @@ const report = {
                     window.location = "../../pages/Index.aspx";
                 }
 
-                console.log(data);
+                //console.log(data);
 
                 report.totalRecuperacion = data.total;
 

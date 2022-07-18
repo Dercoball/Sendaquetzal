@@ -16,13 +16,27 @@ const loansEdit = {
 
         //  Cargar el id del cliente via GET
         let urlParams = utils.parseURLParams(window.location.href);
-        //console.log(`urlParams = ${urlParams['id']}`);
-        if (urlParams && urlParams['id'] !== undefined) {
+        //console.log(`urlParams = ${JSON.stringify(urlParams)}`);
+        if (urlParams && urlParams['id'] !== undefined && urlParams['idf'] !== undefined) {
 
             let idPrestamo = urlParams['id'][0];
+            let idFrom = urlParams['idf'][0];
+
+            if (Number(idFrom) === 13) {
+
+                $('.cancelar').show();
+                $('.volver').hide();
+
+            } else {
+
+                $('.cancelar').hide();
+                $('.volver').show();
+            }
 
             //console.log(`idPrestamo = ${idPrestamo}`);
             loansEdit.edit(idPrestamo);
+        } else {
+            window.location = `../Loans/LoanApprove.aspx?id=${loadId}&idf=${pagina}`;
         }
 
 
@@ -67,9 +81,9 @@ const loansEdit = {
         function success(pos) {
             var crd = pos.coords;
 
-            console.log('Your current position is:');
-            console.log('Latitude : ' + crd.latitude);
-            console.log('Longitude: ' + crd.longitude);
+            //console.log('Your current position is:');
+            //console.log('Latitude : ' + crd.latitude);
+            //console.log('Longitude: ' + crd.longitude);
             //console.log('More or less ' + crd.accuracy + ' meters.');
 
 
@@ -164,14 +178,14 @@ const loansEdit = {
                 let relPrestamoAprobacion1 = item.listaRelPrestamoAprobacion[0];
                 let relPrestamoAprobacionAval2 = item.listaRelPrestamoAprobacion[1];
 
-                console.log(`NotaFotografiaCliente ${JSON.stringify(itemCliente.NotaFotografiaCliente)}`);
-                console.log(`NotaFotografiaAval ${JSON.stringify(itemCliente.NotaFotografiaAval)}`);
+                //console.log(`NotaFotografiaCliente ${JSON.stringify(itemCliente.NotaFotografiaCliente)}`);
+                //console.log(`NotaFotografiaAval ${JSON.stringify(itemCliente.NotaFotografiaAval)}`);
 
 
-                console.log(`NotaCliente ${JSON.stringify(relPrestamoAprobacion1.NotaCliente)}`);
-                console.log(`NotaAval ${JSON.stringify(relPrestamoAprobacion1.NotaAval)}`);
+                //console.log(`NotaCliente ${JSON.stringify(relPrestamoAprobacion1.NotaCliente)}`);
+                //console.log(`NotaAval ${JSON.stringify(relPrestamoAprobacion1.NotaAval)}`);
 
-                console.log(`item.IdStatusPrestamo ${JSON.stringify(item.IdStatusPrestamo)}`);
+                //console.log(`item.IdStatusPrestamo ${JSON.stringify(item.IdStatusPrestamo)}`);
 
 
                 $('#txtNotaSupervisor').val(relPrestamoAprobacion1.NotaCliente);
@@ -376,6 +390,16 @@ const loansEdit = {
             $(`.documentos`).attr('src', '../../img/upload.png');
 
             window.location = "loansIndex.aspx";
+
+
+        });
+
+        $('.volver').on('click', (e) => {
+            e.preventDefault();
+
+            $(`.documentos`).attr('src', '../../img/upload.png');
+
+            window.location = "../Customers/Customers.aspx";
 
 
         });
@@ -598,7 +622,7 @@ const loansEdit = {
                             let file;
                             if (file = this.files[0]) {
 
-                                console.log("id del cliente: " + valores.IdItem);
+                                //console.log("id del cliente: " + valores.IdItem);
 
 
 

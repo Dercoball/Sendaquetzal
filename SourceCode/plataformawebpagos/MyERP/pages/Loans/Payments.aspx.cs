@@ -560,7 +560,7 @@ namespace Plataforma.pages
                 string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                      FORMAT(p.fecha, 'dd/MM/yyyy') fechastr,                                
-                                    st.nombre nombre_status_pago, st.color, 
+                                    st.nombre nombre_status_pago, st.color, pre.id_cliente,
 
                                     IsNull( (SELECT SUM(f.saldo) FROM pago f WHERE p.id_prestamo = f.id_prestamo 
                                             AND  f.id_status_pago = " + idStatusPagoFalla + @" ) , 0)  total_falla,
@@ -577,7 +577,8 @@ namespace Plataforma.pages
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
                                     JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND IsNull(c.id_status_cliente, 2) <> " + Cliente.STATUS_CONDONADO + @" )                                                                                       
+                                    "
                                     + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"') "
                                     + sqlUser
                                     + sqlStatus
@@ -597,6 +598,7 @@ namespace Plataforma.pages
                         Pago item = new Pago();
                         item.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        item.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
                         item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
                         item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
@@ -616,7 +618,7 @@ namespace Plataforma.pages
 
                         string botones = "";
 
-                        botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.view(" + item.IdPago + ")'  class='btn btn-outline-primary'> <span class='fa fa-folder-open mr-1'></span>Abrir</button>";
+                        botones += "<button data-idcliente = " + item.IdCliente + "  data-idprestamo = " + item.IdPrestamo + " onclick='payments.view(" + item.IdPago + ")'  class='btn btn-outline-primary'> <span class='fa fa-folder-open mr-1'></span>Abrir</button>";
 
                         item.Accion = botones;
 

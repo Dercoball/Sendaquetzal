@@ -119,7 +119,8 @@ namespace Plataforma.pages
                 //debe entregar
                 string query = @"   SELECT IsNull(SUM(p.monto) , 0)  total
                                     FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                                                                       
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)       
+                                    JOIN cliente cc ON (cc.id_cliente = pre.id_cliente AND IsNull(cc.id_status_cliente, 2) <>" + Cliente.STATUS_CONDONADO + @" )                                                                                       
                                     WHERE "
                                     + @"(p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')
                                         AND pre.id_empleado = " + idPromotor + @" 
@@ -1357,6 +1358,7 @@ namespace Plataforma.pages
                          (SELECT IsNull(SUM(pp.monto) , 0)  total
                                     FROM pago pp
                                     JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)                                                                                       
+                                    JOIN cliente cc ON (cc.id_cliente = pre2.id_cliente AND IsNull(cc.id_status_cliente, 2) <>" + Cliente.STATUS_CONDONADO + @" )                                                                                       
                                     WHERE 
                                         (pp.fecha >= '" + fechaInicial + @"' AND pp.fecha <= '" + fechaFinal + @"')                                            
                                         AND pre2.id_empleado = e.id_empleado
@@ -1436,18 +1438,18 @@ namespace Plataforma.pages
                             item.DebeEntregarFormateadoMx = item.DebeEntregar.ToString("C2");
 
                             item.Falla = float.Parse(ds.Tables[0].Rows[i]["total_falla"].ToString());
-                            item.FallaFormateadoMx  = item.Falla.ToString("C2");
+                            item.FallaFormateadoMx = item.Falla.ToString("C2");
 
                             item.Efectivo = item.DebeEntregar - item.Falla;
                             item.EfectivoFormateadoMx = item.Efectivo.ToString("C2");
 
-                            item.Recuperado= float.Parse(ds.Tables[0].Rows[i]["total_recuperado"].ToString());
+                            item.Recuperado = float.Parse(ds.Tables[0].Rows[i]["total_recuperado"].ToString());
                             item.RecuperadoFormateadoMx = item.Recuperado.ToString("C2");
 
                             item.AbonoEntrante = float.Parse(ds.Tables[0].Rows[i]["total_abono_entrante"].ToString());
                             item.AbonoEntranteFormateadoMx = item.AbonoEntrante.ToString("C2");
 
-                            
+
                             item.AbonoSaliente = float.Parse(ds.Tables[0].Rows[i]["total_abono_saliente"].ToString());
                             item.AbonoSalienteFormateadoMx = item.AbonoSaliente.ToString("C2");
 
@@ -1475,7 +1477,7 @@ namespace Plataforma.pages
                             else
                             {
                                 item.PorcentajeFalla = 0;
-                                item.PorcentajeFallaFormateadoMx =  "0%";
+                                item.PorcentajeFallaFormateadoMx = "0%";
                             }
 
 

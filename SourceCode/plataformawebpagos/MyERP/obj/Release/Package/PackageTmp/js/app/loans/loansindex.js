@@ -174,7 +174,7 @@ const loansindex = {
         console.log('Abir datos del idPrestamo ' + idPrestamo);
 
 
-        window.location = "LoanApprove.aspx?id=" + idPrestamo;
+        window.location = `LoanApprove.aspx?id=${idPrestamo}&idf=${pagina}`;
 
 
     },

@@ -27,6 +27,7 @@ namespace Plataforma.Clases
         public String Correo_Electronico;
         public String NombreCompleto;
         public String NombreStatus;
+        public String Color;
         public int IdStatusCliente;
 
         public int Activo;
@@ -58,6 +59,7 @@ namespace Plataforma.Clases
         public const int STATUS_ACTIVO = 2;
         public const int STATUS_VENCIDO = 3;
         public const int STATUS_CONDONADO = 4;
+        public const int STATUS_DEMANDA= 5;
 
     }
 }

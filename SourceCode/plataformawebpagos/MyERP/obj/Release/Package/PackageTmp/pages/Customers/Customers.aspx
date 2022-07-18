@@ -125,32 +125,31 @@
 
 
                 <div id="panelFiltro">
+                    <div class="container">
 
-                    <div class="mt-2 mb-4">
+                        <div class="mt-2 mb-4">
 
 
-
-                        <div class="row mt-3 mb-3 ml-auto mr-auto">
-
-                            <div class="form-group col-md-2">
+                            <div class="form-group row">
                                 <label for="comboStatus">
                                     Status
                                 </label>
-                                <select id="comboStatus" class="form-control">
-                                </select>
-                            </div>
+                                <div class="col-md-3">
+                                    <select id="comboStatus" class="form-control">
+                                    </select>
+                                </div>
 
-
-
-                            <div class=" col-md-3">
                                 <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
+
                             </div>
+
+
 
                         </div>
-
                     </div>
-                </div>
+                    <hr />
 
+                </div>
 
 
                 <div id="panelTabla">
@@ -229,6 +228,53 @@
     </div>
 
 
+    <div id="condonatePanel" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Confirmación</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="condonatePanelMsg">
+                         
+                    </span>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnOkCondonate" class="btn btn-primary">Aceptar</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="claimPanel" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Confirmación</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="claimPanelMsg">
+                         
+                    </span>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnOkClaim" class="btn btn-primary">Aceptar</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- JavaScript files-->

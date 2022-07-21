@@ -276,6 +276,29 @@
         </div>
     </div>
 
+     <div id="reactivatePanel" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Confirmación</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="reactivatePanelMsg">
+                         
+                    </span>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnOkReactivate" class="btn btn-primary">Aceptar</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>

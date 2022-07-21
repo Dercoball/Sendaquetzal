@@ -121,15 +121,23 @@ namespace Plataforma.pages
                         string botones = "";
 
                         //  visualizar
-                        botones += "<button onclick='customers.view(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Visualizar</button>";
+                        botones += "<button onclick='customers.view(" + item.IdPrestamo  + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Visualizar</button>";
 
                         //  condonar
-                        botones += "<button onclick='customers.condonate(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-ban mr-1'></span>Condonar</button>";
+                        if (item.IdStatusCliente == Cliente.STATUS_ACTIVO || item.IdStatusCliente == Cliente.STATUS_INACTIVO || item.IdStatusCliente == Cliente.STATUS_VENCIDO)
+                        {
+                            botones += "<button onclick='customers.condonate(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-ban mr-1'></span>Condonar</button>";
+                        }
 
                         //  demanda
                         if (item.IdStatusCliente == Cliente.STATUS_VENCIDO)
                         {
-                            botones += "<button onclick='customers.claim(" + item.IdPrestamo + ")'  class='btn btn-outline-primary'> <span class='fa fa-legal mr-1'></span>Demanda</button>";
+                            botones += "<button onclick='customers.claim(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-legal mr-1'></span>Demanda</button>";
+                        }
+
+                        if (item.IdStatusCliente == Cliente.STATUS_CONDONADO)
+                        {
+                            botones += "<button onclick='customers.reactivate(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-check-circle mr-1'></span>Reactivar</button>";
                         }
 
                         item.Accion = botones;

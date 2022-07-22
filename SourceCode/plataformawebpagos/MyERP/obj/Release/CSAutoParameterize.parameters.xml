@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="localhost-Web.config Connection String" description="localhost Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql8.gear.host;database=sendaquetzalv1;uid=sendaquetzalv1;pwd=Ev3Q_?6rQN14" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\plataformawebpagos\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='localhost']/@connectionString" />
-  </parameter>
-  <parameter name="sendaquetzal.gear.host-Web.config Connection String" description="sendaquetzal.gear.host Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql8.gear.host;database=sendaquetzalv1;uid=sendaquetzalv1;pwd=Ev3Q_?6rQN14" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\test\\apprestarsendaquetzal\\SendaQuetzal\\SourceCode\\plataformawebpagos\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sendaquetzal.gear.host']/@connectionString" />
-  </parameter>
-</parameters>

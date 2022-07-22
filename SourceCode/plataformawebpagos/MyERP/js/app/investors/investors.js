@@ -1,12 +1,12 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "COMISIONES_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '48';
+let descargas = "INVERSIONISTAS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '51';
 
 
 
 
-const comission = {
+const investor = {
 
 
     init: () => {
@@ -14,10 +14,10 @@ const comission = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        comission.idSeleccionado = -1;
-        comission.accion = '';
+        investor.idSeleccionado = -1;
+        investor.accion = '';
 
-        comission.loadContent();
+        investor.loadContent();
         
 
     },
@@ -31,7 +31,7 @@ const comission = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Commissions.aspx/GetListaItems",
+            url: "../../pages/Investors/Investors.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -52,10 +52,10 @@ const comission = {
                     data: data,
                     columns: [
 
-                        { data: 'Nivel' },
+                        { data: 'IdInversionista' },
                         { data: 'Nombre' },
-                        { data: 'Porcentaje' },
-                        { data: 'ActivoStr' },
+                        { data: 'RazonSocial' },
+                        { data: 'RFC' },
                         { data: 'Accion' }
 
                         
@@ -98,7 +98,7 @@ const comission = {
 
     delete: (id) => {
 
-        comission.idSeleccionado = id;
+        investor.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -118,11 +118,12 @@ const comission = {
         let params = {};
         params.path = window.location.hostname;
         params.id = id;
+        console.log(id);
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Commissions.aspx/GetItem",
+            url: "../../pages/Investors/Investors.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -130,21 +131,20 @@ const comission = {
             success: function (msg) {
 
                 let item = msg.d;
-                comission.idSeleccionado = item.IdComision;
+                investor.idSeleccionado = item.IdInversionista;
 
                 $('#txtNombre').val(item.Nombre);
+                $('#txtRazonSocial').val(item.RazonSocial);
+                $('#txtRFC').val(item.RFC);
+                $('#txtPorcentajeInteres').val(item.PorcentajeInteresAnual);
 
-                $('#txtPorcentaje').val(item.Porcentaje);
-                $('#txtNivel').val(item.Nivel);
-
-
-                $('#chkActivo').prop('checked', item.Activo === 1);
+                
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
 
-                comission.accion = "editar";
+                investor.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -171,8 +171,8 @@ const comission = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        comission.accion = "nuevo";
-        comission.idSeleccionado = -1;
+        investor.accion = "nuevo";
+        investor.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -188,7 +188,7 @@ const comission = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            comission.nuevo();
+            investor.nuevo();
 
         });
 
@@ -203,22 +203,23 @@ const comission = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdComision = comission.idSeleccionado;
+                item.IdInversionista = investor.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
-                item.Porcentaje = $('#txtPorcentaje').val();
-                item.Nivel = $('#txtNivel').val();
-                item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
+                item.PorcentajeInteresAnual = $('#txtPorcentajeInteres').val();
+                item.RazonSocial = $('#txtRazonSocial').val();
+                item.RFC = $('#txtRFC').val();
 
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = comission.accion;
+                params.accion = investor.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/Commissions.aspx/Save",
+                    url: "../../pages/Investors/Investors.aspx/Save",
+                    
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -234,7 +235,7 @@ const comission = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            comission.loadContent();
+                            investor.loadContent();
 
 
                         } else {
@@ -273,13 +274,13 @@ const comission = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = comission.idSeleccionado;
+            params.id = investor.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Commissions.aspx/Delete",
+                url: "../../pages/Investors/Investors.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -292,7 +293,7 @@ const comission = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        comission.loadContent();
+                        investor.loadContent();
 
                     } else {
 
@@ -321,9 +322,9 @@ const comission = {
 
 window.addEventListener('load', () => {
 
-    comission.init();
+    investor.init();
 
-    comission.accionesBotones();
+    investor.accionesBotones();
 
 });
 

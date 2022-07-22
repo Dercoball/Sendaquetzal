@@ -99,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Comisiones</h1>
+                    <h1 class="h3 display">Inversionistas</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -110,10 +110,10 @@
 
                             <thead>
                                 <tr>
-                                    <th>No.</th>
+                                    <th>No. Inversionista</th>
                                     <th>Nombre</th>
-                                    <th>Porcentaje</th>
-                                    <th>Activo</th>
+                                    <th>Razon Social</th>
+                                    <th>RFC</th>
 
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
@@ -152,7 +152,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtNombre">
-                                            Nombre
+                                            Nombre corto
                                         </label>
                                         <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -160,10 +160,10 @@
 
 
                                     <div class="form-group col-md-6">
-                                        <label for="txtPorcentaje">
-                                            Porcentaje  
+                                        <label for="txtRazonSocial">
+                                            Razon Social  
                                         </label>
-                                        <input type="number" step="any" class="form-control" id="txtPorcentaje" required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtRazonSocial" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -172,26 +172,30 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNivel">
-                                            Nivel  
+                                     <div class="form-group col-md-6">
+                                        <label for="txtRFC">
+                                            RFC
                                         </label>
-                                        <input type="number" step="1" class="form-control" id="txtNivel" required="required" data-required-error='Requerido' />
+                                        <input type="text" class="form-control" id="txtRFC" title="txtRFC" required="required" data-required-error='Requerido' 
+                                            pattern="[A-Z,Ñ,&]{3,4}[0-9]{2}[0-1][0-9][0-3][0-9][A-Z,0-9]?[A-Z,0-9]?[0-9,A-Z]?"
+"
+                                            data-pattern-error="Debe ingresar un RFC valido."
+                                            />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtPorcentajeInteres">
+                                            % de interes anual  
+                                        </label>
+                                        <input type="number" step="any" class="form-control" id="txtPorcentajeInteres" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
                                     </div>
 
 
                                 </div>
 
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <div class="form-check ml-2">
-                                            <input id="chkActivo" class="form-check-input" type="checkbox" />
-                                            <label for="chkActivo" class="form-check-label">Activo</label>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                         </form>
                     </div>
 

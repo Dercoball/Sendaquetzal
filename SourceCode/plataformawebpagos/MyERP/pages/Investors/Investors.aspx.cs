@@ -14,7 +14,7 @@ namespace Plataforma.pages
 {
     public partial class Investors : System.Web.UI.Page
     {
-        const string pagina = "48";
+        const string pagina = "51";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -38,13 +38,13 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Comision> GetListaItems(string path, string idUsuario)
+        public static List<Inversionista> GetListaItems(string path, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Comision> items = new List<Comision>();
+            List<Inversionista> items = new List<Inversionista>();
 
 
             // verificar que tenga permisos para usar esta pagina
@@ -59,11 +59,11 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo, c.nombre, IsNull(c.nivel, 0) nivel
-                         FROM comision c                          
+                string query = @" SELECT i.id_inversionista, i.nombre, i.razon_social, i.rfc 
+                         FROM inversionista i                          
                          WHERE 
-                         ISNull(c.eliminado, 0) = 0
-                         ORDER BY id_comision ";
+                         ISNull(i.eliminado, 0) = 0
+                         ORDER BY id_inversionista ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -76,20 +76,20 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Comision item = new Comision();
-                        item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
-                        item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
-                        item.Nivel = int.Parse(ds.Tables[0].Rows[i]["nivel"].ToString());
+                        Inversionista item = new Inversionista();
+                        item.IdInversionista = int.Parse(ds.Tables[0].Rows[i]["id_inversionista"].ToString());
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
+                        item.RazonSocial = (ds.Tables[0].Rows[i]["razon_social"].ToString());
+                        item.RFC = (ds.Tables[0].Rows[i]["rfc"].ToString());
 
 
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+                        //item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
+                        //item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
 
-                        string botones = "<button  onclick='comission.edit(" + item.IdComision + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='comission.delete(" + item.IdComision + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        string botones = "<button  onclick='investor.edit(" + item.IdInversionista + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='investor.delete(" + item.IdInversionista + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 
@@ -118,21 +118,21 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static Comision GetItem(string path, string id)
+        public static Inversionista GetItem(string path, string id)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            Comision item = new Comision();
+            Inversionista item = new Inversionista();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT c.id_comision, c.porcentaje, c.activo , c.nombre, IsNull(c.nivel, 0) nivel
-                         FROM comision c                          
+                string query = @" SELECT i.id_inversionista, i.nombre, i.razon_social, i.rfc, i.porcentaje_interes_anual
+                         FROM inversionista i                         
                          WHERE 
-                         c.id_comision = @id ";
+                         i.id_inversionista = @id ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -148,15 +148,16 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        item = new Comision();
+                        item = new Inversionista();
 
-                        item.IdComision = int.Parse(ds.Tables[0].Rows[i]["id_comision"].ToString());
-                        item.Porcentaje = float.Parse(ds.Tables[0].Rows[i]["porcentaje"].ToString());
+                        item.IdInversionista = int.Parse(ds.Tables[0].Rows[i]["id_inversionista"].ToString());
+                        item.RazonSocial = ds.Tables[0].Rows[i]["razon_social"].ToString();
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.Nivel = int.Parse(ds.Tables[0].Rows[i]["nivel"].ToString());
+                        item.RFC = ds.Tables[0].Rows[i]["rfc"].ToString();
+                        item.PorcentajeInteresAnual = float.Parse(ds.Tables[0].Rows[i]["porcentaje_interes_anual"].ToString());
 
 
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+                        //item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
 
                     }
@@ -181,7 +182,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static object Save(string path, Comision item, string accion, string idUsuario)
+        public static object Save(string path, Inversionista item, string accion, string idUsuario)
         {
 
             // verificar que tenga permisos para usar esta pagina
@@ -202,18 +203,18 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO comision(nombre, activo, eliminado, porcentaje, nivel) 
-                    VALUES (@nombre, @activo, 0, @porcentaje, @nivel) ";
+                    sql = @" INSERT INTO inversionista(nombre, razon_social, rfc, eliminado, porcentaje_interes_anual) 
+                    VALUES (@nombre, @razon_social, @rfc, 0 ,@porcentaje_interes_anual) ";
                 }
                 else
                 {
-                    sql = @" UPDATE comision
+                    sql = @" UPDATE inversionista
                           SET nombre = @nombre,
-                              activo = @activo,
-                              nivel = @nivel,
-                              porcentaje = @porcentaje
+                              razon_social = @razon_social,
+                              rfc = @rfc,
+                              porcentaje_interes_anual = @porcentaje_interes_anual
                           WHERE 
-                              id_comision = @id";
+                              id_inversionista = @id";
 
                 }
 
@@ -224,10 +225,10 @@ namespace Plataforma.pages
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@porcentaje", item.Porcentaje);
-                cmd.Parameters.AddWithValue("@nivel", item.Nivel);
-                cmd.Parameters.AddWithValue("@activo", item.Activo);
-                cmd.Parameters.AddWithValue("@id", item.IdComision);
+                cmd.Parameters.AddWithValue("@porcentaje_interes_anual", item.PorcentajeInteresAnual);
+                cmd.Parameters.AddWithValue("@razon_social", item.RazonSocial);
+                cmd.Parameters.AddWithValue("@rfc", item.RFC);
+                cmd.Parameters.AddWithValue("@id", item.IdInversionista);
 
 
                 int r = cmd.ExecuteNonQuery();
@@ -289,8 +290,8 @@ namespace Plataforma.pages
 
                 conn.Open();
 
-                string sql = @" UPDATE comision SET eliminado = 1  
-                                        WHERE id_comision = @id ";
+                string sql = @" UPDATE inversionista SET eliminado = 1  
+                                        WHERE id_inversionista = @id ";
 
                 Utils.Log("\n-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");

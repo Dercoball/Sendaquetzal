@@ -14,10 +14,10 @@ const comission = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        comission.idSeleccionado = -1;
-        comission.accion = '';
+        investor.idSeleccionado = -1;
+        investor.accion = '';
 
-        comission.loadContent();
+        investor.loadContent();
         
 
     },
@@ -98,7 +98,7 @@ const comission = {
 
     delete: (id) => {
 
-        comission.idSeleccionado = id;
+        investor.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -130,7 +130,7 @@ const comission = {
             success: function (msg) {
 
                 let item = msg.d;
-                comission.idSeleccionado = item.IdComision;
+                investor.idSeleccionado = item.IdComision;
 
                 $('#txtNombre').val(item.Nombre);
 
@@ -144,7 +144,7 @@ const comission = {
                 $('#panelForm').show();
 
 
-                comission.accion = "editar";
+                investor.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -171,8 +171,8 @@ const comission = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        comission.accion = "nuevo";
-        comission.idSeleccionado = -1;
+        investor.accion = "nuevo";
+        investor.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -188,7 +188,7 @@ const comission = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            comission.nuevo();
+            investor.nuevo();
 
         });
 
@@ -203,7 +203,7 @@ const comission = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdComision = comission.idSeleccionado;
+                item.IdComision = investor.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
                 item.Porcentaje = $('#txtPorcentaje').val();
                 item.Nivel = $('#txtNivel').val();
@@ -212,7 +212,7 @@ const comission = {
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = comission.accion;
+                params.accion = investor.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
@@ -234,7 +234,7 @@ const comission = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            comission.loadContent();
+                            investor.loadContent();
 
 
                         } else {
@@ -273,7 +273,7 @@ const comission = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = comission.idSeleccionado;
+            params.id = investor.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
@@ -292,7 +292,7 @@ const comission = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        comission.loadContent();
+                        investor.loadContent();
 
                     } else {
 
@@ -321,9 +321,9 @@ const comission = {
 
 window.addEventListener('load', () => {
 
-    comission.init();
+    investor.init();
 
-    comission.accionesBotones();
+    investor.accionesBotones();
 
 });
 

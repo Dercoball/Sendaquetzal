@@ -315,6 +315,9 @@ namespace Plataforma.pages
             nav += GenerateMenu(new List<string> { "7", "8", "10", "11", "44", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración",
                 PermisoUsuario.TIPO_PERMISO_CONFIGURACION, "Configuracion");
 
+            nav += GenerateMenu(new List<string> { "51", }, pagina, listaPermisos, "fa fa-cogs", "Inversionistas",
+               PermisoUsuario.TIPO_PERMISO_INVERSIONISTAS, "Inversionistas");
+
 
 
             //  

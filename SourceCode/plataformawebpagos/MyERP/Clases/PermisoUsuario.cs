@@ -25,6 +25,8 @@ namespace Plataforma.Clases
         public const string TIPO_PERMISO_CONFIGURACION = "2";
         public const string TIPO_PERMISO_BOTON = "1";
         public const string TIPO_PERMISO_PANEL = "3";
+        public const string TIPO_PERMISO_INVERSIONISTAS = "11";
+
 
     }
 }

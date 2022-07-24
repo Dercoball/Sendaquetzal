@@ -6,7 +6,7 @@ let pagina = '51';
 
 
 
-const investor = {
+const investment = {
 
 
     init: () => {
@@ -14,10 +14,10 @@ const investor = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        investor.idSeleccionado = -1;
-        investor.accion = '';
+        investment.idSeleccionado = -1;
+        investment.accion = '';
 
-        investor.loadContent();
+        investment.loadContent();
         
 
     },
@@ -98,7 +98,7 @@ const investor = {
 
     delete: (id) => {
 
-        investor.idSeleccionado = id;
+        investment.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -131,7 +131,7 @@ const investor = {
             success: function (msg) {
 
                 let item = msg.d;
-                investor.idSeleccionado = item.IdInversionista;
+                investment.idSeleccionado = item.IdInversionista;
 
                 $('#txtNombre').val(item.Nombre);
                 $('#txtRazonSocial').val(item.RazonSocial);
@@ -144,7 +144,7 @@ const investor = {
                 $('#panelForm').show();
 
 
-                investor.accion = "editar";
+                investment.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -171,8 +171,8 @@ const investor = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        investor.accion = "nuevo";
-        investor.idSeleccionado = -1;
+        investment.accion = "nuevo";
+        investment.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -188,7 +188,7 @@ const investor = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            investor.nuevo();
+            investment.nuevo();
 
         });
 
@@ -203,7 +203,7 @@ const investor = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdInversionista = investor.idSeleccionado;
+                item.IdInversionista = investment.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
                 item.PorcentajeInteresAnual = $('#txtPorcentajeInteres').val();
                 item.RazonSocial = $('#txtRazonSocial').val();
@@ -212,7 +212,7 @@ const investor = {
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = investor.accion;
+                params.accion = investment.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
@@ -235,7 +235,7 @@ const investor = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            investor.loadContent();
+                            investment.loadContent();
 
 
                         } else {
@@ -274,7 +274,7 @@ const investor = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = investor.idSeleccionado;
+            params.id = investment.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
@@ -293,7 +293,7 @@ const investor = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        investor.loadContent();
+                        investment.loadContent();
 
                     } else {
 
@@ -322,9 +322,9 @@ const investor = {
 
 window.addEventListener('load', () => {
 
-    investor.init();
+    investment.init();
 
-    investor.accionesBotones();
+    investment.accionesBotones();
 
 });
 

@@ -83,6 +83,11 @@ namespace Plataforma
 
                         InsertarImagenGarantia(path_server, idItem, base64String, descripcionArchivo, tipo, urlThumb);
                     }
+                    else if (nombreArchivo == "comprobanteInversion")
+                    {
+
+                        InsertarComprobanteInversion(path_server, idItem, base64String, descripcionArchivo, tipo, urlThumb);
+                    }
 
 
                     context.Response.Write(str_image);
@@ -357,6 +362,62 @@ namespace Plataforma
 
 
                 Log("Guardado imagen garantia -> OK " + r);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Log("Error " + ex.Message);
+                Log(ex.StackTrace);
+
+                r = -1;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+            return r;
+
+
+        }
+
+        public int InsertarComprobanteInversion(string path, string id, string b64, string descripcionArchivo, string tipo, string urlThumbnail)
+        {
+
+            Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+
+            int r = 0;
+            try
+            {
+
+                conn.Open();
+
+                string sql = "";
+
+
+                sql = " UPDATE inversion " +
+                                        " SET comprobante = @fotografia_b64 WHERE id_inversion =  @id";
+
+                Log("sql = " + sql);
+
+
+                SqlCommand cmdGrupo = new SqlCommand(sql, conn);
+                cmdGrupo.CommandType = CommandType.Text;
+                cmdGrupo.Parameters.AddWithValue("@id", id);
+                cmdGrupo.Parameters.AddWithValue("@fotografia_b64", b64);
+
+
+                r = (int)cmdGrupo.ExecuteNonQuery();
+
+
+
+                Log("Guardado comprobante inversion -> OK " + r);
 
 
 

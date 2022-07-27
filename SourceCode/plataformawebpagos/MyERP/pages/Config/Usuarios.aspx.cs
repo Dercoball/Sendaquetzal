@@ -586,7 +586,8 @@ namespace Plataforma.pages
                                      from permisos_tipo_usuario rel_ptu 
                                      join permisos p on (p.id_permiso = rel_ptu .id_permiso) 
                                         where rel_ptu.id_tipo_usuario  = @id_tipo_usuario 
-                                        AND IsNull(p.activo, 0) = 1 ORDER BY p.nombre, p.id_permiso ";
+                                        AND IsNull(p.activo, 0) = 1 
+                                    ORDER BY p.nombre_recurso, p.id_permiso ";
 
 
                 Utils.Log("idtipoUsuario =  " + idTipoUsuario);

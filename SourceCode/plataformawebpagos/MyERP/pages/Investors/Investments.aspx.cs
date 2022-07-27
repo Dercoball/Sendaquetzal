@@ -16,6 +16,10 @@ namespace Plataforma.pages
     {
         const string pagina = "52";
 
+        public const int TIPO_MOVIMIENTO_INVERSION = 1;
+        public const int TIPO_MOVIMIENTO_RETIRO= 2;
+        public const int TIPO_MOVIMIENTO_UTILIDAD= 3;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string usuario = (string)Session["usuario"];
@@ -89,7 +93,7 @@ namespace Plataforma.pages
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
 
                         item.Fecha = (ds.Tables[0].Rows[i]["fecha"].ToString());
-                        
+
                         string botones = "<button class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Retiro</button>";
 
                         item.Accion = botones;
@@ -135,50 +139,93 @@ namespace Plataforma.pages
 
             DatosSalida salida = new DatosSalida();
 
+
+            SqlTransaction transaction = null;
+
+            int r = 0;
             try
             {
+
                 conn.Open();
-
-                string sql = "";
-                sql = @" INSERT INTO inversion(monto, fecha, id_inversionista, eliminado, id_periodo, utilidades) 
-
-                    OUTPUT INSERTED.id_inversion
-
-                    VALUES (@monto, @fecha, @id_inversionista, 0, @id_periodo, @utilidades) ";
-
-
+                transaction = conn.BeginTransaction();
 
 
                 Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+               System.Reflection.MethodBase.GetCurrentMethod().Name);
 
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.CommandType = CommandType.Text;
+                string sql = "";
+                sql = @" INSERT INTO inversion(monto, fecha, id_inversionista, eliminado, id_periodo, utilidades) 
+                    OUTPUT INSERTED.id_inversion
+                    VALUES (@monto, @fecha, @id_inversionista, 0, @id_periodo, @utilidades) ";
 
-                cmd.Parameters.AddWithValue("@monto", item.Monto);
-                cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
-                cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
-                cmd.Parameters.AddWithValue("@utilidades", item.Utilidades);
+                Utils.Log(sql + "\n");
 
-                cmd.Parameters.AddWithValue("@id_periodo", item.IdPeriodo);
+                int idGenerado = 0;
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.CommandType = CommandType.Text;                                        
+                    cmd.Parameters.AddWithValue("@monto", item.Monto);
+                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
+                    cmd.Parameters.AddWithValue("@utilidades", item.Utilidades);
+                    cmd.Parameters.AddWithValue("@id_periodo", item.IdPeriodo);
+                    cmd.Transaction = transaction;
+                    idGenerado = (int)cmd.ExecuteScalar();
+                }
 
+                sql = @" INSERT INTO inversion_movimiento
+                        (fecha, id_inversion_total, id_tipo_movimiento_inversion, monto, id_usuario) 
+                        SELECT @fecha, (SELECT id_inversion_total total FROM inversion_total WHERE id_inversionista = @id_inversionista) AS id_inversion_total,
+                               @id_tipo_movimiento_inversion, @monto, @id_usuario ";
 
-                int idGenerado = (int)cmd.ExecuteScalar();
+                Utils.Log(sql + "\n");
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@monto", item.Monto);
+                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@utilidades", item.Utilidades);
+                    cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
+                    cmd.Parameters.AddWithValue("@id_tipo_movimiento_inversion", TIPO_MOVIMIENTO_INVERSION);
+                    cmd.Parameters.AddWithValue("@id_periodo", item.IdPeriodo);
+                    cmd.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmd.Transaction = transaction;
+                    idGenerado = cmd.ExecuteNonQuery();
+                }
+
+                sql = @" UPDATE inversion_total 
+                            SET fecha_modificacion = @fecha_modificacion,
+                            monto_total = monto_total + @monto
+                         WHERE id_inversionista = @id_inversionista
+                        ";
+                Utils.Log(sql + "\n");
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@monto", item.Monto);
+                    cmd.Parameters.AddWithValue("@fecha_modificacion", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
+                    cmd.Transaction = transaction;
+                    cmd.ExecuteNonQuery();
+                }
 
                 Utils.Log("Guardado -> OK ");
 
-
+                transaction.Commit();
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
                 salida.IdItem = idGenerado.ToString();
 
-               
-
 
             }
             catch (Exception ex)
             {
+
+                transaction.Rollback();
+
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 salida.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
@@ -281,7 +328,7 @@ namespace Plataforma.pages
                         item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
                         item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
 
-                        
+
                         items.Add(item);
 
 

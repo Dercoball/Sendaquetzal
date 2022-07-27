@@ -211,6 +211,7 @@
     </Content>
     <Content Include="js\app\customers\customerhistory.js" />
     <Content Include="js\app\customers\customers.js" />
+    <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
     <Content Include="js\app\investors\investors.js" />
     <Content Include="js\app\loans\loanrequest.min.js">
@@ -293,6 +294,7 @@
     <Content Include="js\validator.js" />
     <Content Include="pages\Bills.aspx" />
     <Content Include="pages\Customers\Customers.aspx" />
+    <Content Include="pages\Investors\InvestmentsDashboard.aspx" />
     <Content Include="pages\Investors\Investments.aspx" />
     <Content Include="pages\Investors\Investors.aspx" />
     <Content Include="pages\Reports\ReportDefault.aspx" />
@@ -1235,6 +1237,13 @@
     </Compile>
     <Compile Include="pages\Customers\Customers.aspx.designer.cs">
       <DependentUpon>Customers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Investors\InvestmentsDashboard.aspx.cs">
+      <DependentUpon>InvestmentsDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Investors\InvestmentsDashboard.aspx.designer.cs">
+      <DependentUpon>InvestmentsDashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Investors\Investments.aspx.cs">
       <DependentUpon>Investments.aspx</DependentUpon>

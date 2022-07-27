@@ -195,16 +195,22 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
+            SqlTransaction transaction = null;
+
+            int r = 0;
             try
             {
 
-
                 conn.Open();
+                transaction = conn.BeginTransaction();
+
                 string sql = "";
                 if (accion == "nuevo")
                 {
                     sql = @" INSERT INTO inversionista(nombre, razon_social, rfc, eliminado, porcentaje_interes_anual) 
-                    VALUES (@nombre, @razon_social, @rfc, 0 ,@porcentaje_interes_anual) ";
+                             OUTPUT INSERTED.id_inversionista
+                                VALUES 
+                            (@nombre, @razon_social, @rfc, 0 ,@porcentaje_interes_anual) ";
                 }
                 else
                 {
@@ -220,29 +226,55 @@ namespace Plataforma.pages
 
                 Utils.Log("\nMétodo-> " +
                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+                int idGenerado = 0;
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.CommandType = CommandType.Text;
 
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                    cmd.Parameters.AddWithValue("@porcentaje_interes_anual", item.PorcentajeInteresAnual);
+                    cmd.Parameters.AddWithValue("@razon_social", item.RazonSocial);
+                    cmd.Parameters.AddWithValue("@rfc", item.RFC);
+                    cmd.Parameters.AddWithValue("@id", item.IdInversionista);
+                    cmd.Transaction = transaction;
+                    idGenerado = (int)cmd.ExecuteScalar();
 
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@porcentaje_interes_anual", item.PorcentajeInteresAnual);
-                cmd.Parameters.AddWithValue("@razon_social", item.RazonSocial);
-                cmd.Parameters.AddWithValue("@rfc", item.RFC);
-                cmd.Parameters.AddWithValue("@id", item.IdInversionista);
+                }
 
+                if (accion == "nuevo")
+                {
+                    sql = @" INSERT INTO inversion_total 
+                            (fecha_creacion, monto_total, id_inversionista) 
+                            VALUES 
+                            (@fecha_creacion, @monto_total, @id_inversionista) ";
 
-                int r = cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.CommandType = CommandType.Text;
+
+                        cmd.Parameters.AddWithValue("@monto_total", 0);
+                        cmd.Parameters.AddWithValue("@fecha_creacion", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@id_inversionista", idGenerado);
+                        cmd.Transaction = transaction;
+                        r += cmd.ExecuteNonQuery();
+
+                    }
+
+                }
+
+                transaction.Commit();
                 Utils.Log("Guardado -> OK ");
 
+                return idGenerado;
 
-
-                return r;
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
+
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return -1; //Retornamos menos uno cuando se dió por alguna razón un error
+                return -1;
             }
 
             finally

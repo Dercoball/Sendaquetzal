@@ -228,6 +228,107 @@
                     </div>
 
                 </div>
+
+                <div id="panelFormRetiro">
+
+                    <div class="modal-body form">
+                        <form role="form" id="frmRetiro" name="frmRetiro">
+
+                                <div class="form-body">
+                                    <h3 class="text-left">Retiro
+                                    </h3>
+                                    <hr />
+
+
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="txtNombre">
+                                                Nombre corto
+                                            </label>
+                                            <input type="text" disabled="disabled" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+
+                                        <div class="form-group col-md-6">
+                                            <label for="txtRazonSocial">
+                                                Nombre corto
+                                            </label>
+                                            <input type="text" disabled="disabled" class="form-control" id="txtRazonSocial" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="txtFolio">
+                                                Folio
+                                            </label>
+                                            <input type="text" disabled="disabled" class="form-control" id="txtFolio"/>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+
+                                        <div class="form-group col-md-6">
+                                            <label for="txtMonto">
+                                                Monto
+                                            </label>
+                                            <input type="number" step="any" class="form-control" id="txtMonto" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6">
+
+                                            <label>
+                                                Comprobante
+                                            </label>
+
+                                            <input type="file" class="form-control file-comprobanteretiro" data-tipo="1"
+                                                required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+
+                                        </div>
+
+
+                                        <div class="form-group col-md-6">
+                                            <label for="txtFecha">
+                                                Fecha
+                                            </label>
+                                            <input type="date" class="form-control" id="txtFecha" required="required" data-required-error='Requerido'/>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+                    </div>
+
+
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-left">
+                            <button id="btnCancelarRetiro" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                        </div>
+
+                        <div class=" col-md-6 text-right">
+                            <button id="btnGuardarRetiro" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </section>
@@ -342,6 +443,7 @@
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/investors/investments.js"></script>
+    <script src="../../js/app/investors/investmentsRetiro.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

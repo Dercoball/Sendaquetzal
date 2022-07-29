@@ -213,6 +213,7 @@
     <Content Include="js\app\customers\customers.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
+    <Content Include="js\app\investors\investmentsRetiro.js" />
     <Content Include="js\app\investors\investors.js" />
     <Content Include="js\app\loans\loanrequest.min.js">
       <DependentUpon>loanrequest.js</DependentUpon>
@@ -1178,6 +1179,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\InversionRetiro.cs" />
     <Compile Include="Clases\Inversion.cs" />
     <Compile Include="Clases\Inversionista.cs" />
     <Compile Include="Clases\Gasto.cs" />

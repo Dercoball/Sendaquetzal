@@ -213,6 +213,8 @@
     <Content Include="js\app\customers\customers.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
+    <Content Include="js\app\investors\investmentsRetiro.js" />
+    <Content Include="js\app\investors\utilities.js" />
     <Content Include="js\app\investors\investors.js" />
     <Content Include="js\app\loans\loanrequest.min.js">
       <DependentUpon>loanrequest.js</DependentUpon>
@@ -296,6 +298,7 @@
     <Content Include="pages\Customers\Customers.aspx" />
     <Content Include="pages\Investors\InvestmentsDashboard.aspx" />
     <Content Include="pages\Investors\Investments.aspx" />
+    <Content Include="pages\Investors\Utilities.aspx" />
     <Content Include="pages\Investors\Investors.aspx" />
     <Content Include="pages\Reports\ReportDefault.aspx" />
     <Content Include="pages\Commissions\ConfigRules.aspx" />
@@ -1178,6 +1181,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\InversionRetiro.cs" />
     <Compile Include="Clases\Inversion.cs" />
     <Compile Include="Clases\Inversionista.cs" />
     <Compile Include="Clases\Gasto.cs" />
@@ -1251,6 +1255,13 @@
     </Compile>
     <Compile Include="pages\Investors\Investments.aspx.designer.cs">
       <DependentUpon>Investments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Investors\Utilities.aspx.cs">
+      <DependentUpon>Utilities.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Investors\Utilities.aspx.designer.cs">
+      <DependentUpon>Utilities.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Investors\Investors.aspx.cs">
       <DependentUpon>Investors.aspx</DependentUpon>

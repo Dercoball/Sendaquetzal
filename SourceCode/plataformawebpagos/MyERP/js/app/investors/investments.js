@@ -8,6 +8,7 @@ let pagina = '52';
 
 const investment = {
 
+    
 
     init: () => {
 
@@ -95,9 +96,9 @@ const investment = {
 
         });
 
-
-
     },
+
+   
 
     loadComboInvestor: () => {
 

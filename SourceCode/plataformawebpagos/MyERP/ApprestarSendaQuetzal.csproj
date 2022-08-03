@@ -1181,6 +1181,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\InversionMovimiento.cs" />
     <Compile Include="Clases\InversionRetiro.cs" />
     <Compile Include="Clases\Inversion.cs" />
     <Compile Include="Clases\Inversionista.cs" />

@@ -17,8 +17,8 @@ namespace Plataforma.pages
         const string pagina = "52";
 
         public const int TIPO_MOVIMIENTO_INVERSION = 1;
-        public const int TIPO_MOVIMIENTO_RETIRO= 2;
-        public const int TIPO_MOVIMIENTO_UTILIDAD= 3;
+        public const int TIPO_MOVIMIENTO_RETIRO = 2;
+        public const int TIPO_MOVIMIENTO_UTILIDAD = 3;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -63,14 +63,19 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT i.id_inversion, i.id_inversionista, i.monto, 
+                string query = @" SELECT i.id_inversion, i.id_inversionista, IsNull(i.monto, 0) monto, 
                                          FORMAT(i.fecha, 'dd/MM/yyyy') fecha, i.utilidades,
-                                         inv.nombre, inv.porcentaje_interes_anual
-                         FROM inversion i  
-                         JOIN inversionista inv ON (inv.id_inversionista = i.id_inversionista)                      
-                         WHERE 
-                         ISNull(i.eliminado, 0) = 0
-                         ORDER BY id_inversionista ";
+                                         inv.nombre, inv.porcentaje_interes_anual, 
+                                          (SELECT DATEPART(ISO_WEEK, GETDATE())) as numSemanaHoy,
+                                         (SELECT DATEPART(ISO_WEEK, i.fecha)) as numSemanaInversion,                                         
+                                         p.valor_periodo, IsNull(i.retiro_efectuado, 0) retiro_efectuado
+                                         FROM inversion i  
+                                         JOIN inversionista inv ON (inv.id_inversionista = i.id_inversionista)                      
+                                         JOIN periodo p ON (p.id_periodo = i.id_periodo)                      
+                                         WHERE 
+                                         ISNull(i.eliminado, 0) = 0
+                                         ORDER BY id_inversionista 
+                                ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -89,18 +94,28 @@ namespace Plataforma.pages
                         item.Inversionista.PorcentajeInteresAnual = float.Parse(ds.Tables[0].Rows[i]["porcentaje_interes_anual"].ToString());
                         item.IdInversion = int.Parse(ds.Tables[0].Rows[i]["id_inversion"].ToString());
                         item.Utilidades = int.Parse(ds.Tables[0].Rows[i]["utilidades"].ToString());
+                        item.NumSemanaHoy = int.Parse(ds.Tables[0].Rows[i]["numSemanaHoy"].ToString());
+                        item.NumSemanaInversion = int.Parse(ds.Tables[0].Rows[i]["numSemanaInversion"].ToString());
+                        item.PeriodoSemanas = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
+                        item.RetiroEfectuado = int.Parse(ds.Tables[0].Rows[i]["retiro_efectuado"].ToString());
 
                         item.IdInversionista = int.Parse(ds.Tables[0].Rows[i]["id_inversionista"].ToString());
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoMx = item.Monto.ToString("C2");
 
                         item.Fecha = (ds.Tables[0].Rows[i]["fecha"].ToString());
 
-                        string botones = "<button onclick='retirement.addRetiro(" + item.IdInversionista + "," + item.IdInversion + ")' class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Retiro</button>";
+                        var interes = (item.Inversionista.PorcentajeInteresAnual / 52) * item.PeriodoSemanas; //     52 semanas del año
+                        var montoRetiro = item.Monto + (interes * item.Monto / 100);
 
-                        if(item.Utilidades == 1)
+                        string botones = "<button onclick='retirement.addRetiro(" + item.IdInversionista + "," + item.IdInversion + "," + montoRetiro + ")' class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Retiro</button>";
+
+                        if (item.Utilidades == 1 && item.RetiroEfectuado == 0)
                         {
-                            item.Accion = botones;
-
+                            if ((item.NumSemanaHoy - item.NumSemanaInversion) > item.PeriodoSemanas)
+                            {
+                                item.Accion = botones;
+                            }
                         }
 
                         items.Add(item);
@@ -166,8 +181,6 @@ namespace Plataforma.pages
                         item.PorcentajeInteresAnual = float.Parse(ds.Tables[0].Rows[i]["porcentaje_interes_anual"].ToString());
 
 
-                        //item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
 
                     }
                 }
@@ -189,7 +202,7 @@ namespace Plataforma.pages
         }
 
 
-
+        // Guardar nueva inversión
         [WebMethod]
         public static DatosSalida Save(string path, Inversion item, string accion, string idUsuario)
         {
@@ -208,6 +221,9 @@ namespace Plataforma.pages
 
 
             SqlTransaction transaction = null;
+
+            var fechaOperacion = DateTime.Now;
+            //var fechaOperacion = "2022-05-01";
 
             int r = 0;
             try
@@ -231,9 +247,9 @@ namespace Plataforma.pages
                 int idInversion = 0;
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.CommandType = CommandType.Text;                                        
+                    cmd.CommandType = CommandType.Text;
                     cmd.Parameters.AddWithValue("@monto", item.Monto);
-                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@fecha", fechaOperacion);
                     cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
                     cmd.Parameters.AddWithValue("@utilidades", item.Utilidades);
                     cmd.Parameters.AddWithValue("@id_periodo", item.IdPeriodo);
@@ -241,10 +257,16 @@ namespace Plataforma.pages
                     idGenerado = idInversion = (int)cmd.ExecuteScalar();
                 }
 
+                //
+
+                float nuevoMontoTotalActual = GetNuevoMontoInversionTotalActual(item.IdInversionista.ToString(), item.Monto, transaction, conn, TIPO_MOVIMIENTO_INVERSION);
+
+
+                //
                 sql = @" INSERT INTO inversion_movimiento
-                        (fecha, id_inversion_total, id_tipo_movimiento_inversion, monto, id_usuario) 
+                        (fecha, id_inversion_total, id_tipo_movimiento_inversion, monto, id_usuario, balance) 
                         SELECT @fecha, (SELECT id_inversion_total total FROM inversion_total WHERE id_inversionista = @id_inversionista) AS id_inversion_total,
-                               @id_tipo_movimiento_inversion, @monto, @id_usuario ";
+                               @id_tipo_movimiento_inversion, @monto, @id_usuario, @balance ";
 
                 Utils.Log(sql + "\n");
 
@@ -252,8 +274,9 @@ namespace Plataforma.pages
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.Parameters.AddWithValue("@monto", item.Monto);
-                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@fecha", fechaOperacion);
                     cmd.Parameters.AddWithValue("@utilidades", item.Utilidades);
+                    cmd.Parameters.AddWithValue("@balance", nuevoMontoTotalActual);
                     cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
                     cmd.Parameters.AddWithValue("@id_tipo_movimiento_inversion", TIPO_MOVIMIENTO_INVERSION);
                     cmd.Parameters.AddWithValue("@id_periodo", item.IdPeriodo);
@@ -261,10 +284,14 @@ namespace Plataforma.pages
                     cmd.Transaction = transaction;
                     idGenerado = cmd.ExecuteNonQuery();
                 }
+                //
+
+
+                //
 
                 sql = @" UPDATE inversion_total 
                             SET fecha_modificacion = @fecha_modificacion,
-                            monto_total = monto_total + @monto
+                            monto_total = @nuevoMontoTotalActual
                          WHERE id_inversionista = @id_inversionista
                         ";
                 Utils.Log(sql + "\n");
@@ -272,8 +299,8 @@ namespace Plataforma.pages
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@monto", item.Monto);
-                    cmd.Parameters.AddWithValue("@fecha_modificacion", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@nuevoMontoTotalActual", nuevoMontoTotalActual);
+                    cmd.Parameters.AddWithValue("@fecha_modificacion", fechaOperacion);
                     cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
                     cmd.Transaction = transaction;
                     cmd.ExecuteNonQuery();
@@ -309,6 +336,88 @@ namespace Plataforma.pages
 
         }
 
+
+        public static Inversion GetInversion(string idInversion, SqlTransaction transaction, SqlConnection conn)
+        {
+            Inversion item = new Inversion();
+
+            try
+            {
+                string query = @" SELECT i.id_inversion, i.id_inversionista, IsNull(i.monto, 0) monto, 
+                                         FORMAT(i.fecha, 'dd/MM/yyyy') fecha, i.utilidades
+                                         FROM inversion i                      
+                                         WHERE  i.id_inversion = @id_inversion
+                                ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_inversion", idInversion);
+                adp.SelectCommand.Transaction = transaction;
+
+
+                DataSet ds = new DataSet();
+                adp.Fill(ds);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item.Inversionista = new Inversionista();
+                        item.IdInversion = int.Parse(ds.Tables[0].Rows[i]["id_inversion"].ToString());
+                        item.IdInversionista = int.Parse(ds.Tables[0].Rows[i]["id_inversionista"].ToString());
+                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return item;
+
+        }
+
+        public static float GetNuevoMontoInversionTotalActual(string idInversionista, float monto, SqlTransaction transaction, SqlConnection conn, int tipoMovimiento)
+        {
+            try
+            {
+                string query = @" SELECT 
+	                                it.id_inversion_total, it.monto_total, it.id_inversionista
+                                FROM inversion_total it                                                      
+                                WHERE it.id_inversionista = @id_inversionista ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_inversionista", idInversionista);
+                adp.SelectCommand.Transaction = transaction;
+
+                DataSet ds = new DataSet();
+                adp.Fill(ds);
+                float montoTotalActual = float.Parse(ds.Tables[0].Rows[0]["monto_total"].ToString());
+                Utils.Log("montoTotalActual : " + montoTotalActual);
+
+                float nuevoMontoTotalActual = 0;
+                if (tipoMovimiento == TIPO_MOVIMIENTO_INVERSION)
+                {
+                     nuevoMontoTotalActual = montoTotalActual + monto;
+                }
+
+                if (tipoMovimiento == TIPO_MOVIMIENTO_RETIRO)
+                {
+                    nuevoMontoTotalActual = montoTotalActual - monto;
+                }
+
+
+                Utils.Log("nuevoMontoTotalActual : " + nuevoMontoTotalActual);
+
+                return nuevoMontoTotalActual;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         [WebMethod]
         public static DatosSalida SaveRetiro(string path, InversionRetiro item, string accion, string idUsuario)
         {
@@ -325,6 +434,8 @@ namespace Plataforma.pages
 
             DatosSalida salida = new DatosSalida();
 
+            var fechaOperacion = DateTime.Now;
+            //var fechaOperacion = "2022-07-01";
 
             SqlTransaction transaction = null;
 
@@ -339,6 +450,16 @@ namespace Plataforma.pages
                 Utils.Log("\nMétodo-> " +
                System.Reflection.MethodBase.GetCurrentMethod().Name);
 
+                Inversion inversion = GetInversion(item.IdInversion.ToString(), transaction, conn);
+
+                //
+                float utilidad = item.Monto - inversion.Monto;
+
+                Utils.Log("\n Retiro " + item.Monto);
+                Utils.Log("\n Utilidad " + utilidad);
+                Utils.Log("\n Inversion " + inversion.Monto);
+
+
                 string sql = "";
                 sql = @" INSERT INTO inversion_retiro(fecha, id_inversion, id_tipo_movimiento_inversion, monto, id_usuario) 
                     OUTPUT INSERTED.id_inversion_retiro
@@ -351,8 +472,8 @@ namespace Plataforma.pages
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@monto", item.Monto);
-                    cmd.Parameters.AddWithValue("@fecha", item.Fecha);
+                    cmd.Parameters.AddWithValue("@monto", inversion.Monto);
+                    cmd.Parameters.AddWithValue("@fecha", fechaOperacion);
                     cmd.Parameters.AddWithValue("@id_inversion", item.IdInversion);
                     cmd.Parameters.AddWithValue("@id_tipo_movimiento_inversion", TIPO_MOVIMIENTO_RETIRO);
 
@@ -363,18 +484,24 @@ namespace Plataforma.pages
 
                 }
 
+                //
+                float nuevoMontoTotalActual = GetNuevoMontoInversionTotalActual(item.IdInversionista.ToString(), inversion.Monto, transaction, conn, TIPO_MOVIMIENTO_RETIRO);
+
+
+
                 sql = @" INSERT INTO inversion_movimiento
-                        (fecha, id_inversion_total, id_tipo_movimiento_inversion, monto, id_usuario) 
+                        (fecha, id_inversion_total, id_tipo_movimiento_inversion, monto, id_usuario, balance) 
                         SELECT @fecha, (SELECT id_inversion_total total FROM inversion_total WHERE id_inversionista = @id_inversionista) AS id_inversion_total,
-                               @id_tipo_movimiento_inversion, @monto, @id_usuario ";
+                               @id_tipo_movimiento_inversion, @monto, @id_usuario, @balance ";
 
                 Utils.Log(sql + "\n");
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@monto", item.Monto);
-                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@monto", inversion.Monto);
+                    cmd.Parameters.AddWithValue("@fecha", fechaOperacion);
+                    cmd.Parameters.AddWithValue("@balance", nuevoMontoTotalActual);
                     cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
                     cmd.Parameters.AddWithValue("@id_tipo_movimiento_inversion", TIPO_MOVIMIENTO_RETIRO);
                     cmd.Parameters.AddWithValue("@id_usuario", idUsuario);
@@ -382,9 +509,33 @@ namespace Plataforma.pages
                     idGenerado = cmd.ExecuteNonQuery();
                 }
 
+
+                // utilidad
+                sql = @" INSERT INTO inversion_movimiento
+                        (fecha, id_inversion_total, id_tipo_movimiento_inversion, monto, id_usuario, balance) 
+                        SELECT @fecha, (SELECT id_inversion_total total FROM inversion_total WHERE id_inversionista = @id_inversionista) AS id_inversion_total,
+                               @id_tipo_movimiento_inversion, @monto, @id_usuario, @balance ";
+
+                Utils.Log(sql + "\n");
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@monto", utilidad);
+                    cmd.Parameters.AddWithValue("@fecha", fechaOperacion);
+                    cmd.Parameters.AddWithValue("@balance", nuevoMontoTotalActual);
+                    cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
+                    cmd.Parameters.AddWithValue("@id_tipo_movimiento_inversion", TIPO_MOVIMIENTO_UTILIDAD);
+                    cmd.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmd.Transaction = transaction;
+                    idGenerado = cmd.ExecuteNonQuery();
+                }
+
+
+                //
                 sql = @" UPDATE inversion_total 
                             SET fecha_modificacion = @fecha_modificacion,
-                            monto_total = monto_total - @monto
+                            monto_total = @nuevoMontoTotalActual
                          WHERE id_inversionista = @id_inversionista
                         ";
                 Utils.Log(sql + "\n");
@@ -392,12 +543,28 @@ namespace Plataforma.pages
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@monto", item.Monto);
-                    cmd.Parameters.AddWithValue("@fecha_modificacion", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@nuevoMontoTotalActual", nuevoMontoTotalActual);
+                    cmd.Parameters.AddWithValue("@fecha_modificacion", fechaOperacion);
                     cmd.Parameters.AddWithValue("@id_inversionista", item.IdInversionista);
                     cmd.Transaction = transaction;
                     cmd.ExecuteNonQuery();
                 }
+
+                // Marcar que la inversion ya se ha retirado mediante un retiro
+                sql = @" UPDATE inversion
+                            SET retiro_efectuado = 1
+                         WHERE id_inversion = @id_inversion
+                        ";
+                Utils.Log(sql + "\n");
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@id_inversion", item.IdInversion);
+                    cmd.Transaction = transaction;
+                    cmd.ExecuteNonQuery();
+                }
+                //
 
                 Utils.Log("Guardado -> OK ");
 

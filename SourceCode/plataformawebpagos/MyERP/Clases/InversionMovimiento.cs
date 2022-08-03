@@ -5,7 +5,8 @@ using System.Web;
 
 namespace Plataforma.Clases
 {
-    public class Inversion{
+    public class InversionMovimiento
+    {
 
         public int IdInversion;
         public int IdInversionista;

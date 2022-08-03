@@ -10,7 +10,7 @@
     <UseGlobalApplicationHostFile />
     <LastActiveSolutionConfig>Release|Any CPU</LastActiveSolutionConfig>
     <ProjectView>ProjectFiles</ProjectView>
-    <NameOfLastUsedPublishProfile>C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\Properties\PublishProfiles\sendaquetzal - FTP.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

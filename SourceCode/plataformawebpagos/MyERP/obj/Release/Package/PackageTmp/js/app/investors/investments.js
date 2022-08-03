@@ -8,6 +8,7 @@ let pagina = '52';
 
 const investment = {
 
+    
 
     init: () => {
 
@@ -56,7 +57,7 @@ const investment = {
                         { data: 'IdInversion' },
                         { data: 'IdInversionista' },
                         { data: 'Inversionista.Nombre' },
-                        { data: 'Monto' },
+                        { data: 'MontoMx' },
                         { data: 'Inversionista.PorcentajeInteresAnual' },
                         { data: 'Fecha' },
                         { data: 'Accion' }
@@ -95,9 +96,9 @@ const investment = {
 
         });
 
-
-
     },
+
+   
 
     loadComboInvestor: () => {
 

@@ -83,10 +83,6 @@ namespace Plataforma.pages
                         item.RFC = (ds.Tables[0].Rows[i]["rfc"].ToString());
 
 
-                        //item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
-                        //item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
-
 
                         string botones = "<button  onclick='investor.edit(" + item.IdInversionista + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
                         botones += "&nbsp; <button  onclick='investor.delete(" + item.IdInversionista + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";

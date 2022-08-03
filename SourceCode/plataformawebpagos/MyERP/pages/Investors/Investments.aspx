@@ -277,7 +277,7 @@
                                             <label for="txtMonto">
                                                 Monto
                                             </label>
-                                            <input type="number" step="any" class="form-control" id="txtMonto" required="required" data-required-error='Requerido' />
+                                            <input type="number" step="any" class="form-control" disabled="disabled" id="txtMonto" required="required" data-required-error='Requerido' />
                                             <div class="help-block with-errors"></div>
                                         </div>
 
@@ -302,7 +302,7 @@
                                             <label for="txtFecha">
                                                 Fecha
                                             </label>
-                                            <input type="date" class="form-control" id="txtFecha" required="required" data-required-error='Requerido'/>
+                                            <input type="date" class="form-control" id="txtFecha"  disabled="disabled" required="required" data-required-error='Requerido'/>
                                             <div class="help-block with-errors"></div>
                                         </div>
 

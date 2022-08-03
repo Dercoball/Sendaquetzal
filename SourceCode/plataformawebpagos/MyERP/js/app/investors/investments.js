@@ -57,7 +57,7 @@ const investment = {
                         { data: 'IdInversion' },
                         { data: 'IdInversionista' },
                         { data: 'Inversionista.Nombre' },
-                        { data: 'Monto' },
+                        { data: 'MontoMx' },
                         { data: 'Inversionista.PorcentajeInteresAnual' },
                         { data: 'Fecha' },
                         { data: 'Accion' }

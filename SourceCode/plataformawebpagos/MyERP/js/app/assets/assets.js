@@ -1,0 +1,383 @@
+﻿'use strict';
+let date = new Date();
+let descargas = "ACTIVOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '52';
+
+
+
+
+const asset = {
+
+    
+
+    init: () => {
+
+        $('#panelTabla').show();
+        $('#panelForm').hide();
+
+        asset.idSeleccionado = -1;
+        asset.accion = '';
+
+        asset.loadContent();
+        asset.loadComboEmpleado();
+        asset.loadComboTipo();
+
+    },
+
+    loadContent() {
+
+        let params = {};
+        params.path = window.location.hostname;
+        console.log(params.idUsuario = document.getElementById('txtIdUsuario').value);
+        
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Assets/Assets.aspx/GetListaItems",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let data = msg.d;
+
+                //  si no tiene permisos
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                }
+
+                let table = $('#table').DataTable({
+                    "destroy": true,
+                    "processing": true,
+                    "order": [],
+                    data: data,
+                    columns: [
+
+                        { data: 'Categoria.Nombre' },
+                        { data: 'Descripcion' },
+                        { data: 'NumeroSerie' },
+                        { data: 'Costo' },
+                        { data: 'Comentarios' },
+                        { data: 'Empleado.Nombre' },
+                        { data: 'Accion' }
+
+                        
+                    ],
+                    "language": textosEsp,
+                    "columnDefs": [
+                        {
+                            "targets": [-1],
+                            "orderable": false
+                        },
+                    ],
+                    dom: 'frBtipl',
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            title: descargas,
+                            text: 'Xls', className: 'excelbtn'
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            title: descargas,
+                            text: 'Pdf', className: 'pdfbtn'
+                        }
+                    ]
+
+                });
+
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+
+
+            }
+
+        });
+
+    },
+
+
+    delete: (id) => {
+
+        asset.idSeleccionado = id;
+
+
+        $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
+        $('#panelEliminar').modal('show');
+
+    },
+
+
+
+
+    edit: (id) => {
+
+        $('.form-group').removeClass('has-error');
+        $('.help-block').empty();
+        $('#frm')[0].reset();
+
+        let params = {};
+        params.path = window.location.hostname;
+        params.id = id;
+        console.log(id);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Assets/Assets.aspx/GetItem",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let item = msg.d;
+                asset.idSeleccionado = item.IdActivo;
+
+                $('#txtDescripcion').val(item.Descripcion);
+                $('#comboCategoria').val(item.Categoria.Id);
+                $('#comboEmpleado').val(item.Empleado.IdEmpleado);
+
+                $('#txtNumeroSerie').val(item.NumeroSerie);
+                $('#txtCosto').val(item.Costo);
+                $('#txtComentarios').val(item.Cometantarios);
+
+
+
+                $('#panelTabla').hide();
+                $('#panelForm').show();
+
+
+                asset.accion = "editar";
+                $('#spnTituloForm').text('Editar');
+                $('.deshabilitable').prop('disabled', false);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+
+
+    },
+
+
+
+   
+
+    loadComboEmpleado: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Assets/Assets.aspx/GetListaItemsEmpleados",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdEmpleado}' > ${item.Nombre}</option > `;
+
+                }
+
+                $('#comboEmpleado').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+    loadComboTipo: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Assets/Assets.aspx/GetListaItemsCategorias",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.Id}' > ${item.Nombre}</option > `;
+
+                }
+
+                $('#comboCategoria').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+
+    nuevo: () => {
+
+
+        $('#frm')[0].reset();
+        $('.form-group').removeClass('has-error');
+        $('.help-block').empty();
+        $('#spnTituloForm').text('Nuevo');
+
+
+
+
+        $('#panelTabla').hide();
+        $('#panelForm').show();
+        asset.accion = "nuevo";
+        asset.idSeleccionado = -1;
+
+        $('.deshabilitable').prop('disabled', false);
+
+
+
+
+    },
+
+
+
+    accionesBotones: () => {
+
+        $('#btnNuevo').on('click', (e) => {
+            e.preventDefault();
+
+            asset.nuevo();
+
+        });
+
+
+        $('#btnGuardar').click(function (e) {
+
+            e.preventDefault();
+
+            var hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
+
+            if (!hasErrors) {
+
+                //  Objeto con los valores a enviar
+                let item = {};
+                
+                
+                item.Monto = $('#txtMontoAInvertir').val();
+                item.Utilidades = $('#chkUtilidades').prop('checked') ? 1 : 0;
+                item.IdPeriodo = $('#comboPeriodos').val();
+                item.IdInversionista = $('#comboInversionista').val();
+
+
+                let params = {};
+                params.path = window.location.hostname;
+                params.item = item;
+                params.accion = asset.accion;
+                params.idUsuario = document.getElementById('txtIdUsuario').value;
+                params = JSON.stringify(params);
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../pages/Investors/Investments.aspx/Save",
+                    
+                    data: params,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        var valores = msg.d;
+
+                        if (parseInt(valores.CodigoError) == 0) {
+
+
+                            utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
+                            $('.file-comprobante').each(function (documento) {
+
+                                let file;
+                                if (file = this.files[0]) {
+
+                                    console.log("guardar comprobante");
+
+                                    utils.sendFileEmployee(file, 'comprobanteInversion', valores.IdItem, 0, "comprobanteInversion");
+
+                                }
+
+                            });
+
+
+                            $('#panelTabla').show();
+                            $('#panelForm').hide();
+
+                            asset.loadContent();
+
+
+                        } else {
+
+                            utils.toast(mensajesAlertas.errorGuardar, 'fail');
+
+
+                        }
+
+                        $('#panelEdicion').modal('hide');
+
+
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    }
+
+                });
+
+
+            }
+
+        });
+
+
+
+        $('#btnCancelar').on('click', (e) => {
+            e.preventDefault();
+
+            $('#panelTabla').show();
+            $('#panelForm').hide();
+
+        });
+
+    }
+
+
+}
+
+window.addEventListener('load', () => {
+
+    asset.init();
+
+    asset.accionesBotones();
+
+});
+
+

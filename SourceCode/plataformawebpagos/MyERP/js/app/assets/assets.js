@@ -143,7 +143,7 @@ const asset = {
 
                 $('#txtNumeroSerie').val(item.NumeroSerie);
                 $('#txtCosto').val(item.Costo);
-                $('#txtComentarios').val(item.Cometantarios);
+                $('#txtComentarios').val(item.Comentarios);
 
 
 
@@ -285,12 +285,15 @@ const asset = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                
-                
-                item.Monto = $('#txtMontoAInvertir').val();
-                item.Utilidades = $('#chkUtilidades').prop('checked') ? 1 : 0;
-                item.IdPeriodo = $('#comboPeriodos').val();
-                item.IdInversionista = $('#comboInversionista').val();
+
+                item.IdActivo = asset.idSeleccionado;
+                item.Descripcion = $('#txtDescripcion').val();
+                item.IdCategoria = $('#comboCategoria').val();
+                item.IdEmpleado = $('#comboEmpleado').val();
+                item.NumeroSerie = $('#txtNumeroSerie').val();
+                item.Costo = $('#txtCosto').val();
+                item.Comentarios = $('#txtComentarios').val();
+
 
 
                 let params = {};
@@ -302,32 +305,18 @@ const asset = {
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Investors/Investments.aspx/Save",
+                    url: "../../pages/Assets/Assets.aspx/Save",
                     
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: true,
                     success: function (msg) {
-                        var valores = msg.d;
+                        let resultado = parseInt(msg.d);
 
-                        if (parseInt(valores.CodigoError) == 0) {
-
+                        if (resultado > 0) {
 
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
-
-                            $('.file-comprobante').each(function (documento) {
-
-                                let file;
-                                if (file = this.files[0]) {
-
-                                    console.log("guardar comprobante");
-
-                                    utils.sendFileEmployee(file, 'comprobanteInversion', valores.IdItem, 0, "comprobanteInversion");
-
-                                }
-
-                            });
 
 
                             $('#panelTabla').show();
@@ -343,7 +332,6 @@ const asset = {
 
                         }
 
-                        $('#panelEdicion').modal('hide');
 
 
                     }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -356,6 +344,48 @@ const asset = {
             }
 
         });
+
+        $('#btnEliminarAceptar').on('click', (e) => {
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.id = asset.idSeleccionado;
+            params.idUsuario = document.getElementById('txtIdUsuario').value;
+            params = JSON.stringify(params);
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Assets/Assets.aspx/Delete",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+
+                    var resultado = msg.d;
+                    if (resultado.MensajeError === null) {
+
+                        utils.toast(mensajesAlertas.exitoEliminar, 'ok');
+
+
+                        asset.loadContent();
+
+                    } else {
+
+                        utils.toast(resultado.MensajeError, 'error');
+
+
+                    }
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                }
+
+            });
+
+        });
+
 
 
 

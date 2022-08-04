@@ -137,7 +137,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, e.nombre as nombre_empleado, e.id_empleado
+                string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, e.nombre as nombre_empleado, e.id_empleado,
                                          c.nombre as tipo, c.id as id_categoria
                                          FROM activo a   
                                          JOIN empleado e ON (e.id_empleado = a.id_empleado)
@@ -201,7 +201,7 @@ namespace Plataforma.pages
 
         // Guardar nueva inversión
         [WebMethod]
-        public static DatosSalida Save(string path, Inversion item, string accion, string idUsuario)
+        public static object Save(string path, Activo item, string accion, string idUsuario)
         {
 
             // verificar que tenga permisos para usar esta pagina
@@ -214,45 +214,74 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-            DatosSalida salida = new DatosSalida();
 
 
-            SqlTransaction transaction = null;
-
-            var fechaOperacion = DateTime.Now;
-            //var fechaOperacion = "2022-05-01";
-
-            int r = 0;
+            
             try
             {
 
-                conn.Open();
-                transaction = conn.BeginTransaction();
 
+                conn.Open();
+                string sql = "";
+                if (accion == "nuevo")
+                {
+                    sql = @" INSERT INTO activo(descripcion, numero_serie,costo, comentarios, eliminado, id_empleado, id_categoria) 
+                    VALUES (@descripcion, @numero_serie, @costo, @comentarios, 0, @id_empleado, @id_categoria) ";
+                }
+                else
+                {
+                    sql = @" UPDATE activo
+                          SET descripcion = @descripcion,
+                              numero_serie = @numero_serie,
+                              costo = @costo,
+                              comentarios = @comentarios,
+                              id_empleado = @id_empleado,
+                              id_categoria = @id_categoria
+                          WHERE 
+                              id_activo = @id";
+
+                }
 
                 Utils.Log("\nMétodo-> " +
-               System.Reflection.MethodBase.GetCurrentMethod().Name);
+               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
-                string sql = "";
-                sql = @" INSERT INTO inversion(monto, fecha, id_inversionista, eliminado, id_periodo, utilidades) 
-                    OUTPUT INSERTED.id_inversion
-                    VALUES (@monto, @fecha, @id_inversionista, 0, @id_periodo, @utilidades) ";
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
 
-                
+                cmd.Parameters.AddWithValue("@descripcion", item.Descripcion);
+                cmd.Parameters.AddWithValue("@numero_serie", item.NumeroSerie);
+                cmd.Parameters.AddWithValue("@costo", item.Costo);
+                cmd.Parameters.AddWithValue("@comentarios", item.Comentarios);
+
+
+                cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
+                cmd.Parameters.AddWithValue("@id_categoria", item.IdCategoria);
+
+                cmd.Parameters.AddWithValue("@id", item.IdActivo);
+
+
+
+                int r = cmd.ExecuteNonQuery();
+                Utils.Log("Guardado -> OK ");
+
+
+
+                return r;
+
+
             }
             catch (Exception ex)
             {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return -1; //Retornamos menos uno cuando se dió por alguna razón un error
 
-                
             }
 
             finally
             {
                 conn.Close();
             }
-
-            return salida;
-
         }
 
         [WebMethod]
@@ -369,62 +398,80 @@ namespace Plataforma.pages
         }
 
 
+
         [WebMethod]
-        public static List<Periodo> GetListaItemsPeriodos(string path)
+        public static DatosSalida Delete(string path, string id, string idUsuario)
         {
 
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
+
+            DatosSalida salida = new DatosSalida();
+            salida.CodigoError = 0;
+            salida.MensajeError = null;
+
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                salida.CodigoError = -1;
+                salida.MensajeError = "No se pudo eliminar el registro.";
+
+                return salida;
+
+            }
+
+            Utils.Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Periodo> items = new List<Periodo>();
+
 
             try
             {
+
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_periodo,  IsNull(valor_periodo, 0) valor_periodo, activo
-                     FROM periodo
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id_periodo ";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                string sql = @" UPDATE activo SET eliminado = 1  
+                                        WHERE id_activo = @id ";
 
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Periodo item = new Periodo();
-                        item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
-                        item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
+                Utils.Log("\n-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
 
-                        items.Add(item);
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@id", id);
 
+                int r = cmd.ExecuteNonQuery();
 
-                    }
-                }
+                Utils.Log("r = " + r);
+                Utils.Log("Eliminado -> OK ");
 
-                return items;
+                salida.MensajeError = null;
+                salida.CodigoError = 0;
+
+                return salida;
             }
             catch (Exception ex)
             {
+
+                salida.CodigoError = -1;
+                salida.MensajeError = "No se pudo eliminar el registro.";
+
+
+
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return items;
+                return salida;
             }
 
             finally
             {
                 conn.Close();
             }
-        }
 
+        }
 
 
 

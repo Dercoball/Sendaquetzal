@@ -14,8 +14,9 @@ namespace Plataforma.Clases
         public string NumeroSerie;
         public float Costo;
         public string Comentarios;
-        public int eliminado;
-        public int id_empleado;
+        public int Eliminado;
+        public int IdEmpleado;
+        public int IdCategoria;
 
         public Categoria Categoria;
         public Empleado Empleado;

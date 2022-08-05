@@ -1,13 +1,14 @@
 ﻿'use strict';
 let date = new Date();
-let descargas = "COMISIONES_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
-let pagina = '48';
+let descargas = "ACTIVOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
+let pagina = '52';
 
 
 
 
-const comission = {
+const asset = {
 
+    
 
     init: () => {
 
@@ -18,7 +19,8 @@ const comission = {
         asset.accion = '';
 
         asset.loadContent();
-        
+        asset.loadComboEmpleado();
+        asset.loadComboTipo();
 
     },
 
@@ -26,12 +28,13 @@ const comission = {
 
         let params = {};
         params.path = window.location.hostname;
-        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        console.log(params.idUsuario = document.getElementById('txtIdUsuario').value);
+        
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Commissions.aspx/GetListaItems",
+            url: "../../pages/Assets/Assets.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -52,10 +55,12 @@ const comission = {
                     data: data,
                     columns: [
 
-                        { data: 'Nivel' },
-                        { data: 'Nombre' },
-                        { data: 'Porcentaje' },
-                        { data: 'ActivoStr' },
+                        { data: 'Categoria.Nombre' },
+                        { data: 'Descripcion' },
+                        { data: 'NumeroSerie' },
+                        { data: 'Costo' },
+                        { data: 'Comentarios' },
+                        { data: 'Empleado.Nombre' },
                         { data: 'Accion' }
 
                         
@@ -92,9 +97,8 @@ const comission = {
 
         });
 
-
-
     },
+
 
     delete: (id) => {
 
@@ -118,11 +122,12 @@ const comission = {
         let params = {};
         params.path = window.location.hostname;
         params.id = id;
+        console.log(id);
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Config/Commissions.aspx/GetItem",
+            url: "../../pages/Assets/Assets.aspx/GetItem",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -130,15 +135,17 @@ const comission = {
             success: function (msg) {
 
                 let item = msg.d;
-                asset.idSeleccionado = item.IdComision;
+                asset.idSeleccionado = item.IdActivo;
 
-                $('#txtNombre').val(item.Nombre);
+                $('#txtDescripcion').val(item.Descripcion);
+                $('#comboCategoria').val(item.Categoria.Id);
+                $('#comboEmpleado').val(item.Empleado.IdEmpleado);
 
-                $('#txtPorcentaje').val(item.Porcentaje);
-                $('#txtNivel').val(item.Nivel);
+                $('#txtNumeroSerie').val(item.NumeroSerie);
+                $('#txtCosto').val(item.Costo);
+                $('#txtComentarios').val(item.Comentarios);
 
 
-                $('#chkActivo').prop('checked', item.Activo === 1);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -155,6 +162,81 @@ const comission = {
         });
 
 
+    },
+
+
+
+   
+
+    loadComboEmpleado: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Assets/Assets.aspx/GetListaItemsEmpleados",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdEmpleado}' > ${item.Nombre}</option > `;
+
+                }
+
+                $('#comboEmpleado').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+
+    loadComboTipo: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Assets/Assets.aspx/GetListaItemsCategorias",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.Id}' > ${item.Nombre}</option > `;
+
+                }
+
+                $('#comboCategoria').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
     },
 
 
@@ -203,11 +285,16 @@ const comission = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdComision = asset.idSeleccionado;
-                item.Nombre = $('#txtNombre').val();
-                item.Porcentaje = $('#txtPorcentaje').val();
-                item.Nivel = $('#txtNivel').val();
-                item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
+
+                item.IdActivo = asset.idSeleccionado;
+                item.Descripcion = $('#txtDescripcion').val();
+                item.IdCategoria = $('#comboCategoria').val();
+                item.IdEmpleado = $('#comboEmpleado').val();
+                item.NumeroSerie = $('#txtNumeroSerie').val();
+                item.Costo = $('#txtCosto').val();
+                item.Comentarios = $('#txtComentarios').val();
+
+
 
                 let params = {};
                 params.path = window.location.hostname;
@@ -218,7 +305,8 @@ const comission = {
 
                 $.ajax({
                     type: "POST",
-                    url: "../../pages/Config/Commissions.aspx/Save",
+                    url: "../../pages/Assets/Assets.aspx/Save",
+                    
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -244,7 +332,6 @@ const comission = {
 
                         }
 
-                        $('#panelEdicion').modal('hide');
 
 
                     }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -258,17 +345,6 @@ const comission = {
 
         });
 
-
-
-        $('#btnCancelar').on('click', (e) => {
-            e.preventDefault();
-
-            $('#panelTabla').show();
-            $('#panelForm').hide();
-
-        });
-
-
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
@@ -279,7 +355,7 @@ const comission = {
 
             $.ajax({
                 type: "POST",
-                url: "../../pages/Config/Commissions.aspx/Delete",
+                url: "../../pages/Assets/Assets.aspx/Delete",
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -311,10 +387,17 @@ const comission = {
         });
 
 
+
+
+        $('#btnCancelar').on('click', (e) => {
+            e.preventDefault();
+
+            $('#panelTabla').show();
+            $('#panelForm').hide();
+
+        });
+
     }
-
-
-
 
 
 }

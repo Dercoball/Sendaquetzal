@@ -1599,7 +1599,9 @@
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
     <Content Include="pages\FileUploader.ashx" />
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzal - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy1.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -16,10 +16,6 @@ namespace Plataforma.pages
     {
         const string pagina = "54";
 
-        public const int TIPO_MOVIMIENTO_INVERSION = 1;
-        public const int TIPO_MOVIMIENTO_RETIRO = 2;
-        public const int TIPO_MOVIMIENTO_UTILIDAD = 3;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             string usuario = (string)Session["usuario"];
@@ -63,12 +59,17 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, e.nombre as nombre_empleado, c.nombre as tipo
+                string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, 
+                                         concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_empleado,
+                                         c.nombre as tipo
                                          FROM activo a   
                                          JOIN empleado e ON (e.id_empleado = a.id_empleado)
                                          JOIN categoria c ON (c.id = a.id_categoria)
                                          WHERE 
-                                         ISNull(a.eliminado, 0) = 0      
+                                            e.id_plaza = 
+                                	        (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
+                                		    WHERE u.id_usuario = @id_usuario)
+                                         AND ISNull(a.eliminado, 0) = 0      
                                          ORDER BY a.id_activo
                                 ";
 
@@ -77,7 +78,7 @@ namespace Plataforma.pages
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
-                
+
 
                 adp.Fill(ds);
 
@@ -199,7 +200,6 @@ namespace Plataforma.pages
 
 
 
-        // Guardar nueva inversión
         [WebMethod]
         public static object Save(string path, Activo item, string accion, string idUsuario)
         {
@@ -216,7 +216,7 @@ namespace Plataforma.pages
 
 
 
-            
+
             try
             {
 
@@ -274,7 +274,7 @@ namespace Plataforma.pages
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return -1; //Retornamos menos uno cuando se dió por alguna razón un error
+                return -1;
 
             }
 
@@ -285,7 +285,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static List<Empleado> GetListaItemsEmpleados(string path, string idUsuario )
+        public static List<Empleado> GetListaItemsEmpleados(string path, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -297,10 +297,13 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT em.id_empleado, em.nombre FROM empleado em 
-                                	    WHERE id_plaza = 
+                string query = @" SELECT em.id_empleado, 
+                                        concat(em.nombre ,  ' ' , em.primer_apellido , ' ' , em.segundo_apellido) AS nombre_completo
+                                        FROM empleado em 
+                                	    WHERE em.id_plaza = 
                                 	    (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
-                                		WHERE u.id_usuario = @id) AND ISNull(eliminado, 0) = 0";
+                                		WHERE u.id_usuario = @id) 
+                                        AND ISNull(eliminado, 0) = 0";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", idUsuario);
@@ -316,7 +319,7 @@ namespace Plataforma.pages
                     {
                         Empleado item = new Empleado();
                         item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
 
                         items.Add(item);
 
@@ -359,7 +362,7 @@ namespace Plataforma.pages
                                 ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                
+
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");

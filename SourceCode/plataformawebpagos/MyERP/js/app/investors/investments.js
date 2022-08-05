@@ -6,7 +6,7 @@ let pagina = '52';
 
 
 
-const investment = {
+const asset = {
 
     
 
@@ -15,12 +15,12 @@ const investment = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        investment.idSeleccionado = -1;
-        investment.accion = '';
+        asset.idSeleccionado = -1;
+        asset.accion = '';
 
-        investment.loadContent();
-        investment.loadComboInvestor();
-        investment.loadComboPeriods();
+        asset.loadContent();
+        asset.loadComboInvestor();
+        asset.loadComboPeriods();
 
     },
 
@@ -182,8 +182,8 @@ const investment = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        investment.accion = "nuevo";
-        investment.idSeleccionado = -1;
+        asset.accion = "nuevo";
+        asset.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -199,7 +199,7 @@ const investment = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            investment.nuevo();
+            asset.nuevo();
 
         });
 
@@ -225,7 +225,7 @@ const investment = {
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = investment.accion;
+                params.accion = asset.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
@@ -262,7 +262,7 @@ const investment = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            investment.loadContent();
+                            asset.loadContent();
 
 
                         } else {
@@ -303,9 +303,9 @@ const investment = {
 
 window.addEventListener('load', () => {
 
-    investment.init();
+    asset.init();
 
-    investment.accionesBotones();
+    asset.accionesBotones();
 
 });
 

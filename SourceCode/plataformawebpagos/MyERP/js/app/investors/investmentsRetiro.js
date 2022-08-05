@@ -153,7 +153,7 @@ const retirement = {
                             $('#panelTabla').show();
                             $('#panelFormRetiro').hide();
 
-                            investment.loadContent();
+                            asset.loadContent();
 
 
                         } else {

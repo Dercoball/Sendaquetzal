@@ -14,10 +14,10 @@ const comission = {
         $('#panelTabla').show();
         $('#panelForm').hide();
 
-        investment.idSeleccionado = -1;
-        investment.accion = '';
+        asset.idSeleccionado = -1;
+        asset.accion = '';
 
-        investment.loadContent();
+        asset.loadContent();
         
 
     },
@@ -98,7 +98,7 @@ const comission = {
 
     delete: (id) => {
 
-        investment.idSeleccionado = id;
+        asset.idSeleccionado = id;
 
 
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
@@ -130,7 +130,7 @@ const comission = {
             success: function (msg) {
 
                 let item = msg.d;
-                investment.idSeleccionado = item.IdComision;
+                asset.idSeleccionado = item.IdComision;
 
                 $('#txtNombre').val(item.Nombre);
 
@@ -144,7 +144,7 @@ const comission = {
                 $('#panelForm').show();
 
 
-                investment.accion = "editar";
+                asset.accion = "editar";
                 $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
@@ -171,8 +171,8 @@ const comission = {
 
         $('#panelTabla').hide();
         $('#panelForm').show();
-        investment.accion = "nuevo";
-        investment.idSeleccionado = -1;
+        asset.accion = "nuevo";
+        asset.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
 
@@ -188,7 +188,7 @@ const comission = {
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
 
-            investment.nuevo();
+            asset.nuevo();
 
         });
 
@@ -203,7 +203,7 @@ const comission = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdComision = investment.idSeleccionado;
+                item.IdComision = asset.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
                 item.Porcentaje = $('#txtPorcentaje').val();
                 item.Nivel = $('#txtNivel').val();
@@ -212,7 +212,7 @@ const comission = {
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = item;
-                params.accion = investment.accion;
+                params.accion = asset.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
 
@@ -234,7 +234,7 @@ const comission = {
                             $('#panelTabla').show();
                             $('#panelForm').hide();
 
-                            investment.loadContent();
+                            asset.loadContent();
 
 
                         } else {
@@ -273,7 +273,7 @@ const comission = {
 
             let params = {};
             params.path = window.location.hostname;
-            params.id = investment.idSeleccionado;
+            params.id = asset.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
 
@@ -292,7 +292,7 @@ const comission = {
                         utils.toast(mensajesAlertas.exitoEliminar, 'ok');
 
 
-                        investment.loadContent();
+                        asset.loadContent();
 
                     } else {
 
@@ -321,9 +321,9 @@ const comission = {
 
 window.addEventListener('load', () => {
 
-    investment.init();
+    asset.init();
 
-    investment.accionesBotones();
+    asset.accionesBotones();
 
 });
 

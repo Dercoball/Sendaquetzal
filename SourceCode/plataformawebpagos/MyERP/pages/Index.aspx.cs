@@ -318,7 +318,7 @@ namespace Plataforma.pages
             nav += GenerateMenu(new List<string> { "51", "52", "53"}, pagina, listaPermisos, "fa fa-percent", "Inversionistas",
                PermisoUsuario.TIPO_PERMISO_INVERSIONISTAS, "Inversionistas");
 
-            nav += GenerateMenu(new List<string> { "54" }, pagina, listaPermisos, "fa fa-th-list", "Otros",
+            nav += GenerateMenu(new List<string> { "54", "57" }, pagina, listaPermisos, "fa fa-th-list", "Otros",
                PermisoUsuario.TIPO_PERMISO_ACTIVOS, "Otros");
 
             

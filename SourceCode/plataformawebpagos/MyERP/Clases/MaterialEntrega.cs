@@ -13,6 +13,7 @@ namespace Plataforma.Clases
         public float Cantidad;
         public string Fecha;
         public float Costo;
+        public string CostoMx;
         public int Eliminado;
         public int IdEmpleado;
         public int IdCategoria;

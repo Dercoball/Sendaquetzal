@@ -92,6 +92,7 @@ namespace Plataforma.pages
 
                         item.IdMaterialEntrega = int.Parse(ds.Tables[0].Rows[i]["id_material_entrega"].ToString());
                         item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        item.CostoMx = item.Costo.ToString("C2");
                         item.MaterialEntregado = ds.Tables[0].Rows[i]["material_entregado"].ToString();
                         item.Cantidad = float.Parse(ds.Tables[0].Rows[i]["cantidad"].ToString());
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();

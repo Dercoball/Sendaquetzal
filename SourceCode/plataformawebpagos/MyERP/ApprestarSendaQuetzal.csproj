@@ -151,6 +151,7 @@
     <Content Include="js\app\aboutus.min.js">
       <DependentUpon>aboutus.js</DependentUpon>
     </Content>
+    <Content Include="js\app\assets\deliveryMaterials.js" />
     <Content Include="js\app\assets\assets.js" />
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
@@ -295,6 +296,7 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Assets\DeliveryMaterials.aspx" />
     <Content Include="pages\Assets\Assets.aspx" />
     <Content Include="pages\Bills.aspx" />
     <Content Include="pages\Customers\Customers.aspx" />
@@ -1183,6 +1185,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\MaterialEntrega.cs" />
     <Compile Include="Clases\Activo.cs" />
     <Compile Include="Clases\InversionMovimiento.cs" />
     <Compile Include="Clases\InversionRetiro.cs" />
@@ -1232,6 +1235,13 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Assets\DeliveryMaterials.aspx.cs">
+      <DependentUpon>DeliveryMaterials.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Assets\DeliveryMaterials.aspx.designer.cs">
+      <DependentUpon>DeliveryMaterials.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Assets\Assets.aspx.cs">
       <DependentUpon>Assets.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

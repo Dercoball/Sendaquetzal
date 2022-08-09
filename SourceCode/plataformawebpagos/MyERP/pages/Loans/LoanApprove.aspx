@@ -496,6 +496,15 @@
 
                             </form>
 
+
+                            <div class="row mt-3 mb-3">
+
+                                <div class=" col-md-12 text-center">
+                                    <button id="btnGuardarCliente" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                </div>
+
+                            </div>
+
                         </div>
 
                         <!-- PESTAÑA AVAL-->
@@ -865,21 +874,17 @@
                                         </div>
 
 
-
-                                        <div class="row mt-3 mb-3">
-
-                                            <div class=" col-md-6 text-center">
-                                                <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                                            </div>
-
-                                            <div class=" col-md-6 text-center">
-                                                <button id="btnGuardarAval" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                            </div>
-
-                                        </div>
-
                                     </div>
                                 </div>
+
+                                <div class="row mt-3 mb-3">
+                               
+                                    <div class=" col-md-12 text-center">
+                                        <button id="btnGuardarAval" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                    </div>
+
+                                </div>
+
 
                             </form>
 
@@ -934,29 +939,27 @@
                                         </div>
 
 
-                                        <div class="row mt-5 mb-3">
 
-                                            <div class=" col-md-4 text-center">
-                                                <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                                            </div>
-
-
-                                            <div class=" col-md-4 text-center">
-                                                <button id="btnRechazar" class="btn btn-danger deshabilitable  boton-ocultable"><i class="fa fa-times mr-1"></i>Rechazar</button>
-                                            </div>
-
-
-                                            <div class=" col-md-4 text-center">
-                                                <button id="btnAprobar" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Aprobar</button>
-                                            </div>
-
-                                        </div>
 
 
                                     </form>
 
                                 </div>
 
+
+                            </div>
+
+
+                            <div class="row mt-5 mb-3">
+
+                                <div class=" col-md-6 text-center">
+                                    <button id="btnRechazar" class="btn btn-danger deshabilitable  boton-ocultable"><i class="fa fa-times mr-1"></i>Rechazar</button>
+                                </div>
+
+
+                                <div class=" col-md-6 text-center">
+                                    <button id="btnAprobar" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Aprobar</button>
+                                </div>
 
                             </div>
 
@@ -969,15 +972,11 @@
 
                     <div class="row mt-3 mb-3">
 
-                        <div class=" col-md-6 text-center">
+                        <div class=" col-md-12 text-center">
                             <button class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Volver a préstamos</button>
                             <button class="btn btn-secondary volver deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Volver a clientes</button>
                         </div>
 
-
-                        <div class=" col-md-6 text-center">
-                            <button id="btnGuardarCliente" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
 
                     </div>
 

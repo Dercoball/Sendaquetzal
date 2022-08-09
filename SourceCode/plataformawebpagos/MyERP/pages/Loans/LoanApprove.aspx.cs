@@ -324,7 +324,7 @@ namespace Plataforma.pages
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
                     //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
-                    DateTime startDate = new DateTime(2022, 7, 1);    //TODO: CAMBIAR ESTE TEST
+                    DateTime startDate = new DateTime(2022, 4, 1);    //TODO: CAMBIAR ESTE TEST
 
 
                     //  Se agrega la semana extra por si le aplica

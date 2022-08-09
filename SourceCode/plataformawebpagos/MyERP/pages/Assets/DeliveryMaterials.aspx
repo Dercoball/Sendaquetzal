@@ -99,10 +99,74 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Material</h1>
+                    <h1 class="h3 display">Material de entrega</h1>
                 </header>
 
                 <div id="panelTabla">
+
+                    <div class="row mt-3">
+
+
+                        <div class="form-group col-md-2">
+                            <label for="txtFiltroFechaInicial">
+                                Fecha inicial
+                            </label>
+                            <input type="date" class="form-control" id="txtFiltroFechaInicial" />
+                        </div>
+
+
+                        <div class="form-group col-md-2">
+                            <label for="txtFiltroFechaFinal">
+                                Fecha final
+                            </label>
+                            <input type="date" class="form-control" id="txtFiltroFechaFinal" />
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="comboFiltroEmpleado">
+                                Colaborador
+                            </label>
+                            <select class="form-control campo-combo" id="comboFiltroEmpleado">
+                            </select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="comboFiltroCategoria">
+                                Categoría
+                            </label>
+                            <select class="form-control campo-combo" id="comboFiltroCategoria">
+                            </select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="txtFiltroCostoInicial">
+                                Costo desde
+                            </label>
+                            <input type="number" step="any" class="form-control" id="txtFiltroCostoInicial" />
+                            <div class="help-block with-errors"></div>
+                        </div>
+
+
+                        <div class="form-group col-md-2">
+                            <label for="txtFiltroCostoFinal">
+                                Costo hasta
+                            </label>
+                            <input type="number" step="any" class="form-control" id="txtFiltroCostoFinal" />
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 text-right">
+
+                        <div class="col-md-12">
+                            <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
+                        </div>
+
+                    </div>
+
+
                     <div class="table-responsive">
 
                         <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
@@ -127,126 +191,128 @@
                         </table>
 
                     </div>
+
+                    <div class="mt-5">
+                        <div id="container_grafica">
+                        </div>
+                    </div>
+
                 </div>
 
 
 
 
-                <div id="panelForm">
+            <div id="panelForm">
 
-                    <div class="modal-body form">
-                        <form role="form" id="frm" name="frm">
+                <div class="modal-body form">
+                    <form role="form" id="frm" name="frm">
 
-                            <div class="form-body">
-                                <h3 class="text-left">
-                                    <span id="spnTituloForm"></span>
-                                </h3>
-                                <hr />
-
-
+                        <div class="form-body">
+                            <h3 class="text-left">
+                                <span id="spnTituloForm"></span>
+                            </h3>
+                            <hr />
 
 
 
-                                <div class="row">
 
-                                      <div class="form-group col-md-6">
-                                        <label for="comboEmpleado">
-                                            Colaborador
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboEmpleado" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
 
-                                     <div class="form-group col-md-6">
-                                        <label for="txtMaterial">
-                                            Material entregado
-                                        </label>
-                                        <input type="text" class="form-control" id="txtMaterial" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
+                            <div class="row">
 
-                                  
-
-                                  
-
+                                <div class="form-group col-md-6">
+                                    <label for="comboEmpleado">
+                                        Colaborador
+                                    </label>
+                                    <select class="form-control campo-combo" id="comboEmpleado" required="required" data-required-error='Requerido'>
+                                    </select>
+                                    <div class="help-block with-errors"></div>
                                 </div>
 
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtCantidad">
-                                            Cantidad  
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtCantidad" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                   <div class="form-group col-md-6">
-                                        <label for="txtCosto">
-                                            Costo  
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtCosto" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-
-
-                                    
-                                    <div class="form-group col-md-6">
-                                        <label for="comboCategoria">
-                                            Categoría
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboCategoria" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFecha">
-                                            Fecha
-                                        </label>
-                                        <input type="date" class="form-control campo-date" id="txtFecha" disabled="disabled"
-                                            />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
+                                <div class="form-group col-md-6">
+                                    <label for="txtMaterial">
+                                        Material entregado
+                                    </label>
+                                    <input type="text" class="form-control" id="txtMaterial" required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
                                 </div>
 
 
-                               
+
+
+
                             </div>
-                                
-                        </form>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtCantidad">
+                                        Cantidad  
+                                    </label>
+                                    <input type="number" step="any" class="form-control" id="txtCantidad" required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtCosto">
+                                        Costo  
+                                    </label>
+                                    <input type="number" step="any" class="form-control" id="txtCosto" required="required" data-required-error='Requerido' />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+
+
+
+                                <div class="form-group col-md-6">
+                                    <label for="comboCategoria">
+                                        Categoría
+                                    </label>
+                                    <select class="form-control campo-combo" id="comboCategoria" required="required" data-required-error='Requerido'>
+                                    </select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                                <div class="form-group col-md-6">
+                                    <label for="txtFecha">
+                                        Fecha
+                                    </label>
+                                    <input type="date" class="form-control campo-date" id="txtFecha" disabled="disabled" />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+
+                            </div>
+
+
+
+                        </div>
+
+                    </form>
+                </div>
+
+
+
+                <div class="row mt-3 mb-3">
+
+                    <div class=" col-md-6 text-left">
+                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
                     </div>
 
-
-
-                    <div class="row mt-3 mb-3">
-
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
-                        </div>
-
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
-
+                    <div class=" col-md-6 text-right">
+                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                     </div>
 
                 </div>
-
-                
 
             </div>
+    </div>
 
-        </section>
+    </section>
 
 
 
@@ -333,7 +399,7 @@
     </div>
 
 
- <!-- JavaScript files-->
+    <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -352,8 +418,8 @@
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
+    <script src="https://code.highcharts.com/7.0.3/highcharts.js"></script>
 
-    <%--<script src="../../js/front.js"></script>--%>
 
 
     <script src="../../js/validator.js"></script>

@@ -38,7 +38,8 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<MaterialEntrega> GetListaItems(string path, string idUsuario)
+        public static List<MaterialEntrega> GetListaItems(string path, string idUsuario, string fechaInicial, string fechaFinal,
+            string idColaborador, string costoDesde, string costoHasta, string idCategoria)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -55,13 +56,39 @@ namespace Plataforma.pages
             }
 
 
+            string sqlColaborador = "";
+            if (idColaborador != "-1" && idColaborador != "")
+            {
+                sqlColaborador = " AND e.id_empleado = '" + idColaborador + "'";
+            }
+
+            string sqlCategoria = "";
+            if (idCategoria != "-1" && idCategoria != "")
+            {
+                sqlCategoria = " AND m.id_categoria = '" + idCategoria + "'";
+            }
+
+            string sqlCostoDesde = "";
+            if (costoDesde != "0" && costoDesde != "")
+            {
+                sqlCostoDesde = " and m.costo >= '" + costoDesde + "'";
+            }
+
+
+            string sqlCostoHasta = "";
+            if (costoHasta != "0" && costoHasta != "")
+            {
+                sqlCostoHasta = " AND m.costo <= '" + costoHasta + "'";
+            }
+        
+
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
                 string query = @"  SELECT m.id_material_entrega, m.material_entregado, m.cantidad, m.costo, FORMAT(m.fecha, 'dd/MM/yyyy') fecha, 
                                          concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_empleado,
-                                         c.nombre as tipo
+                                         c.nombre as tipo, e.id_empleado
                                          FROM material_entrega m
                                          JOIN empleado e ON (e.id_empleado = m.id_empleado)
                                          JOIN categoria c ON (c.id = m.id_categoria)
@@ -69,7 +96,12 @@ namespace Plataforma.pages
                                             e.id_plaza = 
                                 	        (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
                                 		    WHERE u.id_usuario = @id_usuario)
-                                         AND ISNull(m.eliminado, 0) = 0      
+                                         AND ISNull(m.eliminado, 0) = 0      "
+                                            + @" AND (m.fecha >= '" + fechaInicial + @"' AND m.fecha <= '" + fechaFinal + @"')"
+                                            + sqlColaborador
+                                            + sqlCategoria
+                                            + sqlCostoDesde
+                                            + sqlCostoHasta + @"
                                          ORDER BY m.id_material_entrega
                                 ";
 
@@ -98,6 +130,7 @@ namespace Plataforma.pages
                         item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
                         item.Categoria.Nombre = ds.Tables[0].Rows[i]["tipo"].ToString();
                         item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
+                        item.Empleado.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
 
                         string botones = "<button  onclick='deliveryMaterial.edit(" + item.IdMaterialEntrega + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
                         botones += "&nbsp; <button  onclick='deliveryMaterial.delete(" + item.IdMaterialEntrega + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
@@ -359,7 +392,7 @@ namespace Plataforma.pages
                 conn.Open();
                 DataSet ds = new DataSet();
                 string query = @" SELECT c.id, c.nombre FROM categoria c
-                                  WHERE ISNull(eliminado, 0) = 0
+                                  WHERE ISNull(eliminado, 0) = 0 AND ISNull(es_material_entrega, 0) = 1
                                 ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);

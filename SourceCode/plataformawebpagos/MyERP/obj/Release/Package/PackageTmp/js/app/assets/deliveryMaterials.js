@@ -8,7 +8,7 @@ let pagina = '57';
 
 const deliveryMaterial = {
 
-    
+
 
     init: () => {
 
@@ -21,15 +21,51 @@ const deliveryMaterial = {
         deliveryMaterial.loadContent();
         deliveryMaterial.loadComboEmpleado();
         deliveryMaterial.loadComboTipo();
+        deliveryMaterial.fechas();
 
     },
 
     loadContent() {
 
+        let fechaInicial = $('#txtFiltroFechaInicial').val();
+        let fechaFinal = $('#txtFiltroFechaFinal').val();
+
+        if (!fechaInicial) {
+
+            fechaInicial = deliveryMaterial.fecha();
+            $('#txtFiltroFechaInicial').val(fechaInicial);
+        }
+
+        if (!fechaFinal) {
+
+            fechaFinal = deliveryMaterial.fecha();
+            $('#txtFiltroFechaFinal').val(fechaFinal);
+        }
+
+        let idColaborador = $('#comboFiltroEmpleado').val();
+        idColaborador = idColaborador == null ? "-1" : status;
+
+        let idCategoria= $('#comboFiltroCategoria').val();
+        idCategoria = idCategoria == null ? "-1" : idCategoria;
+
+
+        let costoDesde = $('#txtFiltroCostoInicial').val();
+        let costoHasta = $('#txtFiltroCostoFinal').val();
+        
+
+
         let params = {};
         params.path = window.location.hostname;
+        params.idColaborador = idColaborador;
+        params.idColaborador = document.getElementById('comboFiltroEmpleado').value;
+        params.fechaInicial = fechaInicial;
+        params.fechaFinal = fechaFinal;
+        params.costoDesde = costoDesde;
+        params.costoHasta = costoHasta;
+        params.idCategoria = idCategoria;
+
         console.log(params.idUsuario = document.getElementById('txtIdUsuario').value);
-        
+
         params = JSON.stringify(params);
 
         $.ajax({
@@ -63,7 +99,7 @@ const deliveryMaterial = {
                         { data: 'Fecha' },
                         { data: 'Accion' }
 
-                        
+
                     ],
                     "language": textosEsp,
                     "columnDefs": [
@@ -88,6 +124,7 @@ const deliveryMaterial = {
 
                 });
 
+                deliveryMaterial.generateChart(data);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -166,7 +203,7 @@ const deliveryMaterial = {
 
 
 
-   
+
 
     loadComboEmpleado: () => {
 
@@ -195,6 +232,7 @@ const deliveryMaterial = {
                 }
 
                 $('#comboEmpleado').html(opcion);
+                $('#comboFiltroEmpleado').html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -231,6 +269,7 @@ const deliveryMaterial = {
                 }
 
                 $('#comboCategoria').html(opcion);
+                $('#comboFiltroCategoria').html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -239,6 +278,147 @@ const deliveryMaterial = {
         });
     },
 
+    generateChart: (data) => {
+
+        deliveryMaterial.empleados = data.map((x) => {
+            return {
+                id_empleado: x.Empleado.IdEmpleado,
+                material: x.MaterialEntregado,
+                nombre: x.Empleado.Nombre
+            }
+        });
+
+        deliveryMaterial.nombres_empleados = deliveryMaterial.empleados.map(x => { return x.nombre });
+        let nombresDistintos = [...new Set(deliveryMaterial.nombres_empleados)];  //  quitar repetidos
+
+
+        let series = [];
+        for (let i in deliveryMaterial.empleados) {
+
+            let current = deliveryMaterial.empleados[i];
+
+            let serie = {
+                nombre: current.nombre,
+                material: current.material,
+                montos: data.map((x) => {
+
+                    if (x.Empleado.IdEmpleado == current.id_empleado) {
+                        return x.Costo;
+                    }
+                })
+            }
+
+            let exists = series.find(item => item.nombre === current.nombre);
+
+
+            if (!exists) {
+                series.push(serie);
+            }
+
+        }
+
+
+        //  Quitar nulls y convertir a ceros
+        let cleanSeries = [];
+        for (let i in series) {
+            let s = series[i];
+
+            let newSerie = {
+                'name': s.nombre,
+                data: s.montos.map((item) => {
+
+                    if (typeof item !== 'undefined') {
+                        return item
+                    } else {
+                        return 0
+                    }
+                })
+
+            };
+
+            cleanSeries.push(newSerie);
+
+        }
+
+
+
+        Highcharts.chart('container_grafica', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Monto total'
+            },
+            xAxis: {
+                categories: deliveryMaterial.empleados.map(x => { return x.material })
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ''
+                }
+            },
+            legend: {
+                reversed: true
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            series: cleanSeries
+        });
+
+
+    },
+
+
+    fechas() {
+
+        //  fecha hoy (final)
+        let today = new Date();
+        let month = (today.getMonth() + 1);
+
+        month = month.toString().length === 1 ? `0${month}` : month;
+
+        let endWeekDay = new Date();
+        let end_ = endWeekDay.getDay() + 1
+
+        endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
+
+        let dayMonth = endWeekDay.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
+
+
+        month = (endWeekDay.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
+
+        let fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
+
+        //  fecha inicial
+        let startWeekDay = new Date();
+        startWeekDay.setDate(startWeekDay.getDate() - startWeekDay.getDay() + 1);
+
+        let startDayMonth = startWeekDay.getDate();
+        startDayMonth = startDayMonth.toString().length === 1 ? `0${startDayMonth}` : startDayMonth;
+
+        let startMonth = (startWeekDay.getMonth() + 1);
+        startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
+
+        let startYear = (startWeekDay.getFullYear());
+
+        let fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
+
+
+        console.log(`fechaInicial ${fechaInicial}`);
+        console.log(`fechaFinal ${fechaFinal}`);
+
+
+        $('#txtFiltroFechaFinal').val(fechaFinal);
+        $('#txtFiltroFechaInicial').val(fechaInicial);
+
+
+    },
 
     nuevo: () => {
 
@@ -257,14 +437,13 @@ const deliveryMaterial = {
         deliveryMaterial.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
-        deliveryMaterial.fechaHoy();
-
+        
+        $('#txtFecha').val(deliveryMaterial.fecha());
 
 
     },
 
-
-    fechaHoy() {
+    fecha() {
         let today = new Date();
 
         let dayMonth = today.getDate();
@@ -272,9 +451,12 @@ const deliveryMaterial = {
         let month = (today.getMonth() + 1);
         month = month.toString().length === 1 ? `0${month}` : month;
 
-        $('#txtFecha').val(`${today.getFullYear()}-${month}-${dayMonth}`);
+        return `${today.getFullYear()}-${month}-${dayMonth}`;
+
 
     },
+
+
 
     accionesBotones: () => {
 
@@ -283,6 +465,13 @@ const deliveryMaterial = {
 
 
             deliveryMaterial.nuevo();
+
+        });
+
+        $('#btnFiltrar').on('click', (e) => {
+            e.preventDefault();
+
+            deliveryMaterial.loadContent();
 
         });
 
@@ -319,7 +508,7 @@ const deliveryMaterial = {
                 $.ajax({
                     type: "POST",
                     url: "../../pages/Assets/DeliveryMaterials.aspx/Save",
-                    
+
                     data: params,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",

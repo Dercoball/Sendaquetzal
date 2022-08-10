@@ -11,6 +11,8 @@ namespace Plataforma.Clases
         public int Id;
         public string Nombre;
         public int Activo;
+        public int EsMaterialEntrega;
+        public string EsMaterialEntregaStr;
         public string ActivoStr;
         public int Eliminado;
         public string UltimaModificacionStr;

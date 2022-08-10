@@ -292,6 +292,10 @@ namespace Plataforma.pages
                 salida.MensajeError = null;
                 salida.CodigoError = 0;
 
+
+                //  TODO: si se condona al cliente, pasar a status condonado los pagos
+
+
                 return salida;
             }
             catch (Exception ex)

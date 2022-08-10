@@ -112,6 +112,7 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Nombre</th>
+                                    <th>Material de entrega</th>
                                     <th>Activo</th>
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
@@ -156,13 +157,22 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
+                                        <div class="form-check ml-2">
+                                            <input id="chkEsMaterialEntrega" class="form-check-input" type="checkbox" />
+                                            <label for="chkEsMaterialEntrega" class="form-check-label">Material de entrega</label>
+                                        </div>
+                                    </div>
+                               
+
+                                    <div class="form-group col-md-6">
                                         <div class="form-check ml-2">
                                             <input id="chkActivo" class="form-check-input" type="checkbox" />
                                             <label for="chkActivo" class="form-check-label">Activo</label>
                                         </div>
                                     </div>
                                 </div>
+
 
 
                             </div>
@@ -298,7 +308,7 @@
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
 
-    <script src="../../js/front.js"></script>
+    <%--<script src="../../js/front.js"></script>--%>
 
 
     <script src="../../js/validator.js"></script>

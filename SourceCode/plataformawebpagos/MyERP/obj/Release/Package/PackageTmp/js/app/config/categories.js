@@ -18,7 +18,7 @@ const Category = {
         Category.accion = '';
 
         Category.loadContent();
-        
+
 
     },
 
@@ -54,10 +54,11 @@ const Category = {
 
                         { data: 'Id' },
                         { data: 'Nombre' },
+                        { data: 'EsMaterialEntregaStr' },
                         { data: 'ActivoStr' },
                         { data: 'Accion' }
 
-                        
+
                     ],
                     "language": textosEsp,
                     "columnDefs": [
@@ -133,6 +134,7 @@ const Category = {
                 $('#txtNombre').val(item.Nombre);
 
                 $('#chkActivo').prop('checked', item.Activo === 1);
+                $('#chkEsMaterialEntrega').prop('checked', item.EsMaterialEntrega === 1);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -194,11 +196,11 @@ const Category = {
 
             if (!hasErrors) {
 
-                //  Objeto con los valores a enviar
                 let item = {};
                 item.Id = Category.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
+                item.EsMaterialEntrega = $('#chkEsMaterialEntrega').prop('checked') ? 1 : 0;
 
                 let params = {};
                 params.path = window.location.hostname;

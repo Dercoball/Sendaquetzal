@@ -50,7 +50,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, activo
+                string query = @" SELECT id, nombre, activo, IsNull(es_material_entrega, 0) es_material_entrega
                      FROM categoria
                      WHERE  id =  @id ";
 
@@ -73,7 +73,7 @@ namespace Plataforma.pages
                         item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
+                        item.EsMaterialEntrega = int.Parse(ds.Tables[0].Rows[i]["es_material_entrega"].ToString());
 
                     }
                 }
@@ -118,14 +118,15 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO categoria(nombre, activo, eliminado) 
-                    VALUES (@nombre, @activo, 0) ";
+                    sql = @" INSERT INTO categoria(nombre, activo, eliminado, es_material_entrega) 
+                    VALUES (@nombre, @activo, 0, @es_material_entrega) ";
                 }
                 else
                 {
                     sql = @" UPDATE categoria
                           SET nombre = @nombre,
-                              activo = @activo
+                              activo = @activo,
+                              es_material_entrega = @es_material_entrega
                           WHERE 
                               id = @id";
 
@@ -139,7 +140,8 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
-   
+                cmd.Parameters.AddWithValue("@es_material_entrega", item.EsMaterialEntrega);
+
                 cmd.Parameters.AddWithValue("@id", item.Id);
 
 
@@ -154,7 +156,7 @@ namespace Plataforma.pages
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return -1; //Retornamos menos uno cuando se dió por alguna razón un error
+                return -1; 
             }
 
             finally
@@ -189,7 +191,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, activo
+                string query = @" SELECT id, nombre, activo, IsNull(es_material_entrega, 0) es_material_entrega
                      FROM categoria
                      WHERE 
                      ISNull(eliminado, 0) = 0
@@ -209,11 +211,12 @@ namespace Plataforma.pages
                         Categoria item = new Categoria();
                         item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-                       
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
+                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
+                        item.EsMaterialEntrega = int.Parse(ds.Tables[0].Rows[i]["es_material_entrega"].ToString());
+                        item.EsMaterialEntregaStr = (item.EsMaterialEntrega == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
 
                         string botones = "<button  onclick='Category.edit(" + item.Id + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
                         botones += "&nbsp; <button  onclick='Category.delete(" + item.Id + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
@@ -243,75 +246,6 @@ namespace Plataforma.pages
 
         }
 
-
-        [WebMethod]
-        public static List<Categoria> LoadContentPublic(string path, string idUsuario)
-        {
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Categoria> items = new List<Categoria>();
-
-
-
-
-            try
-            {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, activo
-                     FROM categoria
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Categoria item = new Categoria();
-                        item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-
-                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
-
-                        item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";
-
-
-                        string botones = "<button  onclick='period.edit(" + item.Id + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='period.delete(" + item.Id + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-        }
 
 
         [WebMethod]

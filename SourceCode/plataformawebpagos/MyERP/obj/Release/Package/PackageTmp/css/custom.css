@@ -115,3 +115,21 @@
 .margen-derecho {
     margin-right: 2px;
 }
+
+.fc-daygrid-event {
+    position: relative;
+    white-space: pre-line !important;
+    border-radius: 3px;
+    font-size: .85em;
+    font-size: var(--fc-small-font-size,.85em);
+}
+
+
+.color-dia-paro {
+    background-color: indianred;
+}
+
+
+.color-calendario {
+    background-color: indianred;
+}

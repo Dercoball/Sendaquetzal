@@ -13,6 +13,10 @@ namespace Plataforma.Clases
 
         public string Fecha;
         public string FechaMx;
+        public string FechaLarga;
+        
+        public string FechaFinal;
+        public string Tipo;
 
         public string Dia;
         public string Mes;

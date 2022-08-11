@@ -89,10 +89,11 @@ namespace VerifyStatusPaymentsService.App_Data
             {
                 Log("Error ... " + ex.Message);
                 Log(ex.StackTrace);
-                return items;
+                throw ex;
+
             }
 
-         
+
         }
 
         public TipoCliente GetCustomerTypeById(string customerTypeId, SqlConnection conn, SqlTransaction transaction)
@@ -160,12 +161,41 @@ namespace VerifyStatusPaymentsService.App_Data
             {
                 Log("Error ... " + ex.Message);
                 Log(ex.StackTrace);
-                return item;
+                throw ex;
+
             }
 
 
         }
 
+        public int InsertLog(string observations, SqlConnection conn, SqlTransaction transaction)
+        {
+
+            int r = 0;
+            try
+            {
+
+                string sql = @" INSERT INTO resumen_calculo_fallas(observaciones, fecha)
+                            VALUES (@observaciones, getdate()) ";
+                                               
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@observaciones", observations);
+                cmd.Transaction = transaction;
+
+                r = cmd.ExecuteNonQuery();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+            return r;
+
+        }
 
         public int UpdatePymentStatus(int idPago, int idStatus, SqlConnection conn, SqlTransaction transaction)
         {
@@ -197,8 +227,7 @@ namespace VerifyStatusPaymentsService.App_Data
             }
             catch (Exception ex)
             {
-                Log("Error ... " + ex.Message);
-                Log(ex.StackTrace);
+                throw ex;
             }
 
 

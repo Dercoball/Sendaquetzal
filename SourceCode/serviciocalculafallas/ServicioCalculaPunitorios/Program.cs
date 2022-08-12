@@ -5,177 +5,216 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Twilio;
+using System.Net;
+using Twilio.Rest.Api.V2010.Account;
+using Newtonsoft.Json.Linq;
 
 namespace VerifyStatusPaymentsService
 {
     class Program
     {
+        //static void Main(string[] args)
+        //{
+
+        //    Log("Enviar mensaje de cumpleaños a empleados.");
+
+
+        //    using (SQContext db = new SQContext())
+        //    {
+
+        //        // Message
+        //        var message = db.TemplateMessage.Find(2);// El msg con id 2 es el configurado correctamente por ahora
+        //        //  Debe ser texto plano
+
+
+        //        DateTime date = DateTime.Now;
+        //        int month = date.Month;
+        //        int day = date.Day;
+
+
+        //        //  Employees that today is their birthday
+        //        var employeesList = db.Employee.SqlQuery(
+        //            @" SELECT * FROM empleado 
+        //             WHERE month(fecha_nacimiento) = @month AND day(fecha_nacimiento) = @day ",
+        //            new SqlParameter("month", month),
+        //            new SqlParameter("day", day));
+
+        //        string summary = "";
+
+        //        foreach(var employee in employeesList)
+        //        {
+
+        //            string employeeName = employee.nombre + " " + employee.primer_apellido;
+        //            string msg = message.contenido;// "Hola {{1}} Feliz cumpleaños a uno de nuestros clientes más importantes de todos los tiempos. No seríamos absolutamente nada sin ti.";
+        //            msg = msg.Replace("{{1}}", employeeName);
+
+        //            Log(" Employee : " + employeeName);
+        //            Log(" Telefono : " + employee.telefono);
+
+        //            if (employee.telefono.Length == 10) {
+
+        //                Log(" Send whatsapp msg to employee : " + employeeName);
+
+        //                var result = SendMessageWhatsapp(msg, employee.telefono);
+        //                Log(result);
+        //                summary += "Mensaje de felicitación de cumpleados whatsapp a Empleado : " + employee.id_empleado + " - " + employeeName + " enviado correctamente. ";
+
+        //            }
+        //            else
+        //            {
+        //                summary += "Empleado : " + employee.id_empleado + " - " + employeeName +  " no cuenta con núm celular válido. ";
+        //            }
+
+        //        }
+        //        //
+
+        //        Log(summary);
+        //        resumen_calculo_fallas summaryOperation = new resumen_calculo_fallas();
+        //        summaryOperation.fecha = DateTime.Now;
+        //        summaryOperation.observaciones= summary;
+        //        db.SummaryOperation.Add(summaryOperation);
+        //        db.SaveChanges();
+
+        //    }
+
+        //    Log("\n\nFin de actualizacion de status de pagos  ");
+
+
+        //    Environment.Exit(0);
+
+
+        //}
+
         static void Main(string[] args)
         {
 
-            PaymentsDao dao = new PaymentsDao();
-
-            Log("Proceso de actualizacion de status de pagos  ");
-
-
-            DateTime hora = DateTime.Now;
-            int hora_ = hora.Hour;
-            int min_ = hora.Minute + 1;   //  real
-            //int min_ = hora.Minute;         //  test
-
-            Log("Iniciando a las  " + hora_ + " : " + min_ + " hrs ");
-
-            // For Interval in Seconds 
-            // This Scheduler will start at 11:10 and call after every 15 Seconds
-            // IntervalInSeconds(start_hour, start_minute, seconds)
-
-            Log("Inicio  de actualizacion de status de pagos  ");
-
-            //  fechas
-            DateTime endWeekDate = DateTime.Now;
-            var numDayOfweek = (int)endWeekDate.DayOfWeek;
-            endWeekDate = new DateTime(endWeekDate.Year, endWeekDate.Month, endWeekDate.Day);
-            endWeekDate = endWeekDate.AddDays(7);
-            endWeekDate = endWeekDate.AddDays(-numDayOfweek);
-            Log("Fecha final de la semana: " + endWeekDate);
-
-            DateTime startWeekDate = DateTime.Now;
-            var numDayOfweek2 = (int)startWeekDate.DayOfWeek;
-            startWeekDate = startWeekDate.AddDays(-numDayOfweek2);
-            Log("Fecha inicial de la semana : " + startWeekDate);
-
-
-            string startDateStr = startWeekDate.Year.ToString() + "-" + startWeekDate.Month.ToString() + "-" + startWeekDate.Day.ToString();
-            string endDateStr = endWeekDate.Year.ToString() + "-" + endWeekDate.Month.ToString() + "-" + endWeekDate.Day.ToString();
-
-
+            Log("Enviar mensaje de cumpleaños a empleados.");
             string strConexion = Properties.Settings.Default.connection;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            SqlTransaction transaction = null;
-
-            int r = 0;
             try
             {
-                conn.Open();
-                transaction = conn.BeginTransaction();
+                using (SqlConnection conn = new SqlConnection(strConexion))
+                {
 
-                // 1. Traer los pagos de la semana de los prestamos activos
-                List<Pago> payments = dao.GetPayments(Pago.STATUS_PAGO_PENDIENTE.ToString(), startDateStr, endDateStr, conn, transaction);
-                Log("Pagos encontrados pendientes para esta semana :" + payments.Count);
-
-                //  Se necesita saber que dia de la semana es
-                DateTime today = DateTime.Now;
-                var dayOfWeek = (int)today.DayOfWeek;
-                Log("dayOfWeek : " + dayOfWeek);
-
-                List<Pago> paymentsFoundUpdate = new List<Pago>();
-                List<Pago> paymentsLastWeekFoundUpdate = new List<Pago>();
-                
-                dao.InsertLog("Observaciones de ejemplo", conn, transaction);
-
-                //foreach (var itemPayment in payments)
-                //{
-
-                //    Log("\n\n\n...........................................Inicio de análisis del pago :" + itemPayment.IdPago);
-
-                //    // Obtener el cliente
-                //    Cliente customer = itemPayment.cliente;
-                //    Log("IdCliente     : " + customer.IdCliente);
-                //    Log("Cliente     : " + customer.NombreCompleto);
-                //    Log("IdTipoCliente : " + customer.IdTipoCliente);
-                //    Log("IdTipoCliente : " + customer.IdTipoCliente);
+                    PaymentsDao dao = new PaymentsDao();
 
 
-                //    //  Traer la configuración del tipo de clienta para cada pago
-                //    TipoCliente configCliente = dao.GetCustomerTypeById(customer.IdTipoCliente.ToString(), conn, transaction);
-                //    Log("TipoCliente : " + configCliente.NombreTipoCliente);
+                    // Message
+                    var messageStr = dao.GetMessageById("2", conn);    // El msg con id 2 es el configurado correctamente por ahora
+                                                                       //  Debe ser texto plano
 
 
-                //    //  Ver cuales son sus días de pago
-                //    Log("\n\nDias de pago .........: ");
-                //    Log("FechaPagoLunes : " + configCliente.FechaPagoLunes);
-                //    Log("FechaPagoMartes : " + configCliente.FechaPagoMartes);
-                //    Log("FechaPagoMiercoles : " + configCliente.FechaPagoMiercoles);
-                //    Log("FechaPagoJueves : " + configCliente.FechaPagoJueves);
-                //    Log("FechaPagoViernes : " + configCliente.FechaPagoViernes);
-                //    Log("FechaPagoSabado : " + configCliente.FechaPagoSabado);
-                //    Log("FechaPagoDomingo : " + configCliente.FechaPagoDomingo);
-                //    Log("\n");
-
-                //    int[] dias = new int[7];
-                //    dias[0] = configCliente.FechaPagoLunes == 1 ? 1 : 0;
-                //    dias[1] = configCliente.FechaPagoMartes == 1 ? 2 : 0;
-                //    dias[2] = configCliente.FechaPagoMiercoles == 1 ? 3 : 0;
-                //    dias[3] = configCliente.FechaPagoJueves == 1 ? 4 : 0;
-                //    dias[4] = configCliente.FechaPagoViernes == 1 ? 5 : 0;
-                //    dias[5] = configCliente.FechaPagoSabado == 1 ? 6 : 0;
-                //    dias[6] = configCliente.FechaPagoDomingo == 1 ? 7 : 0;
-
-                //    int maxday = dias[0];
-                //    for (int i = 1; i < dias.Length; i++)
-                //    {
-                //        if (dias[i] > maxday)
-                //        {
-                //            maxday = dias[i];
-                //        }
-
-                //    }
-
-                //    Log("Día máximo de pago: (1 = lunes, ... 7 = domingo) " + maxday);
-
-                //    if (dayOfWeek > maxday)
-                //    {
-                //        //  
-                //        Log("\nEn este punto este pago se encuentra en Falla ... ");
-
-                //        int rowsAffected = dao.UpdatePymentStatus(itemPayment.IdPago, Pago.STATUS_PAGO_FALLA, conn, transaction);
-
-                //        Log("Filas modificadas en Cambio de status a Falla : " + rowsAffected);
-
-                //    }
-                //    else
-                //    {
-                //        Log("El pago " + itemPayment.IdPago + " aún se encuentra con status de pago pendiente...");
-                //    }
+                    DateTime date = DateTime.Now;
+                    int month = date.Month;
+                    int day = date.Day;
 
 
+                    var employeesList = dao.GetEmployees(month, day, conn);
 
-                //}
+                    string summary = "";
+
+                    foreach (var employee in employeesList)
+                    {
+
+                        string employeeName = employee.Nombre + " " + employee.PrimerApellido;
+                        string msg = messageStr;// "Hola {{1}} Feliz cumpleaños a uno de nuestros clientes más importantes de todos los tiempos. No seríamos absolutamente nada sin ti.";
+                                                //    //string msg = message.contenido;// "Hola {{1}} Feliz cumpleaños a uno de nuestros clientes más importantes de todos los tiempos. No seríamos absolutamente nada sin ti.";
+                        msg = msg.Replace("{{1}}", employeeName + ".");
+
+                        Log(" Employee : " + employeeName);
+                        Log(" Telefono : " + employee.Telefono);
+
+                        if (employee.Telefono.Length == 10)
+                        {
+
+                            Log(" Send whatsapp msg to employee : " + employeeName);
+
+                            var result = SendMessageWhatsapp(msg, employee.Telefono);
+                            Log(result);
+                            summary += "Mensaje de felicitación de cumpleados whatsapp a Empleado : " + employee.IdEmpleado + " - " + employeeName + " enviado correctamente. ";
+
+                        }
+                        else
+                        {
+                            summary += "Empleado : " + employee.IdEmpleado + " - " + employeeName + " no cuenta con núm celular válido. ";
+                        }
+
+                    }
 
 
-                transaction.Commit();
- 
+                    //dao.InsertLog(summary, conn);
+
+                }
 
             }
             catch (Exception ex)
             {
-
-                transaction.Rollback();
-
-                Log("Error ... " + ex.Message);
+                Log(ex.Message);
                 Log(ex.StackTrace);
-                r = -1;
+
+
             }
 
-            finally
+            Log("\n\nFin del proceso de envio de notificaciones.");
+
+
+            Environment.Exit(0);
+
+
+        }
+
+
+        public static string SendMessageWhatsapp(string msg, string celular)
+        {
+            try
             {
-                conn.Close();
-                
-                Environment.Exit(0);
+                Log("");
+                Log("SendMessageWhatsapp");
+
+
+                string accountSid = Properties.Settings.Default.TWILIO_ACCOUNT_SID;
+                string authToken = Properties.Settings.Default.TWILIO_AUTH_TOKEN;
+                string celFromWhatsapp = Properties.Settings.Default.CEL_FROM_WP;
+
+                Log("celFrom Whatsapp " + celFromWhatsapp);
+
+                celular = "whatsapp:+521" + celular;
+
+                msg = msg.Replace("\n", "");
+                msg = msg.Trim();
+
+                Log("msg       " + msg);
+                Log("to Celular       " + celular);
+
+
+                TwilioClient.Init(accountSid, authToken);
+
+                System.Net.ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+                // WHATSAPP
+                var message = MessageResource.Create(
+                  body: msg,
+                  from: new Twilio.Types.PhoneNumber(celFromWhatsapp),
+              to: new Twilio.Types.PhoneNumber(celular)
+              );
+
+
+                Log("message.Sid " + message.Sid.ToString());
+                Log("message.Status " + message.Status.ToString());
+                Log("message.ErrorMessage" + message.ErrorMessage);
+                Log("");
+
+
+                return message.Sid;
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+                Log(ex.StackTrace);
+
+                return "";
 
             }
-
-
-
-
-            //Log("Registros modificados = " + registros);
-
-            Log("\n\nFin de actualizacion de status de pagos  ");
-
-
-
-            Console.ReadLine();
 
         }
 

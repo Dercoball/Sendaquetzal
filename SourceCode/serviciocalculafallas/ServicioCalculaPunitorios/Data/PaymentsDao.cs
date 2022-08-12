@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Plataforma.Clases;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -24,7 +26,7 @@ namespace VerifyStatusPaymentsService.App_Data
 
                 //  Filtro status del pago
                 var sqlStatus = " AND p.id_status_pago = '" + idStatus + "'";
-                
+
 
                 DataSet ds = new DataSet();
                 string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
@@ -95,6 +97,98 @@ namespace VerifyStatusPaymentsService.App_Data
 
 
         }
+
+
+        public string GetMessageById(string id, SqlConnection conn)
+        {
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT  * from plantilla WHERE id = @id  ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", id);
+
+                Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+
+                    var json = ds.Tables[0].Rows[0]["contenido"].ToString();
+                    return json;
+
+                }
+
+                return null;
+
+
+            }
+            catch (Exception ex)
+            {
+                Log("Error ... " + ex.Message);
+                Log(ex.StackTrace);
+                throw ex;
+
+            }
+
+
+        }
+
+        public List<Empleado> GetEmployees(int month, int day, SqlConnection conn)
+        {
+
+
+            List<Empleado> items = new List<Empleado>();
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT  * from empleado WHERE month(fecha_nacimiento) = @month AND day(fecha_nacimiento) = @day AND eliminado <> 1  ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@month", month);
+                adp.SelectCommand.Parameters.AddWithValue("@day", day);
+
+                Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    Empleado item = new Empleado();
+                    item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                    item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
+                    item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                    item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                    item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                    item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
+
+                    items.Add(item);
+
+                }
+
+                return items;
+
+
+            }
+            catch (Exception ex)
+            {
+                Log("Error ... " + ex.Message);
+                Log(ex.StackTrace);
+                throw ex;
+
+            }
+
+
+        }
+
 
         public TipoCliente GetCustomerTypeById(string customerTypeId, SqlConnection conn, SqlTransaction transaction)
         {
@@ -168,7 +262,7 @@ namespace VerifyStatusPaymentsService.App_Data
 
         }
 
-        public int InsertLog(string observations, SqlConnection conn, SqlTransaction transaction)
+        public int InsertLog(string observations, SqlConnection conn)
         {
 
             int r = 0;
@@ -184,7 +278,6 @@ namespace VerifyStatusPaymentsService.App_Data
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@observaciones", observations);
-                cmd.Transaction = transaction;
 
                 r = cmd.ExecuteNonQuery();
 
@@ -241,7 +334,7 @@ namespace VerifyStatusPaymentsService.App_Data
         public object RegistrarLogCambios(string path, int idUsuario, string descripcion, string modulo, SqlConnection conn)
         {
 
-            
+
             try
             {
 
@@ -274,7 +367,7 @@ namespace VerifyStatusPaymentsService.App_Data
                 return -1;
             }
 
-    
+
 
         }
 

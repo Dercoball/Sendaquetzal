@@ -207,17 +207,31 @@
 
                         <div class="row mt-3 mb-3 mr-auto ml-auto">
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                             </div>
 
-                            <div class="col-md-4 text-center">
+                            <div class="col-md-3 text-center">
                                 <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
                             </div>
 
 
-                            <div class="col-md-4 text-right">
-                                <button id="btnEnviar" class="btn btn-success" disabled="disabled"><i class="fa fa-send mr-1"></i>Enviar ahora</button>
+                            <%--                            <div class="col-md-3 text-right">
+                                <button id="btnEnviarS" class="btn btn-success"><i class="fa fa-send mr-1"></i>Enviar SMS ahora</button>
+                            </div>--%>
+
+                            <div class="col-md-6 text-right">
+
+                                <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
+                                <div class="input-group mb-2 mr-sm-2">
+                                    <div class="input-group-prepend">
+                                        <input type="number" class="form-control" id="txtCelular" placeholder="Núm celular 10 dígitos"/>
+                                    </div>
+                                    <button id="btnEnviarW" class="btn btn-success"><i class="fa fa-send mr-1"></i>Enviar</button>
+                                </div>
+
+
+
                             </div>
 
                         </div>

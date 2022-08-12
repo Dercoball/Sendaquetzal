@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Plataforma.pages
 {
@@ -422,10 +426,110 @@ namespace Plataforma.pages
         }
 
 
+        [WebMethod]
+        public static string SendMessageSMS(string path, string id, string msg)
+        {
+            try
+            {
+
+
+                string accountSid = System.Configuration.ConfigurationManager.AppSettings["TWILIO_ACCOUNT_SID"];
+                string authToken = System.Configuration.ConfigurationManager.AppSettings["TWILIO_AUTH_TOKEN"];
+
+                TwilioClient.Init(accountSid, authToken);
+
+                System.Net.ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+
+                //  SMS
+                var message = MessageResource.Create(
+                  from: new Twilio.Types.PhoneNumber("+12054305280"),
+                  body: msg.Replace("&nbsp;", ""),
+                    to: new Twilio.Types.PhoneNumber("+522731257047") //  lcd
+                                                                      //to: new Twilio.Types.PhoneNumber("+522731611855")   // Han
+                                                                      //to: new Twilio.Types.PhoneNumber("+523331830952")   // JP
+              );
+
+                Utils.Log("SendMessageSMS");
+
+
+                Utils.Log(message.Sid.ToString());
+                Utils.Log(message.Status.ToString());
+                Utils.Log(message.ErrorMessage);
+                Utils.Log("Mensaje enviado" + message.Body);
+
+
+                return message.Sid;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log(ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                return "";
+
+            }
+
+        }
 
 
 
+        [WebMethod]
+        public static string SendMessageWhatsapp(string path, string id, string msg, string celular, string nombre)
+        {
+            try
+            {
+                Utils.Log("SendMessageWhatsapp");
 
+
+                string accountSid = System.Configuration.ConfigurationManager.AppSettings["TWILIO_ACCOUNT_SID"];
+                string authToken = System.Configuration.ConfigurationManager.AppSettings["TWILIO_AUTH_TOKEN"];
+                string celFromWhatsapp = System.Configuration.ConfigurationManager.AppSettings["CEL_FROM_WP"];
+
+                Utils.Log("celFrom Whatsapp " + celFromWhatsapp);
+
+                celular = "whatsapp:+521" + celular;
+
+                msg = msg.Replace("\n","");
+                msg = msg.Trim();
+                msg = msg.Replace("{{1}}", nombre);
+
+                Utils.Log("msg       " + msg);
+                Utils.Log("to Celular       " + celular);
+
+
+                TwilioClient.Init(accountSid, authToken);
+
+                System.Net.ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+                // WHATSAPP
+                var message = MessageResource.Create(
+                  body: msg,
+                  from: new Twilio.Types.PhoneNumber(celFromWhatsapp),
+              //to: new Twilio.Types.PhoneNumber("whatsapp:+5212731611855")   // Han
+              //to: new Twilio.Types.PhoneNumber("whatsapp:+5212731217386")   // Mer
+              to: new Twilio.Types.PhoneNumber(celular)
+              );
+
+
+                Utils.Log("message.Sid " + message.Sid.ToString());
+                Utils.Log("message.Status " + message.Status.ToString());
+                Utils.Log("message.ErrorMessage" + message.ErrorMessage);
+                Utils.Log("Mensaje enviado body " + message.Body);
+
+
+                return message.Sid;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log(ex.Message);
+                Utils.Log(ex.StackTrace);
+
+                return "";
+
+            }
+
+        }
     }
 
 

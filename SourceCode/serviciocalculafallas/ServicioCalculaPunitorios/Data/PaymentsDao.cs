@@ -175,9 +175,12 @@ namespace VerifyStatusPaymentsService.App_Data
             try
             {
 
-                string sql = @" INSERT INTO resumen_calculo_fallas(observaciones, fecha)
+                string sql = @" INSERT INTO resumen_calculo_fallas (observaciones, fecha)
                             VALUES (@observaciones, getdate()) ";
-                                               
+
+                Log("\nMétodo-> " +
+         System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
+
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@observaciones", observations);

@@ -174,7 +174,7 @@ const messages = {
 
         messages.idSeleccionado = id;
 
-        
+
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
         $('#panelEliminar').modal('show');
 
@@ -206,7 +206,7 @@ const messages = {
                 messages.idSeleccionado = item.IdMensaje;
 
                 $('#txtNombre').val(item.Nombre);
-                $('#comboTipoPlantilla').val(item.IdTipoPlantilla);               
+                $('#comboTipoPlantilla').val(item.IdTipoPlantilla);
                 $('#comboFrecuenciaEnvio').val(item.IdFrecuenciaEnvio);
                 tinymce.get("contenido").setContent(item.Contenido);
 
@@ -234,7 +234,7 @@ const messages = {
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
         $('#spnTituloForm').text('Nuevo');
-             
+
 
 
 
@@ -269,13 +269,13 @@ const messages = {
 
             if (!hasErrors) {
 
-                let item =  {};
+                let item = {};
                 item.IdMensaje = messages.idSeleccionado;
-                item.Nombre = $('#txtNombre').val();                
+                item.Nombre = $('#txtNombre').val();
                 item.Contenido = tinymce.get("contenido").getContent();
                 item.IdTipoPlantilla = $('#comboTipoPlantilla').val();
                 item.IdFrecuenciaEnvio = $('#comboFrecuenciaEnvio').val();
-                
+
 
                 let params = {};
                 params.path = window.location.hostname;
@@ -369,6 +369,89 @@ const messages = {
 
                     }
 
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                }
+
+            });
+
+        });
+
+
+        $('#btnEnviarS').on('click', (e) => {
+            e.preventDefault();
+
+            console.log('Enviar sms');
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.id = messages.idSeleccionado;
+            params.msg = tinymce.get("contenido").getContent().replace(/<[^>]*>?/gm, '');
+            params = JSON.stringify(params);
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Config/Messages.aspx/SendMessageSMS",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+
+                    console.log(msg);
+
+
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                }
+
+            });
+
+        });
+
+        $('#btnEnviarW').on('click', (e) => {
+            e.preventDefault();
+
+            console.log('Enviar SendMessageWhatsapp ');
+
+            let numCel = $('#txtCelular').val();
+            if (!numCel) {
+                utils.toast(mensajesAlertas.errorCelular, 'error');
+
+                return;
+            }
+
+            if (numCel.length < 10) {
+                utils.toast(mensajesAlertas.errorCelular, 'error');
+
+                return;
+            }
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.id = messages.idSeleccionado;
+            params.celular = numCel;
+            params.nombre = "Juan Perez";
+            //params.msg = tinymce.get("contenido").getContent();
+            params.msg = tinymce.activeEditor.getContent({ format: 'text' });
+            params = JSON.stringify(params);
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Config/Messages.aspx/SendMessageWhatsapp",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+
+                    console.log(msg);
+                    if (msg.d !== '') {
+
+                        utils.toast(mensajesAlertas.exitoEnviarMsgWthats, 'ok');
+
+                    }
 
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log(textStatus + ": " + XMLHttpRequest.responseText);

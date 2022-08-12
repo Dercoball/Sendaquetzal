@@ -25,8 +25,8 @@ namespace VerifyStatusPaymentsService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("server=den1.mssql7.gear.host;database=sistemacobranzas;uid=sistemacobranzas;pwd=S" +
-            "Q22@v1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("server=den1.mssql8.gear.host;database=sendaquetzalv1;uid=sendaquetzalv1;pwd=Ev3Q_" +
+            "?6rQN14")]
         public string connection {
             get {
                 return ((string)(this["connection"]));

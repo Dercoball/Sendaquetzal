@@ -48,8 +48,9 @@ var mensajesAlertas = {
     errorTipoArchivo: 'Debe ingregar un archivo de tipo csv.',
     errorSeleccionarCampo: 'Debe seleccionar un campo.',
     exitoEntregar: 'Se registró la entrega de combustible correctamente.',
-    exitoAprobar: 'Se aprobó la solicitud de combustible correctamente.'
-
+    exitoAprobar: 'Se aprobó la solicitud de combustible correctamente.',
+    errorCelular:'Debe ingresar el número de celular de 10 dígitos.',
+    exitoEnviarMsgWthats: 'El mensaje ha sido enviado correctamente. Para esta prueba el placeHolder {{1}} ha sido reemplazado por "Juan Perez"'
 
 };
 

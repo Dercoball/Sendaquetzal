@@ -196,3 +196,10 @@ C:\Users\Aldo\Documents\WORK\PrestamosApp\SendaQuetzal\SourceCode\plataformawebp
 C:\Users\Aldo\Documents\WORK\PrestamosApp\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\ApprestarSendaQuetzal.csproj.CopyComplete
 C:\Users\Aldo\Documents\WORK\PrestamosApp\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\ApprestarSendaQuetzal.dll
 C:\Users\Aldo\Documents\WORK\PrestamosApp\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\ApprestarSendaQuetzal.pdb
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\Microsoft.IdentityModel.Logging.dll
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\Microsoft.IdentityModel.Tokens.dll
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\System.IdentityModel.Tokens.Jwt.dll
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\Twilio.dll
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\Microsoft.IdentityModel.Tokens.xml
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\System.IdentityModel.Tokens.Jwt.xml
+C:\test\apprestarsendaquetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\bin\Twilio.xml

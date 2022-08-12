@@ -22,5 +22,41 @@ namespace Plataforma.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ACb26cb3c953576c6010f10abfdb1eb760")]
+        public string TWILIO_ACCOUNT_SID {
+            get {
+                return ((string)(this["TWILIO_ACCOUNT_SID"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("773ea1d00672c9ee6b6d7d538beb66e5")]
+        public string TOKEN {
+            get {
+                return ((string)(this["TOKEN"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("773ea1d00672c9ee6b6d7d538beb66e5")]
+        public string TWILIO_AUTH_TOKEN {
+            get {
+                return ((string)(this["TWILIO_AUTH_TOKEN"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("whatsapp:+12054305280")]
+        public string CEL_FROM_WP {
+            get {
+                return ((string)(this["CEL_FROM_WP"]));
+            }
+        }
     }
 }

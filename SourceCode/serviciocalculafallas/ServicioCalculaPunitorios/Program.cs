@@ -71,79 +71,81 @@ namespace VerifyStatusPaymentsService
 
                 List<Pago> paymentsFoundUpdate = new List<Pago>();
                 List<Pago> paymentsLastWeekFoundUpdate = new List<Pago>();
+                
+                dao.InsertLog("Observaciones de ejemplo", conn, transaction);
 
-                foreach (var itemPayment in payments)
-                {
+                //foreach (var itemPayment in payments)
+                //{
 
-                    Log("\n\n\n...........................................Inicio de análisis del pago :" + itemPayment.IdPago);
+                //    Log("\n\n\n...........................................Inicio de análisis del pago :" + itemPayment.IdPago);
 
-                    // Obtener el cliente
-                    Cliente customer = itemPayment.cliente;
-                    Log("IdCliente     : " + customer.IdCliente);
-                    Log("Cliente     : " + customer.NombreCompleto);
-                    Log("IdTipoCliente : " + customer.IdTipoCliente);
-                    Log("IdTipoCliente : " + customer.IdTipoCliente);
-
-
-                    //  Traer la configuración del tipo de clienta para cada pago
-                    TipoCliente configCliente = dao.GetCustomerTypeById(customer.IdTipoCliente.ToString(), conn, transaction);
-                    Log("TipoCliente : " + configCliente.NombreTipoCliente);
+                //    // Obtener el cliente
+                //    Cliente customer = itemPayment.cliente;
+                //    Log("IdCliente     : " + customer.IdCliente);
+                //    Log("Cliente     : " + customer.NombreCompleto);
+                //    Log("IdTipoCliente : " + customer.IdTipoCliente);
+                //    Log("IdTipoCliente : " + customer.IdTipoCliente);
 
 
-                    //  Ver cuales son sus días de pago
-                    Log("\n\nDias de pago .........: ");
-                    Log("FechaPagoLunes : " + configCliente.FechaPagoLunes);
-                    Log("FechaPagoMartes : " + configCliente.FechaPagoMartes);
-                    Log("FechaPagoMiercoles : " + configCliente.FechaPagoMiercoles);
-                    Log("FechaPagoJueves : " + configCliente.FechaPagoJueves);
-                    Log("FechaPagoViernes : " + configCliente.FechaPagoViernes);
-                    Log("FechaPagoSabado : " + configCliente.FechaPagoSabado);
-                    Log("FechaPagoDomingo : " + configCliente.FechaPagoDomingo);
-                    Log("\n");
-
-                    int[] dias = new int[7];
-                    dias[0] = configCliente.FechaPagoLunes == 1 ? 1 : 0;
-                    dias[1] = configCliente.FechaPagoMartes == 1 ? 2 : 0;
-                    dias[2] = configCliente.FechaPagoMiercoles == 1 ? 3 : 0;
-                    dias[3] = configCliente.FechaPagoJueves == 1 ? 4 : 0;
-                    dias[4] = configCliente.FechaPagoViernes == 1 ? 5 : 0;
-                    dias[5] = configCliente.FechaPagoSabado == 1 ? 6 : 0;
-                    dias[6] = configCliente.FechaPagoDomingo == 1 ? 7 : 0;
-
-                    int maxday = dias[0];
-                    for (int i = 1; i < dias.Length; i++)
-                    {
-                        if (dias[i] > maxday)
-                        {
-                            maxday = dias[i];
-                        }
-
-                    }
-
-                    Log("Día máximo de pago: (1 = lunes, ... 7 = domingo) " + maxday);
-
-                    if (dayOfWeek > maxday)
-                    {
-                        //  
-                        Log("\nEn este punto este pago se encuentra en Falla ... ");
-
-                        int rowsAffected = dao.UpdatePymentStatus(itemPayment.IdPago, Pago.STATUS_PAGO_FALLA, conn, transaction);
-
-                        Log("Filas modificadas en Cambio de status a Falla : " + rowsAffected);
-
-                    }
-                    else
-                    {
-                        Log("El pago " + itemPayment.IdPago + " aún se encuentra con status de pago pendiente...");
-                    }
+                //    //  Traer la configuración del tipo de clienta para cada pago
+                //    TipoCliente configCliente = dao.GetCustomerTypeById(customer.IdTipoCliente.ToString(), conn, transaction);
+                //    Log("TipoCliente : " + configCliente.NombreTipoCliente);
 
 
+                //    //  Ver cuales son sus días de pago
+                //    Log("\n\nDias de pago .........: ");
+                //    Log("FechaPagoLunes : " + configCliente.FechaPagoLunes);
+                //    Log("FechaPagoMartes : " + configCliente.FechaPagoMartes);
+                //    Log("FechaPagoMiercoles : " + configCliente.FechaPagoMiercoles);
+                //    Log("FechaPagoJueves : " + configCliente.FechaPagoJueves);
+                //    Log("FechaPagoViernes : " + configCliente.FechaPagoViernes);
+                //    Log("FechaPagoSabado : " + configCliente.FechaPagoSabado);
+                //    Log("FechaPagoDomingo : " + configCliente.FechaPagoDomingo);
+                //    Log("\n");
 
-                }
+                //    int[] dias = new int[7];
+                //    dias[0] = configCliente.FechaPagoLunes == 1 ? 1 : 0;
+                //    dias[1] = configCliente.FechaPagoMartes == 1 ? 2 : 0;
+                //    dias[2] = configCliente.FechaPagoMiercoles == 1 ? 3 : 0;
+                //    dias[3] = configCliente.FechaPagoJueves == 1 ? 4 : 0;
+                //    dias[4] = configCliente.FechaPagoViernes == 1 ? 5 : 0;
+                //    dias[5] = configCliente.FechaPagoSabado == 1 ? 6 : 0;
+                //    dias[6] = configCliente.FechaPagoDomingo == 1 ? 7 : 0;
+
+                //    int maxday = dias[0];
+                //    for (int i = 1; i < dias.Length; i++)
+                //    {
+                //        if (dias[i] > maxday)
+                //        {
+                //            maxday = dias[i];
+                //        }
+
+                //    }
+
+                //    Log("Día máximo de pago: (1 = lunes, ... 7 = domingo) " + maxday);
+
+                //    if (dayOfWeek > maxday)
+                //    {
+                //        //  
+                //        Log("\nEn este punto este pago se encuentra en Falla ... ");
+
+                //        int rowsAffected = dao.UpdatePymentStatus(itemPayment.IdPago, Pago.STATUS_PAGO_FALLA, conn, transaction);
+
+                //        Log("Filas modificadas en Cambio de status a Falla : " + rowsAffected);
+
+                //    }
+                //    else
+                //    {
+                //        Log("El pago " + itemPayment.IdPago + " aún se encuentra con status de pago pendiente...");
+                //    }
+
+
+
+                //}
 
 
                 transaction.Commit();
-
+ 
 
             }
             catch (Exception ex)
@@ -159,6 +161,9 @@ namespace VerifyStatusPaymentsService
             finally
             {
                 conn.Close();
+                
+                Environment.Exit(0);
+
             }
 
 

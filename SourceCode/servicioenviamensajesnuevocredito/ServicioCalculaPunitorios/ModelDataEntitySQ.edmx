@@ -1,0 +1,2637 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="sendaquetzalv1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="abono_pago">
+          <Key>
+            <PropertyRef Name="id_abono_pago" />
+          </Key>
+          <Property Name="id_abono_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_pago" Type="int" />
+          <Property Name="monto" Type="float" />
+          <Property Name="fecha" Type="date" />
+          <Property Name="id_usuario" Type="int" />
+        </EntityType>
+        <EntityType Name="activo">
+          <Key>
+            <PropertyRef Name="id_activo" />
+          </Key>
+          <Property Name="id_activo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="tipo" Type="varchar" MaxLength="250" />
+          <Property Name="descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="numero_serie" Type="varchar" MaxLength="100" />
+          <Property Name="costo" Type="float" />
+          <Property Name="comentarios" Type="varchar" MaxLength="250" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="id_categoria" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'sendaquetzalv1.dbo.bitacora_login' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="bitacora_login">
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="fecha_hora" Type="datetime" />
+          <Property Name="comentario" Type="varchar" MaxLength="300" />
+          <Property Name="ip" Type="varchar" MaxLength="25" />
+          <Property Name="browser" Type="varchar" MaxLength="25" />
+        </EntityType>-->
+        <EntityType Name="calendario">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="200" />
+          <Property Name="fecha" Type="date" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="categoria">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="200" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="es_material_entrega" Type="int" />
+        </EntityType>
+        <EntityType Name="cliente">
+          <Key>
+            <PropertyRef Name="id_cliente" />
+          </Key>
+          <Property Name="id_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="curp" Type="varchar" MaxLength="100" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="primer_apellido" Type="varchar" MaxLength="100" />
+          <Property Name="segundo_apellido" Type="varchar" MaxLength="100" />
+          <Property Name="ocupacion" Type="varchar" MaxLength="200" />
+          <Property Name="telefono" Type="varchar" MaxLength="100" />
+          <Property Name="id_tipo_cliente" Type="int" />
+          <Property Name="curp_aval" Type="varchar" MaxLength="100" />
+          <Property Name="nombre_aval" Type="varchar" MaxLength="100" />
+          <Property Name="primer_apellido_aval" Type="varchar" MaxLength="100" />
+          <Property Name="segundo_apellido_aval" Type="varchar" MaxLength="100" />
+          <Property Name="ocupacion_aval" Type="varchar" MaxLength="200" />
+          <Property Name="telefono_aval" Type="varchar" MaxLength="100" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="id_status_cliente" Type="int" />
+          <Property Name="nota_fotografia" Type="varchar" MaxLength="500" />
+          <Property Name="nota_fotografia_aval" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="comision">
+          <Key>
+            <PropertyRef Name="id_comision" />
+          </Key>
+          <Property Name="id_comision" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_modulo" Type="int" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="porcentaje" Type="float" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+          <Property Name="nivel" Type="int" />
+        </EntityType>
+        <EntityType Name="configuracion">
+          <Key>
+            <PropertyRef Name="id_configuracion" />
+          </Key>
+          <Property Name="id_configuracion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="eliminado" Type="bit" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="fecha_ultima_modificacion" Type="datetime" />
+          <Property Name="valor" Type="float" />
+          <Property Name="ValorCadena" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="dias_paro">
+          <Key>
+            <PropertyRef Name="id_dias_paro" />
+          </Key>
+          <Property Name="id_dias_paro" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nota" Type="varchar" MaxLength="100" />
+          <Property Name="fecha_inicio" Type="date" />
+          <Property Name="fecha_fin" Type="date" />
+          <Property Name="id_tipo_paro" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="direccion">
+          <Key>
+            <PropertyRef Name="id_direccion" />
+          </Key>
+          <Property Name="id_direccion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="id_aval" Type="int" />
+          <Property Name="calleyno" Type="varchar" MaxLength="100" />
+          <Property Name="colonia" Type="varchar" MaxLength="100" />
+          <Property Name="municipio" Type="varchar" MaxLength="100" />
+          <Property Name="estado" Type="varchar" MaxLength="100" />
+          <Property Name="telefono" Type="varchar" MaxLength="50" />
+          <Property Name="codigo_postal" Type="varchar" MaxLength="50" />
+          <Property Name="id_municipio" Type="int" />
+          <Property Name="id_estado" Type="int" />
+          <Property Name="activo" Type="int" />
+          <Property Name="aval" Type="int" />
+          <Property Name="direccion_trabajo" Type="varchar" MaxLength="250" />
+          <Property Name="id_cliente" Type="int" />
+          <Property Name="ubicacion" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="documento">
+          <Key>
+            <PropertyRef Name="id_documento_colaborador" />
+          </Key>
+          <Property Name="id_documento_colaborador" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="250" />
+          <Property Name="id_tipo_documento" Type="int" />
+          <Property Name="contenido" Type="varchar(max)" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="id_aval" Type="int" />
+          <Property Name="url" Type="varchar" MaxLength="150" />
+          <Property Name="fecha_ingreso" Type="date" />
+          <Property Name="id_cliente" Type="int" />
+          <Property Name="extension" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="empleado">
+          <Key>
+            <PropertyRef Name="id_empleado" />
+          </Key>
+          <Property Name="id_empleado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_tipo_usuario" Type="int" />
+          <Property Name="id_comision_inicial" Type="int" />
+          <Property Name="id_posicion" Type="int" />
+          <Property Name="id_plaza" Type="int" />
+          <Property Name="curp" Type="varchar" MaxLength="20" />
+          <Property Name="email" Type="varchar" MaxLength="50" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="primer_apellido" Type="varchar" MaxLength="100" />
+          <Property Name="segundo_apellido" Type="varchar" MaxLength="100" />
+          <Property Name="telefono" Type="varchar" MaxLength="50" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="fecha_nacimiento" Type="date" />
+          <Property Name="activo" Type="int" />
+          <Property Name="id_supervisor" Type="int" />
+          <Property Name="id_ejecutivo" Type="int" />
+          <Property Name="fecha_ingreso" Type="date" />
+          <Property Name="nombre_aval" Type="varchar" MaxLength="100" />
+          <Property Name="primer_apellido_aval" Type="varchar" MaxLength="100" />
+          <Property Name="segundo_apellido_aval" Type="varchar" MaxLength="100" />
+          <Property Name="curp_aval" Type="varchar" MaxLength="100" />
+          <Property Name="telefono_aval" Type="varchar" MaxLength="50" />
+          <Property Name="monto_limite_inicial" Type="float" />
+          <Property Name="id_coordinador" Type="int" />
+        </EntityType>
+        <EntityType Name="evaluacion_colaborador">
+          <Key>
+            <PropertyRef Name="id_evaluacion_colaborador" />
+          </Key>
+          <Property Name="id_evaluacion_colaborador" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="fecha_modificacion" Type="datetime" />
+          <Property Name="id_comision" Type="int" />
+          <Property Name="calificacion" Type="int" />
+        </EntityType>
+        <EntityType Name="forma_pago">
+          <Key>
+            <PropertyRef Name="id_forma_pago" />
+          </Key>
+          <Property Name="id_forma_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.frecuencia_envio_mensaje' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="frecuencia_envio_mensaje">
+          <Key>
+            <PropertyRef Name="id_frecuencia_envio_mensaje" />
+          </Key>
+          <Property Name="id_frecuencia_envio_mensaje" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="garantia_prestamo">
+          <Key>
+            <PropertyRef Name="id_garantia_prestamo" />
+          </Key>
+          <Property Name="id_garantia_prestamo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_prestamo" Type="int" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="numero_serie" Type="varchar" MaxLength="100" />
+          <Property Name="costo" Type="float" />
+          <Property Name="fotografia" Type="varchar(max)" />
+          <Property Name="fecha_registro" Type="datetime" />
+          <Property Name="aval" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="gasto">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="concepto" Type="varchar" MaxLength="150" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="monto" Type="float" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="id_empleado" Type="int" />
+        </EntityType>
+        <EntityType Name="historial_cliente">
+          <Key>
+            <PropertyRef Name="id_historial_cliente" />
+          </Key>
+          <Property Name="id_historial_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_cliente" Type="int" />
+          <Property Name="id_semana" Type="int" />
+          <Property Name="atiempo" Type="int" />
+          <Property Name="abonado" Type="int" />
+          <Property Name="falla" Type="int" />
+        </EntityType>
+        <EntityType Name="inversion">
+          <Key>
+            <PropertyRef Name="id_inversion" />
+          </Key>
+          <Property Name="id_inversion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="monto" Type="float" />
+          <Property Name="fecha" Type="date" />
+          <Property Name="id_inversionista" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="comprobante" Type="varchar(max)" />
+          <Property Name="id_periodo" Type="int" />
+          <Property Name="utilidades" Type="int" />
+          <Property Name="retiro_efectuado" Type="int" />
+        </EntityType>
+        <EntityType Name="inversion_movimiento">
+          <Key>
+            <PropertyRef Name="id_registro_cambios_inversion" />
+          </Key>
+          <Property Name="id_registro_cambios_inversion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="id_inversion_total" Type="int" />
+          <Property Name="id_retiro" Type="int" />
+          <Property Name="id_tipo_movimiento_inversion" Type="int" />
+          <Property Name="monto" Type="float" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="balance" Type="float" />
+        </EntityType>
+        <EntityType Name="inversion_retiro">
+          <Key>
+            <PropertyRef Name="id_inversion_retiro" />
+          </Key>
+          <Property Name="id_inversion_retiro" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="id_inversion" Type="int" />
+          <Property Name="comprobante" Type="varchar(max)" />
+          <Property Name="id_tipo_movimiento_inversion" Type="int" />
+          <Property Name="monto" Type="float" />
+          <Property Name="id_usuario" Type="int" />
+        </EntityType>
+        <EntityType Name="inversion_total">
+          <Key>
+            <PropertyRef Name="id_inversion_total" />
+          </Key>
+          <Property Name="id_inversion_total" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha_modificacion" Type="datetime" />
+          <Property Name="monto_total" Type="float" />
+          <Property Name="id_inversionista" Type="int" />
+          <Property Name="fecha_creacion" Type="datetime" />
+        </EntityType>
+        <EntityType Name="inversionista">
+          <Key>
+            <PropertyRef Name="id_inversionista" />
+          </Key>
+          <Property Name="id_inversionista" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="250" />
+          <Property Name="razon_social" Type="varchar" MaxLength="250" />
+          <Property Name="rfc" Type="varchar" MaxLength="250" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="porcentaje_interes_anual" Type="float" />
+        </EntityType>
+        <EntityType Name="log_cambios">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="descripcion" Type="varchar" MaxLength="1500" />
+          <Property Name="fecha_hora" Type="datetime" />
+          <Property Name="modulo" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="material_entrega">
+          <Key>
+            <PropertyRef Name="id_material_entrega" />
+          </Key>
+          <Property Name="id_material_entrega" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="material_entregado" Type="varchar" MaxLength="250" />
+          <Property Name="cantidad" Type="float" />
+          <Property Name="costo" Type="float" />
+          <Property Name="fecha" Type="date" />
+          <Property Name="id_categoria" Type="int" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="modulo">
+          <Key>
+            <PropertyRef Name="id_modulo" />
+          </Key>
+          <Property Name="id_modulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="pago">
+          <Key>
+            <PropertyRef Name="id_pago" />
+          </Key>
+          <Property Name="id_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_prestamo" Type="int" />
+          <Property Name="monto" Type="float" />
+          <Property Name="saldo" Type="float" />
+          <Property Name="fecha" Type="date" />
+          <Property Name="id_status_pago" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="fecha_registro_pago" Type="date" />
+          <Property Name="numero_semana" Type="int" />
+          <Property Name="pagado" Type="float" />
+          <Property Name="semana_extra" Type="int" />
+          <Property Name="pagado_con_adelanto" Type="int" />
+          <Property Name="id_prestamo_adelanto" Type="int" />
+          <Property Name="es_recuperado" Type="int" />
+        </EntityType>
+        <EntityType Name="periodo">
+          <Key>
+            <PropertyRef Name="id_periodo" />
+          </Key>
+          <Property Name="id_periodo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="valor_periodo" Type="int" />
+        </EntityType>
+        <EntityType Name="permisos">
+          <Key>
+            <PropertyRef Name="id_permiso" />
+          </Key>
+          <Property Name="id_permiso" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="200" />
+          <Property Name="tipo_permiso" Type="int" />
+          <Property Name="activo" Type="bit" />
+          <Property Name="nombre_interno" Type="varchar" MaxLength="200" />
+          <Property Name="nombre_recurso" Type="varchar" MaxLength="100" />
+          <Property Name="id_tipo_usuario" Type="int" />
+        </EntityType>
+        <EntityType Name="permisos_tipo_usuario">
+          <Key>
+            <PropertyRef Name="id_tipo_usuario" />
+            <PropertyRef Name="id_permiso" />
+          </Key>
+          <Property Name="id_tipo_usuario" Type="int" Nullable="false" />
+          <Property Name="id_permiso" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'sendaquetzalv1.dbo.permisos_usuario' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="permisos_usuario">
+          <Property Name="id_permiso" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+        </EntityType>-->
+        <EntityType Name="plantilla">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="contenido" Type="text" />
+          <Property Name="id_tipo_plantilla" Type="int" />
+          <Property Name="id_frecuencia_envio_mensaje" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="plaza">
+          <Key>
+            <PropertyRef Name="id_plaza" />
+          </Key>
+          <Property Name="id_plaza" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.posicion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="posicion">
+          <Key>
+            <PropertyRef Name="id_posicion" />
+          </Key>
+          <Property Name="id_posicion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="pagina_entrada" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="prestamo">
+          <Key>
+            <PropertyRef Name="id_prestamo" />
+          </Key>
+          <Property Name="id_prestamo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha_solicitud" Type="date" />
+          <Property Name="monto" Type="float" />
+          <Property Name="id_status_prestamo" Type="int" />
+          <Property Name="id_cliente" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="notas_generales" Type="varchar" MaxLength="500" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="activo" Type="int" />
+          <Property Name="fecha_aprobacion" Type="datetime" />
+          <Property Name="monto_con_interes" Type="float" />
+        </EntityType>
+        <EntityType Name="regla_evaluacion_modulo">
+          <Key>
+            <PropertyRef Name="id_regla_evaluacion_modulo" />
+          </Key>
+          <Property Name="id_regla_evaluacion_modulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="descripcion" Type="varchar" MaxLength="150" />
+          <Property Name="ponderacion" Type="int" />
+          <Property Name="id_comision" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'sendaquetzalv1.dbo.relacion_evaluacion_colaborador_reglas' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="relacion_evaluacion_colaborador_reglas">
+          <Property Name="id_evaluacion_colaborador" Type="int" />
+          <Property Name="id_regla_evaluacion" Type="int" />
+          <Property Name="id_comision" Type="int" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="ponderacion" Type="int" />
+          <Property Name="completado" Type="int" />
+        </EntityType>-->
+        <EntityType Name="relacion_prestamo_aprobacion">
+          <Key>
+            <PropertyRef Name="id_historial_aprobacion" />
+          </Key>
+          <Property Name="id_historial_aprobacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_prestamo" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="id_empleado" Type="int" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="id_supervisor" Type="int" />
+          <Property Name="id_ejecutivo" Type="int" />
+          <Property Name="notas_aval" Type="varchar" MaxLength="500" />
+          <Property Name="notas_cliente" Type="varchar" MaxLength="500" />
+          <Property Name="id_posicion" Type="int" />
+          <Property Name="status_aprobacion" Type="varchar" MaxLength="50" />
+          <Property Name="notas_generales" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="reporte">
+          <Key>
+            <PropertyRef Name="id_reporte" />
+          </Key>
+          <Property Name="id_reporte" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="contenido" Type="varchar(max)" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="id_tipo_reporte" Type="int" />
+        </EntityType>
+        <EntityType Name="resumen_calculo_fallas">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="observaciones" Type="varchar" MaxLength="1500" />
+          <Property Name="fecha" Type="datetime" />
+        </EntityType>
+        <EntityType Name="solicitud_aumento_credito">
+          <Key>
+            <PropertyRef Name="id_solicitud_aumento_credito" />
+          </Key>
+          <Property Name="id_solicitud_aumento_credito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_prestamo" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="id_director" Type="int" />
+          <Property Name="id_status_solicitud_aumento_credito" Type="int" />
+        </EntityType>
+        <EntityType Name="status_cliente">
+          <Key>
+            <PropertyRef Name="id_status_cliente" />
+          </Key>
+          <Property Name="id_status_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+          <Property Name="color" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="status_pago">
+          <Key>
+            <PropertyRef Name="id_status_pago" />
+          </Key>
+          <Property Name="id_status_pago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="250" />
+          <Property Name="color" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="status_prestamo">
+          <Key>
+            <PropertyRef Name="id_status_prestamo" />
+          </Key>
+          <Property Name="id_status_prestamo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+          <Property Name="color" Type="varchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="status_solicitud_aumento_credito">
+          <Key>
+            <PropertyRef Name="id_status_solicitud_aumento_credito" />
+          </Key>
+          <Property Name="id_status_solicitud_aumento_credito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="tipo_cliente">
+          <Key>
+            <PropertyRef Name="id_tipo_cliente" />
+          </Key>
+          <Property Name="id_tipo_cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="tipo_cliente" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="prestamo_inicial_maximo" Type="float" />
+          <Property Name="porcentaje_semanal" Type="float" />
+          <Property Name="semanas_a_prestar" Type="int" />
+          <Property Name="garantias_por_monto" Type="float" />
+          <Property Name="fechas_pago" Type="varchar" MaxLength="100" />
+          <Property Name="cantidad_para_renovar" Type="float" />
+          <Property Name="semana_extra" Type="int" />
+          <Property Name="eliminado" Type="int" />
+          <Property Name="fecha_pago_lunes" Type="int" />
+          <Property Name="fecha_pago_martes" Type="int" />
+          <Property Name="fecha_pago_miercoles" Type="int" />
+          <Property Name="fecha_pago_jueves" Type="int" />
+          <Property Name="fecha_pago_viernes" Type="int" />
+          <Property Name="fecha_pago_sabado" Type="int" />
+          <Property Name="fecha_pago_domingo" Type="int" />
+        </EntityType>
+        <EntityType Name="tipo_documento">
+          <Key>
+            <PropertyRef Name="id_tipo_documento" />
+          </Key>
+          <Property Name="id_tipo_documento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="tipo_movimiento_inversion">
+          <Key>
+            <PropertyRef Name="id_tipo_movimiento_inversion" />
+          </Key>
+          <Property Name="id_tipo_movimiento_inversion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="tipo_paro">
+          <Key>
+            <PropertyRef Name="id_tipo_paro" />
+          </Key>
+          <Property Name="id_tipo_paro" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.tipo_plantilla' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="tipo_plantilla">
+          <Key>
+            <PropertyRef Name="id_tipo_plantilla" />
+          </Key>
+          <Property Name="id_tipo_plantilla" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="100" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="id_usuario" />
+          </Key>
+          <Property Name="id_usuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_tipo_usuario" Type="int" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+          <Property Name="login" Type="varchar" MaxLength="50" />
+          <Property Name="password" Type="varchar" MaxLength="50" />
+          <Property Name="email" Type="varchar" MaxLength="50" />
+          <Property Name="telefono" Type="varchar" MaxLength="50" />
+          <Property Name="eliminado" Type="bit" />
+          <Property Name="id_empleado" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.web_acercade' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="web_acercade">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="info" Type="text" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.web_politicas_privacidad' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="web_politicas_privacidad">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="info" Type="text" />
+        </EntityType>
+        <EntityType Name="web_pregunta_frecuente">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pregunta" Type="varchar" MaxLength="250" />
+          <Property Name="respuesta" Type="varchar" MaxLength="500" />
+          <Property Name="ultima_modificacion" Type="datetime" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.web_terminos_condiciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="web_terminos_condiciones">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="info" Type="text" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'sendaquetzalv1.dbo.web_tutorial' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="web_tutorial">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="titulo" Type="varchar" MaxLength="100" />
+          <Property Name="url_video" Type="varchar" MaxLength="250" />
+          <Property Name="activo" Type="int" />
+          <Property Name="eliminado" Type="int" />
+        </EntityType>
+        <Association Name="activo_FK">
+          <End Role="empleado" Type="Self.empleado" Multiplicity="0..1" />
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empleado">
+              <PropertyRef Name="id_empleado" />
+            </Principal>
+            <Dependent Role="activo">
+              <PropertyRef Name="id_empleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activo_FK2">
+          <End Role="categoria" Type="Self.categoria" Multiplicity="0..1" />
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categoria">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activo">
+              <PropertyRef Name="id_categoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="cliente_FK">
+          <End Role="tipo_cliente" Type="Self.tipo_cliente" Multiplicity="0..1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tipo_cliente">
+              <PropertyRef Name="id_tipo_cliente" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="id_tipo_cliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="comision_FK">
+          <End Role="modulo" Type="Self.modulo" Multiplicity="0..1" />
+          <End Role="comision" Type="Self.comision" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="modulo">
+              <PropertyRef Name="id_modulo" />
+            </Principal>
+            <Dependent Role="comision">
+              <PropertyRef Name="id_modulo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="dias_paro_FK">
+          <End Role="tipo_paro" Type="Self.tipo_paro" Multiplicity="0..1" />
+          <End Role="dias_paro" Type="Self.dias_paro" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tipo_paro">
+              <PropertyRef Name="id_tipo_paro" />
+            </Principal>
+            <Dependent Role="dias_paro">
+              <PropertyRef Name="id_tipo_paro" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <!--Errors Found During Generation:
+error 6004: The table 'sendaquetzalv1.dbo.permisos_usuario' is referenced by a relationship, but cannot be found.
+        <Association Name="FK_permisosusuario_permisos" />-->
+        <!--Errors Found During Generation:
+error 6004: The table 'sendaquetzalv1.dbo.permisos_usuario' is referenced by a relationship, but cannot be found.
+        <Association Name="FK_permisosusuario_usuario" />-->
+        <Association Name="inversion_FK">
+          <End Role="inversionista" Type="Self.inversionista" Multiplicity="0..1" />
+          <End Role="inversion" Type="Self.inversion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="inversionista">
+              <PropertyRef Name="id_inversionista" />
+            </Principal>
+            <Dependent Role="inversion">
+              <PropertyRef Name="id_inversionista" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="inversion_FK2">
+          <End Role="periodo" Type="Self.periodo" Multiplicity="0..1" />
+          <End Role="inversion" Type="Self.inversion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="periodo">
+              <PropertyRef Name="id_periodo" />
+            </Principal>
+            <Dependent Role="inversion">
+              <PropertyRef Name="id_periodo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="material_entrega_FK">
+          <End Role="empleado" Type="Self.empleado" Multiplicity="0..1" />
+          <End Role="material_entrega" Type="Self.material_entrega" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empleado">
+              <PropertyRef Name="id_empleado" />
+            </Principal>
+            <Dependent Role="material_entrega">
+              <PropertyRef Name="id_empleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="material_entrega_FK_1">
+          <End Role="categoria" Type="Self.categoria" Multiplicity="0..1" />
+          <End Role="material_entrega" Type="Self.material_entrega" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categoria">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="material_entrega">
+              <PropertyRef Name="id_categoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="prestamo_FK">
+          <End Role="cliente" Type="Self.cliente" Multiplicity="0..1" />
+          <End Role="prestamo" Type="Self.prestamo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="cliente">
+              <PropertyRef Name="id_cliente" />
+            </Principal>
+            <Dependent Role="prestamo">
+              <PropertyRef Name="id_cliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="prestamo_statusprestamoFK">
+          <End Role="status_prestamo" Type="Self.status_prestamo" Multiplicity="0..1" />
+          <End Role="prestamo" Type="Self.prestamo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="status_prestamo">
+              <PropertyRef Name="id_status_prestamo" />
+            </Principal>
+            <Dependent Role="prestamo">
+              <PropertyRef Name="id_status_prestamo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="solicitudaumentocredito_prestamo_FK">
+          <End Role="prestamo" Type="Self.prestamo" Multiplicity="0..1" />
+          <End Role="solicitud_aumento_credito" Type="Self.solicitud_aumento_credito" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="prestamo">
+              <PropertyRef Name="id_prestamo" />
+            </Principal>
+            <Dependent Role="solicitud_aumento_credito">
+              <PropertyRef Name="id_prestamo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="solicitudaumentocredito_status_FK">
+          <End Role="status_solicitud_aumento_credito" Type="Self.status_solicitud_aumento_credito" Multiplicity="0..1" />
+          <End Role="solicitud_aumento_credito" Type="Self.solicitud_aumento_credito" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="status_solicitud_aumento_credito">
+              <PropertyRef Name="id_status_solicitud_aumento_credito" />
+            </Principal>
+            <Dependent Role="solicitud_aumento_credito">
+              <PropertyRef Name="id_status_solicitud_aumento_credito" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="usuario_FK">
+          <End Role="empleado" Type="Self.empleado" Multiplicity="0..1" />
+          <End Role="usuario" Type="Self.usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empleado">
+              <PropertyRef Name="id_empleado" />
+            </Principal>
+            <Dependent Role="usuario">
+              <PropertyRef Name="id_empleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="sendaquetzalv1ModelStoreContainer">
+          <EntitySet Name="abono_pago" EntityType="Self.abono_pago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="activo" EntityType="Self.activo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="calendario" EntityType="Self.calendario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="categoria" EntityType="Self.categoria" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="cliente" EntityType="Self.cliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="comision" EntityType="Self.comision" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="configuracion" EntityType="Self.configuracion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="dias_paro" EntityType="Self.dias_paro" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="direccion" EntityType="Self.direccion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="documento" EntityType="Self.documento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="empleado" EntityType="Self.empleado" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="evaluacion_colaborador" EntityType="Self.evaluacion_colaborador" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="forma_pago" EntityType="Self.forma_pago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="garantia_prestamo" EntityType="Self.garantia_prestamo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gasto" EntityType="Self.gasto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="historial_cliente" EntityType="Self.historial_cliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="inversion" EntityType="Self.inversion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="inversion_movimiento" EntityType="Self.inversion_movimiento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="inversion_retiro" EntityType="Self.inversion_retiro" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="inversion_total" EntityType="Self.inversion_total" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="inversionista" EntityType="Self.inversionista" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="log_cambios" EntityType="Self.log_cambios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="material_entrega" EntityType="Self.material_entrega" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="modulo" EntityType="Self.modulo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="pago" EntityType="Self.pago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="periodo" EntityType="Self.periodo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="permisos" EntityType="Self.permisos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="permisos_tipo_usuario" EntityType="Self.permisos_tipo_usuario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="plantilla" EntityType="Self.plantilla" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="plaza" EntityType="Self.plaza" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="prestamo" EntityType="Self.prestamo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="regla_evaluacion_modulo" EntityType="Self.regla_evaluacion_modulo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="relacion_prestamo_aprobacion" EntityType="Self.relacion_prestamo_aprobacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="reporte" EntityType="Self.reporte" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="resumen_calculo_fallas" EntityType="Self.resumen_calculo_fallas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="solicitud_aumento_credito" EntityType="Self.solicitud_aumento_credito" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="status_cliente" EntityType="Self.status_cliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="status_pago" EntityType="Self.status_pago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="status_prestamo" EntityType="Self.status_prestamo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="status_solicitud_aumento_credito" EntityType="Self.status_solicitud_aumento_credito" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tipo_cliente" EntityType="Self.tipo_cliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tipo_documento" EntityType="Self.tipo_documento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tipo_movimiento_inversion" EntityType="Self.tipo_movimiento_inversion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tipo_paro" EntityType="Self.tipo_paro" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="usuario" EntityType="Self.usuario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="web_pregunta_frecuente" EntityType="Self.web_pregunta_frecuente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="frecuencia_envio_mensaje" EntityType="Self.frecuencia_envio_mensaje" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[frecuencia_envio_mensaje].[id_frecuencia_envio_mensaje] AS [id_frecuencia_envio_mensaje], 
+[frecuencia_envio_mensaje].[nombre] AS [nombre], 
+[frecuencia_envio_mensaje].[eliminado] AS [eliminado]
+FROM [dbo].[frecuencia_envio_mensaje] AS [frecuencia_envio_mensaje]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="posicion" EntityType="Self.posicion" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[posicion].[id_posicion] AS [id_posicion], 
+[posicion].[nombre] AS [nombre], 
+[posicion].[activo] AS [activo], 
+[posicion].[eliminado] AS [eliminado], 
+[posicion].[pagina_entrada] AS [pagina_entrada]
+FROM [dbo].[posicion] AS [posicion]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="tipo_plantilla" EntityType="Self.tipo_plantilla" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[tipo_plantilla].[id_tipo_plantilla] AS [id_tipo_plantilla], 
+[tipo_plantilla].[nombre] AS [nombre], 
+[tipo_plantilla].[eliminado] AS [eliminado]
+FROM [dbo].[tipo_plantilla] AS [tipo_plantilla]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="web_acercade" EntityType="Self.web_acercade" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[web_acercade].[id] AS [id], 
+[web_acercade].[info] AS [info]
+FROM [dbo].[web_acercade] AS [web_acercade]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="web_politicas_privacidad" EntityType="Self.web_politicas_privacidad" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[web_politicas_privacidad].[id] AS [id], 
+[web_politicas_privacidad].[info] AS [info]
+FROM [dbo].[web_politicas_privacidad] AS [web_politicas_privacidad]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="web_terminos_condiciones" EntityType="Self.web_terminos_condiciones" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[web_terminos_condiciones].[id] AS [id], 
+[web_terminos_condiciones].[info] AS [info]
+FROM [dbo].[web_terminos_condiciones] AS [web_terminos_condiciones]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="web_tutorial" EntityType="Self.web_tutorial" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[web_tutorial].[id] AS [id], 
+[web_tutorial].[titulo] AS [titulo], 
+[web_tutorial].[url_video] AS [url_video], 
+[web_tutorial].[activo] AS [activo], 
+[web_tutorial].[eliminado] AS [eliminado]
+FROM [dbo].[web_tutorial] AS [web_tutorial]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="activo_FK" Association="Self.activo_FK">
+            <End Role="empleado" EntitySet="empleado" />
+            <End Role="activo" EntitySet="activo" />
+          </AssociationSet>
+          <AssociationSet Name="activo_FK2" Association="Self.activo_FK2">
+            <End Role="categoria" EntitySet="categoria" />
+            <End Role="activo" EntitySet="activo" />
+          </AssociationSet>
+          <AssociationSet Name="cliente_FK" Association="Self.cliente_FK">
+            <End Role="tipo_cliente" EntitySet="tipo_cliente" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="comision_FK" Association="Self.comision_FK">
+            <End Role="modulo" EntitySet="modulo" />
+            <End Role="comision" EntitySet="comision" />
+          </AssociationSet>
+          <AssociationSet Name="dias_paro_FK" Association="Self.dias_paro_FK">
+            <End Role="tipo_paro" EntitySet="tipo_paro" />
+            <End Role="dias_paro" EntitySet="dias_paro" />
+          </AssociationSet>
+          <AssociationSet Name="inversion_FK" Association="Self.inversion_FK">
+            <End Role="inversionista" EntitySet="inversionista" />
+            <End Role="inversion" EntitySet="inversion" />
+          </AssociationSet>
+          <AssociationSet Name="inversion_FK2" Association="Self.inversion_FK2">
+            <End Role="periodo" EntitySet="periodo" />
+            <End Role="inversion" EntitySet="inversion" />
+          </AssociationSet>
+          <AssociationSet Name="material_entrega_FK" Association="Self.material_entrega_FK">
+            <End Role="empleado" EntitySet="empleado" />
+            <End Role="material_entrega" EntitySet="material_entrega" />
+          </AssociationSet>
+          <AssociationSet Name="material_entrega_FK_1" Association="Self.material_entrega_FK_1">
+            <End Role="categoria" EntitySet="categoria" />
+            <End Role="material_entrega" EntitySet="material_entrega" />
+          </AssociationSet>
+          <AssociationSet Name="prestamo_FK" Association="Self.prestamo_FK">
+            <End Role="cliente" EntitySet="cliente" />
+            <End Role="prestamo" EntitySet="prestamo" />
+          </AssociationSet>
+          <AssociationSet Name="prestamo_statusprestamoFK" Association="Self.prestamo_statusprestamoFK">
+            <End Role="status_prestamo" EntitySet="status_prestamo" />
+            <End Role="prestamo" EntitySet="prestamo" />
+          </AssociationSet>
+          <AssociationSet Name="solicitudaumentocredito_prestamo_FK" Association="Self.solicitudaumentocredito_prestamo_FK">
+            <End Role="prestamo" EntitySet="prestamo" />
+            <End Role="solicitud_aumento_credito" EntitySet="solicitud_aumento_credito" />
+          </AssociationSet>
+          <AssociationSet Name="solicitudaumentocredito_status_FK" Association="Self.solicitudaumentocredito_status_FK">
+            <End Role="status_solicitud_aumento_credito" EntitySet="status_solicitud_aumento_credito" />
+            <End Role="solicitud_aumento_credito" EntitySet="solicitud_aumento_credito" />
+          </AssociationSet>
+          <AssociationSet Name="usuario_FK" Association="Self.usuario_FK">
+            <End Role="empleado" EntitySet="empleado" />
+            <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="sendaquetzalv1Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="abono_pago">
+          <Key>
+            <PropertyRef Name="id_abono_pago" />
+          </Key>
+          <Property Name="id_abono_pago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_pago" Type="Int32" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="fecha" Type="DateTime" Precision="0" />
+          <Property Name="id_usuario" Type="Int32" />
+        </EntityType>
+        <EntityType Name="activo">
+          <Key>
+            <PropertyRef Name="id_activo" />
+          </Key>
+          <Property Name="id_activo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="numero_serie" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="costo" Type="Double" />
+          <Property Name="comentarios" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="id_categoria" Type="Int32" />
+          <NavigationProperty Name="empleado" Relationship="Self.activo_FK" FromRole="activo" ToRole="empleado" />
+          <NavigationProperty Name="categoria" Relationship="Self.activo_FK2" FromRole="activo" ToRole="categoria" />
+        </EntityType>
+        <EntityType Name="calendario">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="fecha" Type="DateTime" Precision="0" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="categoria">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="es_material_entrega" Type="Int32" />
+          <NavigationProperty Name="activo1" Relationship="Self.activo_FK2" FromRole="categoria" ToRole="activo" />
+          <NavigationProperty Name="material_entrega" Relationship="Self.material_entrega_FK_1" FromRole="categoria" ToRole="material_entrega" />
+        </EntityType>
+        <EntityType Name="cliente">
+          <Key>
+            <PropertyRef Name="id_cliente" />
+          </Key>
+          <Property Name="id_cliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="curp" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="primer_apellido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="segundo_apellido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ocupacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="telefono" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="id_tipo_cliente" Type="Int32" />
+          <Property Name="curp_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="nombre_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="primer_apellido_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="segundo_apellido_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ocupacion_aval" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="telefono_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="id_status_cliente" Type="Int32" />
+          <Property Name="nota_fotografia" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="nota_fotografia_aval" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tipo_cliente" Relationship="Self.cliente_FK" FromRole="cliente" ToRole="tipo_cliente" />
+          <NavigationProperty Name="prestamo" Relationship="Self.prestamo_FK" FromRole="cliente" ToRole="prestamo" />
+        </EntityType>
+        <EntityType Name="comision">
+          <Key>
+            <PropertyRef Name="id_comision" />
+          </Key>
+          <Property Name="id_comision" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_modulo" Type="Int32" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="porcentaje" Type="Double" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="nivel" Type="Int32" />
+          <NavigationProperty Name="modulo" Relationship="Self.comision_FK" FromRole="comision" ToRole="modulo" />
+        </EntityType>
+        <EntityType Name="configuracion">
+          <Key>
+            <PropertyRef Name="id_configuracion" />
+          </Key>
+          <Property Name="id_configuracion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Boolean" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_ultima_modificacion" Type="DateTime" Precision="3" />
+          <Property Name="valor" Type="Double" />
+          <Property Name="ValorCadena" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="dias_paro">
+          <Key>
+            <PropertyRef Name="id_dias_paro" />
+          </Key>
+          <Property Name="id_dias_paro" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nota" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_inicio" Type="DateTime" Precision="0" />
+          <Property Name="fecha_fin" Type="DateTime" Precision="0" />
+          <Property Name="id_tipo_paro" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <NavigationProperty Name="tipo_paro" Relationship="Self.dias_paro_FK" FromRole="dias_paro" ToRole="tipo_paro" />
+        </EntityType>
+        <EntityType Name="direccion">
+          <Key>
+            <PropertyRef Name="id_direccion" />
+          </Key>
+          <Property Name="id_direccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="id_aval" Type="Int32" />
+          <Property Name="calleyno" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="municipio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="codigo_postal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="id_municipio" Type="Int32" />
+          <Property Name="id_estado" Type="Int32" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="aval" Type="Int32" />
+          <Property Name="direccion_trabajo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="id_cliente" Type="Int32" />
+          <Property Name="ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="documento">
+          <Key>
+            <PropertyRef Name="id_documento_colaborador" />
+          </Key>
+          <Property Name="id_documento_colaborador" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="id_tipo_documento" Type="Int32" />
+          <Property Name="contenido" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="id_aval" Type="Int32" />
+          <Property Name="url" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_ingreso" Type="DateTime" Precision="0" />
+          <Property Name="id_cliente" Type="Int32" />
+          <Property Name="extension" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="empleado">
+          <Key>
+            <PropertyRef Name="id_empleado" />
+          </Key>
+          <Property Name="id_empleado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_tipo_usuario" Type="Int32" />
+          <Property Name="id_comision_inicial" Type="Int32" />
+          <Property Name="id_posicion" Type="Int32" />
+          <Property Name="id_plaza" Type="Int32" />
+          <Property Name="curp" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="primer_apellido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="segundo_apellido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="fecha_nacimiento" Type="DateTime" Precision="0" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="id_supervisor" Type="Int32" />
+          <Property Name="id_ejecutivo" Type="Int32" />
+          <Property Name="fecha_ingreso" Type="DateTime" Precision="0" />
+          <Property Name="nombre_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="primer_apellido_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="segundo_apellido_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="curp_aval" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="telefono_aval" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="monto_limite_inicial" Type="Double" />
+          <Property Name="id_coordinador" Type="Int32" />
+          <NavigationProperty Name="activo1" Relationship="Self.activo_FK" FromRole="empleado" ToRole="activo" />
+          <NavigationProperty Name="material_entrega" Relationship="Self.material_entrega_FK" FromRole="empleado" ToRole="material_entrega" />
+          <NavigationProperty Name="usuario" Relationship="Self.usuario_FK" FromRole="empleado" ToRole="usuario" />
+        </EntityType>
+        <EntityType Name="evaluacion_colaborador">
+          <Key>
+            <PropertyRef Name="id_evaluacion_colaborador" />
+          </Key>
+          <Property Name="id_evaluacion_colaborador" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="fecha_modificacion" Type="DateTime" Precision="3" />
+          <Property Name="id_comision" Type="Int32" />
+          <Property Name="calificacion" Type="Int32" />
+        </EntityType>
+        <EntityType Name="forma_pago">
+          <Key>
+            <PropertyRef Name="id_forma_pago" />
+          </Key>
+          <Property Name="id_forma_pago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="garantia_prestamo">
+          <Key>
+            <PropertyRef Name="id_garantia_prestamo" />
+          </Key>
+          <Property Name="id_garantia_prestamo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_prestamo" Type="Int32" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="numero_serie" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="costo" Type="Double" />
+          <Property Name="fotografia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_registro" Type="DateTime" Precision="3" />
+          <Property Name="aval" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="gasto">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="concepto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="id_empleado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="historial_cliente">
+          <Key>
+            <PropertyRef Name="id_historial_cliente" />
+          </Key>
+          <Property Name="id_historial_cliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_cliente" Type="Int32" />
+          <Property Name="id_semana" Type="Int32" />
+          <Property Name="atiempo" Type="Int32" />
+          <Property Name="abonado" Type="Int32" />
+          <Property Name="falla" Type="Int32" />
+        </EntityType>
+        <EntityType Name="inversion">
+          <Key>
+            <PropertyRef Name="id_inversion" />
+          </Key>
+          <Property Name="id_inversion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="fecha" Type="DateTime" Precision="0" />
+          <Property Name="id_inversionista" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="comprobante" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="id_periodo" Type="Int32" />
+          <Property Name="utilidades" Type="Int32" />
+          <Property Name="retiro_efectuado" Type="Int32" />
+          <NavigationProperty Name="inversionista" Relationship="Self.inversion_FK" FromRole="inversion" ToRole="inversionista" />
+          <NavigationProperty Name="periodo" Relationship="Self.inversion_FK2" FromRole="inversion" ToRole="periodo" />
+        </EntityType>
+        <EntityType Name="inversion_movimiento">
+          <Key>
+            <PropertyRef Name="id_registro_cambios_inversion" />
+          </Key>
+          <Property Name="id_registro_cambios_inversion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="id_inversion_total" Type="Int32" />
+          <Property Name="id_retiro" Type="Int32" />
+          <Property Name="id_tipo_movimiento_inversion" Type="Int32" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="balance" Type="Double" />
+        </EntityType>
+        <EntityType Name="inversion_retiro">
+          <Key>
+            <PropertyRef Name="id_inversion_retiro" />
+          </Key>
+          <Property Name="id_inversion_retiro" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="id_inversion" Type="Int32" />
+          <Property Name="comprobante" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="id_tipo_movimiento_inversion" Type="Int32" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="id_usuario" Type="Int32" />
+        </EntityType>
+        <EntityType Name="inversion_total">
+          <Key>
+            <PropertyRef Name="id_inversion_total" />
+          </Key>
+          <Property Name="id_inversion_total" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha_modificacion" Type="DateTime" Precision="3" />
+          <Property Name="monto_total" Type="Double" />
+          <Property Name="id_inversionista" Type="Int32" />
+          <Property Name="fecha_creacion" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="inversionista">
+          <Key>
+            <PropertyRef Name="id_inversionista" />
+          </Key>
+          <Property Name="id_inversionista" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="razon_social" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="rfc" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="porcentaje_interes_anual" Type="Double" />
+          <NavigationProperty Name="inversion" Relationship="Self.inversion_FK" FromRole="inversionista" ToRole="inversion" />
+        </EntityType>
+        <EntityType Name="log_cambios">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="descripcion" Type="String" MaxLength="1500" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_hora" Type="DateTime" Precision="3" />
+          <Property Name="modulo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="material_entrega">
+          <Key>
+            <PropertyRef Name="id_material_entrega" />
+          </Key>
+          <Property Name="id_material_entrega" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="material_entregado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="cantidad" Type="Double" />
+          <Property Name="costo" Type="Double" />
+          <Property Name="fecha" Type="DateTime" Precision="0" />
+          <Property Name="id_categoria" Type="Int32" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <NavigationProperty Name="categoria" Relationship="Self.material_entrega_FK_1" FromRole="material_entrega" ToRole="categoria" />
+          <NavigationProperty Name="empleado" Relationship="Self.material_entrega_FK" FromRole="material_entrega" ToRole="empleado" />
+        </EntityType>
+        <EntityType Name="modulo">
+          <Key>
+            <PropertyRef Name="id_modulo" />
+          </Key>
+          <Property Name="id_modulo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <NavigationProperty Name="comision" Relationship="Self.comision_FK" FromRole="modulo" ToRole="comision" />
+        </EntityType>
+        <EntityType Name="pago">
+          <Key>
+            <PropertyRef Name="id_pago" />
+          </Key>
+          <Property Name="id_pago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_prestamo" Type="Int32" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="saldo" Type="Double" />
+          <Property Name="fecha" Type="DateTime" Precision="0" />
+          <Property Name="id_status_pago" Type="Int32" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="fecha_registro_pago" Type="DateTime" Precision="0" />
+          <Property Name="numero_semana" Type="Int32" />
+          <Property Name="pagado" Type="Double" />
+          <Property Name="semana_extra" Type="Int32" />
+          <Property Name="pagado_con_adelanto" Type="Int32" />
+          <Property Name="id_prestamo_adelanto" Type="Int32" />
+          <Property Name="es_recuperado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="periodo">
+          <Key>
+            <PropertyRef Name="id_periodo" />
+          </Key>
+          <Property Name="id_periodo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="valor_periodo" Type="Int32" />
+          <NavigationProperty Name="inversion" Relationship="Self.inversion_FK2" FromRole="periodo" ToRole="inversion" />
+        </EntityType>
+        <EntityType Name="permisos">
+          <Key>
+            <PropertyRef Name="id_permiso" />
+          </Key>
+          <Property Name="id_permiso" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="tipo_permiso" Type="Int32" />
+          <Property Name="activo" Type="Boolean" />
+          <Property Name="nombre_interno" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="nombre_recurso" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="id_tipo_usuario" Type="Int32" />
+        </EntityType>
+        <EntityType Name="permisos_tipo_usuario">
+          <Key>
+            <PropertyRef Name="id_tipo_usuario" />
+            <PropertyRef Name="id_permiso" />
+          </Key>
+          <Property Name="id_tipo_usuario" Type="Int32" Nullable="false" />
+          <Property Name="id_permiso" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="plantilla">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="contenido" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="id_tipo_plantilla" Type="Int32" />
+          <Property Name="id_frecuencia_envio_mensaje" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="plaza">
+          <Key>
+            <PropertyRef Name="id_plaza" />
+          </Key>
+          <Property Name="id_plaza" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="prestamo">
+          <Key>
+            <PropertyRef Name="id_prestamo" />
+          </Key>
+          <Property Name="id_prestamo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha_solicitud" Type="DateTime" Precision="0" />
+          <Property Name="monto" Type="Double" />
+          <Property Name="id_status_prestamo" Type="Int32" />
+          <Property Name="id_cliente" Type="Int32" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="notas_generales" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="fecha_aprobacion" Type="DateTime" Precision="3" />
+          <Property Name="monto_con_interes" Type="Double" />
+          <NavigationProperty Name="cliente" Relationship="Self.prestamo_FK" FromRole="prestamo" ToRole="cliente" />
+          <NavigationProperty Name="status_prestamo" Relationship="Self.prestamo_statusprestamoFK" FromRole="prestamo" ToRole="status_prestamo" />
+          <NavigationProperty Name="solicitud_aumento_credito" Relationship="Self.solicitudaumentocredito_prestamo_FK" FromRole="prestamo" ToRole="solicitud_aumento_credito" />
+        </EntityType>
+        <EntityType Name="regla_evaluacion_modulo">
+          <Key>
+            <PropertyRef Name="id_regla_evaluacion_modulo" />
+          </Key>
+          <Property Name="id_regla_evaluacion_modulo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="descripcion" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ponderacion" Type="Int32" />
+          <Property Name="id_comision" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="relacion_prestamo_aprobacion">
+          <Key>
+            <PropertyRef Name="id_historial_aprobacion" />
+          </Key>
+          <Property Name="id_historial_aprobacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_prestamo" Type="Int32" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="id_empleado" Type="Int32" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="id_supervisor" Type="Int32" />
+          <Property Name="id_ejecutivo" Type="Int32" />
+          <Property Name="notas_aval" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="notas_cliente" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="id_posicion" Type="Int32" />
+          <Property Name="status_aprobacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="notas_generales" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="reporte">
+          <Key>
+            <PropertyRef Name="id_reporte" />
+          </Key>
+          <Property Name="id_reporte" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="contenido" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="id_tipo_reporte" Type="Int32" />
+        </EntityType>
+        <EntityType Name="resumen_calculo_fallas">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="observaciones" Type="String" MaxLength="1500" FixedLength="false" Unicode="false" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="solicitud_aumento_credito">
+          <Key>
+            <PropertyRef Name="id_solicitud_aumento_credito" />
+          </Key>
+          <Property Name="id_solicitud_aumento_credito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_prestamo" Type="Int32" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="id_director" Type="Int32" />
+          <Property Name="id_status_solicitud_aumento_credito" Type="Int32" />
+          <NavigationProperty Name="prestamo" Relationship="Self.solicitudaumentocredito_prestamo_FK" FromRole="solicitud_aumento_credito" ToRole="prestamo" />
+          <NavigationProperty Name="status_solicitud_aumento_credito" Relationship="Self.solicitudaumentocredito_status_FK" FromRole="solicitud_aumento_credito" ToRole="status_solicitud_aumento_credito" />
+        </EntityType>
+        <EntityType Name="status_cliente">
+          <Key>
+            <PropertyRef Name="id_status_cliente" />
+          </Key>
+          <Property Name="id_status_cliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="status_pago">
+          <Key>
+            <PropertyRef Name="id_status_pago" />
+          </Key>
+          <Property Name="id_status_pago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="color" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="status_prestamo">
+          <Key>
+            <PropertyRef Name="id_status_prestamo" />
+          </Key>
+          <Property Name="id_status_prestamo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="color" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="prestamo" Relationship="Self.prestamo_statusprestamoFK" FromRole="status_prestamo" ToRole="prestamo" />
+        </EntityType>
+        <EntityType Name="status_solicitud_aumento_credito">
+          <Key>
+            <PropertyRef Name="id_status_solicitud_aumento_credito" />
+          </Key>
+          <Property Name="id_status_solicitud_aumento_credito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="solicitud_aumento_credito" Relationship="Self.solicitudaumentocredito_status_FK" FromRole="status_solicitud_aumento_credito" ToRole="solicitud_aumento_credito" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="tipo_cliente">
+          <Key>
+            <PropertyRef Name="id_tipo_cliente" />
+          </Key>
+          <Property Name="id_tipo_cliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="tipo_cliente1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="prestamo_inicial_maximo" Type="Double" />
+          <Property Name="porcentaje_semanal" Type="Double" />
+          <Property Name="semanas_a_prestar" Type="Int32" />
+          <Property Name="garantias_por_monto" Type="Double" />
+          <Property Name="fechas_pago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="cantidad_para_renovar" Type="Double" />
+          <Property Name="semana_extra" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="fecha_pago_lunes" Type="Int32" />
+          <Property Name="fecha_pago_martes" Type="Int32" />
+          <Property Name="fecha_pago_miercoles" Type="Int32" />
+          <Property Name="fecha_pago_jueves" Type="Int32" />
+          <Property Name="fecha_pago_viernes" Type="Int32" />
+          <Property Name="fecha_pago_sabado" Type="Int32" />
+          <Property Name="fecha_pago_domingo" Type="Int32" />
+          <NavigationProperty Name="cliente" Relationship="Self.cliente_FK" FromRole="tipo_cliente" ToRole="cliente" />
+        </EntityType>
+        <EntityType Name="tipo_documento">
+          <Key>
+            <PropertyRef Name="id_tipo_documento" />
+          </Key>
+          <Property Name="id_tipo_documento" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tipo_movimiento_inversion">
+          <Key>
+            <PropertyRef Name="id_tipo_movimiento_inversion" />
+          </Key>
+          <Property Name="id_tipo_movimiento_inversion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tipo_paro">
+          <Key>
+            <PropertyRef Name="id_tipo_paro" />
+          </Key>
+          <Property Name="id_tipo_paro" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+          <NavigationProperty Name="dias_paro" Relationship="Self.dias_paro_FK" FromRole="tipo_paro" ToRole="dias_paro" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="id_usuario" />
+          </Key>
+          <Property Name="id_usuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_tipo_usuario" Type="Int32" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="login" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Boolean" />
+          <Property Name="id_empleado" Type="Int32" />
+          <NavigationProperty Name="empleado" Relationship="Self.usuario_FK" FromRole="usuario" ToRole="empleado" />
+        </EntityType>
+        <EntityType Name="web_pregunta_frecuente">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pregunta" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="respuesta" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ultima_modificacion" Type="DateTime" Precision="3" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="frecuencia_envio_mensaje">
+          <Key>
+            <PropertyRef Name="id_frecuencia_envio_mensaje" />
+          </Key>
+          <Property Name="id_frecuencia_envio_mensaje" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="posicion">
+          <Key>
+            <PropertyRef Name="id_posicion" />
+          </Key>
+          <Property Name="id_posicion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+          <Property Name="pagina_entrada" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tipo_plantilla">
+          <Key>
+            <PropertyRef Name="id_tipo_plantilla" />
+          </Key>
+          <Property Name="id_tipo_plantilla" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="web_acercade">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="info" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="web_politicas_privacidad">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="info" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="web_terminos_condiciones">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="info" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="web_tutorial">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="titulo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="url_video" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Int32" />
+          <Property Name="eliminado" Type="Int32" />
+        </EntityType>
+        <Association Name="activo_FK">
+          <End Role="empleado" Type="Self.empleado" Multiplicity="0..1" />
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empleado">
+              <PropertyRef Name="id_empleado" />
+            </Principal>
+            <Dependent Role="activo">
+              <PropertyRef Name="id_empleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activo_FK2">
+          <End Role="categoria" Type="Self.categoria" Multiplicity="0..1" />
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categoria">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activo">
+              <PropertyRef Name="id_categoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="material_entrega_FK_1">
+          <End Role="categoria" Type="Self.categoria" Multiplicity="0..1" />
+          <End Role="material_entrega" Type="Self.material_entrega" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categoria">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="material_entrega">
+              <PropertyRef Name="id_categoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="cliente_FK">
+          <End Role="tipo_cliente" Type="Self.tipo_cliente" Multiplicity="0..1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tipo_cliente">
+              <PropertyRef Name="id_tipo_cliente" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="id_tipo_cliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="prestamo_FK">
+          <End Role="cliente" Type="Self.cliente" Multiplicity="0..1" />
+          <End Role="prestamo" Type="Self.prestamo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="cliente">
+              <PropertyRef Name="id_cliente" />
+            </Principal>
+            <Dependent Role="prestamo">
+              <PropertyRef Name="id_cliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="comision_FK">
+          <End Role="modulo" Type="Self.modulo" Multiplicity="0..1" />
+          <End Role="comision" Type="Self.comision" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="modulo">
+              <PropertyRef Name="id_modulo" />
+            </Principal>
+            <Dependent Role="comision">
+              <PropertyRef Name="id_modulo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="dias_paro_FK">
+          <End Role="tipo_paro" Type="Self.tipo_paro" Multiplicity="0..1" />
+          <End Role="dias_paro" Type="Self.dias_paro" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tipo_paro">
+              <PropertyRef Name="id_tipo_paro" />
+            </Principal>
+            <Dependent Role="dias_paro">
+              <PropertyRef Name="id_tipo_paro" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="material_entrega_FK">
+          <End Role="empleado" Type="Self.empleado" Multiplicity="0..1" />
+          <End Role="material_entrega" Type="Self.material_entrega" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empleado">
+              <PropertyRef Name="id_empleado" />
+            </Principal>
+            <Dependent Role="material_entrega">
+              <PropertyRef Name="id_empleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="usuario_FK">
+          <End Role="empleado" Type="Self.empleado" Multiplicity="0..1" />
+          <End Role="usuario" Type="Self.usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empleado">
+              <PropertyRef Name="id_empleado" />
+            </Principal>
+            <Dependent Role="usuario">
+              <PropertyRef Name="id_empleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="inversion_FK">
+          <End Role="inversionista" Type="Self.inversionista" Multiplicity="0..1" />
+          <End Role="inversion" Type="Self.inversion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="inversionista">
+              <PropertyRef Name="id_inversionista" />
+            </Principal>
+            <Dependent Role="inversion">
+              <PropertyRef Name="id_inversionista" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="inversion_FK2">
+          <End Role="periodo" Type="Self.periodo" Multiplicity="0..1" />
+          <End Role="inversion" Type="Self.inversion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="periodo">
+              <PropertyRef Name="id_periodo" />
+            </Principal>
+            <Dependent Role="inversion">
+              <PropertyRef Name="id_periodo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="prestamo_statusprestamoFK">
+          <End Role="status_prestamo" Type="Self.status_prestamo" Multiplicity="0..1" />
+          <End Role="prestamo" Type="Self.prestamo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="status_prestamo">
+              <PropertyRef Name="id_status_prestamo" />
+            </Principal>
+            <Dependent Role="prestamo">
+              <PropertyRef Name="id_status_prestamo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="solicitudaumentocredito_prestamo_FK">
+          <End Role="prestamo" Type="Self.prestamo" Multiplicity="0..1" />
+          <End Role="solicitud_aumento_credito" Type="Self.solicitud_aumento_credito" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="prestamo">
+              <PropertyRef Name="id_prestamo" />
+            </Principal>
+            <Dependent Role="solicitud_aumento_credito">
+              <PropertyRef Name="id_prestamo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="solicitudaumentocredito_status_FK">
+          <End Role="status_solicitud_aumento_credito" Type="Self.status_solicitud_aumento_credito" Multiplicity="0..1" />
+          <End Role="solicitud_aumento_credito" Type="Self.solicitud_aumento_credito" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="status_solicitud_aumento_credito">
+              <PropertyRef Name="id_status_solicitud_aumento_credito" />
+            </Principal>
+            <Dependent Role="solicitud_aumento_credito">
+              <PropertyRef Name="id_status_solicitud_aumento_credito" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="sendaquetzalv1Entitiesv1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="abono_pago" EntityType="Self.abono_pago" />
+          <EntitySet Name="activo" EntityType="Self.activo" />
+          <EntitySet Name="calendario" EntityType="Self.calendario" />
+          <EntitySet Name="categoria" EntityType="Self.categoria" />
+          <EntitySet Name="cliente" EntityType="Self.cliente" />
+          <EntitySet Name="comision" EntityType="Self.comision" />
+          <EntitySet Name="configuracion" EntityType="Self.configuracion" />
+          <EntitySet Name="dias_paro" EntityType="Self.dias_paro" />
+          <EntitySet Name="direccion" EntityType="Self.direccion" />
+          <EntitySet Name="documento" EntityType="Self.documento" />
+          <EntitySet Name="empleado" EntityType="Self.empleado" />
+          <EntitySet Name="evaluacion_colaborador" EntityType="Self.evaluacion_colaborador" />
+          <EntitySet Name="forma_pago" EntityType="Self.forma_pago" />
+          <EntitySet Name="garantia_prestamo" EntityType="Self.garantia_prestamo" />
+          <EntitySet Name="gasto" EntityType="Self.gasto" />
+          <EntitySet Name="historial_cliente" EntityType="Self.historial_cliente" />
+          <EntitySet Name="inversion" EntityType="Self.inversion" />
+          <EntitySet Name="inversion_movimiento" EntityType="Self.inversion_movimiento" />
+          <EntitySet Name="inversion_retiro" EntityType="Self.inversion_retiro" />
+          <EntitySet Name="inversion_total" EntityType="Self.inversion_total" />
+          <EntitySet Name="inversionista" EntityType="Self.inversionista" />
+          <EntitySet Name="log_cambios" EntityType="Self.log_cambios" />
+          <EntitySet Name="material_entrega" EntityType="Self.material_entrega" />
+          <EntitySet Name="modulo" EntityType="Self.modulo" />
+          <EntitySet Name="pago" EntityType="Self.pago" />
+          <EntitySet Name="periodo" EntityType="Self.periodo" />
+          <EntitySet Name="permisos" EntityType="Self.permisos" />
+          <EntitySet Name="permisos_tipo_usuario" EntityType="Self.permisos_tipo_usuario" />
+          <EntitySet Name="plantilla" EntityType="Self.plantilla" />
+          <EntitySet Name="plaza" EntityType="Self.plaza" />
+          <EntitySet Name="prestamo" EntityType="Self.prestamo" />
+          <EntitySet Name="regla_evaluacion_modulo" EntityType="Self.regla_evaluacion_modulo" />
+          <EntitySet Name="relacion_prestamo_aprobacion" EntityType="Self.relacion_prestamo_aprobacion" />
+          <EntitySet Name="reporte" EntityType="Self.reporte" />
+          <EntitySet Name="resumen_calculo_fallas" EntityType="Self.resumen_calculo_fallas" />
+          <EntitySet Name="solicitud_aumento_credito" EntityType="Self.solicitud_aumento_credito" />
+          <EntitySet Name="status_cliente" EntityType="Self.status_cliente" />
+          <EntitySet Name="status_pago" EntityType="Self.status_pago" />
+          <EntitySet Name="status_prestamo" EntityType="Self.status_prestamo" />
+          <EntitySet Name="status_solicitud_aumento_credito" EntityType="Self.status_solicitud_aumento_credito" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="tipo_cliente" EntityType="Self.tipo_cliente" />
+          <EntitySet Name="tipo_documento" EntityType="Self.tipo_documento" />
+          <EntitySet Name="tipo_movimiento_inversion" EntityType="Self.tipo_movimiento_inversion" />
+          <EntitySet Name="tipo_paro" EntityType="Self.tipo_paro" />
+          <EntitySet Name="usuario" EntityType="Self.usuario" />
+          <EntitySet Name="web_pregunta_frecuente" EntityType="Self.web_pregunta_frecuente" />
+          <EntitySet Name="frecuencia_envio_mensaje" EntityType="Self.frecuencia_envio_mensaje" />
+          <EntitySet Name="posicion" EntityType="Self.posicion" />
+          <EntitySet Name="tipo_plantilla" EntityType="Self.tipo_plantilla" />
+          <EntitySet Name="web_acercade" EntityType="Self.web_acercade" />
+          <EntitySet Name="web_politicas_privacidad" EntityType="Self.web_politicas_privacidad" />
+          <EntitySet Name="web_terminos_condiciones" EntityType="Self.web_terminos_condiciones" />
+          <EntitySet Name="web_tutorial" EntityType="Self.web_tutorial" />
+          <AssociationSet Name="activo_FK" Association="Self.activo_FK">
+            <End Role="empleado" EntitySet="empleado" />
+            <End Role="activo" EntitySet="activo" />
+          </AssociationSet>
+          <AssociationSet Name="activo_FK2" Association="Self.activo_FK2">
+            <End Role="categoria" EntitySet="categoria" />
+            <End Role="activo" EntitySet="activo" />
+          </AssociationSet>
+          <AssociationSet Name="material_entrega_FK_1" Association="Self.material_entrega_FK_1">
+            <End Role="categoria" EntitySet="categoria" />
+            <End Role="material_entrega" EntitySet="material_entrega" />
+          </AssociationSet>
+          <AssociationSet Name="cliente_FK" Association="Self.cliente_FK">
+            <End Role="tipo_cliente" EntitySet="tipo_cliente" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="prestamo_FK" Association="Self.prestamo_FK">
+            <End Role="cliente" EntitySet="cliente" />
+            <End Role="prestamo" EntitySet="prestamo" />
+          </AssociationSet>
+          <AssociationSet Name="comision_FK" Association="Self.comision_FK">
+            <End Role="modulo" EntitySet="modulo" />
+            <End Role="comision" EntitySet="comision" />
+          </AssociationSet>
+          <AssociationSet Name="dias_paro_FK" Association="Self.dias_paro_FK">
+            <End Role="tipo_paro" EntitySet="tipo_paro" />
+            <End Role="dias_paro" EntitySet="dias_paro" />
+          </AssociationSet>
+          <AssociationSet Name="material_entrega_FK" Association="Self.material_entrega_FK">
+            <End Role="empleado" EntitySet="empleado" />
+            <End Role="material_entrega" EntitySet="material_entrega" />
+          </AssociationSet>
+          <AssociationSet Name="usuario_FK" Association="Self.usuario_FK">
+            <End Role="empleado" EntitySet="empleado" />
+            <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+          <AssociationSet Name="inversion_FK" Association="Self.inversion_FK">
+            <End Role="inversionista" EntitySet="inversionista" />
+            <End Role="inversion" EntitySet="inversion" />
+          </AssociationSet>
+          <AssociationSet Name="inversion_FK2" Association="Self.inversion_FK2">
+            <End Role="periodo" EntitySet="periodo" />
+            <End Role="inversion" EntitySet="inversion" />
+          </AssociationSet>
+          <AssociationSet Name="prestamo_statusprestamoFK" Association="Self.prestamo_statusprestamoFK">
+            <End Role="status_prestamo" EntitySet="status_prestamo" />
+            <End Role="prestamo" EntitySet="prestamo" />
+          </AssociationSet>
+          <AssociationSet Name="solicitudaumentocredito_prestamo_FK" Association="Self.solicitudaumentocredito_prestamo_FK">
+            <End Role="prestamo" EntitySet="prestamo" />
+            <End Role="solicitud_aumento_credito" EntitySet="solicitud_aumento_credito" />
+          </AssociationSet>
+          <AssociationSet Name="solicitudaumentocredito_status_FK" Association="Self.solicitudaumentocredito_status_FK">
+            <End Role="status_solicitud_aumento_credito" EntitySet="status_solicitud_aumento_credito" />
+            <End Role="solicitud_aumento_credito" EntitySet="solicitud_aumento_credito" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="sendaquetzalv1ModelStoreContainer" CdmEntityContainer="sendaquetzalv1Entitiesv1">
+          <EntitySetMapping Name="abono_pago">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.abono_pago">
+              <MappingFragment StoreEntitySet="abono_pago">
+                <ScalarProperty Name="id_abono_pago" ColumnName="id_abono_pago" />
+                <ScalarProperty Name="id_pago" ColumnName="id_pago" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="activo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.activo">
+              <MappingFragment StoreEntitySet="activo">
+                <ScalarProperty Name="id_activo" ColumnName="id_activo" />
+                <ScalarProperty Name="tipo" ColumnName="tipo" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="numero_serie" ColumnName="numero_serie" />
+                <ScalarProperty Name="costo" ColumnName="costo" />
+                <ScalarProperty Name="comentarios" ColumnName="comentarios" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="id_categoria" ColumnName="id_categoria" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="calendario">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.calendario">
+              <MappingFragment StoreEntitySet="calendario">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="categoria">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.categoria">
+              <MappingFragment StoreEntitySet="categoria">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="es_material_entrega" ColumnName="es_material_entrega" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="cliente">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.cliente">
+              <MappingFragment StoreEntitySet="cliente">
+                <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+                <ScalarProperty Name="curp" ColumnName="curp" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="primer_apellido" ColumnName="primer_apellido" />
+                <ScalarProperty Name="segundo_apellido" ColumnName="segundo_apellido" />
+                <ScalarProperty Name="ocupacion" ColumnName="ocupacion" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="id_tipo_cliente" ColumnName="id_tipo_cliente" />
+                <ScalarProperty Name="curp_aval" ColumnName="curp_aval" />
+                <ScalarProperty Name="nombre_aval" ColumnName="nombre_aval" />
+                <ScalarProperty Name="primer_apellido_aval" ColumnName="primer_apellido_aval" />
+                <ScalarProperty Name="segundo_apellido_aval" ColumnName="segundo_apellido_aval" />
+                <ScalarProperty Name="ocupacion_aval" ColumnName="ocupacion_aval" />
+                <ScalarProperty Name="telefono_aval" ColumnName="telefono_aval" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="id_status_cliente" ColumnName="id_status_cliente" />
+                <ScalarProperty Name="nota_fotografia" ColumnName="nota_fotografia" />
+                <ScalarProperty Name="nota_fotografia_aval" ColumnName="nota_fotografia_aval" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="comision">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.comision">
+              <MappingFragment StoreEntitySet="comision">
+                <ScalarProperty Name="id_comision" ColumnName="id_comision" />
+                <ScalarProperty Name="id_modulo" ColumnName="id_modulo" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="porcentaje" ColumnName="porcentaje" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="nivel" ColumnName="nivel" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="configuracion">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.configuracion">
+              <MappingFragment StoreEntitySet="configuracion">
+                <ScalarProperty Name="id_configuracion" ColumnName="id_configuracion" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="fecha_ultima_modificacion" ColumnName="fecha_ultima_modificacion" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="ValorCadena" ColumnName="ValorCadena" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="dias_paro">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.dias_paro">
+              <MappingFragment StoreEntitySet="dias_paro">
+                <ScalarProperty Name="id_dias_paro" ColumnName="id_dias_paro" />
+                <ScalarProperty Name="nota" ColumnName="nota" />
+                <ScalarProperty Name="fecha_inicio" ColumnName="fecha_inicio" />
+                <ScalarProperty Name="fecha_fin" ColumnName="fecha_fin" />
+                <ScalarProperty Name="id_tipo_paro" ColumnName="id_tipo_paro" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="direccion">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.direccion">
+              <MappingFragment StoreEntitySet="direccion">
+                <ScalarProperty Name="id_direccion" ColumnName="id_direccion" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="id_aval" ColumnName="id_aval" />
+                <ScalarProperty Name="calleyno" ColumnName="calleyno" />
+                <ScalarProperty Name="colonia" ColumnName="colonia" />
+                <ScalarProperty Name="municipio" ColumnName="municipio" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="codigo_postal" ColumnName="codigo_postal" />
+                <ScalarProperty Name="id_municipio" ColumnName="id_municipio" />
+                <ScalarProperty Name="id_estado" ColumnName="id_estado" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="aval" ColumnName="aval" />
+                <ScalarProperty Name="direccion_trabajo" ColumnName="direccion_trabajo" />
+                <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+                <ScalarProperty Name="ubicacion" ColumnName="ubicacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="documento">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.documento">
+              <MappingFragment StoreEntitySet="documento">
+                <ScalarProperty Name="id_documento_colaborador" ColumnName="id_documento_colaborador" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="id_tipo_documento" ColumnName="id_tipo_documento" />
+                <ScalarProperty Name="contenido" ColumnName="contenido" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="id_aval" ColumnName="id_aval" />
+                <ScalarProperty Name="url" ColumnName="url" />
+                <ScalarProperty Name="fecha_ingreso" ColumnName="fecha_ingreso" />
+                <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+                <ScalarProperty Name="extension" ColumnName="extension" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="empleado">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.empleado">
+              <MappingFragment StoreEntitySet="empleado">
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+                <ScalarProperty Name="id_comision_inicial" ColumnName="id_comision_inicial" />
+                <ScalarProperty Name="id_posicion" ColumnName="id_posicion" />
+                <ScalarProperty Name="id_plaza" ColumnName="id_plaza" />
+                <ScalarProperty Name="curp" ColumnName="curp" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="primer_apellido" ColumnName="primer_apellido" />
+                <ScalarProperty Name="segundo_apellido" ColumnName="segundo_apellido" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="fecha_nacimiento" ColumnName="fecha_nacimiento" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="id_supervisor" ColumnName="id_supervisor" />
+                <ScalarProperty Name="id_ejecutivo" ColumnName="id_ejecutivo" />
+                <ScalarProperty Name="fecha_ingreso" ColumnName="fecha_ingreso" />
+                <ScalarProperty Name="nombre_aval" ColumnName="nombre_aval" />
+                <ScalarProperty Name="primer_apellido_aval" ColumnName="primer_apellido_aval" />
+                <ScalarProperty Name="segundo_apellido_aval" ColumnName="segundo_apellido_aval" />
+                <ScalarProperty Name="curp_aval" ColumnName="curp_aval" />
+                <ScalarProperty Name="telefono_aval" ColumnName="telefono_aval" />
+                <ScalarProperty Name="monto_limite_inicial" ColumnName="monto_limite_inicial" />
+                <ScalarProperty Name="id_coordinador" ColumnName="id_coordinador" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="evaluacion_colaborador">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.evaluacion_colaborador">
+              <MappingFragment StoreEntitySet="evaluacion_colaborador">
+                <ScalarProperty Name="id_evaluacion_colaborador" ColumnName="id_evaluacion_colaborador" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="fecha_modificacion" ColumnName="fecha_modificacion" />
+                <ScalarProperty Name="id_comision" ColumnName="id_comision" />
+                <ScalarProperty Name="calificacion" ColumnName="calificacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="forma_pago">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.forma_pago">
+              <MappingFragment StoreEntitySet="forma_pago">
+                <ScalarProperty Name="id_forma_pago" ColumnName="id_forma_pago" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="garantia_prestamo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.garantia_prestamo">
+              <MappingFragment StoreEntitySet="garantia_prestamo">
+                <ScalarProperty Name="id_garantia_prestamo" ColumnName="id_garantia_prestamo" />
+                <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="numero_serie" ColumnName="numero_serie" />
+                <ScalarProperty Name="costo" ColumnName="costo" />
+                <ScalarProperty Name="fotografia" ColumnName="fotografia" />
+                <ScalarProperty Name="fecha_registro" ColumnName="fecha_registro" />
+                <ScalarProperty Name="aval" ColumnName="aval" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gasto">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.gasto">
+              <MappingFragment StoreEntitySet="gasto">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="concepto" ColumnName="concepto" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="historial_cliente">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.historial_cliente">
+              <MappingFragment StoreEntitySet="historial_cliente">
+                <ScalarProperty Name="id_historial_cliente" ColumnName="id_historial_cliente" />
+                <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+                <ScalarProperty Name="id_semana" ColumnName="id_semana" />
+                <ScalarProperty Name="atiempo" ColumnName="atiempo" />
+                <ScalarProperty Name="abonado" ColumnName="abonado" />
+                <ScalarProperty Name="falla" ColumnName="falla" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="inversion">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.inversion">
+              <MappingFragment StoreEntitySet="inversion">
+                <ScalarProperty Name="id_inversion" ColumnName="id_inversion" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_inversionista" ColumnName="id_inversionista" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="comprobante" ColumnName="comprobante" />
+                <ScalarProperty Name="id_periodo" ColumnName="id_periodo" />
+                <ScalarProperty Name="utilidades" ColumnName="utilidades" />
+                <ScalarProperty Name="retiro_efectuado" ColumnName="retiro_efectuado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="inversion_movimiento">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.inversion_movimiento">
+              <MappingFragment StoreEntitySet="inversion_movimiento">
+                <ScalarProperty Name="id_registro_cambios_inversion" ColumnName="id_registro_cambios_inversion" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_inversion_total" ColumnName="id_inversion_total" />
+                <ScalarProperty Name="id_retiro" ColumnName="id_retiro" />
+                <ScalarProperty Name="id_tipo_movimiento_inversion" ColumnName="id_tipo_movimiento_inversion" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="balance" ColumnName="balance" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="inversion_retiro">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.inversion_retiro">
+              <MappingFragment StoreEntitySet="inversion_retiro">
+                <ScalarProperty Name="id_inversion_retiro" ColumnName="id_inversion_retiro" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_inversion" ColumnName="id_inversion" />
+                <ScalarProperty Name="comprobante" ColumnName="comprobante" />
+                <ScalarProperty Name="id_tipo_movimiento_inversion" ColumnName="id_tipo_movimiento_inversion" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="inversion_total">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.inversion_total">
+              <MappingFragment StoreEntitySet="inversion_total">
+                <ScalarProperty Name="id_inversion_total" ColumnName="id_inversion_total" />
+                <ScalarProperty Name="fecha_modificacion" ColumnName="fecha_modificacion" />
+                <ScalarProperty Name="monto_total" ColumnName="monto_total" />
+                <ScalarProperty Name="id_inversionista" ColumnName="id_inversionista" />
+                <ScalarProperty Name="fecha_creacion" ColumnName="fecha_creacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="inversionista">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.inversionista">
+              <MappingFragment StoreEntitySet="inversionista">
+                <ScalarProperty Name="id_inversionista" ColumnName="id_inversionista" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="razon_social" ColumnName="razon_social" />
+                <ScalarProperty Name="rfc" ColumnName="rfc" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="porcentaje_interes_anual" ColumnName="porcentaje_interes_anual" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="log_cambios">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.log_cambios">
+              <MappingFragment StoreEntitySet="log_cambios">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="fecha_hora" ColumnName="fecha_hora" />
+                <ScalarProperty Name="modulo" ColumnName="modulo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="material_entrega">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.material_entrega">
+              <MappingFragment StoreEntitySet="material_entrega">
+                <ScalarProperty Name="id_material_entrega" ColumnName="id_material_entrega" />
+                <ScalarProperty Name="material_entregado" ColumnName="material_entregado" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="costo" ColumnName="costo" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_categoria" ColumnName="id_categoria" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="modulo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.modulo">
+              <MappingFragment StoreEntitySet="modulo">
+                <ScalarProperty Name="id_modulo" ColumnName="id_modulo" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="pago">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.pago">
+              <MappingFragment StoreEntitySet="pago">
+                <ScalarProperty Name="id_pago" ColumnName="id_pago" />
+                <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="saldo" ColumnName="saldo" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_status_pago" ColumnName="id_status_pago" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="fecha_registro_pago" ColumnName="fecha_registro_pago" />
+                <ScalarProperty Name="numero_semana" ColumnName="numero_semana" />
+                <ScalarProperty Name="pagado" ColumnName="pagado" />
+                <ScalarProperty Name="semana_extra" ColumnName="semana_extra" />
+                <ScalarProperty Name="pagado_con_adelanto" ColumnName="pagado_con_adelanto" />
+                <ScalarProperty Name="id_prestamo_adelanto" ColumnName="id_prestamo_adelanto" />
+                <ScalarProperty Name="es_recuperado" ColumnName="es_recuperado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="periodo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.periodo">
+              <MappingFragment StoreEntitySet="periodo">
+                <ScalarProperty Name="id_periodo" ColumnName="id_periodo" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="valor_periodo" ColumnName="valor_periodo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="permisos">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.permisos">
+              <MappingFragment StoreEntitySet="permisos">
+                <ScalarProperty Name="id_permiso" ColumnName="id_permiso" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="tipo_permiso" ColumnName="tipo_permiso" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="nombre_interno" ColumnName="nombre_interno" />
+                <ScalarProperty Name="nombre_recurso" ColumnName="nombre_recurso" />
+                <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="permisos_tipo_usuario">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.permisos_tipo_usuario">
+              <MappingFragment StoreEntitySet="permisos_tipo_usuario">
+                <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+                <ScalarProperty Name="id_permiso" ColumnName="id_permiso" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="plantilla">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.plantilla">
+              <MappingFragment StoreEntitySet="plantilla">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="contenido" ColumnName="contenido" />
+                <ScalarProperty Name="id_tipo_plantilla" ColumnName="id_tipo_plantilla" />
+                <ScalarProperty Name="id_frecuencia_envio_mensaje" ColumnName="id_frecuencia_envio_mensaje" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="plaza">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.plaza">
+              <MappingFragment StoreEntitySet="plaza">
+                <ScalarProperty Name="id_plaza" ColumnName="id_plaza" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="prestamo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.prestamo">
+              <MappingFragment StoreEntitySet="prestamo">
+                <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+                <ScalarProperty Name="fecha_solicitud" ColumnName="fecha_solicitud" />
+                <ScalarProperty Name="monto" ColumnName="monto" />
+                <ScalarProperty Name="id_status_prestamo" ColumnName="id_status_prestamo" />
+                <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="notas_generales" ColumnName="notas_generales" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="fecha_aprobacion" ColumnName="fecha_aprobacion" />
+                <ScalarProperty Name="monto_con_interes" ColumnName="monto_con_interes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="regla_evaluacion_modulo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.regla_evaluacion_modulo">
+              <MappingFragment StoreEntitySet="regla_evaluacion_modulo">
+                <ScalarProperty Name="id_regla_evaluacion_modulo" ColumnName="id_regla_evaluacion_modulo" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="ponderacion" ColumnName="ponderacion" />
+                <ScalarProperty Name="id_comision" ColumnName="id_comision" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="relacion_prestamo_aprobacion">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.relacion_prestamo_aprobacion">
+              <MappingFragment StoreEntitySet="relacion_prestamo_aprobacion">
+                <ScalarProperty Name="id_historial_aprobacion" ColumnName="id_historial_aprobacion" />
+                <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_supervisor" ColumnName="id_supervisor" />
+                <ScalarProperty Name="id_ejecutivo" ColumnName="id_ejecutivo" />
+                <ScalarProperty Name="notas_aval" ColumnName="notas_aval" />
+                <ScalarProperty Name="notas_cliente" ColumnName="notas_cliente" />
+                <ScalarProperty Name="id_posicion" ColumnName="id_posicion" />
+                <ScalarProperty Name="status_aprobacion" ColumnName="status_aprobacion" />
+                <ScalarProperty Name="notas_generales" ColumnName="notas_generales" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="reporte">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.reporte">
+              <MappingFragment StoreEntitySet="reporte">
+                <ScalarProperty Name="id_reporte" ColumnName="id_reporte" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="contenido" ColumnName="contenido" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="id_tipo_reporte" ColumnName="id_tipo_reporte" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="resumen_calculo_fallas">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.resumen_calculo_fallas">
+              <MappingFragment StoreEntitySet="resumen_calculo_fallas">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="observaciones" ColumnName="observaciones" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="solicitud_aumento_credito">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.solicitud_aumento_credito">
+              <MappingFragment StoreEntitySet="solicitud_aumento_credito">
+                <ScalarProperty Name="id_solicitud_aumento_credito" ColumnName="id_solicitud_aumento_credito" />
+                <ScalarProperty Name="id_prestamo" ColumnName="id_prestamo" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_director" ColumnName="id_director" />
+                <ScalarProperty Name="id_status_solicitud_aumento_credito" ColumnName="id_status_solicitud_aumento_credito" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="status_cliente">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.status_cliente">
+              <MappingFragment StoreEntitySet="status_cliente">
+                <ScalarProperty Name="id_status_cliente" ColumnName="id_status_cliente" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="color" ColumnName="color" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="status_pago">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.status_pago">
+              <MappingFragment StoreEntitySet="status_pago">
+                <ScalarProperty Name="id_status_pago" ColumnName="id_status_pago" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="color" ColumnName="color" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="status_prestamo">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.status_prestamo">
+              <MappingFragment StoreEntitySet="status_prestamo">
+                <ScalarProperty Name="id_status_prestamo" ColumnName="id_status_prestamo" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="color" ColumnName="color" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="status_solicitud_aumento_credito">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.status_solicitud_aumento_credito">
+              <MappingFragment StoreEntitySet="status_solicitud_aumento_credito">
+                <ScalarProperty Name="id_status_solicitud_aumento_credito" ColumnName="id_status_solicitud_aumento_credito" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tipo_cliente">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.tipo_cliente">
+              <MappingFragment StoreEntitySet="tipo_cliente">
+                <ScalarProperty Name="id_tipo_cliente" ColumnName="id_tipo_cliente" />
+                <ScalarProperty Name="tipo_cliente1" ColumnName="tipo_cliente" />
+                <ScalarProperty Name="prestamo_inicial_maximo" ColumnName="prestamo_inicial_maximo" />
+                <ScalarProperty Name="porcentaje_semanal" ColumnName="porcentaje_semanal" />
+                <ScalarProperty Name="semanas_a_prestar" ColumnName="semanas_a_prestar" />
+                <ScalarProperty Name="garantias_por_monto" ColumnName="garantias_por_monto" />
+                <ScalarProperty Name="fechas_pago" ColumnName="fechas_pago" />
+                <ScalarProperty Name="cantidad_para_renovar" ColumnName="cantidad_para_renovar" />
+                <ScalarProperty Name="semana_extra" ColumnName="semana_extra" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="fecha_pago_lunes" ColumnName="fecha_pago_lunes" />
+                <ScalarProperty Name="fecha_pago_martes" ColumnName="fecha_pago_martes" />
+                <ScalarProperty Name="fecha_pago_miercoles" ColumnName="fecha_pago_miercoles" />
+                <ScalarProperty Name="fecha_pago_jueves" ColumnName="fecha_pago_jueves" />
+                <ScalarProperty Name="fecha_pago_viernes" ColumnName="fecha_pago_viernes" />
+                <ScalarProperty Name="fecha_pago_sabado" ColumnName="fecha_pago_sabado" />
+                <ScalarProperty Name="fecha_pago_domingo" ColumnName="fecha_pago_domingo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tipo_documento">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.tipo_documento">
+              <MappingFragment StoreEntitySet="tipo_documento">
+                <ScalarProperty Name="id_tipo_documento" ColumnName="id_tipo_documento" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tipo_movimiento_inversion">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.tipo_movimiento_inversion">
+              <MappingFragment StoreEntitySet="tipo_movimiento_inversion">
+                <ScalarProperty Name="id_tipo_movimiento_inversion" ColumnName="id_tipo_movimiento_inversion" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tipo_paro">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.tipo_paro">
+              <MappingFragment StoreEntitySet="tipo_paro">
+                <ScalarProperty Name="id_tipo_paro" ColumnName="id_tipo_paro" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usuario">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.usuario">
+              <MappingFragment StoreEntitySet="usuario">
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="id_tipo_usuario" ColumnName="id_tipo_usuario" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="login" ColumnName="login" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="id_empleado" ColumnName="id_empleado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="web_pregunta_frecuente">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.web_pregunta_frecuente">
+              <MappingFragment StoreEntitySet="web_pregunta_frecuente">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="pregunta" ColumnName="pregunta" />
+                <ScalarProperty Name="respuesta" ColumnName="respuesta" />
+                <ScalarProperty Name="ultima_modificacion" ColumnName="ultima_modificacion" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="frecuencia_envio_mensaje">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.frecuencia_envio_mensaje">
+              <MappingFragment StoreEntitySet="frecuencia_envio_mensaje">
+                <ScalarProperty Name="id_frecuencia_envio_mensaje" ColumnName="id_frecuencia_envio_mensaje" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="posicion">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.posicion">
+              <MappingFragment StoreEntitySet="posicion">
+                <ScalarProperty Name="id_posicion" ColumnName="id_posicion" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+                <ScalarProperty Name="pagina_entrada" ColumnName="pagina_entrada" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tipo_plantilla">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.tipo_plantilla">
+              <MappingFragment StoreEntitySet="tipo_plantilla">
+                <ScalarProperty Name="id_tipo_plantilla" ColumnName="id_tipo_plantilla" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="web_acercade">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.web_acercade">
+              <MappingFragment StoreEntitySet="web_acercade">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="info" ColumnName="info" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="web_politicas_privacidad">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.web_politicas_privacidad">
+              <MappingFragment StoreEntitySet="web_politicas_privacidad">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="info" ColumnName="info" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="web_terminos_condiciones">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.web_terminos_condiciones">
+              <MappingFragment StoreEntitySet="web_terminos_condiciones">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="info" ColumnName="info" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="web_tutorial">
+            <EntityTypeMapping TypeName="sendaquetzalv1Model.web_tutorial">
+              <MappingFragment StoreEntitySet="web_tutorial">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="titulo" ColumnName="titulo" />
+                <ScalarProperty Name="url_video" ColumnName="url_video" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="eliminado" ColumnName="eliminado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

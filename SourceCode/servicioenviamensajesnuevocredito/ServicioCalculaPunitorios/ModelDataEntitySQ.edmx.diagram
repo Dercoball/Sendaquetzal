@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d647f7bbe99f457c9cf2e49af3cb87e6" Name="Diagram1">
+        <EntityTypeShape EntityType="sendaquetzalv1Model.abono_pago" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.activo" Width="1.5" PointX="10" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.calendario" Width="1.5" PointX="0.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.categoria" Width="1.5" PointX="7.75" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.cliente" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.comision" Width="1.5" PointX="14" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.configuracion" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.dias_paro" Width="1.5" PointX="3" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.direccion" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.documento" Width="1.5" PointX="12.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.empleado" Width="1.5" PointX="7.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.evaluacion_colaborador" Width="1.5" PointX="9.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.forma_pago" Width="1.5" PointX="14.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.garantia_prestamo" Width="1.5" PointX="14.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.gasto" Width="1.5" PointX="15.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.historial_cliente" Width="1.5" PointX="16.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.inversion" Width="1.5" PointX="12" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.inversion_movimiento" Width="1.5" PointX="16.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.inversion_retiro" Width="1.5" PointX="16.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.inversion_total" Width="1.5" PointX="16.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.inversionista" Width="1.5" PointX="9.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.log_cambios" Width="1.5" PointX="17.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.material_entrega" Width="1.5" PointX="13" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.modulo" Width="1.5" PointX="11.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.pago" Width="1.5" PointX="18.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.periodo" Width="1.5" PointX="9.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.permisos" Width="1.5" PointX="0.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.permisos_tipo_usuario" Width="1.5" PointX="18.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.plantilla" Width="1.5" PointX="12.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.plaza" Width="1.5" PointX="18.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.prestamo" Width="1.5" PointX="5.25" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.regla_evaluacion_modulo" Width="1.5" PointX="18.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.relacion_prestamo_aprobacion" Width="1.5" PointX="2.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.reporte" Width="1.5" PointX="4.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.resumen_calculo_fallas" Width="1.5" PointX="19.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.solicitud_aumento_credito" Width="1.5" PointX="7.5" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.status_cliente" Width="1.5" PointX="6.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.status_pago" Width="1.5" PointX="14.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.status_prestamo" Width="1.5" PointX="3" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.status_solicitud_aumento_credito" Width="1.5" PointX="5.25" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.sysdiagrams" Width="1.5" PointX="16.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.tipo_cliente" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.tipo_documento" Width="1.5" PointX="18.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.tipo_movimiento_inversion" Width="1.5" PointX="20.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.tipo_paro" Width="1.5" PointX="0.75" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.usuario" Width="1.5" PointX="10" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.web_pregunta_frecuente" Width="1.5" PointX="20.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.frecuencia_envio_mensaje" Width="1.5" PointX="20.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.posicion" Width="1.5" PointX="20.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.tipo_plantilla" Width="1.5" PointX="20.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.web_acercade" Width="1.5" PointX="20.75" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.web_politicas_privacidad" Width="1.5" PointX="21.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.web_terminos_condiciones" Width="1.5" PointX="8.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="sendaquetzalv1Model.web_tutorial" Width="1.5" PointX="10.75" PointY="21.75" IsExpanded="true" />
+        <AssociationConnector Association="sendaquetzalv1Model.activo_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.activo_FK2" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.material_entrega_FK_1" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.cliente_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.prestamo_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.comision_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.dias_paro_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.material_entrega_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.usuario_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.inversion_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.inversion_FK2" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.prestamo_statusprestamoFK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.solicitudaumentocredito_prestamo_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="sendaquetzalv1Model.solicitudaumentocredito_status_FK" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

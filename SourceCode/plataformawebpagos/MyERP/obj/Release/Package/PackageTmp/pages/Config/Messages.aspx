@@ -117,8 +117,8 @@
                             <thead>
 
                                 <th>No.</th>
-                                <th>Nombre</th>
-                                <th>Tipo</th>
+                                <th>Titulo</th>
+                                <th>Plantilla</th>
                                 <th>
                                     <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo</button>
                                 </th>

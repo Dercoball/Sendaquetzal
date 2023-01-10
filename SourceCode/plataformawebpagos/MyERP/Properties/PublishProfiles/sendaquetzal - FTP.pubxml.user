@@ -8,6 +8,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAChWyhMkttEOJ07UpX8/bmQAAAAACAAAAAAAQZgAAAAEAACAAAAC4ncovxiknrVSew6wwS/JnK+kbTmH1VybmrZ5QJwqkpAAAAAAOgAAAAAIAACAAAAABtvtkOrS8Tgq89Jz4K/YXy7mqNNzk8v0JWpCY6zAtW4AAAADs/ViTUi4aqNME1AWcQVd8CfAzihuVdFGqIDWPsZtgi7/+MiD6GYIqqgjY4q9XqCFIeU6sK2nnu+D/ebIcoaY//8Mlnp0H826Ei0kSMprG+Ih+Hjnah9Caiq/0vXwEjifEF31YglQV8dLEi5JdJ594Ke4Mk1fpy9CN4eBakn3Hs0AAAABReqwdee3oW2v3+AC0NGdYvhA7x2RsLt8Lsz9yZRlGZ+4q11fC044AWoFX4F0Hl5HNMkEafNbtOgrXjQ55VWpd</EncryptedPassword>
     <_PublishTargetUrl>ftp://ftp.gear.host/site/wwwroot</_PublishTargetUrl>
-    <History>False|2022-07-15T18:38:30.3354061Z;</History>
+    <History>False|2022-12-22T21:24:03.0029599Z;False|2022-07-15T13:38:30.3354061-05:00;</History>
+    <LastFailureDetails />
   </PropertyGroup>
 </Project>

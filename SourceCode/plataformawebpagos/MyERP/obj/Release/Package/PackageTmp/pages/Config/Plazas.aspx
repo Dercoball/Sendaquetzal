@@ -99,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Plazas</h1>
+                    <h1 class="h3 display">Catálogos - Plazas</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -114,7 +114,7 @@
                                     <th>Nombre</th>
                                     <th>Activo</th>
                                     <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nueva Plaza</button>
                                     </th>
                                 </tr>
                             </thead>
@@ -125,7 +125,9 @@
                     </div>
                 </div>
 
+                 
 
+           
 
 
                 <div id="panelForm">
@@ -183,8 +185,279 @@
                 </div>
             </div>
     </section>
+        <section>
+             <div class="container-fluid">
+
+                <header>
+                    <h1 class="h3 display">Catálogos - Activos</h1>
+                </header>
+
+                <div id="panelTabla2">
+                    <div class="table-responsive">
+
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
 
 
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Nombre</th>
+                                    <th>Activo</th>
+                                    <th>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo Activo</button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr role="row" class="even">
+                                    <td>1</td>
+                                    <td>Computo</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>2</td>
+                                    <td>Electrónica</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>3</td>
+                                    <td>Celulares</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>4</td>
+                                    <td>Autos</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+        </section>
+        
+        <section>
+             <div class="container-fluid">
+
+                <header>
+                    <h1 class="h3 display">Catálogos - Materiales</h1>
+                </header>
+
+                <div id="panelTabla3">
+                    <div class="table-responsive">
+
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
+
+
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Nombre</th>
+                                    <th>Activo</th>
+                                    <th>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo Material</button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr role="row" class="even">
+                                    <td>1</td>
+                                    <td>Papelería</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>2</td>
+                                    <td>Uniformes</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>3</td>
+                                    <td>Equipo</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>4</td>
+                                    <td>Accesorios</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+        </section>
+
+        <section>
+             <div class="container-fluid">
+
+                <header>
+                    <h1 class="h3 display">Catálogos - Gastos</h1>
+                </header>
+
+                <div id="panelTabla4">
+                    <div class="table-responsive">
+
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
+
+
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Nombre</th>
+                                    <th>Activo</th>
+                                    <th>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo Gasto</button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr role="row" class="even">
+                                    <td>1</td>
+                                    <td>Papelería</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>2</td>
+                                    <td>Alimentos</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>3</td>
+                                    <td>Transporte</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr role="row" class="even">
+                                    <td>4</td>
+                                    <td>Gasolina</td>
+                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-edit mr-1"></span>
+                                            "Editar"
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <span class="fa fa-remove mr-1"></span>
+                                            "Eliminar"
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+        </section>
+            
 
         <footer class="main-footer">
             <div class="container-fluid">

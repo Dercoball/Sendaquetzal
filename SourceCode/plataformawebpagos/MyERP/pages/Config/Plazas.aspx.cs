@@ -20,6 +20,7 @@ namespace Plataforma.pages
         {
             string usuario = (string)Session["usuario"];
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
+            string idEmpleado = (string)Session["id_empleado"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
 
@@ -27,6 +28,7 @@ namespace Plataforma.pages
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
+            txtIdEmpleado.Value = idEmpleado;
 
             //  si no esta logueado
             if (usuario == "")

@@ -38,7 +38,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-default navbar-fixed-top">
+            <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -46,16 +46,23 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <img src="../img/sq.jpg" class="img-responsive" style="border-radius: 50%; width: 70px; height: 70px;" />
+                   <a href="Home.aspx"><img src="../img/sq2.png" 
+                        class="img-responsive"
+                        style="padding-right:50px"
+                        <%--style="border-radius: 50%;--%> 
+                        width: 70px; height: 70px;" 
+                        />
+                  </a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li><a href="Home.aspx">Inicio</a></li>
-                        <li><a href="Aboutus.aspx">Nosotros</a></li>
+                        <li <%--class="active"--%>
+                            ><a href="Home.aspx" style="font-size:150%"><strong>Inicio</strong></a></li>
+                        <li><a href="../pages/Aboutus.aspx" style="font-size:150%"><strong>Nosotros</strong></a></li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right links2">
-                        <li class="active"><a href="Login.aspx">Iniciar sesión</a></li>
+                        <li class="active" ><a href="../pages/Login.aspx" style="font-size:150%"><strong>Iniciar sesión</strong></a></li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right redes">
@@ -65,7 +72,7 @@
                             <img src="../img/i-twitter.png" class="img-social" /></a></li>
                         <li><a href="#">
                             <img src="../img/instagram.png" class="img-social" /></a></li>
-                        <li><a href="#">
+                        <li style="padding-right:50px"><a href="#">
                             <img src="../img/mail.png" class="img-social" /></a></li>
                     </ul>
                 </div>
@@ -74,16 +81,16 @@
     </header>
 
 
-    <img src="../img/brand.png" class="img-responsive  center-block" style="margin-top: 70px;" />
+    <img src="../img/brand2.png" class="img-responsive  center-block" style="margin-top: 70px;" />
 
 
     <div class="container">
         <div class="panel">
             <div class="panel-body col-md-6 col-md-offset-3">
 
-                <div style="color: black; margin-left: auto; margin-right: auto; margin-top: 10px;">
+                <div style="color: black; margin-left: auto; margin-right: auto; margin-top: 10px; background-color:#dcdcdc">
 
-                    <h3 style="margin-top: 30px;">Login</h3>
+                    <h3 style="margin-top: 30px">Iniciar Sesión</h3>
 
                     <div class="panel-body">
 
@@ -159,22 +166,21 @@
 
 
     <footer>
-        <div class="container">
+       <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">
-                <h2>Acerca de...</h2>
+                
                 <ul>
-                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de...</a></li>
-                    <li><a href="../pages/Login.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Iniciar sesión</a></li>
+                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de nosotros</a></li>
+                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
                 </ul>
             </div>
             <div class="col-md-3 text-center">
-                <h2>Ayuda</h2>
+                
                 <ul>
-
-                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
-                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
                     <li><a href="../pages/NoticeOfPrivacy.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Aviso de privacidad</a></li>
+                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                    <li><a href="../pages/Tutorials.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Tutoriales</a></li>
                 </ul>
             </div>
         </div>

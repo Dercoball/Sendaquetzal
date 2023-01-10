@@ -1,5 +1,11 @@
 /* your styles go here */
+/*.contenido{
+    margin: 3px;
+}
 
+.caja{
+    display: table-cell;
+}*/
 
 .with-errors {
     color: tomato;

@@ -116,9 +116,11 @@
 
                             <thead>
 
-                                <th>No.</th>
+                                <%--<th>No.</th>--%>
                                 <th>Titulo</th>
                                 <th>Plantilla</th>
+                                <th>Plaza</th>
+                                <th>Mensaje</th>
                                 <th>
                                     <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo</button>
                                 </th>
@@ -161,7 +163,7 @@
 
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-4">
                                         <label for="comboTipoPlantilla">
                                             Tipo plantilla
                                         </label>
@@ -170,7 +172,16 @@
                                         <div class="help-block with-errors"></div>
                                     </div>
 
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-4">
+                                        <label for="comboTipoPlaza">
+                                            Plaza
+                                        </label>
+                                        <select class="form-control campo-combo" id="comboTipoPlaza" required="required" data-required-error='Requerido'>
+                                        </select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-4">
                                         <label for="comboFrecuenciaEnvio">
                                             Frecuencia envío
                                         </label>
@@ -407,7 +418,7 @@
 
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/messages.js"></script>
+    <script src="../../js/app/config/messages.js?v=1.0.1"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

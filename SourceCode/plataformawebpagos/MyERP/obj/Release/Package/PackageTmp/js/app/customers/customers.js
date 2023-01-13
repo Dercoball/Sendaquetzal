@@ -1,7 +1,10 @@
 ﻿'use strict';
+
 let date = new Date();
 let descargas = "Clientes_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '21';
+let total = 0;
+let pageTotal = 0;
 
 
 const customers = {
@@ -16,11 +19,21 @@ const customers = {
         customers.idTipoUsuario = "-1";
         customers.accion = "";
 
-        customers.loadComboStatus();
+        customers.loadComboPlaza();
         customers.selectedCustomerId = '';
         customers.cargarItems();
 
+        $('#cmbPlaza').change(function () {
+            customers.loadComboEjecutivo();
+        });
 
+        $('#cmbEjecutivo').change(function () {
+            customers.loadComboSupervisor();
+        });
+
+        $('#cmbSupervisor').change(function () {
+            customers.loadComboPromotor();
+        });
 
     },
 
@@ -30,11 +43,24 @@ const customers = {
 
         status = status == null ? "-1" : status;
 
+        //Se define el tipo de filtro
+        var typeFilter = "";
+        if (parseInt(document.getElementById("cmbPromotor").value) > 0) typeFilter = "promotor";
+        else if (parseInt(document.getElementById("cmbSupervisor").value) > 0) typeFilter = "supervisor";
+        else if (parseInt(document.getElementById("cmbEjecutivo").value) > 0) typeFilter = "ejecutivo";
+        else typeFilter = "plaza";
+
+
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.idStatus = status;
+        params.idPlaza = parseInt(document.getElementById("cmbPlaza").value);
+        params.typeFilter = typeFilter;
+        params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
+        params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
+        params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
 
         $.ajax({
@@ -57,43 +83,81 @@ const customers = {
                     "destroy": true,
                     "processing": true,
                     "order": [],
+                    columnDefs: [
+                        {
+                            "targets": [-1],
+                            "orderable": false
+                        },
+                        { type: "num-fmt", render: $.fn.dataTable.render.number(',', '.', 2, ''), targets: 4 }
+                    ],
                     data: data,
                     columns: [
                         { data: 'IdCliente' },
                         { data: 'NombreCompleto' },
                         { data: 'Curp' },
                         { data: 'Telefono' },
+                        { data: 'Monto' },
+                        {
+                            data: 'Direccion', render: function (data, type, row) {
+
+                                return `${row.direccion.Calle}, ${row.direccion.Colonia}, ${row.direccion.Municipio}, ${row.direccion.Estado}`;
+                            }
+                        },
                         { data: 'NombreStatus' },
                         { data: 'Accion' }
 
 
                     ],
+
                     "language": textosEsp,
-                    "columnDefs": [
-                        {
-                            "targets": [-1],
-                            "orderable": false
-                        }
-                    ],
-                    dom: 'fBrtipl',
+                    dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
                         {
                             extend: 'csvHtml5',
                             title: descargas,
-                            text: '&nbsp;Csv', className: 'csvbtn'
+                            text: '&nbsp; Descargar CSV', className: 'csvbtn'
                         },
-                        {
-                            extend: 'excelHtml5',
-                            title: descargas,
-                            text: 'Xls', className: 'excelbtn'
-                        },
+                        //{
+                        //    extend: 'pdfHtml5',
+                        //    title: descargas,
+                        //    text: 'Pdf', className: 'pdfbtn'
+                        //}
                         {
                             extend: 'pdfHtml5',
+                            text: 'Descargar PDF',
                             title: descargas,
-                            text: 'Pdf', className: 'pdfbtn'
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            className: 'csvbtn ml-2'
                         }
-                    ]
+                    ],
+                    footerCallback: function (row, data, start, end, display) {
+                        var api = this.api();
 
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) {
+                            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                        };
+
+                        // Total over all pages
+                        total = api
+                            .column(4)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+
+                        // Total over this page
+                        pageTotal = api
+                            .column(4, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+
+                        // Update footer
+                        $(api.column(4).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(pageTotal) + ' ( $' + $.fn.dataTable.render.number(',', '.', 2, '').display(total) + ' total)');
+                    },
 
                 });
 
@@ -181,8 +245,128 @@ const customers = {
         });
     },
 
+    loadComboPlaza: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
 
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
 
+                let selectEl = document.getElementById('cmbPlaza');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(item.Nombre, item.IdPlaza, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+
+    loadComboEjecutivo: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaEjecutivo",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbEjecutivo');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbEjecutivo"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(`${item.Nombre} ${item.PrimerApellido} ${item.SegundoApellido}`, item.IdEmpleado, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+
+    loadComboSupervisor: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaSupervisor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbSupervisor');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbSupervisor"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(`${item.Nombre} ${item.PrimerApellido} ${item.SegundoApellido}`, item.IdEmpleado, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+
+    loadComboPromotor: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaPromotor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbPromotor');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbPromotor"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(`${item.Nombre} ${item.PrimerApellido} ${item.SegundoApellido}`, item.IdEmpleado, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
 
     fecha() {
         let today = new Date();

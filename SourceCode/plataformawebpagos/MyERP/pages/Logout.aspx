@@ -82,9 +82,9 @@
         <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">
-                <h2>Acerca de...</h2>
+                <h2>Acerca de nosotros</h2>
                 <ul>
-                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de...</a></li>
+                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de nosotros</a></li>
                     <li><a href="../pages/Login.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Iniciar sesión</a></li>
                 </ul>
             </div>

@@ -424,6 +424,7 @@
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/assets/deliveryMaterials.js"></script>
+    <script src="../../js/app/assets/deliveryMaterialsPlazas.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

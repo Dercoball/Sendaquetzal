@@ -99,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Categorías</h1>
+                    <h1 class="h3 display">Categorías Activos y Materiales</h1>
                 </header>
 
                 <div id="panelTabla">

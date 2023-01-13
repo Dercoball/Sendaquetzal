@@ -13,6 +13,8 @@ namespace Plataforma.Clases
         public int IdFrecuenciaEnvio;
         public String Nombre;
         public String NombreTipoPlantilla;
+        public String NombrePlaza;
+
         public String NombreFrecuenciaEnvio;
         public String Contenido;
         public int Eliminado;

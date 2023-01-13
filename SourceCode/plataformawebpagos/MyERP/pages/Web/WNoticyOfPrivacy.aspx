@@ -103,7 +103,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Configuración de políticas de privacidad</h1>
+                    <h1 class="h3 display">Configuración de Aviso de Privacidad</h1>
                 </header>
 
                 <div id="panelTabla">

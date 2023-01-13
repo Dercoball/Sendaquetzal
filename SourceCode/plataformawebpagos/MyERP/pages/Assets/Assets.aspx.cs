@@ -99,7 +99,7 @@ namespace Plataforma.pages
                         item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
 
                         string botones = "<button  onclick='asset.edit(" + item.IdActivo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='asset.delete(" + item.IdActivo + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        botones += "&nbsp; <button  onclick='asset.delete(" + item.IdActivo + ")'   class='btn btn-outline-secondary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 

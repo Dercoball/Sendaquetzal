@@ -86,20 +86,20 @@
 
     <table>
         <tr>
-            <th>
+            <%--<th>
                 <h1 style="color:#FFFFFF">TABlE TEST</h1>
-            </th>
+            </th>--%>
             <th>
                 <img src="../img/brand2.png" class="img-responsive" style="margin-top: 70px;" />
             </th>
-            <th>
+            <%--<th>
                 <h1 style="color:#FFFFFF">TABlE TEST</h1>
-            </th>
+            </th>--%>
             
             <th>
                 <section class="pasos">
                 <div class="container">
-                    <h1 style="color:#FFFFFF">TABlE TEST</h1>
+                    <%--<h1 style="color:#FFFFFF">TABlE TEST</h1>--%>
 
                     <div class="row">
                 <div class="col-md-2">
@@ -131,7 +131,6 @@
 
             <div class="col-md-6" style="background-color:#dcdcdc">
 
-                <%--<form role="form" id="frm" name="frm" data-toggle="validator" runat="server">--%>
                 <form id="frm" runat="server">
 
                     <h1 style="text-align:center; font-size:200%" ><strong>Solicita un préstamo ahora</strong></h1>
@@ -141,10 +140,10 @@
                             >
 
                             <%--<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>--%>
-                            <input type="text" class="form-control input" name="txtNombre" id="txtNombre" placeholder="Nombre" required data-required-error=' ' nombre />
+                            <input type="text" class="form-control input" runat="server" name="txtNombre" id="txtNombre" placeholder="Nombre" required data-required-error=' ' nombre />
                             <div class="help-block with-errors"></div>
                             <%--<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>--%>
-                            <input type="text" class="form-control input" name="txtDireccionEmail" id="txtDireccionEmail" placeholder="Email" required data-required-error=' ' email />
+                            <input type="text" class="form-control input" runat="server" name="txtDireccionEmail" id="txtDireccionEmail" placeholder="Email" required data-required-error=' ' email />
                             <div class="help-block with-errors"></div>
 
                         </div>
@@ -152,13 +151,13 @@
                     <div class="form-group">
 
 
-                        <textarea rows="10" id="txtContenidoEmail" name="txtContenidoEmail" placeholder="Comentario" class="area" required data-required-error='Por favor ingrese el contenido de su mensaje.' /></textarea>
+                        <textarea rows="10" id="txtContenidoEmail" runat="server" name="txtContenidoEmail" placeholder="Comentario" class="area" required data-required-error='Por favor ingrese el contenido de su mensaje.' /></textarea>
 						<div class="help-block with-errors"></div>
 
                     </div>
                     <div class="text-center">
-                        <%--<button class="btnenviar" id="btnEnviar">Enviar</button>--%>
-                        <asp:Button ID="Button2" Class="btnenviar" runat="server" Text="Enviar" OnClick="Button2_Click"/>
+                       <%-- <button class="btnenviar" runat="server" OnClick="Button2_Click">Enviar</button>--%>
+                        <asp:Button ID="Button2" Class="btnenviar" runat="server" Text="Enviar" OnClick="Button2_Click" />
                     </div>
                 </form>
 
@@ -232,3 +231,4 @@
     <%--<script src="../js/cp/login.js"></script>--%>
 </body>
 </html>
+

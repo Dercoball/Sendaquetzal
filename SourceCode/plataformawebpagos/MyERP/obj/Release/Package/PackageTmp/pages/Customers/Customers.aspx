@@ -115,7 +115,7 @@
 
         <section class="forms">
 
-            <div class="container-fluid">
+            <div class="container-fluid bg-white pb-5">
 
 
                 <header>
@@ -125,25 +125,61 @@
 
 
                 <div id="panelFiltro">
-                    <div class="container">
+                    <div class="container-fluid">
 
                         <div class="mt-2 mb-4">
-
-
-                            <div class="form-group row">
-                                <label for="comboStatus">
-                                    Status
-                                </label>
-                                <div class="col-md-3">
-                                    <select id="comboStatus" class="form-control">
+                            <div class="row align-items-end">
+                                <div class="col fv-row">
+									<!--begin::Label-->
+									<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+										<span>PLAZA</span>
+									</label>
+									<!--end::Label-->
+									<select class="form-control" id="cmbPlaza" name="cmbPlaza">
+                                      <option value="0">Todos</option>
                                     </select>
+								</div>
+
+                                <div class="col fv-row">
+									<!--begin::Label-->
+									<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+										<span>EJECUTIVO</span>
+									</label>
+									<!--end::Label-->
+									<select class="form-control" id="cmbEjecutivo" name="cmbEjecutivo">
+                                      <option value="0">Todos</option>
+                                    </select>
+								</div>
+
+                                <div class="col fv-row">
+									<!--begin::Label-->
+									<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+										<span>SUPERVISOR</span>
+									</label>
+									<!--end::Label-->
+									<select class="form-control" id="cmbSupervisor" name="cmbSupervisor">
+                                      <option value="0">Todos</option>
+                                    </select>
+								</div>
+
+                                <div class="col fv-row">
+									<!--begin::Label-->
+									<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+										<span>PROMOTOR</span>
+									</label>
+									<!--end::Label-->
+									<select class="form-control" id="cmbPromotor" name="cmbPromotor">
+                                      <option value="0">Todos</option>
+                                    </select>
+								</div>
+
+                                <div class="col">
+                                    <div class="d-flex align-items-center "><button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button></div>
+                                    
                                 </div>
-
-                                <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
-
                             </div>
 
-
+                            
 
                         </div>
                     </div>
@@ -155,21 +191,30 @@
                 <div id="panelTabla">
                     <div class="table-responsive">
 
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="table">
+                        <table style="width: 100%!important;" class="table table-bordered table-hover table-sm" id="table">
 
-                            <thead>
+                            <thead class="thead-light">
                                 <tr>
                                     <th>No.</th>
                                     <th>Nombre</th>
                                     <th>CURP</th>
                                     <th>Teléfono</th>
-                                    <th>Status</th>
-                                    <th></th>
+                                    <th>Monto</th>
+                                    <th>Dirección</th>
+                                    <th>Estatus</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                             </tbody>
+                            <tfoot class="thead-light">
+                                <tr>
+                                    <th colspan="4" style="text-align:right">Total:</th>
+                                    <th></th>
+                                    <th colspan="3"></th>
+                                </tr>
+                            </tfoot>
                         </table>
 
                     </div>
@@ -183,7 +228,7 @@
 
 
         <footer class="main-footer">
-            <div class="container-fluid">
+            <div class="container-fluid ">
                 <div class="row">
                     <div class="col-sm-6">
                         <p class='nombre-empresa'></p>
@@ -301,24 +346,34 @@
     </div>
 
     <!-- JavaScript files-->
-    <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/jquery/jquery-3.5.1.js"></script>
     <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <!-- DataTables JavaScript -->
-    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/jszip.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/pdfmake.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/vfs_fonts.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
 
-    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
+    <!-- DataTables StyleSheet -->
+    <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+
+   <%-- <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
     <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
     <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />--%>
 
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <%--<script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>--%>
 
 
     <script src="../../js/validator.js"></script>

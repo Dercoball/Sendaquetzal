@@ -51,16 +51,23 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <img src="../img/sq.jpg" class="img-responsive" style="border-radius: 50%; width: 70px; height: 70px;" />
+               <img src="../img/sq2.png" 
+                    class="img-responsive"
+                    style="padding-right:50px"
+                    <%--style="border-radius: 50%;--%> 
+                    width: 70px; height: 70px;" 
+                    />
+               
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="Home.aspx">Inicio</a></li>
-                    <li><a href="../pages/Aboutus.aspx">Nosotros</a></li>
+                    <li <%--class="active"--%>
+                        ><a href="Home.aspx" style="font-size:150%"><strong>Inicio</strong></a></li>
+                    <li><a href="../pages/Aboutus.aspx" style="font-size:150%"><strong>Nosotros</strong></a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right links2">
-                    <li><a href="../pages/Login.aspx">Iniciar sesión</a></li>
+                    <li class="active" ><a href="../pages/Login.aspx" style="font-size:150%"><strong>Iniciar sesión</strong></a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right redes">
@@ -70,121 +77,73 @@
                         <img src="../img/i-twitter.png" class="img-social" /></a></li>
                     <li><a href="#">
                         <img src="../img/instagram.png" class="img-social" /></a></li>
-                    <li><a href="#">
+                    <li style="padding-right:50px"><a href="#">
                         <img src="../img/mail.png" class="img-social" /></a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
+    <table>
+        <tr>
+            <th>
+                <h1 style="color:#FFFFFF">TABlE TEST</h1>
+            </th>
+            <th>
+                <img src="../img/brand2.png" class="img-responsive" style="margin-top: 70px;" />
+            </th>
+            <th>
+                <h1 style="color:#FFFFFF">TABlE TEST</h1>
+            </th>
+            
+            <th>
+                <section class="pasos">
+                <div class="container">
+                    <h1 style="color:#FFFFFF">TABlE TEST</h1>
 
-    <img src="../img/brand.png" class="img-responsive  center-block" style="margin-top: 70px;" />
-
-
-    <%--
-    <div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" data-interval="100000">
-
-        <div class="carousel-inner">
-            <div class="item active">
-            </div>
-
-
-
-
-        </div>
-
-    </div>
-
-
-
-    <section class="opcion">
-        <div class="container">
-
-            <div class="col-md-12 text-center">
-                <img src="../img/logo_apprestar.svg" width="300px">
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div id="main-slider" class="owl-carousel owl-theme">
-                        <div class="item">
-                            <div style="text-align: right!important">
-                                <h2>Somos tu mejor opción</h2>
-                            </div>
-                            <img src="../img/img1.jpg" alt="" class="img-fluid">
-                        </div>
-                        <div class="item">
-                            <h2>Calcula tu préstamo</h2>
-                            <img src="../img/img2.jpg" alt="" class="img-fluid">
-                        </div>
-                        <div class="item">
-                            <h2>Tu préstamo a un clic</h2>
-                            <img src="../img/img3.jpg" alt="" class="img-fluid">
-                        </div>
-                        <div class="item">
-                            <h2>Somos tu mejor opción</h2>
-                            <img src="../img/img1.jpg" alt="" class="img-fluid">
-                        </div>
-                        <div class="item">
-                            <h2>Calcula tu préstamo</h2>
-                            <img src="../img/img2.jpg" alt="" class="img-fluid">
-                        </div>
-                        <div class="item">
-                            <h2>Tu préstamo a un clic</h2>
-                            <img src="../img/img3.jpg" alt="" class="img-fluid">
-                        </div>
-                    </div>
-                    <!-- /#main-slider-->
-                </div>
-            </div>
-
-
-        </div>
-    </section>--%>
-
-
-    <section class="pasos">
-        <div class="container">
-            <%--    <div class="col-md-12">
-                <h2>Tres sencillos pasos para obtener tu préstamo</h2>
-            </div>--%>
-            <div class="row">
-                <div class="col-md-4">
+                    <div class="row">
+                <div class="col-md-2">
                     <div class="text-center">
-                        <img src="../img/registro.jpg">
+                        <img src="../img/registro.png"  width="50px">
                     </div>
                     <h1>Registro</h1>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="text-center">
-                        <img src="../img/aprobacion.jpg">
+                        <img src="../img/aprobacion.png" width="50px">
                     </div>
                     <h1>Aprobación</h1>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="text-center">
-                        <img src="../img/registro.jpg">
+                        <img src="../img/listo.png" width="50px">
                     </div>
                     <h1>¡Listo!</h1>
                 </div>
             </div>
+                </div>
+                    </section>
 
-        </div>
-    </section>
+                 <section class="apprestar">
+        <div class="container" >
 
-    <section class="apprestar">
-        <div class="container">
+            <div class="col-md-6" style="background-color:#dcdcdc">
 
-            <div class="col-md-12">
+                <%--<form role="form" id="frm" name="frm" data-toggle="validator" runat="server">--%>
+                <form id="frm" runat="server">
 
-                <form role="form" id="frm" name="frm" data-toggle="validator">
-
-                    <h1>Contáctanos</h1>
+                    <h1 style="text-align:center; font-size:200%" ><strong>Solicita un préstamo ahora</strong></h1>
                     <div class="form-group">
-                        <div class="input-group">
+                        <div 
+                            <%--class="input-group"--%>
+                            >
 
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <%--<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>--%>
+                            <input type="text" class="form-control input" name="txtNombre" id="txtNombre" placeholder="Nombre" required data-required-error=' ' nombre />
+                            <div class="help-block with-errors"></div>
+                            <%--<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>--%>
                             <input type="text" class="form-control input" name="txtDireccionEmail" id="txtDireccionEmail" placeholder="Email" required data-required-error=' ' email />
                             <div class="help-block with-errors"></div>
 
@@ -193,12 +152,13 @@
                     <div class="form-group">
 
 
-                        <textarea rows="10" id="txtContenidoEmail" name="txtContenidoEmail" placeholder="Contenido" class="area" required data-required-error='Por favor ingrese el contenido de su mensaje.' /></textarea>
+                        <textarea rows="10" id="txtContenidoEmail" name="txtContenidoEmail" placeholder="Comentario" class="area" required data-required-error='Por favor ingrese el contenido de su mensaje.' /></textarea>
 						<div class="help-block with-errors"></div>
 
                     </div>
-                    <div>
-                        <button class="btnenviar" id="btnEnviar">Enviar</button>
+                    <div class="text-center">
+                        <%--<button class="btnenviar" id="btnEnviar">Enviar</button>--%>
+                        <asp:Button ID="Button2" Class="btnenviar" runat="server" Text="Enviar" OnClick="Button2_Click"/>
                     </div>
                 </form>
 
@@ -208,6 +168,12 @@
 
 
     </section>
+                
+            </th>
+           
+        </tr>
+    </table>
+
 
 
 
@@ -232,19 +198,18 @@
         <div class="container">
 
             <div class="col-md-3 col-md-offset-3 text-center">
-                <h2>Acerca de...</h2>
+                
                 <ul>
-                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de...</a></li>
-                    <li><a href="../pages/Login.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Iniciar sesión</a></li>
+                    <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de nosotros</a></li>
+                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
                 </ul>
             </div>
             <div class="col-md-3 text-center">
-                <h2>Ayuda</h2>
+                
                 <ul>
-
-                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
-                    <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Términos y condiciones</a></li>
                     <li><a href="../pages/NoticeOfPrivacy.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Aviso de privacidad</a></li>
+                    <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                    <li><a href="../pages/Tutorials.aspx"><span class="glyphicon glyphicon-play-circle  margen-derecho" aria-hidden="true"></span>Tutoriales</a></li>
                 </ul>
             </div>
         </div>
@@ -267,4 +232,3 @@
     <%--<script src="../js/cp/login.js"></script>--%>
 </body>
 </html>
-

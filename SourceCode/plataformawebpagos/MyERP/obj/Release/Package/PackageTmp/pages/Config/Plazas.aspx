@@ -40,6 +40,7 @@
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdEmpleado" runat="server"></asp:HiddenField>
     </form>
 
 
@@ -185,279 +186,325 @@
                 </div>
             </div>
     </section>
-        <section>
-             <div class="container-fluid">
+        
+        
+       
+
+
+        <section class="forms">
+
+            <div class="container-fluid">
 
                 <header>
                     <h1 class="h3 display">Catálogos - Activos</h1>
                 </header>
 
-                <div id="panelTabla2">
+                <div id="panelTablaAssets">
                     <div class="table-responsive">
 
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="tableAssets">
 
 
                             <thead>
                                 <tr>
                                     <th>No.</th>
                                     <th>Nombre</th>
+                                    <th>Material de entrega</th>
                                     <th>Activo</th>
                                     <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo Activo</button>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevoAssets"><i class="fa fa-file mr-1"></i>Nuevo Activo</button>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr role="row" class="even">
-                                    <td>1</td>
-                                    <td>Computo</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>2</td>
-                                    <td>Electrónica</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>3</td>
-                                    <td>Celulares</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>4</td>
-                                    <td>Autos</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
 
                     </div>
                 </div>
+
+
+
+
+                <div id="panelFormAssets">
+
+                    <div class="modal-body form">
+                        <form role="form" id="frmAssets" name="frmAssets">
+
+                            <div class="form-body">
+                                <h3 class="text-left">
+                                    <span id="spnTituloFormAssets"></span>
+                                    <hr />
+                                </h3>
+
+
+
+
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="txtNombreAssets">
+                                            Nombre categoría de activo
+                                        </label>
+                                        <input type="text" class="form-control" id="txtNombreAssets" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-6">
+                                        <div class="form-check ml-2">
+                                            <input id="chkEsMaterialEntrega" class="form-check-input" type="checkbox" />
+                                            <label for="chkEsMaterialEntrega" class="form-check-label">Material de entrega</label>
+                                        </div>
+                                    </div>
+                               
+
+                                    <div class="form-group col-md-6">
+                                        <div class="form-check ml-2">
+                                            <input id="chkActivoAssets" class="form-check-input" type="checkbox" />
+                                            <label for="chkActivoAssets" class="form-check-label">Activo</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-left">
+                            <button id="btnCancelarAssets" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                        </div>
+
+                        <div class=" col-md-6 text-right">
+                            <button id="btnGuardarAssets" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </section>
-        
-        <section>
-             <div class="container-fluid">
+
+
+
+                <section class="forms">
+
+            <div class="container-fluid">
 
                 <header>
                     <h1 class="h3 display">Catálogos - Materiales</h1>
                 </header>
 
-                <div id="panelTabla3">
+                <div id="panelTablaMaterials">
                     <div class="table-responsive">
 
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="tableMaterials">
 
 
                             <thead>
                                 <tr>
                                     <th>No.</th>
                                     <th>Nombre</th>
+                                    <th>Material de entrega</th>
                                     <th>Activo</th>
                                     <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo Material</button>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevoMaterials"><i class="fa fa-file mr-1"></i>Nuevo Material</button>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr role="row" class="even">
-                                    <td>1</td>
-                                    <td>Papelería</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>2</td>
-                                    <td>Uniformes</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>3</td>
-                                    <td>Equipo</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>4</td>
-                                    <td>Accesorios</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
 
                     </div>
                 </div>
-        </section>
 
-        <section>
-             <div class="container-fluid">
+
+
+
+                <div id="panelFormMaterials">
+
+                    <div class="modal-body form">
+                        <form role="form" id="frmMaterials" name="frMaterials">
+
+                            <div class="form-body">
+                                <h3 class="text-left">
+                                    <span id="spnTituloFormMaterials"></span>
+                                    <hr />
+                                </h3>
+
+
+
+
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="txtNombreMaterials">
+                                            Nombre categoría de activo
+                                        </label>
+                                        <input type="text" class="form-control" id="txtNombreMaterials" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-6">
+                                        <div class="form-check ml-2">
+                                            <input id="chkEsMaterialEntregaMaterials" class="form-check-input" type="checkbox" />
+                                            <label for="chkEsMaterialEntregaMaterials" class="form-check-label">Material de entrega</label>
+                                        </div>
+                                    </div>
+                               
+
+                                    <div class="form-group col-md-6">
+                                        <div class="form-check ml-2">
+                                            <input id="chkActivoMaterials" class="form-check-input" type="checkbox" />
+                                            <label for="chkActivoMaterials" class="form-check-label">Activo</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-left">
+                            <button id="btnCancelarMaterials" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
+                        </div>
+
+                        <div class=" col-md-6 text-right">
+                            <button id="btnGuardarMaterials" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+        
+
+
+
+
+         
+             <section class="forms">
+
+            <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Catálogos - Gastos</h1>
+                    <h1 class="h3 display">Registro de Gastos</h1>
                 </header>
 
-                <div id="panelTabla4">
+                <div id="panelTablaBills" class="secciones">
                     <div class="table-responsive">
 
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
+                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="tableBills">
 
 
                             <thead>
                                 <tr>
-                                    <th>No.</th>
-                                    <th>Nombre</th>
-                                    <th>Activo</th>
+                                    <th>Concepto</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
                                     <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo Gasto</button>
+                                        <button class="btn btn-outline btn-primary" id="btnNuevoBills"><i class="fa fa-file mr-1"></i>Nuevo</button>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr role="row" class="even">
-                                    <td>1</td>
-                                    <td>Papelería</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>2</td>
-                                    <td>Alimentos</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>3</td>
-                                    <td>Transporte</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td>4</td>
-                                    <td>Gasolina</td>
-                                    <td><span class="fa fa-check" aria-hidden="true"></span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-edit mr-1"></span>
-                                            "Editar"
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <span class="fa fa-remove mr-1"></span>
-                                            "Eliminar"
-                                        </button>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
 
                     </div>
                 </div>
+
+
+
+                <div id="panelFormBills" class="secciones">
+
+                    <div class="modal-body form">
+                        <form role="form" id="frmBills" name="frmBills">
+
+                            <div class="form-body">
+                                <h3 class="text-left">
+                                    <span id="spnTituloFormBills"></span>
+                                </h3>
+                                <hr />
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="txtConceptoBills">
+                                            Concepto
+                                        </label>
+                                        <input type="text" class="form-control" id="txtConceptoBills" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtFechaBills">
+                                            Fecha
+                                        </label>
+                                        <input type="text" class="form-control" id="txtFechaBills" disabled="disabled" />
+                                    </div>
+                           
+
+                                    <div class="form-group col-md-6">
+                                        <label for="txtMontoBills">
+                                            Monto
+                                        </label>
+                                        <input type="number" class="form-control" id="txtMontoBills" required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                    <div class="row mt-3 mb-3">
+
+                        <div class=" col-md-6 text-left">
+                            <button id="btnCancelarBills" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                        </div>
+
+                        <div class=" col-md-6 text-right">
+                            <button id="btnGuardarBills" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </section>
-            
+
+
+
 
         <footer class="main-footer">
             <div class="container-fluid">
@@ -542,6 +589,51 @@
     </div>
 
 
+
+    <div id="panelEliminarAssets" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Confirmación</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="mensajeEliminarAssets"></span>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnEliminarAceptarAssets" class="btn btn-warning" data-dismiss="modal">Eliminar</button>
+                    <button id="btnEliminarCancelarAssets" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panelEliminarMaterials" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Confirmación</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="mensajeEliminarMaterials"></span>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnEliminarAceptarMaterials" class="btn btn-warning" data-dismiss="modal">Eliminar</button>
+                    <button id="btnEliminarCancelarMaterials" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
@@ -572,6 +664,10 @@
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/config/plazas.js"></script>
+    <script src="../../js/app/config/categories.js?v=1.0.1"></script>
+    <%--<script src="../../js/app/config/categories.min.js"?v="1.0.0"></script>--%>
+    <script src="../../js/app/config/categories_materials.js?v=1.0.1"></script>
+    <script src="../../js/app/billsPlazas.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

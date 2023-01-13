@@ -1,4 +1,5 @@
 ﻿'use strict';
+
 let date = new Date();
 let descargas = "Clientes_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '21';
@@ -42,13 +43,24 @@ const customers = {
 
         status = status == null ? "-1" : status;
 
+        //Se define el tipo de filtro
+        var typeFilter = "";
+        if (parseInt(document.getElementById("cmbPromotor").value) > 0) typeFilter = "promotor";
+        else if (parseInt(document.getElementById("cmbSupervisor").value) > 0) typeFilter = "supervisor";
+        else if (parseInt(document.getElementById("cmbEjecutivo").value) > 0) typeFilter = "ejecutivo";
+        else typeFilter = "plaza";
+
+
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.idStatus = status;
         params.idPlaza = parseInt(document.getElementById("cmbPlaza").value);
-        params.idEmpleado = parseInt(document.getElementById("cmbPromotor").value);
+        params.typeFilter = typeFilter;
+        params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
+        params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
+        params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
 
         $.ajax({

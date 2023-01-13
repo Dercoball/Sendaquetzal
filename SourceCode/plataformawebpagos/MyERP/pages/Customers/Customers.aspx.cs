@@ -45,7 +45,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Cliente> GetItems(string path, string idUsuario, string idTipoUsuario, string idStatus, int idPlaza, int idEmpleado)
+        public static List<Cliente> GetItems(string path, string idUsuario, string idTipoUsuario, string idStatus, int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -73,9 +73,17 @@ namespace Plataforma.pages
                 if (idPlaza > 0)
                 {
                     var sqlEmpleado = "";
-                    if(idEmpleado > 0)
+					switch (typeFilter)
 					{
-                        sqlEmpleado = " AND idEmpleado = " + idEmpleado + " "; 
+                        case "promotor":
+                            sqlEmpleado = " AND id_empleado = " + idPromotor;
+                            break;
+                        case "supervisor":
+                            sqlEmpleado = " AND id_supervisor = " + idSupervisor;
+                            break;
+                        case "ejecutivo":
+                            sqlEmpleado = " AND id_ejecutivo = " + idEjecutivo;
+                            break;
 					}
                     sqlPlaza = " AND p.id_empleado IN (SELECT id_empleado FROM empleado WHERE id_plaza = " + idPlaza + sqlEmpleado + ") ";
                 }

@@ -292,41 +292,52 @@ namespace Plataforma.pages
             nav += AgregarItemRootMenu("15", pagina, listaPermisos, "fa fa-credit-card");
 
 
-
-            nav += GenerateMenu(new List<string> { "2", "3", "4", "5", "6", }, pagina, listaPermisos, "fa fa-internet-explorer", "Web",
-               PermisoUsuario.TIPO_PERMISO_WEB, "Web");
+            
 
             //  clientes
             nav += AgregarItemRootMenu("21", pagina, listaPermisos, "fa fa-user");
 
-
-            nav += GenerateMenu(new List<string> { "16" }, pagina, listaPermisos, "fa fa-dollar", "Préstamos",
+            nav += GenerateMenu(new List<string> { "16", "12" }, pagina, listaPermisos, "fa fa-dollar", "Préstamos",
                PermisoUsuario.TIPO_PERMISO_PRESTAMOS, "Prestamos");
 
+
+            nav += GenerateMenu(new List<string> { "51", "52", "53" }, pagina, listaPermisos, "fa fa-percent", "Inversionistas",
+               PermisoUsuario.TIPO_PERMISO_INVERSIONISTAS, "Inversionistas");
 
             //  reporte
             nav += AgregarItemRootMenu("19", pagina, listaPermisos, "fa fa-file-pdf-o");
 
-
-
-            nav += GenerateMenu(new List<string> { "17", "18" }, pagina, listaPermisos, "fa fa-percent", "Comisiones",
-                PermisoUsuario.TIPO_PERMISO_COMISIONES, "Comisiones");
-
-            nav += GenerateMenu(new List<string> { "7", "8", "10", "11", "44", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración",
-                PermisoUsuario.TIPO_PERMISO_CONFIGURACION, "Configuracion");
-
-            nav += GenerateMenu(new List<string> { "51", "52", "53"}, pagina, listaPermisos, "fa fa-percent", "Inversionistas",
-               PermisoUsuario.TIPO_PERMISO_INVERSIONISTAS, "Inversionistas");
-
-            nav += GenerateMenu(new List<string> { "54", "57", "58"}, pagina, listaPermisos, "fa fa-th-list", "Otros",
+            nav += GenerateMenu(new List<string> { "54", "57", "58" }, pagina, listaPermisos, "fa fa-th-list", "Otros",
                PermisoUsuario.TIPO_PERMISO_ACTIVOS, "Otros");
 
-            
+            nav += GenerateMenu(new List<string> { "47","8", "10", "11", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración",
+                PermisoUsuario.TIPO_PERMISO_CONFIGURACION, "Configuracion");
+
+
+            nav += GenerateMenu(new List<string> { "2", "3", "4", "5", "6", }, pagina, listaPermisos, "fa fa-internet-explorer", "Web",
+               PermisoUsuario.TIPO_PERMISO_WEB, "Web");
+
+            nav += GenerateMenu(new List<string> { "17", "18" }, pagina, listaPermisos, "fa fa-percent", "Configuración de reglas",
+               PermisoUsuario.TIPO_PERMISO_COMISIONES, "Comisiones");
+
+
+
             //  historial
             nav += AgregarItemRootMenu("14", pagina, listaPermisos, "fa fa-calendar-check-o");
 
             //  gastos
             nav += AgregarItemRootMenu("20", pagina, listaPermisos, "fa fa-th-list");
+
+
+
+
+
+
+
+
+
+
+
 
 
             Configuracion nombreEmpresa = new Configuracion();

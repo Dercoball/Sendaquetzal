@@ -364,7 +364,7 @@
 
 
 
-    <script src="../js/validator.js"></script>
+    <script src="../../js/validator.js"></script>
     <script src="../../js/app/config/positions.js"></script>
     <script src="../../js/app/general.js"></script>
 

@@ -86,7 +86,7 @@ namespace Plataforma.pages
                     {
                         Mensaje item = new Mensaje();
 
-                        item.IdMensaje = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
+                        //item.IdMensaje = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.NombreTipoPlantilla = ds.Tables[0].Rows[i]["nombre_tipo_plantilla"].ToString();
 
@@ -315,6 +315,60 @@ namespace Plataforma.pages
 
 
         [WebMethod]
+        public static List<Plaza> GetListaItemsTipoPlaza(string path)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Plaza> items = new List<Plaza>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_plaza, nombre FROM 
+                    plaza WHERE  ISNull(eliminado, 0) = 0   ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        var item = new Plaza();
+                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+
+                        items.Add(item);
+
+
+                    }
+                }
+
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        [WebMethod]
         public static List<FrecuenciaEnvio> GetListaItemsFrecuenciaEnvio(string path)
         {
 
@@ -443,9 +497,11 @@ namespace Plataforma.pages
 
                 //  SMS
                 var message = MessageResource.Create(
-                  from: new Twilio.Types.PhoneNumber("+12054305280"),
+                  //from: new Twilio.Types.PhoneNumber("+12054305280"),
+                  from: new Twilio.Types.PhoneNumber("+15086259759"),
                   body: msg.Replace("&nbsp;", ""),
-                    to: new Twilio.Types.PhoneNumber("+522731257047") //  lcd
+                    //to: new Twilio.Types.PhoneNumber("+522731257047") //  lcd
+                    to: new Twilio.Types.PhoneNumber("+523325346609") //  lcd
                                                                       //to: new Twilio.Types.PhoneNumber("+522731611855")   // Han
                                                                       //to: new Twilio.Types.PhoneNumber("+523331830952")   // JP
               );

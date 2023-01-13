@@ -217,7 +217,7 @@ namespace Plataforma.pages
 
 
                         string botones = "<button  onclick='calendar.edit(" + item.Id + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='calendar.delete(" + item.Id + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        botones += "&nbsp; <button  onclick='calendar.delete(" + item.Id + ")'   class='btn btn-outline-secondary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
                         item.Accion = botones;
 

@@ -111,13 +111,13 @@
                             <thead>
                                 <tr>
                                     <th>Tipo de cliente</th>
-                                    <th>Prestamo inicial máximo</th>
-                                    <th>Porcentaje semanal a pagar</th>
-                                    <th>Semanas a prestar</th>
-                                    <th>Garantías por monto</th>
+                                    <th>Prestamo máximo inicial</th>
+                                    <th>% pago semanal</th>
+                                    <th>Número semanas préstamo</th>
+                                    <th>Monto garantía mínima</th>
                                     <%--<th>Fechas de pago</th>--%>
-                                    <th>Cantidad para renovar</th>
-                                    <th>Semanas extra</th>
+                                    <th>Monto máximo en renovación</th>
+                                    <th>Aplica semana extra</th>
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
                                     </th>
@@ -160,7 +160,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtPrestamoInicialMaximo">
-                                            Prestamo inicial máximo
+                                           Prestamo máximo inicial
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtPrestamoInicialMaximo" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -175,7 +175,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtPorcentajeSemanal">
-                                            Porcentaje semanal a pagar
+                                            % pago semanal
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtPorcentajeSemanal" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -183,7 +183,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtSemanasAPrestar">
-                                            Semanas a prestar
+                                            Número semanas préstamo
                                         </label>
                                         <input type="number" class="form-control" id="txtSemanasAPrestar" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -199,7 +199,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtGarantiasPorMonto">
-                                            Garantías por monto
+                                            Monto garantía mínima
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtGarantiasPorMonto" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -219,7 +219,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="txtCantidadRenovar">
-                                            Cantidad máxima a renovar
+                                            Monto máximo en renovación
                                         </label>
                                         <input type="number" step="any" class="form-control" id="txtCantidadRenovar" required="required" data-required-error='Requerido' />
                                         <div class="help-block with-errors"></div>
@@ -233,7 +233,7 @@
 
                                     <div class="form-group col-md-12">
                                         <label for="txtFechasDePago">
-                                            Fechas de pago
+                                            Día límite de pago
                                         </label>
 
                                         <div class="row">

@@ -187,11 +187,11 @@ const plaza = {
 
 
         $('#btnGuardar').click(function (e) {
-
+            
             e.preventDefault();
 
             var hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
-
+            console.log("PRUEBA1", hasErrors);
             if (!hasErrors) {
 
                 //  Objeto con los valores a enviar
@@ -206,6 +206,7 @@ const plaza = {
                 params.accion = plaza.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params = JSON.stringify(params);
+                console.log("PRUEBA2", params);
 
                 $.ajax({
                     type: "POST",
@@ -248,6 +249,7 @@ const plaza = {
             }
 
         });
+
 
 
 

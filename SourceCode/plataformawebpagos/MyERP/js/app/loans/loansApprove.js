@@ -588,6 +588,7 @@ const loansEdit = {
             dataClient.Ocupacion = $('#txtOcupacion').val();
             dataClient.CurpAval = $('#txtCURPAval').val();
             dataClient.NotaCliente = $('#txtNotaSupervisor').val();
+            dataClient.NotaEjecutivoCliente = $('#txtNotaEjecutivo').val();
             dataClient.NotaFotografiaCliente = $('#txtNotaDeFoto').val();
 
             let dataAddressClient = {};
@@ -740,6 +741,7 @@ const loansEdit = {
             dataClient.NombreAval = $('#txtNombreAval').val();
             dataClient.TelefonoAval = $('#txtTelefonoAval').val();
             dataClient.NotaAval = $('#txtNotaSupervisorAval').val();
+            dataClient.NotaEjecutivoAval = $('#txtNotaEjecutivoAval').val();
             dataClient.NotaFotografiaAval = $('#txtNotaDeFotoAval').val();
 
 

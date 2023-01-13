@@ -38,6 +38,8 @@ namespace Plataforma.Clases
 
         public string NotaCliente;
         public string NotaAval;
+        public string NotaEjecutivoCliente;
+        public string NotaEjecutivoAval;
         public string NotaFotografiaCliente;
         public string NotaFotografiaAval;
 

@@ -99,7 +99,7 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Comisiones</h1>
+                    <h1 class="h3 display">Módulos</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -111,9 +111,9 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Nombre</th>
-                                    <th>Porcentaje</th>
-                                    <th>Activo</th>
+                                    <th>Regla</th>
+                                    <th>Porcentaje comisión</th>
+                                    <th>Estatus Activo</th>
 
                                     <th>
                                         <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>

@@ -45,7 +45,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Cliente> GetItems(string path, string idUsuario, string idTipoUsuario, string idStatus)
+        public static List<Cliente> GetItems(string path, string idUsuario, string idTipoUsuario, string idStatus, int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -69,10 +69,23 @@ namespace Plataforma.pages
 
 
                 //  Filtro status 
-                var sqlStatus = "";
-                if (idStatus != "-1")
+                var sqlPlaza = "";
+                if (idPlaza > 0)
                 {
-                    sqlStatus = " AND c.id_status_cliente = '" + idStatus + "'";
+                    var sqlEmpleado = "";
+					switch (typeFilter)
+					{
+                        case "promotor":
+                            sqlEmpleado = " AND id_empleado = " + idPromotor;
+                            break;
+                        case "supervisor":
+                            sqlEmpleado = " AND id_supervisor = " + idSupervisor;
+                            break;
+                        case "ejecutivo":
+                            sqlEmpleado = " AND id_ejecutivo = " + idEjecutivo;
+                            break;
+					}
+                    sqlPlaza = " AND p.id_empleado IN (SELECT id_empleado FROM empleado WHERE id_plaza = " + idPlaza + sqlEmpleado + ") ";
                 }
 
 
@@ -81,12 +94,14 @@ namespace Plataforma.pages
                      concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                      c.telefono , c.curp, c.ocupacion,
                      IsNull(c.id_status_cliente, 2) id_status_cliente,
-                     st.nombre nombre_status_cliente, st.color, p.id_prestamo
+                     st.nombre nombre_status_cliente, st.color, p.id_prestamo, p.monto, d.calleyno, d.colonia, d.municipio, d.estado
                      FROM cliente c 
                      JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
-                     JOIN status_cliente st ON (st.id_status_cliente = c.id_status_cliente)                   
+                     JOIN status_cliente st ON (st.id_status_cliente = c.id_status_cliente)   
+                     LEFT JOIN direccion d ON (d.id_cliente = c.id_cliente)
+                    WHERE 1=1 
                     "
-                    + sqlStatus
+                    + sqlPlaza 
                     + @" AND p.id_prestamo =   
                       (SELECT TOP 1 pp.id_prestamo FROM prestamo pp WHERE pp.id_cliente = c.id_cliente 
                             ORDER BY pp.id_prestamo desc) 
@@ -114,6 +129,14 @@ namespace Plataforma.pages
                         item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.NombreStatus = ds.Tables[0].Rows[i]["nombre_status_cliente"].ToString();
                         item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
+                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.direccion = new Direccion
+                        {
+                            Calle = ds.Tables[0].Rows[i]["calleyno"].ToString(),
+                            Colonia = ds.Tables[0].Rows[i]["colonia"].ToString(),
+                            Municipio = ds.Tables[0].Rows[i]["municipio"].ToString(),
+                            Estado = ds.Tables[0].Rows[i]["estado"].ToString()
+                        };
 
                         item.Color = ds.Tables[0].Rows[i]["color"].ToString();
                         item.NombreStatus = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_cliente"].ToString() + "</span>";
@@ -354,6 +377,208 @@ namespace Plataforma.pages
                     }
                 }
 
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        [WebMethod]
+        public static List<Plaza> GetListaPlazas(string path)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Plaza> items = new List<Plaza>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE activo = 1";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Plaza item = new Plaza();
+                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        [WebMethod]
+        public static List<Empleado> GetListaEjecutivo(string path, int idplaza)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Empleado> items = new List<Empleado>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_plaza = " +  idplaza +" AND id_posicion = 3";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Empleado item = new Empleado();
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        [WebMethod]
+        public static List<Empleado> GetListaSupervisor(string path, int idejecutivo)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Empleado> items = new List<Empleado>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idejecutivo + " AND id_posicion = 4";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Empleado item = new Empleado();
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return items;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        [WebMethod]
+        public static List<Empleado> GetListaPromotor(string path, int idsupervisor)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            SqlConnection conn = new SqlConnection(strConexion);
+            List<Empleado> items = new List<Empleado>();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idsupervisor + " AND id_posicion = 5";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Empleado item = new Empleado();
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        items.Add(item);
+                    }
+                }
 
                 return items;
             }

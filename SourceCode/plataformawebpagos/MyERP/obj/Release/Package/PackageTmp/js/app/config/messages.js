@@ -13,6 +13,7 @@ const messages = {
         $('#panelTabla').show();
         $('#panelForm').hide();
         messages.loadComboTipoPlantilla();
+        messages.loadComboTipoPlaza();
         messages.loadComboFrecuenciaEnvio();
         messages.idSeleccionado = -1;
         messages.accion = '';
@@ -49,6 +50,41 @@ const messages = {
                 //console.log('loadComboPosicion');
 
                 $('#comboTipoPlantilla').html(opcion);
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
+    },
+    loadComboTipoPlaza: () => {
+
+        let params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Messages.aspx/GetListaItemsTipoPlaza",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let items = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+
+                    opcion += `<option value = '${item.IdPlaza}' > ${item.Nombre}</option > `;
+
+                }
+
+                //console.log('loadComboPosicion');
+
+                $('#comboTipoPlaza').html(opcion);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -124,7 +160,7 @@ const messages = {
                     data: data,
                     columns: [
 
-                        { data: 'IdMensaje' },
+                        
                         { data: 'Nombre' },
                         { data: 'NombreTipoPlantilla' },
                         { data: 'Accion' }
@@ -207,6 +243,7 @@ const messages = {
 
                 $('#txtNombre').val(item.Nombre);
                 $('#comboTipoPlantilla').val(item.IdTipoPlantilla);
+                $('#comboTipoPlaza').val(item.IdTipoPlantilla);
                 $('#comboFrecuenciaEnvio').val(item.IdFrecuenciaEnvio);
                 tinymce.get("contenido").setContent(item.Contenido);
 

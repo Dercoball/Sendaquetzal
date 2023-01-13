@@ -49,6 +49,9 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="EASendMail, Version=7.9.0.9, Culture=neutral, PublicKeyToken=88adb80ecd66540b, processorArchitecture=MSIL">
+      <HintPath>..\packages\EASendMail.7.9.0.9\lib\net472\EASendMail.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -81,6 +84,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Pkcs.6.0.1\lib\net461\System.Security.Cryptography.Pkcs.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -125,15 +131,26 @@
     <Content Include="data\sql\sqls_varios.sql" />
     <Content Include="css\fonts\dashboard.svg" />
     <Content Include="css\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="flyway\.gitignore" />
+    <Content Include="flyway\migrations\V1.1__Devices_Collected_Data.sql" />
+    <Content Include="flyway\migrations\V1__DummyScript.sql" />
+    <Content Include="flyway\migrations\V2.1__PruebaFlyway.sql" />
+    <Content Include="flyway\migrations\V2.2__Droptable.sql" />
+    <Content Include="flyway\migrations\V2__NewField_Collected_data.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
     <Content Include="icons-reference\styles.css" />
+    <Content Include="img\aprobacion.png" />
+    <Content Include="img\brand2.png" />
+    <Content Include="img\listo.png" />
+    <Content Include="img\registro.png" />
+    <Content Include="img\sq2.png" />
+    <Content Include="img\sq3.png" />
     <Content Include="img\upload.png" />
     <Content Include="img\ico_doc.png" />
     <Content Include="img\ico_pdf.png" />
     <Content Include="img\pfg.png" />
-    <Content Include="img\aprobacion.jpg" />
     <Content Include="img\avatar-0.jpg" />
     <Content Include="img\brand.png" />
     <Content Include="img\brand\brand-1.svg" />
@@ -150,14 +167,12 @@
     <Content Include="img\img2.jpg" />
     <Content Include="img\img3.jpg" />
     <Content Include="img\instagram.png" />
-    <Content Include="img\listo.jpg" />
     <Content Include="img\loading.gif" />
     <Content Include="img\loading2.gif" />
     <Content Include="img\loading4.gif" />
     <Content Include="img\LogoIndex_1.png" />
     <Content Include="img\favicon.ico" />
     <Content Include="img\mail.png" />
-    <Content Include="img\registro.jpg" />
     <Content Include="img\slider.jpg" />
     <Content Include="img\sq.jpg" />
     <Content Include="img\user.png" />
@@ -165,12 +180,18 @@
     <Content Include="js\app\aboutus.min.js">
       <DependentUpon>aboutus.js</DependentUpon>
     </Content>
+    <Content Include="js\app\assets\assetsPlazas.js" />
     <Content Include="js\app\assets\calendar.js" />
+    <Content Include="js\app\assets\deliveryMaterialsPlazas.js" />
     <Content Include="js\app\assets\deliveryMaterials.js" />
     <Content Include="js\app\assets\assets.js" />
+    <Content Include="js\app\billsPlazas.js" />
     <Content Include="js\app\bootstrap.js" />
     <Content Include="js\app\bootstrap.min.js" />
     <Content Include="js\app\aboutus.js" />
+    <Content Include="js\app\commissions.min - Copy - Copy.js">
+      <DependentUpon>billsPlazas.js</DependentUpon>
+    </Content>
     <Content Include="js\app\commissions.min - Copy.js">
       <DependentUpon>bills.js</DependentUpon>
     </Content>
@@ -180,6 +201,10 @@
       <DependentUpon>configrules.js</DependentUpon>
     </Content>
     <Content Include="js\app\commissions\employee_evaluation.js" />
+    <Content Include="js\app\config\categories_materials.js" />
+    <Content Include="js\app\config\categories - Copia.min.js">
+      <DependentUpon>categories_materials.js</DependentUpon>
+    </Content>
     <Content Include="js\app\config\days_off.js" />
     <Content Include="js\app\config\calendars.min.js">
       <DependentUpon>calendars.js</DependentUpon>
@@ -228,6 +253,10 @@
     </Content>
     <Content Include="js\app\customers\customerhistory.js" />
     <Content Include="js\app\customers\customers.js" />
+    <Content Include="js\app\faq.min - Copy.js">
+      <DependentUpon>tutorials.js</DependentUpon>
+    </Content>
+    <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
     <Content Include="js\app\investors\investmentsRetiro.js" />
@@ -311,6 +340,8 @@
     </Content>
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
+    <Content Include="pages\Config\CategoriesMaterials.aspx" />
+    <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
     <Content Include="pages\Assets\DeliveryMaterials.aspx" />
     <Content Include="pages\Assets\Assets.aspx" />
@@ -433,6 +464,18 @@
     <Content Include="vendor\datatables-plugins\index.html" />
     <Content Include="vendor\datatables-responsive\dataTables.responsive.css" />
     <Content Include="vendor\datatables-responsive\dataTables.responsive.js" />
+    <Content Include="vendor\datatables\1.13.1\css\buttons.bootstrap4.min.css" />
+    <Content Include="vendor\datatables\1.13.1\css\dataTables.bootstrap4.min.css" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.bootstrap4.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.colVis.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.html5.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.print.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\dataTables.bootstrap4.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\dataTables.buttons.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\jquery.dataTables.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\jszip.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\pdfmake.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\vfs_fonts.js" />
     <Content Include="vendor\datatables\css\dataTables.bootstrap.css" />
     <Content Include="vendor\datatables\css\dataTables.bootstrap.min.css" />
     <Content Include="vendor\datatables\css\dataTables.bootstrap4.css" />
@@ -722,6 +765,7 @@
     <Content Include="vendor\jquery.cookie\jquery.cookie.js" />
     <Content Include="vendor\jquery.cookie\MIT-LICENSE.txt" />
     <Content Include="vendor\jquery\core.js" />
+    <Content Include="vendor\jquery\jquery-3.5.1.js" />
     <Content Include="vendor\jquery\jquery.js" />
     <Content Include="vendor\jquery\jquery.min.js" />
     <Content Include="vendor\jquery\jquery.slim.js" />
@@ -1285,6 +1329,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\CategoriaMateriales.cs" />
     <Compile Include="Clases\MaterialEntrega.cs" />
     <Compile Include="Clases\Activo.cs" />
     <Compile Include="Clases\InversionMovimiento.cs" />
@@ -1335,6 +1380,20 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="pages\Config\CategoriesMaterials.aspx.cs">
+      <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Config\CategoriesMaterials.aspx.designer.cs">
+      <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Tutorials.aspx.cs">
+      <DependentUpon>Tutorials.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Tutorials.aspx.designer.cs">
+      <DependentUpon>Tutorials.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Assets\Calendar.aspx.cs">
       <DependentUpon>Calendar.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1657,6 +1716,7 @@
     <Content Include="less\mixins.less" />
     <Content Include="less\sb-admin-2.less" />
     <Content Include="less\variables.less" />
+    <Content Include=".circleci\config.yml" />
     <None Include="bundleconfig.json" />
     <Content Include="css\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="css\fonts\glyphicons-halflings-regular.ttf" />
@@ -1664,6 +1724,11 @@
     <Content Include="fonts\dashboard.eot" />
     <Content Include="fonts\dashboard.ttf" />
     <Content Include="fonts\dashboard.woff" />
+    <Content Include="flyway\develop.conf" />
+    <Content Include="flyway\Filter.scpf" />
+    <Content Include="flyway\flyway-dev.json" />
+    <Content Include="flyway\local.conf" />
+    <Content Include="flyway\main.conf" />
     <None Include="packages.config" />
     <Content Include="vendor\bootstrap-social\bootstrap-social.less" />
     <Content Include="vendor\bootstrap-social\bootstrap-social.scss" />
@@ -1719,6 +1784,10 @@
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy1.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzalv2 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzalv2 - FTP1.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzalv2 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzalv2 - Web Deploy1.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

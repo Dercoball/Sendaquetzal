@@ -433,6 +433,18 @@
     <Content Include="vendor\datatables-plugins\index.html" />
     <Content Include="vendor\datatables-responsive\dataTables.responsive.css" />
     <Content Include="vendor\datatables-responsive\dataTables.responsive.js" />
+    <Content Include="vendor\datatables\1.13.1\css\buttons.bootstrap4.min.css" />
+    <Content Include="vendor\datatables\1.13.1\css\dataTables.bootstrap4.min.css" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.bootstrap4.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.colVis.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.html5.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\buttons.print.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\dataTables.bootstrap4.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\dataTables.buttons.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\jquery.dataTables.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\jszip.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\pdfmake.min.js" />
+    <Content Include="vendor\datatables\1.13.1\js\vfs_fonts.js" />
     <Content Include="vendor\datatables\css\dataTables.bootstrap.css" />
     <Content Include="vendor\datatables\css\dataTables.bootstrap.min.css" />
     <Content Include="vendor\datatables\css\dataTables.bootstrap4.css" />
@@ -722,6 +734,7 @@
     <Content Include="vendor\jquery.cookie\jquery.cookie.js" />
     <Content Include="vendor\jquery.cookie\MIT-LICENSE.txt" />
     <Content Include="vendor\jquery\core.js" />
+    <Content Include="vendor\jquery\jquery-3.5.1.js" />
     <Content Include="vendor\jquery\jquery.js" />
     <Content Include="vendor\jquery\jquery.min.js" />
     <Content Include="vendor\jquery\jquery.slim.js" />

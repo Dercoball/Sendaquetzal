@@ -359,21 +359,14 @@
                                     </div>
 
                                     <div class="card-body">
-
-
-
                                         <div class="text-right">
                                             <button id="btnNuevaGarantia" class="btn btn-primary boton-ocultable"><i class="fa fa-save mr-1"></i>Agregar garantía</button>
                                         </div>
 
 
                                         <div id="panelTablaGarantias">
-
                                             <div class="table-responsive">
-
                                                 <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="tableGarantias">
-
-
                                                     <thead>
                                                         <tr>
                                                             <th>Nombre</th>
@@ -404,28 +397,39 @@
 
                                 </div>
 
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Notas supervisor
+                                            </div>
 
-                                <div class="card">
-
-                                    <div class="card-header">
-                                        Notas supervisor/ejecutivo
-                                    </div>
-
-                                    <div class="card-body">
-
-                                        <div class="form-group col-md-12">
-
-                                            <textarea class="form-control campo-textarea" id="txtNotaSupervisor"
-                                                rows="4"></textarea>
-                                            <div class="help-block with-errors"></div>
-
+                                            <div class="card-body">
+                                                <div class="form-group col-md-12">
+                                                    <textarea class="form-control campo-textarea" id="txtNotaSupervisor"
+                                                        rows="4"></textarea>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Notas ejecutivo
+                                            </div>
 
-
+                                            <div class="card-body">
+                                                <div class="form-group col-md-12">
+                                                    <textarea class="form-control campo-textarea" id="txtNotaEjecutivo"
+                                                        rows="4"></textarea>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-
 
                             </form>
 
@@ -709,32 +713,43 @@
 
                                 </div>
 
-
-                                <div class="card">
-
-                                    <div class="card-header">
-                                        Notas supervisor/ejecutivo
-                                    </div>
-
-                                    <div class="card-body">
-
-                                        <div class="row">
-
-
-                                            <div class="form-group col-md-12">
-
-                                                <textarea class="form-control campo-textarea" id="txtNotaSupervisorAval" rows="4"> 
-                                                </textarea>
-
-                                                <div class="help-block with-errors"></div>
-
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Notas supervisor
                                             </div>
-
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="form-group col-md-12">
+                                                        <textarea class="form-control campo-textarea" id="txtNotaSupervisorAval" rows="4"> 
+                                                        </textarea>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-
-
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Notas ejecutivo
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="form-group col-md-12">
+                                                        <textarea class="form-control campo-textarea" id="txtNotaEjecutivoAval" rows="4"> 
+                                                        </textarea>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
+
+                                
 
                                 <div class="row mt-3 mb-3">
                                

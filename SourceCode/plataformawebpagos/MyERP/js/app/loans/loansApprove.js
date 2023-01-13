@@ -107,8 +107,8 @@ const loansEdit = {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        $('#frmCustomer')[0].reset();
-        $('#frmAval')[0].reset();
+        //$('#frmCustomer')[0].reset();
+        //$('#frmAval')[0].reset();
 
         $('#divLoading').show();
         $('#panelForm').hide();
@@ -219,6 +219,28 @@ const loansEdit = {
                 loansEdit.disableFields(disabled);
 
                 panelGuarantee.view(item.IdPrestamo, disabled);
+
+                //Se agrega el evento para descargar las imagenes
+                //const imagesLink = document.querySelectorAll("a.img-document");
+                //console.log(imagesLink);
+
+                //imagesLink.forEach(alink => {
+                //    alink.addEventListener('click', () => {
+                //        console.log('click image');
+                //        console.log(alink)
+                //        console.log(this);
+                //        let img = document.getElementById("img_" + alink.dataset.tipo);
+                //        let imagePath = img.getAttribute('src');
+                //        let fileName = getFileName(imagePath);
+
+                //        var a = document.createElement("a"); //Create <a>
+                //        a.href = imagePath; //Image Base64 Goes here
+                //        a.download = fileName; //File name Here
+                //        a.click()
+                //        //saveAs(imagePath, fileName);
+                //    });
+                //})
+
 
                 let time_ = 5000;
                 setTimeout(function () {
@@ -358,6 +380,7 @@ const loansEdit = {
                     if (doc.Extension === 'png' || doc.Extension === 'PNG' || doc.Extension === 'jpg' || doc.Extension === 'jpeg'
                         || doc.Extension === 'bmp' || doc.Extension === 'jfif') {
                         $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
+                        $(`#href_${idTipoDocumento}`).attr('href', `data:image/jpg;base64,${doc.Contenido}`);
                     } else if (doc.Extension === 'pdf') {
                         $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
                     } else {

@@ -32,6 +32,12 @@
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+
+    <style>
+        .pac-container{
+            z-index:2000;
+        }
+    </style>
 </head>
 
 
@@ -134,7 +140,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-6 col-lg-6">
+                                            <div class="col-md-7 col-lg-6">
                                                 <div class="form-group">
                                                     <label for="txtNombre">
                                                         Nombre(s)
@@ -246,7 +252,7 @@
                                                         <div class="help-block with-errors"></div>
 
                                                         <div class="input-group-append">
-                                                            <button class="input-group-text" id="btnReloadLocation">
+                                                            <button type="button" class="input-group-text" data-toggle="modal" data-target="#modalMapa">
                                                                 <span class="fa fa-map-marker"></span>
                                                             </button>
                                                         </div>
@@ -273,7 +279,7 @@
                                                 
                                             </div>
 
-                                            <div class="col-md-6 col-lg-3" >
+                                            <div class="col-md-5 col-lg-3" >
                                                 <div class="form-group">
 
                                                     <label>
@@ -566,7 +572,7 @@
                                                         <div class="help-block with-errors"></div>
 
                                                         <div class="input-group-append">
-                                                            <button class="input-group-text" id="btnReloadLocationAval">
+                                                            <button type="button" class="input-group-text" data-toggle="modal" data-target="#modalMapa">
                                                                 <span class="fa fa-map-marker"></span>
                                                             </button>
                                                         </div>
@@ -1147,7 +1153,30 @@
         </div>
     </div>
 
+    <div id="modalMapa" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalMapa" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Seleccionar ubicación</h4>
 
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="height: 50vh; width:100% ">
+                        <div id="divSearchMap" class="w-75">
+                                <input id="pac-input"
+                                       class="controls form-control"
+                                       type="text"
+                                       placeholder="Buscar dirección" />
+                            </div>
+                            <div id="map" style="height:90%; width:100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- JavaScript files-->
@@ -1169,7 +1198,7 @@
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
     <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
     
-    <script src="../../vendor/filesaver/FileSaver.min.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD88514tUDyo4A5yEUj12PBd6N7P9Bdk9I&callback=initAutocomplete&libraries=places&v=weekly&channel=2"></script>
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/loansApprove.js"></script>
@@ -1181,6 +1210,8 @@
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet">
     <script src="../../js/toastr.min.js"></script>
+
+    
 
 
 </body>

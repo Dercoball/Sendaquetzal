@@ -79,8 +79,8 @@ namespace Plataforma.pages
                         Inversion item = new Inversion();
                         item.Inversionista = new Inversionista();
                         item.Inversionista.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-                        item.IdInversionista = int.Parse(ds.Tables[0].Rows[i]["id_inversionista"].ToString());
-                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto_total"].ToString());
+                        item.id_inversionista = int.Parse(ds.Tables[0].Rows[i]["id_inversionista"].ToString());
+                        item.monto = float.Parse(ds.Tables[0].Rows[i]["inversion_utilidad"].ToString());
 
                         items.Add(item);
 

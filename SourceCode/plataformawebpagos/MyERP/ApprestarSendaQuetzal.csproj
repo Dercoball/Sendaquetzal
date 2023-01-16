@@ -137,6 +137,7 @@
     <Content Include="flyway\migrations\V2.1__PruebaFlyway.sql" />
     <Content Include="flyway\migrations\V2.2__Droptable.sql" />
     <Content Include="flyway\migrations\V2__NewField_Collected_data.sql" />
+    <Content Include="flyway\migrations\V5__InversioneseInversio.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
@@ -1330,6 +1331,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clases\CategoriaMateriales.cs" />
+    <Compile Include="Clases\Enums\EStatusInversion.cs" />
     <Compile Include="Clases\MaterialEntrega.cs" />
     <Compile Include="Clases\Activo.cs" />
     <Compile Include="Clases\InversionMovimiento.cs" />
@@ -1338,6 +1340,9 @@
     <Compile Include="Clases\Inversionista.cs" />
     <Compile Include="Clases\Gasto.cs" />
     <Compile Include="Clases\EvaluacionModulo.cs" />
+    <Compile Include="Clases\Request\InversionRequest.cs" />
+    <Compile Include="Clases\Request\InversionistaRequest.cs" />
+    <Compile Include="Clases\StatusInversion.cs" />
     <Compile Include="Clases\ValorReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\ReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\SolicitudAumentoCredito.cs" />
@@ -1380,6 +1385,7 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="Extensions\ParseHelpers.cs" />
     <Compile Include="pages\Config\CategoriesMaterials.aspx.cs">
       <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

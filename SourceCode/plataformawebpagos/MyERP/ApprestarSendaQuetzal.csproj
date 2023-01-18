@@ -256,6 +256,7 @@
     <Content Include="js\app\faq.min - Copy.js">
       <DependentUpon>tutorials.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\paymentsOverdue.js" />
     <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
@@ -341,6 +342,7 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\CategoriesMaterials.aspx" />
+    <Content Include="pages\Loans\PaymentOverdue.aspx" />
     <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
     <Content Include="pages\Assets\DeliveryMaterials.aspx" />
@@ -1181,6 +1183,7 @@
     <Content Include="vendor\metisMenu\metisMenu.js" />
     <Content Include="vendor\metisMenu\metisMenu.min.css" />
     <Content Include="vendor\metisMenu\metisMenu.min.js" />
+    <Content Include="vendor\momentjs\moment.min.js" />
     <Content Include="vendor\morrisjs\morris.css" />
     <Content Include="vendor\morrisjs\morris.js" />
     <Content Include="vendor\morrisjs\morris.min.js" />
@@ -1386,6 +1389,13 @@
     </Compile>
     <Compile Include="pages\Config\CategoriesMaterials.aspx.designer.cs">
       <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Loans\PaymentOverdue.aspx.cs">
+      <DependentUpon>PaymentOverdue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Loans\PaymentOverdue.aspx.designer.cs">
+      <DependentUpon>PaymentOverdue.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Tutorials.aspx.cs">
       <DependentUpon>Tutorials.aspx</DependentUpon>

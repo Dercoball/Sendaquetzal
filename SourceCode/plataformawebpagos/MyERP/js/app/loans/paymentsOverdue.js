@@ -3,7 +3,8 @@ let date = new Date();
 let descargas = "Pagos_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '15';
 let totalPrestamo = 0;
-let totalFallas;
+let totalFallas = 0;
+let totalAbonado = 0;
 let dataTable;
 
 
@@ -21,6 +22,7 @@ const payments = {
         payments.idPago = "-1";
         payments.accion = "";
         payments.idPrestamo = "-1";
+        payments.idCliente = "-1";
         payments.numeroSemana = "-1";
 
         payments.fechaInicial = '';
@@ -49,7 +51,7 @@ const payments = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/Payments.aspx/GetListaItems",
+            url: "../../pages/Loans/PaymentOverdue.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -74,8 +76,8 @@ const payments = {
                     select: true,
                     columns: [
                         //{ data: 'IdPago' },
-                        { data: 'NumeroSemana' },
                         { data: 'NombreCliente' },
+                        { data: 'NombreAval' },
                         { data: 'MontoPrestamo' },
                         {
                             data: 'Fecha',
@@ -83,18 +85,18 @@ const payments = {
                                 return moment(data).format('DD/MM/YYYY');
                             }
                         },
+                        { data: 'SemanasFalla' },
                         {
-                            data: 'FechaUltimoPago',
+                            data: 'SemanasFalla',
                             render: function (data, type, full, meta) {
-                                var dateparse = moment(data);
-                                if (dateparse.isValid())
-                                    return dateparse.format('DD/MM/YYYY');
-                                else
-                                    return null;
+                                var res = data.split(",");
+                                return res.length;
                             }
                         },
+                        { data: 'Monto' },
                         { data: 'TotalFalla' },
-                        { data: 'SemanasFalla' },
+                        { data: 'Pagado' },
+                        { data: 'Status' },
                         {
                             data: null,
                             searchable: false,
@@ -104,8 +106,13 @@ const payments = {
                                 return '<input type="checkbox" name="id[]" value="true" checked="checked">';
                             }
                         },
-                        { data: 'Status' },
-                        { data: 'Accion' }
+                        {
+                            data: null,
+                            render: function (data, type, full, meta) {
+                                console.log(data);
+                                return `<button data-idcliente="${data.IdCliente}" data-idprestamo="${data.IdPrestamo}" onclick="payments.view(${data.IdPrestamo})" class="btn btn-outline-primary"> <span class="fa fa-folder-open mr-1"></span>Abrir</button>`;
+                            }
+                        }
                     ],
                     "language": textosEsp,
                     columnDefs: [{
@@ -163,7 +170,15 @@ const payments = {
                         ;
 
                         totalFallas = api
-                            .column(5)
+                            .column(6)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+
+                        totalAbonado = api
+                            .column(7)
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -171,7 +186,8 @@ const payments = {
                         ;
                         // Update footer
                         $(api.column(2).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalPrestamo));
-                        $(api.column(5).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
+                        $(api.column(6).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
+                        $(api.column(7).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalAbonado));
                     },
 
 
@@ -189,9 +205,9 @@ const payments = {
 
     },
 
-    view(idPago) {
+    view(id) {
 
-        console.log(idPago);
+        console.log(id);
 
         $('#frmPago')[0].reset();
 
@@ -199,12 +215,12 @@ const payments = {
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.idPago = idPago;
+        params.idPrestamo = id;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/Payments.aspx/GetPayment",
+            url: "../../pages/Loans/PaymentOverdue.aspx/GetPaymentByIdPrestamo",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -212,32 +228,29 @@ const payments = {
             success: function (msg) {
 
                 let data = msg.d;
-                console.log(data);
-
                 $('#txtCliente').val(data.NombreCliente);
+                $('#txtAval').val(data.NombreAval);
                 $('#txtCliente').attr('data-idcliente', data.IdCliente);
                 $('#txtCliente').attr('data-idprestamo', data.IdPrestamo);
+                $('#txtCalleCliente').val(data.CalleCliente);
+                $('#txtCalleAval').val(data.CalleAval);
+                $('#txtTelefonoCliente').val(data.TelefonoCliente);
+                $('#txtTelefonoAval').val(data.TelefonoAval);
 
-                $('#txtMontoPrestamo').val(data.MontoPrestamoFormateadoMx);
-                $('#txtSaldo').val(data.SaldoFormateadoMx);
-                $('#txtAbono').val(data.Saldo);
+                $('#txtSemanasFallas').val(data.SemanasFalla);
+                var semanas = data.SemanasFalla.split(',');
+                $('#txtPagos').val(semanas.length);
+                $('#txtMonto').val(data.MontoFormateadoMx);
+                $('#txtTotal').val(data.TotalFallaFormateadoMx);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
                 payments.idPago = data.IdPago;
 
                 payments.idPrestamo = data.IdPrestamo;
+                payments.idCliente = data.IdCliente;
                 payments.numeroSemana = data.NumeroSemana;
 
-                payments.historial(data.IdPrestamo, data.NumeroSemana);
-
-                //if (Number(data.IdStatusPago) === 1) {
-                //    //$('#btnCapturar').show();
-                //} else {
-                //    $('#btnCapturar').hide();
-                //}
-
-
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
 
@@ -248,74 +261,6 @@ const payments = {
 
     },
 
-    historial: (idPrestamo, numeroSemanaActual) => {
-
-        console.log(`Historial  idPrestamo ${idPrestamo}`);
-
-        let params = {};
-        params.path = window.location.hostname;
-        params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
-        params.idPrestamo = idPrestamo;
-        params.numeroSemanaActual = numeroSemanaActual;
-        params = JSON.stringify(params);
-
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Loans/Payments.aspx/GetPaymentsByIdPrestamo",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-
-                let data = msg.d;
-
-                //console.log(data);
-                let headers = '';
-
-                let rows = '';
-
-
-                for (var i = 0; i < data.length; i++) {
-                    headers += `<th scope="col text-center">${(i + 1)}</th>`;
-                    let pago = data[i];
-                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="background-color: ${pago.Color}">${pago.SaldoFormateadoMx}${pago.Accion}</th>`;
-
-                }
-
-                const htmlTable = `           
-                    <table class="table table-bordered table-sm text-center" style="width:auto;"
-                        id="tableSolicitudes">
-
-                        <thead class="thead-light">
-
-                            ${headers}
-                       
-                        </thead>
-                        <tbody>
-                            <tr>
-                            ${rows}
-                            </tr>
-                        
-                        </tbody>
-                    </table>`;
-
-
-                $('#table_').html(htmlTable);
-
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-
-
-            }
-
-        });
-
-
-
-    },
 
     loadComboPlaza: () => {
         var params = {};
@@ -502,7 +447,7 @@ const payments = {
 
         $.ajax({
             type: "POST",
-            url: `../../pages/Loans/Payments.aspx/UpdateStatusPagoByPagoAndStatus`,
+            url: `../../pages/Loans/PaymentOverdue.aspx/UpdateStatusPagoByPagoAndStatus`,
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -595,15 +540,15 @@ const payments = {
             params.path = window.location.hostname;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
-            params.idPago = payments.idPago;
-            params.abono = Number($('#txtAbono').val());
-            params.recuperado = $('#txtRecuperado').val() === '' ? 0 : Number($('#txtRecuperado').val());
+            params.idPrestamo = payments.idPrestamo;
+            params.idCliente = payments.idCliente;
+            params.abono = Number($('#txtMontoPago').val());
             params = JSON.stringify(params);
 
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/Payments.aspx/SavePayment`,
+                url: `../../pages/Loans/PaymentOverdue.aspx/SavePayment`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

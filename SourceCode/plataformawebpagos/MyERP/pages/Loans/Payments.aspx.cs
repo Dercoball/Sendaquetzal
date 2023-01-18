@@ -125,7 +125,7 @@ namespace Plataforma.pages
 
 
                 //2.  Actualizar saldo y status del pago
-                string sqlUstatus = " id_status_pago =  " + Pago.STATUS_PAGO_ABONADO + ", saldo = saldo - @abono ";
+                string sqlUstatus = " id_status_pago =  " + Pago.STATUS_PAGO_ABONADO + ", saldo = saldo - @abono, pagado = pagado + @abono ";
                 if (itemPago.Saldo <= abono)
                 {
                     sqlUstatus = " id_status_pago =  " + Pago.STATUS_PAGO_PAGADO + ", pagado = monto, saldo = 0 ";
@@ -148,61 +148,61 @@ namespace Plataforma.pages
                 r += cmd.ExecuteNonQuery();
 
 
-                //3.  Abonar lo recuperado a el o los pagos en status abono hasta completar lo abonado
-                //DataSet ds = new DataSet();
-                List<Pago> pagosFalla = GetPaymentsByIdPrestamoAndStatus(itemPago.IdPrestamo.ToString(), new int[] { Pago.STATUS_PAGO_FALLA }, conn, transaccion);
-
-
-                //  Acomodar el monto recuperado en los registros de fallas
-                if (pagosFalla.Count > 0 && recuperado > 0)
+                #region Abono de saldo recuperado
+                if (recuperado > 0)
                 {
-                    double abonoCompleto = recuperado;
-                    int i = 0;
-
-                    Utils.Log("recuperado ... " + recuperado);
-
-                    while (recuperado > 0 && i < pagosFalla.Count)
+                    //3.  Abonar lo recuperado a el o los pagos en status abono hasta completar lo abonado
+                    //DataSet ds = new DataSet();
+                    List<Pago> pagosFalla = GetPaymentsByIdPrestamoAndStatus(itemPago.IdPrestamo.ToString(), new int[] { Pago.STATUS_PAGO_FALLA }, conn, transaccion);
+                    //  Acomodar el monto recuperado en los registros de fallas
+                    if (pagosFalla.Count > 0 && recuperado > 0)
                     {
-                        Pago pago = pagosFalla[i];
-                        Utils.Log("idPago ... " + pago.IdPago);
-                        Utils.Log("Monto ... " + pago.Monto);
-                        Utils.Log("Saldo ... " + pago.Saldo);
+                        int i = 0;
 
-                        double montoAAbonar = recuperado;
-                        if (recuperado >= pago.Saldo)
+                        Utils.Log("recuperado ... " + recuperado);
+
+                        while (recuperado > 0 && i < pagosFalla.Count)
                         {
-                            montoAAbonar = pago.Saldo;
+                            Pago pago = pagosFalla[i];
+                            Utils.Log("idPago ... " + pago.IdPago);
+                            Utils.Log("Monto ... " + pago.Monto);
+                            Utils.Log("Saldo ... " + pago.Saldo);
+
+                            double montoAAbonar = recuperado;
+							bool completo = false;
+							if (recuperado >= pago.Saldo)
+                            {
+                                montoAAbonar = pago.Saldo;
+								completo = true;
+							}
+                            Utils.Log("montoAAbonar ... " + montoAAbonar);
+
+                            int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar, true, completo, conn, transaccion);
+
+                            Utils.Log("rowsAffected de pago " + pago.IdPago + " ... " + rowsUpdateds);
+
+                            recuperado -= montoAAbonar;
+
+                            Utils.Log("recuperado restamte ... " + recuperado);
+
+                            i++;
                         }
-                        Utils.Log("montoAAbonar ... " + montoAAbonar);
 
-                        int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar, true, conn, transaccion);
+                        //  Revisar que si uno de los pagos de la lista de los que estaban en falla, pasan se cubren en su totalidad
+                        //  Cambiarlos de status a abonado
+                        foreach (var item in pagosFalla)
+                        {
+                            Utils.Log("Revisar status y actualizar de pago " + item.IdPago);
 
-                        Utils.Log("rowsAffected de pago " + pago.IdPago + " ... " + rowsUpdateds);
+                            int rowsAfcected = UpdateStatusPago(item.IdPago, conn, transaccion);
 
-                        recuperado -= montoAAbonar;
+                            Utils.Log("rowsAfcected UpdateStatusPago ... " + rowsAfcected);
+                        }
 
-                        Utils.Log("recuperado restamte ... " + recuperado);
-
-                        i++;
                     }
 
-
-
-
-                    //  Revisar que si uno de los pagos de la lista de los que estaban en falla, pasan se cubren en su totalidad
-                    //  Cambiarlos de status a abonado
-                    foreach (var item in pagosFalla)
-                    {
-                        Utils.Log("Revisar status y actualizar de pago " + item.IdPago);
-
-                        int rowsAfcected = UpdateStatusPago(item.IdPago, conn, transaccion);
-
-                        Utils.Log("rowsAfcected UpdateStatusPago ... " + rowsAfcected);
-                    }
-
-                }
-
-
+                } 
+                #endregion
 
                 //  Revisar que si todos los pagos  han sido realizados, abonado o pagado normal pasar el status del prestamo a pagado.                    
                 List<Pago> pagosDistintosAFalla = GetPaymentsByIdPrestamoAndStatus(itemPago.IdPrestamo.ToString(),
@@ -224,9 +224,6 @@ namespace Plataforma.pages
 
 
                 }
-
-
-
 
                 //
                 transaccion.Commit();
@@ -270,21 +267,28 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static int UpdatePago(int idPago, double abono, bool esRecuperacion, SqlConnection conn, SqlTransaction transaction)
+        public static int UpdatePago(int idPago, double abono, bool esRecuperacion, bool esCompleto, SqlConnection conn, SqlTransaction transaction)
         {
 
             int r = 0;
             try
             {
                 string sqlEsRecuperacion = "";
+                string sql = "";
                 if (esRecuperacion)
                 {
-                    sqlEsRecuperacion += " ,es_recuperado = 1 ";
+                    sqlEsRecuperacion += " ,fecha_registro_pago = @fecha_registro_pago,es_recuperado = 1 ";
                 }
-
-                string sql = @" UPDATE pago SET pagado = pagado+@abono, saldo = saldo-@abono " + sqlEsRecuperacion +
-                             @" WHERE id_pago = @id_pago ";
-
+				if (esCompleto)
+				{
+					sql = @" UPDATE pago SET pagado = monto, saldo = 0 " + sqlEsRecuperacion +
+							 @" WHERE id_pago = @id_pago ";
+				}
+				else
+				{
+					sql = @" UPDATE pago SET pagado = pagado+@abono, saldo = saldo-@abono " + sqlEsRecuperacion +
+							 @" WHERE id_pago = @id_pago ";
+				}
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
@@ -294,6 +298,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@abono", abono);
                 cmd.Parameters.AddWithValue("@id_pago", idPago);
+				cmd.Parameters.AddWithValue("@fecha_registro_pago", DateTime.Now);
                 cmd.Transaction = transaction;
 
                 r = cmd.ExecuteNonQuery();
@@ -439,8 +444,6 @@ namespace Plataforma.pages
         }
 
 
-
-
         public static List<Pago> GetPaymentsByIdPrestamoAndStatus(string idPrestamo, int[] idsStatus, SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -557,32 +560,36 @@ namespace Plataforma.pages
 
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
-                                    concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
-                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr,                                
-                                    st.nombre nombre_status_pago, st.color, pre.id_cliente,
-
-                                    IsNull( (SELECT SUM(f.saldo) FROM pago f WHERE p.id_prestamo = f.id_prestamo 
-                                            AND  f.id_status_pago = " + idStatusPagoFalla + @" ) , 0)  total_falla,
-
-                                      (SELECT SUBSTRING( 
-                                               (
-                                                SELECT ', ' + CAST(p2.numero_semana AS VARCHAR(5)) AS 'data()'
-                                                FROM pago p2 WHERE p.id_prestamo = p2.id_prestamo 
-                                                AND  p2.id_status_pago = " + idStatusPagoFalla + @" 
-                                                FOR XML PATH('') 
-                                              ), 2 , 9999)
-                                    				) As semanas_falla
-
-                                    FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND IsNull(c.id_status_cliente, 2) <> " + Cliente.STATUS_CONDONADO + @" )                                                                                       
-                                    "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"') "
-                                    + sqlUser
-                                    + sqlStatus
-                                    + " ORDER BY p.id_pago ";
+                string query = @"SELECT 
+	                                pre.id_prestamo,
+	                                concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
+	                                c.id_cliente,
+	                                pre.monto,
+	                                pre.fecha_solicitud,
+	                                pre.fecha_aprobacion,
+	                                pre.id_status_prestamo,
+	                                st.color,
+	                                st.nombre nombre_status_prestamo,
+	                                (SELECT SUBSTRING( 
+				                                (
+				                                SELECT ', ' + CAST(p2.numero_semana AS VARCHAR(5)) AS 'data()'
+				                                FROM pago p2 WHERE p2.id_prestamo = pre.id_prestamo
+				                                AND  p2.id_status_pago = 2 AND p2.saldo > 0
+				                                FOR XML PATH('') 
+				                                ), 2 , 9999)) As semanas_falla,
+	                                IsNull( (SELECT SUM(f.saldo) FROM pago f WHERE f.id_prestamo = pre.id_prestamo AND  f.id_status_pago = 2 ) , 0)  total_falla,
+	                                (Select MAX(p3.fecha_registro_pago) FROM pago p3 WHERE p3.id_prestamo = pre.id_prestamo ) AS fecha_ultimo_pago,
+	                                p.id_pago,
+	                                p.numero_semana,
+                                    p.monto montopago
+                                FROM 
+	                                prestamo pre 
+	                                INNER JOIN cliente c ON (c.id_cliente = pre.id_cliente) 
+	                                JOIN status_prestamo st ON (st.id_status_prestamo = pre.id_status_prestamo)
+	                                INNER JOIN pago p ON (p.id_prestamo = pre.id_prestamo AND p.fecha >= CAST('2022-06-16' as DATE) AND p.fecha <= CAST('2022-06-22' as DATE)
+	                                )
+                                WHERE
+	                                pre.id_status_prestamo = 4";    
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -601,19 +608,26 @@ namespace Plataforma.pages
                         item.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
                         item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
                         item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        item.MontoPrestamo = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+						item.Monto = float.Parse(ds.Tables[0].Rows[i]["montopago"].ToString());
                         item.MontoFormateadoMx = item.Monto.ToString("C2"); //moneda Mx -> $ 2,233.00
 
                         item.TotalFalla = float.Parse(ds.Tables[0].Rows[i]["total_falla"].ToString());
                         item.TotalFallaFormateadoMx = item.TotalFalla.ToString("C2");
-
-                        item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
+                        item.Fecha = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_solicitud"].ToString());
+						item.FechaStr = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
 
                         item.SemanasFalla = ds.Tables[0].Rows[i]["semanas_falla"].ToString();
+                        string fechaultimopago = ds.Tables[0].Rows[i]["fecha_ultimo_pago"].ToString();
 
+						if (!string.IsNullOrEmpty(fechaultimopago))
+                        {
+                            item.FechaUltimoPago = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_ultimo_pago"].ToString());
+                        }else
+                            item.FechaUltimoPago = null;
 
                         item.Color = ds.Tables[0].Rows[i]["color"].ToString();
-                        item.Status = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_pago"].ToString() + "</span>";
+                        item.Status = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
 
 
                         string botones = "";
@@ -672,23 +686,18 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
-
-
-
-
-
-
                 DataSet ds = new DataSet();
                 string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
-                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr, tc.semanas_a_prestar, prestamo.id_cliente,            
+                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr, tc.semanas_a_prestar, prestamo.id_cliente, prestamo.monto montoprestamo, 
+                                     IsNull( (SELECT SUM(f.saldo) FROM pago f WHERE f.id_prestamo = prestamo.id_prestamo AND f.numero_semana <= p.numero_semana) , 0)  saldopendiente,
                                     st.nombre nombre_status_pago
                                     FROM pago p
                                     JOIN prestamo prestamo ON (p.id_prestamo = prestamo.id_prestamo)                                            
                                     JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
                                     JOIN cliente c ON (c.id_cliente = prestamo.id_cliente) 
                                     JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) "
-                                    + @" WHERE p.id_pago = @id_pago ";
+									+ @" WHERE p.id_pago = @id_pago ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("id_pago", idPago);
@@ -709,9 +718,13 @@ namespace Plataforma.pages
                         item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
                         item.NumeroSemanas = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
                         item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-                        item.Monto = Math.Round(float.Parse(ds.Tables[0].Rows[i]["monto"].ToString()), 2);
+                        item.MontoPrestamo = Math.Round(float.Parse(ds.Tables[0].Rows[i]["montoprestamo"].ToString()), 2);
+						item.MontoPrestamoFormateadoMx = item.MontoPrestamo.ToString("C2");
+						item.Monto = Math.Round(float.Parse(ds.Tables[0].Rows[i]["monto"].ToString()), 2);
                         item.MontoFormateadoMx = item.Monto.ToString("C2"); //moneda Mx -> $ 2,233.00
-                        item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
+						item.Saldo = float.Parse(ds.Tables[0].Rows[i]["saldo"].ToString());
+                        item.SaldoFormateadoMx = item.Saldo.ToString("C2");
+						item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
                         item.Status = ds.Tables[0].Rows[i]["nombre_status_pago"].ToString();
 
 
@@ -797,20 +810,15 @@ namespace Plataforma.pages
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
                         item.Saldo = float.Parse(ds.Tables[0].Rows[i]["saldo"].ToString());
                         item.Pagado = float.Parse(ds.Tables[0].Rows[i]["pagado"].ToString());
+                        item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
 
                         if (item.IdStatusPago == Pago.STATUS_PAGO_PENDIENTE)//Este aun no se muestra en historial
                         {
-                            if (i + 1 <= numeroSemanaActual)
-                            {
-                                item.SaldoFormateadoMx = item.Monto.ToString("C2");
-                            }
-                            else
-                            {
-                                item.SaldoFormateadoMx = "";
-                            }
-                            item.Color = "#D3D3D3";         //   tono gris
+							item.SaldoFormateadoMx = "-";
+							item.Color = "transparent";         //   tono gris
 
                         }
+
                         if (item.IdStatusPago == Pago.STATUS_PAGO_FALLA)         //  Mostrar lo pagado actualmente
                         {
                             item.SaldoFormateadoMx = item.Pagado.ToString("C2");
@@ -833,15 +841,15 @@ namespace Plataforma.pages
 
 
                         string botones = "";
-                        if (idTipoUsuario == Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString())    //superuser
-                        {
-                            botones += "<div class=\"btn-group\" role=\"group\" aria-label=\"Acciones\">";
-                            botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updatePendiente(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Pe</button>";
-                            botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updateFalla(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Fa</button>";
-                            botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updateAbonado(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Ab</button>";
-                            botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updatePagado(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Pa</button>";
-                            botones += "</div>";
-                        }
+                        //if (idTipoUsuario == Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString())    //superuser
+                        //{
+                        //    botones += "<div class=\"btn-group\" role=\"group\" aria-label=\"Acciones\">";
+                        //    botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updatePendiente(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Pe</button>";
+                        //    botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updateFalla(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Fa</button>";
+                        //    botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updateAbonado(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Ab</button>";
+                        //    botones += "<button data-idprestamo = " + item.IdPrestamo + " onclick='payments.updatePagado(" + item.IdPago + ")'  class='btn btn-secondary btn-sm'> <span class='fa fa-check-circle mr-1'></span>Pa</button>";
+                        //    botones += "</div>";
+                        //}
 
                         item.Accion = botones;
 

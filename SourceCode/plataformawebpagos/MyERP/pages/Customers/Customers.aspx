@@ -126,7 +126,6 @@
 
                 <div id="panelFiltro">
                     <div class="container-fluid">
-
                         <div class="mt-2 mb-4">
                             <div class="row align-items-end">
                                 <div class="col fv-row">
@@ -210,7 +209,7 @@
                             </tbody>
                             <tfoot class="thead-light">
                                 <tr>
-                                    <th colspan="4" style="text-align:right">Total:</th>
+                                    <th colspan="4"></th>
                                     <th></th>
                                     <th colspan="3"></th>
                                 </tr>

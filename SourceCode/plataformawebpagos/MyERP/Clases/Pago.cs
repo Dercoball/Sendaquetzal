@@ -16,18 +16,26 @@ namespace Plataforma.Clases
         public int NumeroSemanas;
         public int SemanaExtra;
 
-        public double Monto;
+        public double MontoPrestamo;
+		public double Monto;
         public float Pagado; // Lo actual abonado
         public double Saldo;
-        public string MontoFormateadoMx;
+        public string MontoPrestamoFormateadoMx;
+		public string MontoFormateadoMx;
         public string SaldoFormateadoMx;
         public int IdStatusPago;
         public string FechaStr;
         public DateTime Fecha;
         public string FechaRegistroPago;
+        public Nullable<DateTime> FechaUltimoPago;
 
         public string NombreCliente;
-        public string Status;
+        public string CalleCliente;
+		public string TelefonoCliente;
+        public string NombreAval;
+		public string TelefonoAval;
+		public string CalleAval;
+		public string Status;
         public string Color;
         public string SemanasFalla; //  concatenadas -> 3,4
         public string Accion;

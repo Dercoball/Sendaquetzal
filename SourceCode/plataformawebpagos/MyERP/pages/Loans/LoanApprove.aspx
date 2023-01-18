@@ -37,6 +37,20 @@
         .pac-container{
             z-index:2000;
         }
+        .nav-line-tabs-2x{
+            border-bottom: 2px solid #009170;
+        }
+        .nav-tabs .nav-link{
+            color: white;
+            background-color: gray;
+        }
+
+        .nav-tabs .nav-link.active, .nav-tabs .nav-link:hover{
+            color: white;
+            background-color: #009170;
+            border-color: #009170;
+            border-bottom: 2px solid #009170;
+        }
     </style>
 </head>
 

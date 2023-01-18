@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Payments.aspx.cs" Inherits="Plataforma.pages.Payments" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PaymentOverdue.aspx.cs" Inherits="Plataforma.pages.Loans.PaymentOverdue" %>
 
 <!DOCTYPE html>
 
@@ -122,7 +122,7 @@
 
             <div class="container-fluid">
                 <header>
-                    <h1 class="h3 display" id="paginaName">Pagos</h1>
+                    <h1 class="h3 display" id="paginaName">Vencidas</h1>
                 </header>
 
                 <div id="panelTabla">
@@ -198,17 +198,19 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <%--<th>No.</th>--%>
-                                            <th>Semana</th>
-                                            <th>Nombre</th>
+                                            <th>Nombre cliente</th>
+                                            <th>Nombre aval</th>
                                             <th>Prestamo</th>
-                                            <th>Fecha prestamo</th>
-                                            <th>Último pago</th>
-                                            <th>Falla</th>
-                                            <th>Semanas</th>
+                                            <th>Fecha</th>
+                                            <th>Fallas</th>
+                                            <th>Pagos</th>
+                                            <th>Monto</th>
+                                            <th>Total</th>
+                                            <th>Abonado</th>
+                                            <th>Estatus</th>
                                             <th>
                                                 <input type="checkbox" name="select_all" value="1" id="checked-select-all" checked="checked" />
-                                                Descarga</th>
-                                            <th>Estatus</th>
+                                                Select</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
@@ -218,6 +220,8 @@
 
                                     <tfoot class="thead-light">
                                         <tr>
+                                            <th></th>
+                                            <th></th>
                                             <th></th>
                                             <th></th>
                                             <th></th>
@@ -241,79 +245,161 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="form-group">
-                                            <label for="txtCliente">
-                                                Cliente
-                                            </label>
-                                            <input type="text" class="form-control campo-input" id="txtCliente"
-                                                disabled="disabled" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="form-group">
-                                            <label for="txtCliente">
-                                                Cantidad Prestada
-                                            </label>
-                                            <input type="text" class="form-control campo-input" id="txtMontoPrestamo"
-                                                disabled="disabled" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="form-group">
-                                            <label for="txtSaldo">
-                                                Saldo
-                                            </label>
-                                            <input type="text" class="form-control campo-input" id="txtSaldo" disabled="disabled" />
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="form-group">
-                                            <label for="txtAbono">
-                                                Abono
-                                            </label>
-                                            <input type="number" class="form-control campo-input" id="txtAbono" step="0.001"
-                                                required="required" data-required-error='Requerido' />
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="form-group">
-                                            <label for="txtRecuperado">
-                                                Recuperado
-                                            </label>
-                                            <input type="number" class="form-control campo-input" id="txtRecuperado" step="0.001" />
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-5" >
-                                    <div class="col-auto">
-                                        <h3>Historial</h3>
-                                        <div class="table-responsive" id="table_">
-
-                                        </div>
+                                    <div class="col-12 col-md-8 col-lg-7">
                                         <div class="row">
-                                            <div class="col-12 text-right mt-5">
-                                                <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable mr-4"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
-                                                <button id="btnCapturar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                            <div class="col-lg-6 col-12">
+                                                <h4>DATOS CLIENTE</h4>
+                                                <div class="form-group">
+                                                    <label for="txtCliente">
+                                                        Nombre Cliente
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtCliente"
+                                                        disabled="disabled" />
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-9">
+                                                        <label for="txtCliente">
+                                                            Calle
+                                                        </label>
+                                                        <input type="text" class="form-control campo-input" id="txtCalleCliente"
+                                                            disabled="disabled" />
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="txtCliente">
+                                                            Número
+                                                        </label>
+                                                        <input type="text" class="form-control campo-input" id="txtNumeroCalleCliente"
+                                                            disabled="disabled" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtCliente">
+                                                        Teléfono
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtTelefonoCliente"
+                                                        disabled="disabled" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtCliente">
+                                                        Notas
+                                                    </label>
+                                                    <textarea rows="5" class="form-control" id="txtNotasCliente" disabled="disabled"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-12">
+                                                <h4>DATOS AVAL</h4>
+                                                <div class="form-group">
+                                                    <label for="txtCliente">
+                                                        Nombre Aval
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtAval"
+                                                        disabled="disabled" />
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-9">
+                                                        <label for="txtCliente">
+                                                            Calle
+                                                        </label>
+                                                        <input type="text" class="form-control campo-input" id="txtCalleAval"
+                                                            disabled="disabled" />
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="txtCliente">
+                                                            Número
+                                                        </label>
+                                                        <input type="text" class="form-control campo-input" id="txtNumeroCalleAval"
+                                                            disabled="disabled" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtCliente">
+                                                        Teléfono
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtTelefonoAval"
+                                                        disabled="disabled" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="txtCliente">
+                                                        Notas
+                                                    </label>
+                                                    <textarea rows="5" class="form-control" id="txtNotasAval" disabled="disabled"></textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
                                 </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-8 col-lg-7">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-12">
+                                                <h5>FALLA</h5>
+                                                <div class="row">
+                                                    <div class="col-9">
+                                                        <div class="form-group">
+                                                            <label for="txtCliente">
+                                                                Semanas falla
+                                                            </label>
+                                                            <input type="text" class="form-control campo-input" id="txtSemanasFallas"
+                                                                disabled="disabled" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="form-group">
+                                                            <label for="txtCliente">
+                                                                Pagos
+                                                            </label>
+                                                            <input type="text" class="form-control campo-input" id="txtPagos"
+                                                                disabled="disabled" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label for="txtCliente">
+                                                                Monto
+                                                            </label>
+                                                            <input type="text" class="form-control campo-input" id="txtMonto"
+                                                                disabled="disabled" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label for="txtCliente">
+                                                                Total
+                                                            </label>
+                                                            <input type="text" class="form-control campo-input" id="txtTotal"
+                                                                disabled="disabled" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h5>PAGO</h5>
+                                                        <div class="form-group">
+                                                            <label for="txtCliente">
+                                                                Monto Pago
+                                                            </label>
+                                                            <input type="text" class="form-control campo-input" id="txtMontoPago"
+                                                                 required="required" data-required-error='Requerido' />
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 text-right mt-5">
+                                            <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable mr-4"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                                            <button id="btnCapturar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </form>
@@ -439,7 +525,7 @@
     <%--<link href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css" rel="stylesheet" />--%>
 
     <script src="../../js/validator.js"></script>
-    <script src="../../js/app/loans/payments.js"></script>
+    <script src="../../js/app/loans/paymentsOverdue.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

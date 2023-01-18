@@ -83,6 +83,8 @@ const customers = {
                     "destroy": true,
                     "processing": true,
                     "order": [],
+                    paging: false,
+                    scrollY: '400px',
                     columnDefs: [
                         {
                             "targets": [-1],
@@ -146,17 +148,9 @@ const customers = {
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
                             }, 0);
-
-                        // Total over this page
-                        pageTotal = api
-                            .column(4, { page: 'current' })
-                            .data()
-                            .reduce(function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0);
-
+;
                         // Update footer
-                        $(api.column(4).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(pageTotal) + ' ( $' + $.fn.dataTable.render.number(',', '.', 2, '').display(total) + ' total)');
+                        $(api.column(4).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(total));
                     },
 
                 });

@@ -244,7 +244,6 @@ const loansEdit = {
 
                 //Se agrega el evento para descargar las imagenes
                 const imagesLink = document.querySelectorAll("a.img-document");
-                console.log(imagesLink);
 
                 imagesLink.forEach(alink => {
                     alink.addEventListener('click', () => {
@@ -258,16 +257,11 @@ const loansEdit = {
                     });
                 })
 
-
                 let time_ = 5000;
                 setTimeout(function () {
-
                     $('#divLoading').hide();
                     $('#panelForm').show();
-
                 }, time_);
-
-
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);

@@ -7,6 +7,8 @@ namespace Plataforma.Clases
     /// </summary>
     public class InversionRequest
     {
+        public int? IdInversionista
+        { get; set; }
         public string NombreInversionista
         { get; set; }
         public float? MontoMinimo

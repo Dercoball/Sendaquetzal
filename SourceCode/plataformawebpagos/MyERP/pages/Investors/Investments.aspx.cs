@@ -51,13 +51,15 @@ namespace Plataforma.pages
                 fecha = prw_Inversion["fecha"].ToString().ParseStringToDateTime(),
                 monto = prw_Inversion["monto"].ToString().ParseStringToFloat(),
                 plazo = prw_Inversion["plazo"].ToString().ParseStringToInt(),
-                comprobante = prw_Inversion["comprobante"].ToString(),
+                comprobante_desposito = prw_Inversion["comprobante_desposito"].ToString(),
+                comprobante_retiro = prw_Inversion["comprobante_retiro"].ToString(),
                 porcentaje_utilidad = prw_Inversion["porcentaje_utilidad"].ToString().ParseStringToFloat(),
                 montoRetiro = prw_Inversion["monto_retiro"].ToString().ParseStringToFloat(),
                 fechaRetiro = prw_Inversion["fecha_retiro"] == null
                 ? prw_Inversion["fecha"].ToString().ParseStringToDateTime().AddDays(prw_Inversion["plazo"].ToString().ParseStringToInt())
                 : prw_Inversion["fecha_retiro"].ToString().ParseStringToDateTime(),
                 utilidad_pesos = prw_Inversion["utilidad_pesos"].ToString().ParseStringToFloat(),
+                id_status_inversion = prw_Inversion["id_status_inversion"].ToString().ParseStringToInt(),
                 Estatus = new StatusInversion
                 {
                     color = prw_Inversion["EstatusColor"].ToString(),
@@ -71,7 +73,11 @@ namespace Plataforma.pages
             };
 
             lo_Inversion.fechaRetiro = lo_Inversion.fecha.AddDays(lo_Inversion.plazo);
-
+            lo_Inversion.Accion =  "<button  onclick='asset.edit(" + lo_Inversion.id_inversion + ")'  class='rounded btn btn-primary mr-1'><i class='fa fa-edit'></i></button>";
+            if (lo_Inversion.id_status_inversion == (int)EStatusInversion.Vigente)
+            {
+                lo_Inversion.Accion += "<button  onclick='asset.delete(" + lo_Inversion.id_inversion + ")'  class=' rounded btn btn-danger mr-1'><i class='fa fa-trash'></i></button>";
+            }
             return lo_Inversion;
         }
 
@@ -99,13 +105,18 @@ namespace Plataforma.pages
                         WHERE 
                         ISNull(i.eliminado, 0) = 0";
 
+                    if (oRequest.IdInversionista.HasValue)
+                    {
+                        query += $@" AND i.id_inversionista = {oRequest.IdInversionista}";
+                    }
+
                     if (!string.IsNullOrWhiteSpace(oRequest.NombreInversionista))
                     {
                         query += $@" AND inv.nombre like '%{oRequest.NombreInversionista}%'";
                     }
                     if (oRequest.Estatus.HasValue)
                     {
-                        query += $@" AND id_status_inversion = '{oRequest.Estatus.Value}'";
+                        query += $@" AND s.id_status_inversion = '{oRequest.Estatus.Value}'";
                     }
                     if (oRequest.MontoMinimo.HasValue)
                     {
@@ -161,9 +172,6 @@ namespace Plataforma.pages
                         for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                         {
                             var lo_Inversionista = MapInversion(ds.Tables[0].Rows[i]);
-                            var ls_botones = "<button  onclick='asset.edit(" + lo_Inversionista.id_inversion + ")'  class='btn btn-primary mr-1'><i class='fa fa-edit'></i></button>";
-                            ls_botones += "<button  onclick='asset.delete(" + lo_Inversionista.id_inversion + ")'  class='btn btn-danger mr-1'><i class='fa fa-trash'></i></button>";
-                            lo_Inversionista.Accion = ls_botones;
                             llst_Inversiones.Add(lo_Inversionista);
                         }
                     }
@@ -236,9 +244,7 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         var lo_Inversionista  = MapInversion(ds.Tables[0].Rows[i]);
-                        var ls_botones = "<button  onclick='asset.edit(" + lo_Inversionista.id_inversion + ")'  class='btn btn-primary mr-1'><i class='fa fa-edit'></i></button>";
-                        ls_botones += "<button  onclick='asset.delete(" + lo_Inversionista.id_inversion + ")'  class='btn btn-danger mr-1'><i class='fa fa-trash'></i></button>";
-                        lo_Inversionista.Accion = ls_botones;
+                      
                         llst_Inversiones.Add(lo_Inversionista);
                         #region Codigo anterior
                         //Inversion item = new Inversion();
@@ -355,7 +361,7 @@ namespace Plataforma.pages
         /// <param name="idUsuario"></param>
         /// <returns></returns>
         [WebMethod]
-        public static DatosSalida Save(string path, Inversion item, string accion, string idUsuario)
+        public static DatosSalida Save(string path, Inversion item,string idUsuario)
         {
             // verificar que tenga permisos para usar esta pagina
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
@@ -379,17 +385,19 @@ namespace Plataforma.pages
 
                 string sql = string.Empty;
 
-                if (accion == "nuevo")
+                //if (accion == "nuevo")
+                if(item.id_inversion <= 0)
                 {
                     sql = @" INSERT INTO inversion
                     OUTPUT INSERTED.id_inversion
-                    VALUES (@id_inversionista, @id_status_inversion, @fecha, @monto, @porcentaje_utilidad,@utilidad_pesos,@plazo,@inversion_utilidad,null,null ,@comprobante,0) ";
+                    VALUES (@id_inversionista, @id_status_inversion, @fecha, @monto, @porcentaje_utilidad,@utilidad_pesos,@plazo,@inversion_utilidad,null,null ,null,null,0) ";
 
                 }
                 else
                 {
                     sql = @" UPDATE inversion
                     SET monto = @monto,
+                           id_status_inversion = @id_status_inversion,
                            porcentaje_utilidad =  @porcentaje_utilidad ,
                            utilidad_pesos = @utilidad_pesos , 
                            plazo = @plazo  ,
@@ -410,22 +418,16 @@ namespace Plataforma.pages
                     cmd.Parameters.AddWithValue("@utilidad_pesos", item.utilidad_pesos);
                     cmd.Parameters.AddWithValue("@plazo", item.plazo);
                     cmd.Parameters.AddWithValue("@inversion_utilidad", item.inversion_utilidad);
-                   
-                    if(string.IsNullOrWhiteSpace(item.comprobante))
-                        cmd.Parameters.AddWithValue("@comprobante",DBNull.Value);
-                    else
-                        cmd.Parameters.AddWithValue("@comprobante", item.comprobante);
+                    cmd.Parameters.AddWithValue("@id_status_inversion", item.id_status_inversion);
 
                     cmd.Transaction = transaction;
 
-                    if (accion == "nuevo")
+                    if (item.id_inversion <= 0)
                     {
-                        cmd.Parameters.AddWithValue("@id_status_inversion", (int)EStatusInversion.Vigente);
-                        idGenerado  = (int)cmd.ExecuteScalar();
+                        item.id_inversion = (int)cmd.ExecuteScalar();
                     }
                     else
                     {
-                        idGenerado = item.id_inversion;
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -478,7 +480,7 @@ namespace Plataforma.pages
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
-                salida.IdItem = idGenerado.ToString();
+                salida.IdItem = item.id_inversion.ToString();
             }
             catch (Exception ex)
             {
@@ -705,9 +707,15 @@ namespace Plataforma.pages
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                         item = MapInversion(ds.Tables[0].Rows[0]);
+
+                    //Verificamos la utilidad acumuada
+                    var li_DiasTranscurridos =DateTime.Now.Subtract(item.fecha).Days;
+                    var lf_UtilidadDiaria = item.monto / item.plazo;
+                    item.utilidad_acumulada = (float)Math.Round(li_DiasTranscurridos * lf_UtilidadDiaria, 2);
+                    item.montoRetiro = item.monto + item.utilidad_acumulada;                   
                 }
 
-                return item;
+               return item;
             }
             catch (Exception ex)
             {
@@ -721,24 +729,24 @@ namespace Plataforma.pages
             }
         }
 
+        /// <summary>
+        /// Catalogo de status de inversiones
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         [WebMethod]
-        public static List<Periodo> GetListaItemsPeriodos(string path)
+        public static List<StatusInversion> GetListaStatusInversion(string path)
         {
-
-            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Periodo> items = new List<Periodo>();
+            var strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            var conn = new SqlConnection(strConexion);
+            var llst_Status = new List<StatusInversion>();
 
             try
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_periodo,  IsNull(valor_periodo, 0) valor_periodo, activo
-                     FROM periodo
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id_periodo ";
+                string query = @" SELECT *
+                     FROM status_inversion ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -751,69 +759,25 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Periodo item = new Periodo();
-                        item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
-                        item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
-
-
-                        items.Add(item);
-
-
+                        llst_Status.Add(new StatusInversion {
+                             color = ds.Tables[0].Rows[i]["color"].ToString(),
+                             id_status_inversion = ds.Tables[0].Rows[i]["id_status_inversion"].ToString().ParseStringToInt(),
+                             nombre = ds.Tables[0].Rows[i]["nombre"].ToString(),
+                        });
                     }
                 }
 
-                return items;
+                return llst_Status;
             }
             catch (Exception ex)
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return items;
+                return llst_Status;
             }
-
             finally
             {
                 conn.Close();
-            }
-        }
-        public static float GetNuevoMontoInversionTotalActual(string idInversionista, float monto, SqlTransaction transaction, SqlConnection conn, int tipoMovimiento)
-        {
-            try
-            {
-                string query = @" SELECT 
-	                                it.id_inversion_total, it.monto_total, it.id_inversionista
-                                FROM inversion_total it                                                      
-                                WHERE it.id_inversionista = @id_inversionista ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_inversionista", idInversionista);
-                adp.SelectCommand.Transaction = transaction;
-
-                DataSet ds = new DataSet();
-                adp.Fill(ds);
-                float montoTotalActual = float.Parse(ds.Tables[0].Rows[0]["monto_total"].ToString());
-                Utils.Log("montoTotalActual : " + montoTotalActual);
-
-                float nuevoMontoTotalActual = 0;
-                if (tipoMovimiento == TIPO_MOVIMIENTO_INVERSION)
-                {
-                    nuevoMontoTotalActual = montoTotalActual + monto;
-                }
-
-                if (tipoMovimiento == TIPO_MOVIMIENTO_RETIRO)
-                {
-                    nuevoMontoTotalActual = montoTotalActual - monto;
-                }
-
-
-                Utils.Log("nuevoMontoTotalActual : " + nuevoMontoTotalActual);
-
-                return nuevoMontoTotalActual;
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
         }
 

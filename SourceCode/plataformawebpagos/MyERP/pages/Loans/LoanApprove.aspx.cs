@@ -1,14 +1,11 @@
 ﻿using Plataforma.Clases;
+using Plataforma.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -16,16 +13,12 @@ namespace Plataforma.pages
     {
         const string pagina = "13";
 
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
             string usuario = (string)Session["usuario"];
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
-
-
 
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
@@ -36,10 +29,275 @@ namespace Plataforma.pages
             {
                 Response.Redirect("Login.aspx");
             }
+        }
+
+        #region Privados
+        static void RegistrarPrestamo(Prestamo oPrestamo, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+
+            if (oPrestamo.IdPrestamo > 0)
+            {
+                sql = @"UPDATE prestamo
+                                SET fecha_solicitud = @fecha_solicitud, monto = @monto
+                          WHERE
+                                id_prestamo = @id_prestamo ";
+                Utils.Log("ACTUALIZAR PRESTAMO " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO prestamo 
+                            OUTPUT INSERTED.id_prestamo
+                    VALUES (@fecha_solicitud, @monto, 1, @id_cliente, @id_usuario,NULL,NULL,1,NULL,NULL,@id_tipo_cliente,@id_aval) ";
+                Utils.Log("INSERTAR PRESTAMO " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@fecha_solicitud", oPrestamo.FechaSolicitud);
+            cmd.Parameters.AddWithValue("@monto", oPrestamo.Monto);
+            cmd.Parameters.AddWithValue("@id_cliente", oPrestamo.IdCliente);
+            cmd.Parameters.AddWithValue("@id_usuario", oPrestamo.idUsuario);
+            cmd.Parameters.AddWithValue("@id_tipo_cliente", oPrestamo.IdTipoCliente);
+            cmd.Parameters.AddWithValue("@id_aval", oPrestamo.IdAval);
+
+            if (oPrestamo.IdPrestamo > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_prestamo", oPrestamo.IdPrestamo);
+
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oPrestamo.IdPrestamo = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+        }
+
+        static void RegistraClienteAval(Cliente oCliente, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+           
+            if (oCliente.IdCliente > 0)
+            {
+                sql = @"UPDATE cliente
+                                SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
+                                segundo_apellido = @segundo_apellido,
+                                ocupacion = @ocupacion, telefono = @telefono 
+                          WHERE
+                                id_cliente = @id_cliente ";
+                Utils.Log("ACTUALIZAR CLIENTE " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO cliente 
+                            OUTPUT INSERTED.id_cliente
+                    VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,2,NULL,NULL) ";
+                Utils.Log("INSERTAR CLIENTE " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@curp", oCliente.Curp);
+            cmd.Parameters.AddWithValue("@nombre", oCliente.Nombre);
+            cmd.Parameters.AddWithValue("@primer_apellido", oCliente.PrimerApellido);
+            cmd.Parameters.AddWithValue("@segundo_apellido", oCliente.SegundoApellido);
+            cmd.Parameters.AddWithValue("@ocupacion", oCliente.Ocupacion);
+            cmd.Parameters.AddWithValue("@telefono", oCliente.Telefono);
+           
+            if (oCliente.IdCliente > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_cliente", oCliente.IdCliente);
+
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oCliente.IdCliente = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+
+            RegistrarDireccion(oCliente.direccion, transaccion,conn);
+        }
+
+        static void RegistrarDireccion(Direccion oDireccion, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+
+            if (oDireccion.idDireccion > 0)
+            {
+                sql = @"  UPDATE direccion
+                             SET calleyno = @calleyno, 
+                                    colonia = @colonia, 
+                                    municipio = @municipio, 
+                                    estado = @estado,
+                                   codigo_postal = @codigo_postal, 
+                                   direccion_trabajo = @direccion_trabajo, 
+                                   ubicacion = @ubicacion
+                            WHERE id_direccion = @id_direccion
+                        ";
+
+                Utils.Log("ACTUALIZAR DIRECCIÓN " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO direccion 
+                      OUTPUT INSERTED.id_direccion
+                    VALUES (NULL, NULL,@calleyno, @colonia, @municipio, @estado,NULL, @codigo_postal,NULL,NULL,1,NULL, @direccion_trabajo,NULL,  @ubicacion);";
+                Utils.Log("INSERTAR id_direccion " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@calleyno", oDireccion.Calle);
+            cmd.Parameters.AddWithValue("@colonia", oDireccion.Colonia);
+            cmd.Parameters.AddWithValue("@municipio", oDireccion.Municipio);
+            cmd.Parameters.AddWithValue("@estado", oDireccion.Estado);
+            cmd.Parameters.AddWithValue("@codigo_postal", oDireccion.CodigoPostal);
+            cmd.Parameters.AddWithValue("@direccion_trabajo", oDireccion.DireccionTrabajo);
+            cmd.Parameters.AddWithValue("@ubicacion", oDireccion.Ubicacion);
+
+            if (oDireccion.idDireccion > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_direccion", oDireccion.idDireccion);
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oDireccion.idDireccion = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+        }
+
+        static void RegistrarDocumento(Documento oDocumento, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+
+            if (oDocumento.IdDocumento > 0)
+            {
+                sql = @"  UPDATE Documento
+                             SET contenido = @contenido
+                            WHERE id_documento_colaborador = @id_documento_colaborador
+                        ";
+
+                Utils.Log("ACTUALIZAR Documento " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO Documento 
+                      OUTPUT INSERTED.id_documento_colaborador
+                    VALUES (@nombre, @id_tipo_documento,@contenido, 0, null, null,NULL, @fecha_ingreso,@id_cliente,  @extension);";
+                Utils.Log("INSERTAR Documento " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@nombre", oDocumento.Nombre);
+            cmd.Parameters.AddWithValue("@id_tipo_documento", oDocumento.IdTipoDocumento);
+            cmd.Parameters.AddWithValue("@contenido", oDocumento.Contenido);
+            cmd.Parameters.AddWithValue("@fecha_ingreso", DateTime.Now);
+            cmd.Parameters.AddWithValue("@id_cliente", oDocumento.IdCliente);
+            cmd.Parameters.AddWithValue("@extension", oDocumento.Extension);
+
+            if (oDocumento.IdDocumento > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_documento_colaborador", oDocumento.IdDocumento);
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oDocumento.IdDocumento = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+        }
+        #endregion
+
+        #region Metodos 
+        [WebMethod]
+        public static DatosSalida SaveCustomerOrAval(string path, 
+            PrestamoRequest Request,
+            string idUsuario)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+
+            //verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            DatosSalida salida = new DatosSalida();
+            SqlTransaction transaccion = null;
+
+            int r = 0;
+            try
+            {
+                conn.Open();
+                transaccion = conn.BeginTransaction();
+
+                RegistraClienteAval(Request.Cliente, transaccion, conn);
+                RegistraClienteAval(Request.Aval, transaccion, conn);
+
+                if (Request.Cliente.IdCliente > 0) {
+                    Request.DocumentosCliente
+                        .ForEach(f => 
+                        {
+                            f.Extension = System.IO.Path.GetExtension(f.Nombre);
+                            f.IdCliente = Request.Cliente.IdCliente;
+                            RegistrarDocumento(f, transaccion, conn);
+                        });
+                }
+
+                if (Request.Aval.IdCliente > 0)
+                {
+                    Request.DocumentosAval
+                        .ForEach(f =>
+                        {
+                            f.Extension = System.IO.Path.GetExtension(f.Nombre);
+                            f.IdCliente = Request.Aval.IdCliente;
+                            RegistrarDocumento(f, transaccion, conn);
+                        });
+                }
+
+                Request.Prestamo.idUsuario = idUsuario.ParseStringToInt();
+                Request.Prestamo.IdCliente = Request.Cliente.IdCliente.ToString();
+                Request.Prestamo.IdAval = Request.Aval.IdCliente;
+
+                RegistrarPrestamo(Request.Prestamo, transaccion, conn);
+
+                Utils.Log("Guardado -> OK ");
+                transaccion.Commit();
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
+                salida.IdItem = String.Empty;
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                r = -1;
+                salida.MensajeError = "Se ha generado un error.";
+                salida.CodigoError = 1;
+                transaccion.Rollback();
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            return salida;
 
 
         }
-
+        #endregion
 
         /// <summary>
         /// Aprobación de un préstamo por un supervisor o por un ejecutivo.
@@ -282,9 +540,9 @@ namespace Plataforma.pages
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    
+
                     //  -1 para montoConInteres porque no queremos actualizar ese valor aún
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1,  Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1, Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
 
@@ -297,16 +555,16 @@ namespace Plataforma.pages
                     {
                         //  Nuevo monto
                         prestamo.Monto = prestamo.Monto - deudaActual.Saldo;
-                        
+
                         //  Efectuar los pagos para cada Pago semanal pendiente
                         int rowsPago = UpdatePagos(currentLoan.IdPrestamo.ToString(), idPrestamo, conn, transaction);
                         Utils.Log("\nrowsPago affected " + rowsPago);
 
 
                         //  Pasar a status pagado el prestamo anterior
-                        string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. " ;
-                        
-                        int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);                        
+                        string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. ";
+
+                        int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);
 
                         Utils.Log("\nrowsPago rowsAffectedStatusPrestamoAnterior " + rowsAffectedStatusPrestamoAnterior);
 
@@ -319,7 +577,7 @@ namespace Plataforma.pages
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
 
                     //  Pago semanal incluyendo interes
-                    float pagoAmmount = pagoAmmountWithInteres  / customerType.SemanasAPrestar;
+                    float pagoAmmount = pagoAmmountWithInteres / customerType.SemanasAPrestar;
 
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
@@ -667,7 +925,7 @@ namespace Plataforma.pages
 
         }
 
-        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus, 
+        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus,
         SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -1516,9 +1774,6 @@ namespace Plataforma.pages
 
         }
 
-
-
-
         [WebMethod]
         public static DatosSalida UpdateCustomer(string path, Cliente item, Direccion itemAddress, string accion,
             string idUsuario, string idTipoUsuario, string idPrestamo)
@@ -1635,8 +1890,6 @@ namespace Plataforma.pages
 
 
         }
-
-
 
         [WebMethod]
         public static DatosSalida UpdateCustomerAval(string path, Cliente item, Direccion itemAddressAval, string accion, string idUsuario,
@@ -1758,8 +2011,6 @@ namespace Plataforma.pages
 
         }
 
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -1837,8 +2088,6 @@ namespace Plataforma.pages
 
         }
 
-
-
         /// <summary>
         /// Obtener lista de prestamos de un cliente
         /// </summary>
@@ -1848,9 +2097,6 @@ namespace Plataforma.pages
         [WebMethod]
         public static List<Prestamo> GetLoansByCustomerId(string path, string customerId, SqlConnection conn, SqlTransaction transaction)
         {
-
-
-
             //  Lista de datos a devolver
             List<Prestamo> items = new List<Prestamo>();
 
@@ -1988,7 +2234,6 @@ namespace Plataforma.pages
 
 
         }
-
 
         [WebMethod]
         public static Empleado GetItemEmployee(string id, SqlConnection conn, SqlTransaction transaction)
@@ -2145,11 +2390,5 @@ namespace Plataforma.pages
 
 
         }
-
-
-
     }
-
-
-
 }

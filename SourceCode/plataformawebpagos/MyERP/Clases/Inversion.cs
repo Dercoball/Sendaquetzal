@@ -54,9 +54,13 @@ namespace Plataforma.Clases
         {
             get; set;
         }
-        public string comprobante
+        public string comprobante_desposito
         {
             get; set; 
+        }
+        public string comprobante_retiro
+        {
+            get; set;
         }
         public int eliminado
         { 
@@ -67,6 +71,9 @@ namespace Plataforma.Clases
             get;
             set;
         }
+        public float utilidad_acumulada
+        { get; set; }
+
         public Inversionista Inversionista 
         {
             get;set;

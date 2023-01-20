@@ -3,7 +3,6 @@
     public enum EStatusInversion
     {
         Vigente = 1,
-        Liquidado = 2,
-        Retirado = 3
+        Liquidado = 2
     }
 }

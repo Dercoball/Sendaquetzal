@@ -5,16 +5,20 @@ let pagina = '52';
 
 const asset = {
     init: () => {
+        $("#dvFechaInversion").hide();
         $('#panelTabla').show();
         $('#panelForm').hide();
         $("#nvMenuInversiones").hide();
         $("#lblFechaActual").html(moment(Date.now()).format("DD-MM-YYYY"));
-        asset.idSeleccionado = -1;
-        asset.accion = '';
+        $("#dvCamposRetiro").hide();
 
-        asset.loadContent();
+        asset.idInversionista = -1;
+        asset.idStatus = 1;
+        asset.idSeleccionado = -1;
+        asset.idTabSeleccionado = 1;
         asset.loadComboInvestor();
-        asset.loadComboPeriods();
+        asset.loadContent();
+        asset.loadComboStatus();
     },
     calculateUtilidadPesos: () => {
         var lf_montoInvertir = parseFloat($("#txtMontoAInvertir").val());
@@ -28,7 +32,6 @@ const asset = {
         lf_UtilidadInversion = (lf_montoInvertir + lf_UtilidadPesos).toFixed(2);
 
         $("#txtUtilidadPesos").val(lf_UtilidadPesos.toFixed(2));
-        $("#txtUtilidad").val(lf_UtilidadPesos.toFixed(2));
         $("#txtUtilidadInversion").val(lf_UtilidadInversion);
     },
     loadContent() {
@@ -59,6 +62,7 @@ const asset = {
     getFilter: () => {
         var oRequest =
         {
+            Estatus: $("#cboStatus").val(),
             NombreInversionista: $("#txtNombreInversionistaBusqueda").val(),
             MontoMinimo: $("#txtMontoMinimoBusqueda").val(),
             MontoMaximo: $("#txtMontoMaximaBusqueda").val(),
@@ -112,10 +116,10 @@ const asset = {
                         return (row.porcentaje_utilidad / 100).toFixed(2) + " %";
                     }
                 },
-                { data: 'plazo' },
+                { data: 'plazo', className: 'text-center'},
                 {
                     data: 'Estatus.id_status_inversion', className: 'text-center', render: function (datum, type, row) {
-                        return "<h2><span class='" + row.Estatus.color + " p-2'>" + row.Estatus.nombre + "</span></h2>";
+                        return "<h2><span class='rounded text-white " + row.Estatus.color + " p-2'>" + row.Estatus.nombre + "</span></h2>";
                     }
                 },
                 {
@@ -177,17 +181,16 @@ const asset = {
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
-
         });
     },
-    loadComboPeriods: () => {
+    loadComboStatus: () => {
         var params = {};
         params.path = window.location.hostname;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Investors/Investments.aspx/GetListaItemsPeriodos",
+            url: "../../pages/Investors/Investments.aspx/GetListaStatusInversion",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -198,42 +201,71 @@ const asset = {
 
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
-                    opcion += `<option value = '${item.IdPeriodo}' > ${item.ValorPeriodo}</option > `;
+                    opcion += `<option value = '${item.id_status_inversion}' > ${item.nombre}</option > `;
                 }
-                $('#comboPeriodos').html(opcion);
 
+                $('#cboStatus').html(opcion);
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
         });
     },
-    nuevo: () => {
-        $('#frm')[0].reset();
-        $('.form-group').removeClass('has-error');
-        $('.help-block').empty();
-        $('#panelTabla').hide();
-        $('#panelForm').show();
-        $("#nvMenuInversiones").show();
-        asset.accion = "nuevo";
-        asset.idSeleccionado = -1;
+    loadInversiones: () => {
+        var params = {};
+        var Request = {};
+        Request.IdInversionista = asset.idInversionista;
+        Request.Estatus = 1;
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.oRequest = Request;
+        params = JSON.stringify(params);
 
-        $('.deshabilitable').prop('disabled', false);
-    },
-    delete: (id) => {
-        asset.idSeleccionado = id;
-        $('#mensajeEliminar').text(`Esta seguro que dese eliminar la inversión ¿Desea continuar ?`);
-        $('#panelEliminar').modal('show');
-    },
-    edit: (id) => {
-        $('.form-group').removeClass('has-error');
-        $('.help-block').empty();
-        $('#frm')[0].reset();
-        $('#panelTabla').hide();
-        $('#panelForm').show();
-        $("#nvMenuInversiones").show();
-        asset.accion = "edicion";
-        asset.idSeleccionado = -1;
+        $('#cboFechaInversionesRetiro').html('');
 
+        $.ajax({
+            type: "POST",
+            url: "/pages/Investors/Investments.aspx/Search",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                var llst_Inversiones = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < llst_Inversiones.length; i++) {
+                    let lo_Inversion = llst_Inversiones[i];
+                    opcion += `<option value = '${lo_Inversion.id_inversion}' > ${moment(lo_Inversion.fecha).format('YYYY-MM-DD')}</option > `;
+                }
+
+                $('#cboFechaInversionesRetiro').html(opcion);
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+    loadInversionista: (id, funcion) => {
+        let params = {};
+        params.path = window.location.hostname;
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.id = id;
+        params = JSON.stringify(params);
+     
+        $.ajax({
+            type: "POST",
+            url: "/pages/Investors/Investments.aspx/GetDataInvestor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: funcion,
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+    loadInversion: (id, funcion) =>
+    {
         let params = {};
         params.path = window.location.hostname;
         params.id = id;
@@ -246,23 +278,111 @@ const asset = {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
-            success: function (msg) {
-                let lo_Inversion = msg.d;
-                asset.idSeleccionado = lo_Inversion.id_inversion;
-                $("#comboInversionista").val(lo_Inversion.id_inversionista);
-                $("#txtUtilidadInversion").val(lo_Inversion.inversion_utilidad);
-                $("#txtMontoAInvertir").val(lo_Inversion.monto);
-                $("#txtPlazo").val(lo_Inversion.plazo).keyup();
-                $("#txtPorcentajeUtilidad").val(lo_Inversion.porcentaje_utilidad);
-                $("#txtUtilidadPesos").val(lo_Inversion.utilidad_pesos);
-                $("#txtUtilidad").val(lo_Inversion.utilidad_pesos);
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+            success: funcion,
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
         });
     },
+    cargaInversionDetalle: (inversion) => {
+        $("#comboInversionista").val(inversion.id_inversionista);
+        $("#txtUtilidadInversion").val(inversion.inversion_utilidad);
+        $("#txtMontoAInvertir").val(inversion.monto);
+        $("#txtPlazo").val(inversion.plazo).keyup();
+        $("#txtPorcentajeUtilidad").val(inversion.porcentaje_utilidad);
+        $("#txtUtilidadPesos").val(inversion.utilidad_pesos);
+
+        if (inversion.id_status_inversion === 2) {
+            asset.bloquearCampos(true);
+        }
+    },
+    cancelarGuardadoResgistro: () => {
+        asset.idSeleccionado = -1;
+        $('#frm')[0].reset();
+        $('#panelTabla').show();
+        $('#panelForm').hide();
+        $("#nvMenuInversiones").hide();
+        asset.idInversionista = -1;
+        asset.idStatus = -1;
+        $('#tabInvertir').tab('show');
+        $("#cboFechaInversionesRetiro").html("");
+        $("#comboInversionista").attr("disabled", true);
+    },
+    bloquearCampos: (enabled) => {
+        $("#txtPlazo").attr("readonly", enabled);
+        $("#txtMontoAInvertir").attr("readonly", enabled);
+        $("#txtPorcentajeUtilidad").attr("readonly", enabled);
+    },
+    limpiarNuevoResgistro: () => {
+        $('#frm')[0].reset();
+        $('.form-group').removeClass('has-error');
+        $('.help-block').empty();
+        $('#panelTabla').hide();
+        $('#panelForm').show();
+        $("#nvMenuInversiones").show();
+        asset.idSeleccionado = -1;
+        asset.idInversionista = -1;
+        asset.idStatus = -1;       
+    },
+    nuevo: () => {
+        asset.limpiarNuevoResgistro();
+        asset.idStatus = 1;
+        $('#tabInvertir').tab('show').click();
+        $("#comboInversionista").attr("disabled", false);
+        $('.deshabilitable').prop('disabled', false);
+    },
+    delete: (id) => {
+        asset.idSeleccionado = id;
+        $('#mensajeEliminar').text(`Esta seguro que dese eliminar la inversión ¿Desea continuar ?`);
+        $('#panelEliminar').modal('show');
+    },
+    edit: (id) => {
+        asset.limpiarNuevoResgistro();
+        asset.loadInversion(id, function (resultado) {
+            let lo_Inversion = resultado.d;
+            asset.idSeleccionado = lo_Inversion.id_inversion;
+            asset.idInversionista = lo_Inversion.id_inversionista;
+            asset.idStatus = lo_Inversion.id_status_inversion; 
+            asset.cargaInversionDetalle(lo_Inversion);
+            $('#tabInvertir').tab('show').click();
+            $("#comboInversionista").attr("disabled", true);
+        })
+    },
     accionesBotones: () => {
+        $("#cboFechaInversionesRetiro").change(function () {
+            asset.loadInversion($(this).val(), function (resultado) {
+                let lo_Inversion = resultado.d;
+                asset.cargaInversionDetalle(lo_Inversion);
+                $("#txtUtilidadAcumulada").val(lo_Inversion.utilidad_acumulada);
+                $("#txtRetiro").val(lo_Inversion.montoRetiro);
+            })
+        })
+
+        $(".tabAccion").click(function () {
+            asset.idTabSeleccionado = parseInt($(this).attr('data-id'));
+            $('.tabInvertir').tab('show');
+            $("#lblFechaVencimiento").html('');
+            $("#dvCamposRetiro").hide();
+            $("#dvFechaInversion").hide();
+            $("#dvFechaActual").hide();
+            asset.idStatus = asset.idStatus > 0 ? asset.idStatus : 1;
+
+            if (asset.idTabSeleccionado === 1) {     
+                $("#dvFechaActual").show();
+            } else if (asset.idTabSeleccionado === 2) {
+                $("#dvCamposRetiro").show();
+                $("#dvFechaInversion").show();
+            }
+
+            $("#comboInversionista").val(asset.idInversionista).change();
+
+            if (asset.idSeleccionado > 0) {
+                $("#txtPlazo").keyup();
+            }
+
+            asset.bloquearCampos(asset.idTabSeleccionado === 2 || asset.idStatus === 2);
+        })
+
         $("#btnEliminarAceptar").click(function () {
             let params = {};
             params.path = window.location.hostname;
@@ -306,42 +426,35 @@ const asset = {
         })
 
         $("#comboInversionista").change(function () {
-            let params = {};
-            params.path = window.location.hostname;
-            params.idUsuario = document.getElementById('txtIdUsuario').value;
-            params.id = $(this).val();
-            params = JSON.stringify(params);
-            $("#txtUtilidadInversion").val('');
+            asset.idInversionista = parseInt($("#comboInversionista").val());
+            asset.idInversionista = isNaN(asset.idInversionista) ? -1 : asset.idInversionista;
 
-            $.ajax({
-                type: "POST",
-                url: "/pages/Investors/Investments.aspx/GetDataInvestor",
-                data: params,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: true,
-                success: function (msg) {
-                    var lo_Inversor = msg.d;
+            if (asset.idTabSeleccionado === 1) {
+                asset.loadInversionista($(this).val(), function (resultado) {
+                    var lo_Inversor = resultado.d;
                     $("#txtPorcentajeUtilidad").val(lo_Inversor.PorcentajeUtilidadSugerida);
                     asset.calculateUtilidadPesos();
-                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
-                }
-            });
+                });
+            }
+            else if (asset.idTabSeleccionado === 2) {
+                asset.loadInversiones();
+            }
         })
+
         $("#btnLimpiar").click(function () {
-            $("#txtNombreInversionistaBusqueda").val('');
-            $("#txtMontoMinimoBusqueda").val('');
-            $("#txtMontoMaximaBusqueda").val('');
-            $("#txtUtilidadMinimaBusqueda").val('');
-            $("#txtUtilidadMaximaBusqueda").val('');
-            $("#txtPlazoMinimoBusqueda").val('');
-            $("#txtPlazoMaximoBusqueda").val('');
-            $("#dtpIngresoMinimoBusqueda").val('');
-            $("#dtpIngresoMaximoBusqueda").val('');
-            $("#dtpRetiroMinimoBusqueda").val('');
-            $("#dtpRetiroMaximoBusqueda").val('');
+            $('#txtNombreInversionistaBusqueda').val('');
+            $('#txtMontoMaximaBusqueda').val('');
+            $('#txtMontoMinimoBusqueda').val('');
+            $('#txtUtilidadMaximaBusqueda').val('');
+            $('#txtUtilidadMinimaBusqueda').val('');
+            $('#txtPlazoMaximoBusqueda').val('');
+            $('#txtPlazoMinimoBusqueda').val('');
+            $('#dtpIngresoMaximoBusqueda').val('');
+            $('#dtpIngresoMinimoBusqueda').val('');
+            $('#dtpRetiroMaximoBusqueda').val('');
+            $('#dtpRetiroMinimoBusqueda').val('');
         });
+
         $("#btnBuscar").click(function (e) {
             e.preventDefault();
             let params = {};
@@ -365,34 +478,28 @@ const asset = {
                 }
             });
         });
+
         $('#btnNuevo').on('click', (e) => {
             e.preventDefault();
             asset.nuevo();
         });
+
         $('#btnGuardar').click(function (e) {
             e.preventDefault();
             var hasErrors = $('form[name="frm"]').validator('validate').has('.has-error').length;
             if (!hasErrors) {
-                //  Objeto con los valores a enviar
                 let lo_Inversion = {};
-                var filecomprobante = $(".file-comprobante");
-
-                if (filecomprobante.prop('files').length <= 0) {
-                    var lo_reader = new FileReader();
-                    lo_reader.readAsDataURL(filecomprobante.prop('files')[0]);
-                    lo_reader.onload = function () {
-                        lo_Inversion.comprobante = lo_reader.rresult;
-                    };
-                }
-
-                lo_Inversion.id_inversion = asset.idSeleccionado;
+                lo_Inversion.id_status_inversion = asset.idStatus;
+                lo_Inversion.id_inversion = asset.idTabSeleccionado === 2
+                    ? parseInt($("#cboFechaInversionesRetiro").val())
+                    : asset.idSeleccionado;
                 lo_Inversion.id_inversionista = $("#comboInversionista").val();
                 lo_Inversion.inversion_utilidad = $("#txtUtilidadInversion").val();
                 lo_Inversion.monto = $("#txtMontoAInvertir").val();
                 lo_Inversion.plazo = $("#txtPlazo").val();
                 lo_Inversion.porcentaje_utilidad = $("#txtPorcentajeUtilidad").val();
                 lo_Inversion.utilidad_pesos = $("#txtUtilidadPesos").val();
-                
+
                 let params = {};
                 params.path = window.location.hostname;
                 params.item = lo_Inversion;
@@ -411,16 +518,21 @@ const asset = {
                         var valores = msg.d;
                         if (parseInt(valores.CodigoError) == 0) {
                             utils.toast(mensajesAlertas.exitoGuardar, 'ok');
+
                             $('.file-comprobante').each(function (documento) {
                                 let file;
                                 if (file = this.files[0]) {
-                                    utils.sendFileEmployee(file, 'comprobanteInversion', valores.IdItem, 0, "comprobanteInversion");
+                                    var ls_TipoComprobante = asset.idTabSeleccionado === 2
+                                        ? 'comprobanteRetiro' : 'comprobanteInversion';  
+                                    utils.sendFileEmployee(file,
+                                        ls_TipoComprobante,
+                                        valores.IdItem,
+                                        0,
+                                        ls_TipoComprobante);
                                 }
                             });
 
-                            $('#panelTabla').show();
-                            $('#panelForm').hide();
-                            $("#nvMenuInversiones").hide();
+                            asset.cancelarGuardadoResgistro();
                             asset.loadContent();
                         } else {
                             utils.toast(mensajesAlertas.errorGuardar, 'fail');
@@ -433,11 +545,10 @@ const asset = {
                 });
             }
         });
+
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
-            $('#panelTabla').show();
-            $('#panelForm').hide();
-            $("#nvMenuInversiones").hide();
+            asset.cancelarGuardadoResgistro();
         });
     }
 }

@@ -36,7 +36,8 @@ CREATE TABLE [dbo].[inversion](
 	inversion_utilidad  float,
 	monto_retiro  float,
 	fecha_retiro  datetime , 
-	[comprobante] [varchar](max) NULL,
+	[comprobante_desposito] [varchar](max) NULL,
+	[comprobante_retiro] [varchar](max) NULL,
 	[eliminado] [int] NULL,
 
 	CONSTRAINT PK_inversion primary KEY(id_inversion) , 

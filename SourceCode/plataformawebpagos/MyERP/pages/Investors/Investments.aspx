@@ -87,6 +87,7 @@
             </nav>
         </header>
 
+
         <section class="forms">
             <div class="container-fluid">
                 <div id="panelTabla">
@@ -97,16 +98,55 @@
                     <!-- Fin titulo -->
 
                     <div class="row">
-                        <div class="col-9  border-right">
+                        <div class="col-12">
+                            <!-- Inicio botones -->
                             <div class="row mb-4 col-12">
                                 <button class="btn btn-primary mr-1 rounded" id="btnNuevo">
                                     <i class="fa fa-money mr-1"></i>NUEVA INVERSIÓN
                                 </button>
+                                <button class="btn btn-primary rounded mr-2" id="btnBuscar">
+                                    <i class="fa fa-search mr-1"></i>BUSCAR
+                                </button>
+                                <button class="btn btn-secondary rounded" id="btnLimpiar">
+                                    <i class="fa fa-eraser mr-1"></i>LIMPIAR
+                                </button>
                             </div>
+                            <!-- Fin botones -->
+
                             <!-- Inicio tabla de inversiones -->
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover w-100" id="table">
                                     <thead>
+                                        <tr>
+                                            <td class="p-1">
+                                                <input id="txtNombreInversionistaBusqueda" class="form-control w-100 mt-2" placeholder="Nombre" />
+                                            </td>
+                                            <td style="width: 170px">
+                                                <input id="txtMontoMaximaBusqueda" type="number" class="form-control w-100" placeholder="Monto max." />
+                                                <input id="txtMontoMinimoBusqueda" type="number" class="form-control w-100 mt-2" placeholder="Monto min." />
+                                            </td>
+                                            <td style="width: 120px">
+                                                <input id="txtUtilidadMaximaBusqueda" type="number" class="form-control w-100" placeholder="Utilidad max." />
+                                                <input id="txtUtilidadMinimaBusqueda" type="number" class="form-control w-100 mt-2" placeholder="Utilidad min." />
+                                            </td>
+                                            <td style="width: 100px">
+                                                <input id="txtPlazoMaximoBusqueda" type="number" class="form-control w-100" placeholder="Plazo max." />
+                                                <input id="txtPlazoMinimoBusqueda" type="number" class="form-control w-100 mt-2" placeholder="Plazo min." />
+                                            </td>
+                                            <td>
+                                                <select class="form-control campo-combo" id="cboStatus">
+                                                </select>
+                                            </td>
+                                            <td style="width: 110px">
+                                                <input id="dtpIngresoMaximoBusqueda" type="date" class="form-control w-100" placeholder="Ingreso max." />
+                                                <input id="dtpIngresoMinimoBusqueda" type="date" class="form-control w-100 mt-2" placeholder="Ingreso min." />
+                                            </td>
+                                            <td style="width: 110px">
+                                                <input id="dtpRetiroMaximoBusqueda" type="date" class="form-control w-100" placeholder="Retiro max." />
+                                                <input id="dtpRetiroMinimoBusqueda" type="date" class="form-control w-100 mt-2" placeholder="Retiro min." />
+                                            </td>
+                                            <td></td>
+                                        </tr>
                                         <tr>
                                             <th>Nombre inversionista</th>
                                             <th>Monto inversión</th>
@@ -136,78 +176,9 @@
                             </div>
                             <!-- Fin tabla de inversiones -->
                         </div>
-                        <div class="col-3">
-                            <form id="frmFiltros">
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <label class="form-label">Nombre</label>
-                                    <input id="txtNombreInversionistaBusqueda" class="form-control w-100" placeholder="Nombre" />
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Monto max.</label>
-                                    <input id="txtMontoMaximaBusqueda" type="number" class="form-control w-100" placeholder="Monto max." />
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Monto min.</label>
-                                    <input id="txtMontoMinimoBusqueda" type="number" class="form-control w-100" placeholder="Monto min." />
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Utilidad max.</label>
-                                    <input id="txtUtilidadMaximaBusqueda" type="number" class="form-control w-100" placeholder="Utilidad max." />
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Utilidad min.</label>
-                                    <input id="txtUtilidadMinimaBusqueda" type="number" class="form-control w-100" placeholder="Utilidad min." />
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Plazo max.</label>
-                                    <input id="txtPlazoMaximoBusqueda" type="number" class="form-control w-100" placeholder="Plazo max." />
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Plazo min.</label>
-                                    <input id="txtPlazoMinimoBusqueda" type="number" class="form-control w-100" placeholder="Plazo min." />
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Ingreso max.</label>
-                                    <input id="dtpIngresoMaximoBusqueda" type="date" class="form-control w-100" placeholder="Ingreso max." />
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Ingreso min.</label>
-                                    <input id="dtpIngresoMinimoBusqueda" type="date" class="form-control w-100" placeholder="Ingreso min." />
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Retiro max.</label>
-                                    <input id="dtpRetiroMaximoBusqueda" type="date" class="form-control w-100" placeholder="Retiro max." />
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Retiro min.</label>
-                                    <input id="dtpRetiroMinimoBusqueda" type="date" class="form-control w-100" placeholder="Retiro min." />
-                                </div>
-                            </div>
-                            </form>
-                            <!-- Inicio Boton de nuevo inversionista -->
-                            <div class="row mb-4 col-12">
-                                <button class="btn btn-primary rounded mr-2" id="btnBuscar">
-                                    <i class="fa fa-search mr-1"></i>BUSCAR
-                                </button>
-                                <button class="btn btn-secondary rounded" id="btnLimpiar">
-                                    <i class="fa fa-clean mr-1"></i>LIMPIAR
-                                </button>
-                            </div>
-                            <!-- Fin Boton de nuevo inversionista -->
-                        </div>
                     </div>
                 </div>
+
 
                 <!--Inicio menu de inversiones -->
                 <nav id="nvMenuInversiones" class="row mt-4">
@@ -218,199 +189,169 @@
                     <!-- Fin titulo -->
 
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-invertir-tab" data-toggle="tab" href="#panelForm" role="tab" aria-controls="nav-client" aria-selected="true">Invertir</a>
-                        <a class="nav-item nav-link" id="nav-aval-tab" data-toggle="tab" href="#panelFormRetiro" role="tab" aria-controls="nav-aval" aria-selected="false">Retirar</a>
+                        <a class="nav-item nav-link active tabAccion" id="tabInvertir" data-id="1" data-toggle="tab" href="#pnAccion" role="tab" aria-controls="nav-client" aria-selected="true">Invertir</a>
+                        <a class="nav-item nav-link tabAccion" id="tabRetirar" data-toggle="tab" data-id="2" href="#pnAccion" role="tab" aria-controls="nav-aval" aria-selected="false">Retirar</a>
                     </div>
                 </nav>
                 <!--Fin menu de inversiones -->
 
-                <!--Inicio panel de Inversiones -->
-                <div id="panelForm" class="tab-pane fade show active">
-                    <form role="form" id="frm" name="frm">
-                        <div class="form-body mt-4">
-                            <!-- Inicio Inversionista y Fecha Actual-->
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label">Inversionista</label>
-                                    <select class="form-control campo-combo" id="comboInversionista" required="required" data-required-error='Requerido'>
-                                    </select>
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label">Fecha Actual</label>
-                                    <label class="form-control" id="lblFechaActual"></label>
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                            </div>
-                            <!-- Fin Inversionista-->
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="pnAccion" role="tabpanel" data-id="1">
+                        <!--Inicio panel de Inversiones -->
 
-                            <!-- Inicio Monto inversión-->
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label">Monto inversión  </label>
-                                    <input type="number" step="any" class="form-control"
-                                        id="txtMontoAInvertir"
-                                        required="required"
-                                        data-required-error='Requerido'
-                                        placeholder="$" />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                            </div>
-                            <!-- Fin % Monto inversión-->
-
-                            <!-- Inicio % Utilidad y % Utilidad (Pesos)-->
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label">% Utilidad</label>
-                                    <input type="number" placeholder="Porcentaje" step="any" class="form-control" id="txtPorcentajeUtilidad" required="required" data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-
-                                <div class="col-4">
-                                    <label class="form-label">Utilidad (Pesos)</label>
-                                    <input type="number" placeholder="$" step="any" class="form-control" id="txtUtilidadPesos" readonly="true" required="required" data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                            </div>
-                            <!-- Inicio % Utilidad y % Utilidad (Pesos)-->
-
-                            <!-- Inicio Plazo y Fecha para retiro-->
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label">Plazo (días)</label>
-                                    <input type="number" placeholder="Plazo" step="any" class="form-control" id="txtPlazo" required="required" data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-
-                                <div class="col-4">
-                                    <label class="form-label">Fecha para retiro</label>
-                                    <label class="form-control" id="lblFechaVencimiento"></label>
-                                </div>
-                            </div>
-                            <!-- Fin Plazo y Fecha para retiro-->
-
-                            <!-- Inicio Utilidad y Inversión + Utilidad -->
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label">Utilidad</label>
-                                    <input type="number" placeholder="$" step="any" class="form-control" readonly="true" id="txtUtilidad" required="required" data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label">Inversión + Utilidad</label>
-                                    <input type="number" placeholder="$" step="any" class="form-control" readonly="true" id="txtUtilidadInversion" required="required" data-required-error='Requerido' />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                            </div>
-                            <!-- Fin Utilidad -->
-
-                            <!-- Inicio Comprobante de pago -->
-                            <div class="row mb-4">
-                                <div class="col-4">
-                                    <label class="form-label">Comprobante de pago</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupFileAddon01">Archivo</span>
+                        <div id="panelForm">
+                            <form role="form" id="frm" name="frm" class="mt-4">
+                                <div>
+                                    <!-- Inicio Inversionista y Fecha Actual-->
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label class="form-label">Inversionista</label>
+                                            <select class="form-control campo-combo" id="comboInversionista" required="required" data-required-error='Requerido'>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
                                         </div>
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input file-comprobante" data-tipo="1"
-                                                required="required" data-required-error='Requerido' />
-                                            <label class="custom-file-label">Selecciona archivo</label>
+                                        <div class="col-4" id="dvFechaActual">
+                                            <label class="form-label">Fecha Actual</label>
+                                            <label class="form-control" id="lblFechaActual"></label>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                        <div class="col-4" id="dvFechaInversion">
+                                            <label class="form-label">Fecha Inversion</label>
+                                            <select class="form-control campo-combo" id="cboFechaInversionesRetiro" required="required" data-required-error='Requerido'>
+                                            </select>
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
+                                    <!-- Fin Inversionista-->
+
+                                    <!-- Inicio Monto inversión-->
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label class="form-label">Monto inversión  </label>
+                                            <input type="number" step="any" class="form-control"
+                                                id="txtMontoAInvertir"
+                                                required="required"
+                                                data-required-error='Requerido'
+                                                placeholder="$" />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Fin % Monto inversión-->
+
+                                    <!-- Inicio % Utilidad y % Utilidad (Pesos)-->
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label class="form-label">% Utilidad</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                                <input type="number" placeholder="Porcentaje" step="any" class="form-control" id="txtPorcentajeUtilidad" required="required" data-required-error='Requerido' />
+                                            </div>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <label class="form-label">Utilidad (Pesos)</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="number" placeholder="$" step="any" class="form-control" id="txtUtilidadPesos" readonly="true" required="required" data-required-error='Requerido' />
+                                            </div>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Inicio % Utilidad y % Utilidad (Pesos)-->
+
+                                    <!-- Inicio Plazo y Fecha para retiro-->
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label class="form-label">Plazo (días)</label>
+                                            <input type="number" placeholder="Plazo" step="any" class="form-control" id="txtPlazo" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <label class="form-label">Fecha para retiro</label>
+                                            <label class="form-control" id="lblFechaVencimiento"></label>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Plazo y Fecha para retiro-->
+
+                                    <!-- Inicio Inversión + Utilidad -->
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label class="form-label">Inversión + Utilidad</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="number" placeholder="$" step="any" class="form-control" readonly="true" id="txtUtilidadInversion" required="required" data-required-error='Requerido' />
+                                            </div>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Utilidad -->
+
+                                    <!-- Inicio  Utilidad  acumulada y total a retirar-->
+                                    <div class="row mb-3" id="dvCamposRetiro">
+                                        <div class="col-4">
+                                            <label class="form-label">Utilidad Acumulada</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="number" placeholder="$" step="any" class="form-control" readonly="true" id="txtUtilidadAcumulada" required="required" data-required-error='Requerido' />
+                                            </div>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label">Total a retirar</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="number" placeholder="$" step="any" class="form-control" readonly="true" id="txtRetiro" required="required" data-required-error='Requerido' />
+                                            </div>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Utilidad -->
+
+                                    <!-- Inicio Comprobante de pago -->
+                                    <div class="row mb-4">
+                                        <div class="col-4">
+                                            <label class="form-label">Comprobante de pago</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="inputGroupFileAddon01">Archivo</span>
+                                                </div>
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input file-comprobante" data-tipo="1"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <label class="custom-file-label">Selecciona archivo</label>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Comprobante de pago -->
+                                </div>
+                            </form>
+                            <!-- Inicio acciones-->
+                            <div class="row mt-4 text-center">
+                                <div class="col-8">
+                                    <button id="btnCancelar" class="btn btn-secondary rounded"><i class="fa fa-ban mr-1"></i>CANCELAR</button>
+                                    <button id="btnGuardar" class="btn btn-success deshabilitable rounded"><i class="fa fa-save mr-1"></i>REGISTRAR</button>
                                 </div>
                             </div>
-                            <!-- Fin Comprobante de pago -->
+                            <!-- Fin acciones-->
                         </div>
-                    </form>
-                    <!-- Inicio acciones-->
-                    <div class="row mt-4 text-center">
-                        <div class="col-8">
-                            <button id="btnCancelar" class="btn btn-secondary rounded"><i class="fa fa-ban mr-1"></i>CANCELAR</button>
-                            <button id="btnGuardar" class="btn btn-success deshabilitable rounded"><i class="fa fa-save mr-1"></i>REGISTRAR</button>
-                        </div>
+
+                        <!--Fin panel de inversiones -->
                     </div>
-                    <!-- Fin acciones-->
                 </div>
-                <!--Fin panel de inversiones -->
-
-                <!--Inicio panel de retiro -->
-                <div id="panelFormRetiro" class="tab-pane fade">
-                    <div class="modal-body form">
-                        <form role="form" id="frmRetiro" name="frmRetiro">
-                            <div class="form-body">
-                                <h3 class="text-left">Retiro
-                                </h3>
-                                <hr />
-
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNombre">
-                                            Nombre corto
-                                        </label>
-                                        <input type="text" disabled="disabled" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="txtRazonSocial">
-                                            Nombre corto
-                                        </label>
-                                        <input type="text" disabled="disabled" class="form-control" id="txtRazonSocial" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFolio">
-                                            Folio
-                                        </label>
-                                        <input type="text" disabled="disabled" class="form-control" id="txtFolio" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtMonto">
-                                            Monto
-                                        </label>
-                                        <input type="number" step="any" class="form-control" disabled="disabled" id="txtMonto" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label>
-                                            Comprobante
-                                        </label>
-                                        <input type="file" class="form-control file-comprobanteretiro" data-tipo="1"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFecha">
-                                            Fecha
-                                        </label>
-                                        <input type="date" class="form-control" id="txtFecha" disabled="disabled" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="row mt-3 mb-3">
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelarRetiro" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
-                        </div>
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardarRetiro" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
-                    </div>
-
-                </div>
-                <!--Fin panel de retiro -->
             </div>
         </section>
 
@@ -530,7 +471,6 @@
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/investors/investments.js"></script>
-    <script src="../../js/app/investors/investmentsRetiro.js"></script>
     <script src="../../js/app/general.js"></script>
 
     <!-- Toastr style -->

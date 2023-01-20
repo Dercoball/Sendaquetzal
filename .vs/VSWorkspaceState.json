@@ -1,6 +1,16 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\SourceCode",
+    "\\SourceCode\\plataformawebpagos",
+    "\\SourceCode\\plataformawebpagos\\MyERP",
+    "\\SourceCode\\plataformawebpagos\\MyERP\\js",
+    "\\SourceCode\\plataformawebpagos\\MyERP\\js\\app",
+    "\\SourceCode\\plataformawebpagos\\MyERP\\js\\app\\investors",
+    "\\SourceCode\\plataformawebpagos\\MyERP\\pages",
+    "\\SourceCode\\plataformawebpagos\\MyERP\\pages\\Investors",
+    "\\SourceCode\\plataformawebpagos\\MyERP\\pages\\Loans"
   ],
+  "SelectedNode": "\\SourceCode\\plataformawebpagos\\MyERP\\js\\app\\investors\\investments.js",
   "PreviewInSolutionExplorer": false
 }

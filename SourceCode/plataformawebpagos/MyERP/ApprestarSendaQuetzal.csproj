@@ -257,6 +257,8 @@
     <Content Include="js\app\faq.min - Copy.js">
       <DependentUpon>tutorials.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\loanlist.js" />
+    <Content Include="js\app\loans\loans.js" />
     <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
@@ -342,6 +344,8 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\CategoriesMaterials.aspx" />
+    <Content Include="pages\Controles\UcDocumentacion.ascx" />
+    <Content Include="pages\Controles\UcCliente.ascx" />
     <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
     <Content Include="pages\Assets\DeliveryMaterials.aspx" />
@@ -382,7 +386,6 @@
     <Content Include="pages\Home.aspx" />
     <Content Include="pages\Index.aspx" />
     <Content Include="pages\Login.aspx" />
-    <Content Include="pages\Uploads\1_1.png" />
     <Content Include="pages\Web\WTutoriales.aspx" />
     <Content Include="pages\Web\WNoticyOfPrivacy.aspx" />
     <Content Include="pages\Web\WTermsAndConditions.aspx" />
@@ -1340,8 +1343,10 @@
     <Compile Include="Clases\Inversionista.cs" />
     <Compile Include="Clases\Gasto.cs" />
     <Compile Include="Clases\EvaluacionModulo.cs" />
+    <Compile Include="Clases\Request\PrestamoRequest.cs" />
     <Compile Include="Clases\Request\InversionRequest.cs" />
     <Compile Include="Clases\Request\InversionistaRequest.cs" />
+    <Compile Include="Clases\Response\ResponseGridPrestamos.cs" />
     <Compile Include="Clases\StatusInversion.cs" />
     <Compile Include="Clases\ValorReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\ReglaEvaluacionModulo.cs" />
@@ -1392,6 +1397,14 @@
     </Compile>
     <Compile Include="pages\Config\CategoriesMaterials.aspx.designer.cs">
       <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Controles\UcDocumentacion.ascx.cs">
+      <DependentUpon>UcDocumentacion.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Controles\UcCliente.ascx.cs">
+      <DependentUpon>UcCliente.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="pages\Tutorials.aspx.cs">
       <DependentUpon>Tutorials.aspx</DependentUpon>
@@ -1860,6 +1873,7 @@
     <Folder Include="DAL\" />
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
+    <Folder Include="pages\Uploads\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>

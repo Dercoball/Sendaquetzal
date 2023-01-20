@@ -52,7 +52,7 @@ namespace Plataforma.pages
             }
 
             SqlConnection conn = new SqlConnection(strConexion);
-            List<Cliente> items = new List<Cliente>();
+            var items = new List<RequestGridPrestamos>();
 
             try
             {
@@ -84,7 +84,7 @@ namespace Plataforma.pages
                             Status = ds.Tables[0].Rows[i]["Status"].ToString(),
                         };
 
-                        items.Add(new );
+                        items.Add(item);
                     }
                 }
 

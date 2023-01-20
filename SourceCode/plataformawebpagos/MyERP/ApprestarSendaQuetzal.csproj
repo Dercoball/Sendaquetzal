@@ -49,6 +49,9 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="EASendMail, Version=7.9.0.9, Culture=neutral, PublicKeyToken=88adb80ecd66540b, processorArchitecture=MSIL">
       <HintPath>..\packages\EASendMail.7.9.0.9\lib\net472\EASendMail.dll</HintPath>
     </Reference>
@@ -75,6 +78,24 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="QRCoder, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\QRCoder.1.4.1\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Compression.Base.20.4.0.44\lib\net46\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIO.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DocIO.AspNet.20.4.0.44\lib\net46\Syncfusion.DocIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocToPdfConverter.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DocToPDFConverter.AspNet.20.4.0.44\lib\net46\Syncfusion.DocToPdfConverter.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.20.4.0.44\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.OfficeChart.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.OfficeChart.Base.20.4.0.44\lib\net46\Syncfusion.OfficeChart.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Pdf.AspNet.20.4.0.44\lib\net46\Syncfusion.Pdf.Base.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -256,6 +277,7 @@
     <Content Include="js\app\faq.min - Copy.js">
       <DependentUpon>tutorials.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\paymentsOverdue.js" />
     <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
@@ -341,6 +363,7 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\CategoriesMaterials.aspx" />
+    <Content Include="pages\Loans\PaymentOverdue.aspx" />
     <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
     <Content Include="pages\Assets\DeliveryMaterials.aspx" />
@@ -1181,6 +1204,7 @@
     <Content Include="vendor\metisMenu\metisMenu.js" />
     <Content Include="vendor\metisMenu\metisMenu.min.css" />
     <Content Include="vendor\metisMenu\metisMenu.min.js" />
+    <Content Include="vendor\momentjs\moment.min.js" />
     <Content Include="vendor\morrisjs\morris.css" />
     <Content Include="vendor\morrisjs\morris.js" />
     <Content Include="vendor\morrisjs\morris.min.js" />
@@ -1386,6 +1410,13 @@
     </Compile>
     <Compile Include="pages\Config\CategoriesMaterials.aspx.designer.cs">
       <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Loans\PaymentOverdue.aspx.cs">
+      <DependentUpon>PaymentOverdue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Loans\PaymentOverdue.aspx.designer.cs">
+      <DependentUpon>PaymentOverdue.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Tutorials.aspx.cs">
       <DependentUpon>Tutorials.aspx</DependentUpon>
@@ -1780,6 +1811,7 @@
     <Content Include="vendor\jquery.cookie\cookie.jquery.json" />
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
     <Content Include="pages\FileUploader.ashx" />
+    <None Include="plantillas\ticket_pago_01.docx" />
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />

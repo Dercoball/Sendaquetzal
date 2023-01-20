@@ -32,6 +32,106 @@ const payments = {
 
         payments.loadComboPlaza();
         payments.cargarItems();
+
+        //Filtros personalizados en datatable
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#pmin').val(), 10);
+            var max = parseInt($('#pmax').val(), 10);
+            var prestamo = parseFloat(data[2]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#fpmin').val();
+                var max = $('#fpmax').val();
+                var createdAt = data[3] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#fmin').val(), 10);
+            var max = parseInt($('#fmax').val(), 10);
+            var semana = parseFloat(data[5]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#mmin').val(), 10);
+            var max = parseInt($('#mmax').val(), 10);
+            var semana = parseFloat(data[6]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#tmin').val(), 10);
+            var max = parseInt($('#tmax').val(), 10);
+            var semana = parseFloat(data[7]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#amin').val(), 10);
+            var max = parseInt($('#amax').val(), 10);
+            var semana = parseFloat(data[8]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
     },
 
     cargarItems: () => {
@@ -39,6 +139,12 @@ const payments = {
         let status = null;//document.querySelector('input[name="filtroPagos"]:checked').value
 
         status = status == null ? "0" : status;
+        //Se define el tipo de filtro
+        var typeFilter = "";
+        if (parseInt(document.getElementById("cmbPromotor").value) > 0) typeFilter = "promotor";
+        else if (parseInt(document.getElementById("cmbSupervisor").value) > 0) typeFilter = "supervisor";
+        else if (parseInt(document.getElementById("cmbEjecutivo").value) > 0) typeFilter = "ejecutivo";
+        else typeFilter = "plaza";
 
         let params = {};
         params.path = window.location.hostname;
@@ -47,6 +153,11 @@ const payments = {
         params.fechaInicial = payments.fechaInicial;
         params.fechaFinal = payments.fechaFinal;
         params.idStatus = status;
+        params.idPlaza = parseInt(document.getElementById("cmbPlaza").value);
+        params.typeFilter = typeFilter;
+        params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
+        params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
+        params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
 
         $.ajax({
@@ -69,18 +180,23 @@ const payments = {
                     "destroy": true,
                     "processing": true,
                     "order": [],
+                    ordering: false,
                     paging: false,
                     scrollY: '400px',
-                    scrollCollapse: true,
+                    scrollX: true,
                     data: data,
                     select: true,
                     columns: [
                         //{ data: 'IdPago' },
                         { data: 'NombreCliente' },
                         { data: 'NombreAval' },
-                        { data: 'MontoPrestamo' },
+                        {
+                            data: 'MontoPrestamo',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
                         {
                             data: 'Fecha',
+                            type: 'date',
                             render: function (data, type, full, meta) {
                                 return moment(data).format('DD/MM/YYYY');
                             }
@@ -88,14 +204,24 @@ const payments = {
                         { data: 'SemanasFalla' },
                         {
                             data: 'SemanasFalla',
+                            type: 'date',
                             render: function (data, type, full, meta) {
                                 var res = data.split(",");
                                 return res.length;
                             }
                         },
-                        { data: 'Monto' },
-                        { data: 'TotalFalla' },
-                        { data: 'Pagado' },
+                        {
+                            data: 'Monto',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
+                        {
+                            data: 'TotalFalla',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
+                        {
+                            data: 'Pagado',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
                         { data: 'Status' },
                         {
                             data: null,
@@ -109,7 +235,6 @@ const payments = {
                         {
                             data: null,
                             render: function (data, type, full, meta) {
-                                console.log(data);
                                 return `<button data-idcliente="${data.IdCliente}" data-idprestamo="${data.IdPrestamo}" onclick="payments.view(${data.IdPrestamo})" class="btn btn-outline-primary"> <span class="fa fa-folder-open mr-1"></span>Abrir</button>`;
                             }
                         }
@@ -118,7 +243,7 @@ const payments = {
                     columnDefs: [{
                         orderable: false,
                         className: 'select-checkbox',
-                        targets: 7
+                        targets: 10
                     }],
                     dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
@@ -127,7 +252,11 @@ const payments = {
                             title: descargas,
                             text: '&nbsp; Descargar Excel', className: 'csvbtn',
                             exportOptions: {
-                                columns: [0,1,2,3,4,5,6,8],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8, 9],
+                                rows: function (idx, data, node) {
+                                    var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
+                                    return checkbox.checked;
+                                },
                                 modifier: {
                                     selected: true
                                 }
@@ -141,7 +270,7 @@ const payments = {
                             pageSize: 'LEGAL',
                             className: 'csvbtn ml-2',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6, 8],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8, 9],
                                 rows: function (idx, data, node) {
                                     var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
                                     return checkbox.checked;
@@ -162,7 +291,7 @@ const payments = {
 
                         // Total over all pages
                         totalPrestamo = api
-                            .column(2)
+                            .column(2, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -170,7 +299,7 @@ const payments = {
                         ;
 
                         totalFallas = api
-                            .column(6)
+                            .column(6, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -178,7 +307,7 @@ const payments = {
                         ;
 
                         totalAbonado = api
-                            .column(7)
+                            .column(7, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -189,7 +318,48 @@ const payments = {
                         $(api.column(6).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
                         $(api.column(7).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalAbonado));
                     },
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
 
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
+
+                                switch (dataHeader) {
+                                    case 'MontoPrestamo':
+                                    case 'SemanasFalla':
+                                    case 'Monto':
+                                    case 'TotalFalla':
+                                    case 'Pagado':
+                                        $('input', column.header()).on('keyup', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'NombreCliente':
+                                    case 'NombreAval':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Fecha':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Status':
+                                        $('select', column.header()).on('change', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                }
+                            });
+                    }
 
                 });
 
@@ -241,6 +411,7 @@ const payments = {
                 var semanas = data.SemanasFalla.split(',');
                 $('#txtPagos').val(semanas.length);
                 $('#txtMonto').val(data.MontoFormateadoMx);
+                $('#txtMonto').attr('data-monto', data.Monto);
                 $('#txtTotal').val(data.TotalFallaFormateadoMx);
 
                 $('#panelTabla').hide();
@@ -326,6 +497,7 @@ const payments = {
     loadComboSupervisor: () => {
         var params = {};
         params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
         params = JSON.stringify(params);
 
@@ -357,6 +529,7 @@ const payments = {
     loadComboPromotor: () => {
         var params = {};
         params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
         params = JSON.stringify(params);
 
@@ -430,10 +603,6 @@ const payments = {
 
         payments.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
 
-
-        console.log(`fechaInicial ${payments.fechaInicial}`);
-        console.log(`fechaFinal ${payments.fechaFinal}`);
-
     },
 
     updatePayment(idPago, idStatus) {
@@ -454,8 +623,6 @@ const payments = {
             async: true,
             success: function (msg) {
                 let valores = msg.d;
-
-                console.log(valores);
                 payments.historial(payments.idPrestamo, payments.numeroSemana);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -504,21 +671,27 @@ const payments = {
 
             $('#panelMensajeControlado').modal('hide');
 
-            $('#panelTabla').show();
-            $('#panelForm').hide();
-
-
+            //$('#panelForm').hide();
+            //$('#panelTabla').show();
+            //payments.cargarItems();
 
         });
 
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
 
+            var pago = parseFloat($('#btnRecibo').data('pago'));
+            $('#btnRecibo').attr('data-pago', 0);
+            $('#btnRecibo').removeClass("deshabilitable");
+            $('#btnRecibo').prop('disabled', true);
 
-            $('#panelTabla').show();
             $('#panelForm').hide();
-
-
+            $('#panelTabla').show();
+            
+            if (pago > 0) {
+                console.log('cargaitems');
+                payments.cargarItems();
+            }
 
         });
 
@@ -543,6 +716,8 @@ const payments = {
             params.idPrestamo = payments.idPrestamo;
             params.idCliente = payments.idCliente;
             params.abono = Number($('#txtMontoPago').val());
+            params.notaCliente = $('#txtNotasCliente').val();
+            params.notaAval = $('#txtNotasAval').val();
             params = JSON.stringify(params);
 
 
@@ -563,8 +738,11 @@ const payments = {
                         $('#spnMensajeControlado').html(mensajesAlertas.pagoRegistradoExito);
                         $('#panelMensajeControlado').modal('show');
 
-                        //payments.cargarItems();
-                        window.location.reload();
+                        $('#btnRecibo').attr('data-pago', valores.IdItem);
+                        $('#btnRecibo').addClass("deshabilitable");
+                        $('#btnRecibo').prop('disabled', false);
+                        payments.cargarItems();
+                        //window.location.reload();
 
                     } else {
                         $('#spnMensajes').html(valores.MensajeError);
@@ -576,6 +754,82 @@ const payments = {
 
                     $('#spnMensajes').html(mensajesAlertas.errorInesperado);
                     $('#panelMensajes').modal('show');
+
+                }
+
+            });
+
+
+        });
+
+        $('#btnRecibo').on('click', (e) => {
+            e.preventDefault();
+
+            let hasErrors = $('form[name="frmPago"]').validator('validate').has('.has-error').length;
+
+            if (hasErrors) {
+
+                return;
+            }
+
+            $('.deshabilitable').prop('disabled', true);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.idUsuario = Number(document.getElementById('txtIdUsuario').value);
+            params.idPosicion = Number(document.getElementById('txtIdTipoUsuario').value);
+            params.idPrestamo = payments.idPrestamo;
+            params.idCliente = payments.idCliente;
+            params.abono = Number($('#btnRecibo').data('pago'));
+            params.abonoPactado = Number($('#txtMonto').data('monto'));
+            params.semanas = $('#txtSemanasFallas').val();
+            params = JSON.stringify(params);
+
+            //fetch(`../../pages/Loans/PaymentOverdue.aspx/GenerateReport`, {
+            //    body: params,
+            //    method: 'POST',
+            //    headers: {
+            //        'Content-Type': 'application/json; charset=utf-8'
+            //    },
+            //})
+            //    .then(response => response.json())
+            //    .then(response => {
+            //        $('.deshabilitable').prop('disabled', false);
+            //        console.log(d);
+            //        //const blob = new Blob([response], { type: 'application/pdf' });
+            //        //const downloadUrl = URL.createObjectURL(blob);
+            //        const a = document.createElement("a");
+            //        a.href = response.d;
+            //        a.download = "reporte.pdf";
+            //        document.body.appendChild(a);
+            //        a.click();
+            //        $('.deshabilitable').prop('disabled', false);
+            //    })
+            //    .catch(() => {
+            //        $('.deshabilitable').prop('disabled', false);
+            //    });
+
+
+
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/PaymentOverdue.aspx/GenerateReport`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+                    const a = document.createElement("a");
+                    a.href = valores;
+                    a.download = "reporte.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                    $('.deshabilitable').prop('disabled', false);
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.deshabilitable').prop('disabled', false);
 
                 }
 

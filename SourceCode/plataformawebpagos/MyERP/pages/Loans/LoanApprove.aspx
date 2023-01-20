@@ -156,6 +156,17 @@
                                         <div class="row">
                                             <div class="col-md-7 col-lg-6">
                                                 <div class="form-group">
+                                                    <label for="txtCURP">
+                                                        CURP
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtCURP" title=""
+                                                        required="required" data-required-error='Requerido'
+                                                        <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                                        data-pattern-error="Debe ingresar una CURP válida." --%> />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+
+                                                <div class="form-group">
                                                     <label for="txtNombre">
                                                         Nombre(s)
                                                     </label>
@@ -179,17 +190,6 @@
                                                         Segundo apellido
                                                     </label>
                                                     <input type="text" class="form-control campo-input" id="txtSegundoApellido" />
-                                                    <div class="help-block with-errors"></div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="txtCURP">
-                                                        CURP
-                                                    </label>
-                                                    <input type="text" class="form-control campo-input" id="txtCURP" title=""
-                                                        required="required" data-required-error='Requerido'
-                                                        <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
-                                                        data-pattern-error="Debe ingresar una CURP válida." --%> />
                                                     <div class="help-block with-errors"></div>
                                                 </div>
 
@@ -474,6 +474,17 @@
                                         <div class="row">
                                             <div class="col-md-6 col-lg-6">
                                                 <div class="form-group">
+                                                    <label for="txtCURPAval">
+                                                        CURP
+                                                    </label>
+                                                    <input type="text" class="form-control campo-input" id="txtCURPAval" title=""
+                                                        required="required" data-required-error='Requerido'
+                                                        <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
+                                                        data-pattern-error="Debe ingresar una CURP válida." --%> />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+
+                                                <div class="form-group">
                                                     <label for="txtNombreAval">
                                                         Nombre(s)
                                                     </label>
@@ -497,17 +508,6 @@
                                                         Segundo apellido
                                                     </label>
                                                     <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval" />
-                                                    <div class="help-block with-errors"></div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="txtCURPAval">
-                                                        CURP
-                                                    </label>
-                                                    <input type="text" class="form-control campo-input" id="txtCURPAval" title=""
-                                                        required="required" data-required-error='Requerido'
-                                                        <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
-                                                        data-pattern-error="Debe ingresar una CURP válida." --%> />
                                                     <div class="help-block with-errors"></div>
                                                 </div>
 

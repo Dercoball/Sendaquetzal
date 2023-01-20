@@ -1,4 +1,5 @@
-﻿using Plataforma.Clases;
+﻿using Dapper;
+using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -513,7 +514,7 @@ namespace Plataforma.pages
 
         [WebMethod]
         public static List<Pago> GetListaItems(string path, string idUsuario, string idTipoUsuario, string idStatus,
-                string fechaInicial, string fechaFinal)
+                string fechaInicial, string fechaFinal, int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -548,15 +549,60 @@ namespace Plataforma.pages
                     sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
                 }
 
-                //  Filtro status del pago
-                var sqlStatus = "";
-                if (idStatus != "0")    //  todos
-                {
-                    sqlStatus = " AND p.id_status_pago = '" + idStatus + "'";
-                }
+				//  Filtro status 
+				var sqlPlaza = "";
+				if (idPlaza > 0)
+				{
+					var sqlEmpleado = "";
+					var empleados = conn.Query<Empleado>("SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado WHERE id_plaza = " + idPlaza).ToList();
+					List<Empleado> empleadosFiltrados = new List<Empleado>();
+
+					switch (typeFilter)
+					{
+						case "promotor":
+							empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor).ToList();
+							break;
+						case "supervisor":
+							//obtenemos el supervisor
+							var supervisor = empleados.Where(w => w.IdEmpleado == idSupervisor && w.IdPosicion == 4).ToList();
+
+							//obtenemos los promotores asignados al supervisor
+							var promotores = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5).ToList();
+
+							//empleadosFiltrados.AddRange(supervisor);
+							empleadosFiltrados.AddRange(promotores);
+							break;
+						case "ejecutivo":
+							//obtenemos el ejecutivo
+							var ejecutivo = empleados.Where(w => w.IdEmpleado == idEjecutivo && w.IdPosicion == 3).ToList();
+
+							//obtenemos los supervisores
+							var supervisores = empleados.Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4).ToList();
+							var supervisoresIDs = supervisores.Select(s => s.IdEmpleado).ToList();
+
+							//obtenemos los promotores
+							var promotoresEjecutivo = empleados.Where(w => supervisoresIDs.Contains(w.IdSupervisor) && w.IdPosicion == 5).ToList();
+
+							//empleadosFiltrados.AddRange(ejecutivo);
+							//empleadosFiltrados.AddRange(supervisores);
+							empleadosFiltrados.AddRange(promotoresEjecutivo);
+
+							break;
+					}
+					if (empleadosFiltrados.Count > 0)
+					{
+						sqlEmpleado = string.Join<int>(",", empleadosFiltrados.Select(s => s.IdEmpleado).ToList());
+					}
+					else
+					{
+						sqlEmpleado = string.Join<int>(",", empleados.Select(s => s.IdEmpleado).ToList());
+					}
+
+					sqlPlaza = " AND p.id_empleado IN (" + sqlEmpleado + ") ";
+				}
 
 
-                int idStatusPagoFalla = Pago.STATUS_PAGO_FALLA;    // PARA EL subquery de totalizado de fallas
+				int idStatusPagoFalla = Pago.STATUS_PAGO_FALLA;    // PARA EL subquery de totalizado de fallas
 
 
                 DataSet ds = new DataSet();
@@ -564,6 +610,7 @@ namespace Plataforma.pages
 	                                pre.id_prestamo,
 	                                concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
 	                                c.id_cliente,
+                                    ISNULL(c.mensaje, 1) mensaje,
 	                                pre.monto,
 	                                pre.fecha_solicitud,
 	                                pre.fecha_aprobacion,
@@ -589,7 +636,7 @@ namespace Plataforma.pages
 	                                INNER JOIN pago p ON (p.id_prestamo = pre.id_prestamo AND p.fecha >= CAST('2022-06-16' as DATE) AND p.fecha <= CAST('2022-06-22' as DATE)
 	                                )
                                 WHERE
-	                                pre.id_status_prestamo = 4";    
+	                                pre.id_status_prestamo = 4" + sqlPlaza;    
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -617,7 +664,8 @@ namespace Plataforma.pages
                         item.Fecha = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_solicitud"].ToString());
 						item.FechaStr = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
 
-                        item.SemanasFalla = ds.Tables[0].Rows[i]["semanas_falla"].ToString();
+                        item.Mensaje = int.Parse(ds.Tables[0].Rows[i]["mensaje"].ToString());
+						item.SemanasFalla = ds.Tables[0].Rows[i]["semanas_falla"].ToString();
                         string fechaultimopago = ds.Tables[0].Rows[i]["fecha_ultimo_pago"].ToString();
 
 						if (!string.IsNullOrEmpty(fechaultimopago))

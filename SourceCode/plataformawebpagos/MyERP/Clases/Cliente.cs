@@ -54,8 +54,8 @@ namespace Plataforma.Clases
         public String TelefonoAval;
 
 
-
-        public string Accion;
+		public int Mensaje;
+		public string Accion;
 
         public const int STATUS_INACTIVO = 1;
         public const int STATUS_ACTIVO = 2;

@@ -8,6 +8,13 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using System.IO;
+using System.Drawing;
+using Syncfusion.DocToPDFConverter;
+using Syncfusion.Pdf;
+using Dapper;
 
 namespace Plataforma.pages.Loans
 {
@@ -21,7 +28,7 @@ namespace Plataforma.pages.Loans
 			string idTipoUsuario = (string)Session["id_tipo_usuario"];
 			string idUsuario = (string)Session["id_usuario"];
 			string path = (string)Session["path"];
-
+			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NRAiBiAaIQQuGjN/V0Z+WE9EaFtGVmJLYVB3WmpQdldgdVRMZVVbQX9PIiBoS35RdUViW39fc3RTQmFVWUR2");
 
 
 			txtUsuario.Value = usuario;//"promotor.colorado
@@ -48,7 +55,7 @@ namespace Plataforma.pages.Loans
 
 		[WebMethod]
 		public static List<Pago> GetListaItems(string path, string idUsuario, string idTipoUsuario, string idStatus,
-				string fechaInicial, string fechaFinal)
+				string fechaInicial, string fechaFinal, int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
 		{
 
 			string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -76,18 +83,56 @@ namespace Plataforma.pages.Loans
 				//  Traer datos del usuario para saber su id_empleado
 				Usuario user = Usuarios.GetUsuario(path, idUsuario);
 
-				string sqlUser = "";
-
-				if (idTipoUsuario != Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString())    //superuser
+				//  Filtro status 
+				var sqlPlaza = "";
+				if (idPlaza > 0)
 				{
-					sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
-				}
+					var sqlEmpleado = "";
+					var empleados = conn.Query<Empleado>("SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado WHERE id_plaza = " + idPlaza).ToList();
+					List<Empleado> empleadosFiltrados = new List<Empleado>();
 
-				//  Filtro status del pago
-				var sqlStatus = "";
-				if (idStatus != "0")    //  todos
-				{
-					sqlStatus = " AND p.id_status_pago = '" + idStatus + "'";
+					switch (typeFilter)
+					{
+						case "promotor":
+							empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor).ToList();
+							break;
+						case "supervisor":
+							//obtenemos el supervisor
+							var supervisor = empleados.Where(w => w.IdEmpleado == idSupervisor && w.IdPosicion == 4).ToList();
+
+							//obtenemos los promotores asignados al supervisor
+							var promotores = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5).ToList();
+
+							//empleadosFiltrados.AddRange(supervisor);
+							empleadosFiltrados.AddRange(promotores);
+							break;
+						case "ejecutivo":
+							//obtenemos el ejecutivo
+							var ejecutivo = empleados.Where(w => w.IdEmpleado == idEjecutivo && w.IdPosicion == 3).ToList();
+
+							//obtenemos los supervisores
+							var supervisores = empleados.Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4).ToList();
+							var supervisoresIDs = supervisores.Select(s => s.IdEmpleado).ToList();
+
+							//obtenemos los promotores
+							var promotoresEjecutivo = empleados.Where(w => supervisoresIDs.Contains(w.IdSupervisor) && w.IdPosicion == 5).ToList();
+
+							//empleadosFiltrados.AddRange(ejecutivo);
+							//empleadosFiltrados.AddRange(supervisores);
+							empleadosFiltrados.AddRange(promotoresEjecutivo);
+
+							break;
+					}
+					if (empleadosFiltrados.Count > 0)
+					{
+						sqlEmpleado = string.Join<int>(",", empleadosFiltrados.Select(s => s.IdEmpleado).ToList());
+					}
+					else
+					{
+						sqlEmpleado = string.Join<int>(",", empleados.Select(s => s.IdEmpleado).ToList());
+					}
+
+					sqlPlaza = " AND p.id_empleado IN (" + sqlEmpleado + ") ";
 				}
 
 
@@ -136,7 +181,7 @@ namespace Plataforma.pages.Loans
 										AND p.numero_semana = (SELECT MIN(numero_semana) FROM pago p2 WHERE p2.id_prestamo = pre.id_prestamo AND p2.id_status_pago = 2)
 									)
 								WHERE
-									pre.id_status_prestamo = 4";
+									pre.id_status_prestamo = 4" + sqlPlaza;
 
 				SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -331,6 +376,67 @@ namespace Plataforma.pages.Loans
 
 		}
 
+		[WebMethod]
+		public static string GenerateReport(string path, int idPrestamo, int idCliente, int idUsuario, int idPosicion,double abono, double abonoPactado, string semanas)
+		{
+			string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+			SqlConnection conn = new SqlConnection(strConexion);
+
+			try
+			{
+
+				conn.Open();
+				DataSet ds = new DataSet();
+				string query = @"SELECT 
+						pre.fecha_solicitud,
+						concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo
+					  FROM
+					   prestamo pre 
+					   INNER JOIN cliente c ON (c.id_cliente = pre.id_cliente)
+					   WHERE id_prestamo = @id_prestamo ";
+
+				SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+				adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
+
+				Utils.Log("\nMétodo-> " +
+				System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+				adp.Fill(ds);
+				DateTime FechaCredito = DateTime.Now;
+				string NombreCliente = "";
+				if (ds.Tables[0].Rows.Count > 0)
+				{
+					for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+					{
+						FechaCredito = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_solicitud"].ToString());
+						NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+					}
+				}
+
+				var pathFile = HttpContext.Current.Server.MapPath("~/plantillas/ticket_pago_01.docx");
+				WordDocument document = new WordDocument(pathFile);
+				string[] fieldNames = new string[] { "FechaPago", "NombreCliente", "FechaCredito", "SemanaPago", "AbonoPactado", "AbonoRecibido", "Promotor" };
+				string[] fieldValues = new string[] { DateTime.Now.ToString("dd/MM/yyyy"), NombreCliente, FechaCredito.ToString("dd/MM/yyyy"), semanas, abonoPactado.ToString("C2"), abono.ToString("C2"), (string)HttpContext.Current.Session["usuario"] };
+				document.MailMerge.Execute(fieldNames, fieldValues);
+				//document.Save("Sample.docx", FormatType.Docx);
+
+				DocToPDFConverter converter = new DocToPDFConverter();
+				PdfDocument pdfDocument = converter.ConvertToPDF(document);
+				MemoryStream stream = new MemoryStream();
+				pdfDocument.Save(stream);
+				pdfDocument.Close(true);
+				document.Close();
+
+				return "data:application/pdf;base64," + Convert.ToBase64String(stream.ToArray());
+
+
+			}
+			catch(Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
 		/// <summary>
 		/// Capturar los datos del pago
 		/// </summary>
@@ -341,10 +447,11 @@ namespace Plataforma.pages.Loans
 		/// <param name="nota"></param>
 		/// <returns></returns>
 		[WebMethod]
-		public static DatosSalida SavePayment(string path, int idPrestamo, int idCliente, string idUsuario, double abono)
+		public static DatosSalida SavePayment(string path, int idPrestamo, int idCliente, string idUsuario, double abono, string notaCliente, string notaAval)
 		{
 
 			string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+			double abonoRecibido = abono;
 
 			SqlConnection conn = new SqlConnection(strConexion);
 			List<StatusPrestamo> items = new List<StatusPrestamo>();
@@ -389,7 +496,7 @@ namespace Plataforma.pages.Loans
 							}
 							Utils.Log("montoAAbonar ... " + montoAAbonar);
 
-							int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar, true, completo, conn, transaccion);
+							int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar, true, completo,notaCliente, notaAval, conn, transaccion);
 
 							Utils.Log("rowsAffected de pago " + pago.IdPago + " ... " + rowsUpdateds);
 
@@ -436,8 +543,8 @@ namespace Plataforma.pages.Loans
 
 
 				}
-
 				//
+				response.IdItem = abonoRecibido.ToString();
 				transaccion.Commit();
 
 				return response;
@@ -540,7 +647,7 @@ namespace Plataforma.pages.Loans
 		}
 
 		[WebMethod]
-		public static int UpdatePago(int idPago, double abono, bool esRecuperacion, bool esCompleto, SqlConnection conn, SqlTransaction transaction)
+		public static int UpdatePago(int idPago, double abono, bool esRecuperacion, bool esCompleto, string notaCliente, string notaAval,SqlConnection conn, SqlTransaction transaction)
 		{
 
 			int r = 0;
@@ -550,7 +657,7 @@ namespace Plataforma.pages.Loans
 				string sql = "";
 				if (esRecuperacion)
 				{
-					sqlEsRecuperacion += " ,fecha_registro_pago = @fecha_registro_pago,es_recuperado = 1 ";
+					sqlEsRecuperacion += " ,fecha_registro_pago = @fecha_registro_pago,es_recuperado = 1, nota_vencida_cliente = @nota_vencida_cliente, nota_vencida_aval= @nota_vencida_aval ";
 				}
 
 				if (esCompleto)
@@ -573,6 +680,8 @@ namespace Plataforma.pages.Loans
 				cmd.Parameters.AddWithValue("@abono", abono);
 				cmd.Parameters.AddWithValue("@id_pago", idPago);
 				cmd.Parameters.AddWithValue("@fecha_registro_pago", DateTime.Now);
+				cmd.Parameters.AddWithValue("@nota_vencida_cliente", notaCliente);
+				cmd.Parameters.AddWithValue("@nota_vencida_aval", notaAval);
 				cmd.Transaction = transaction;
 
 				r = cmd.ExecuteNonQuery();

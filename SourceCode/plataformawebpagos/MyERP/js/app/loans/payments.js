@@ -30,6 +30,100 @@ const payments = {
 
         payments.loadComboPlaza();
         payments.cargarItems();
+
+        //Filtros personalizados en datatable
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#semmin').val(), 10);
+            var max = parseInt($('#semmax').val(), 10);
+            var semana = parseFloat(data[0]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#pmin').val(), 10);
+            var max = parseInt($('#pmax').val(), 10);
+            var prestamo = parseFloat(data[2]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#fmin').val(), 10);
+            var max = parseInt($('#fmax').val(), 10);
+            var prestamo = parseFloat(data[5]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#fpmin').val();
+                var max = $('#fpmax').val();
+                var createdAt = data[3] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#uppmin').val();
+                var max = $('#uppmax').val();
+                var createdAt = data[4] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
     },
 
     cargarItems: () => {
@@ -38,6 +132,13 @@ const payments = {
 
         status = status == null ? "0" : status;
 
+        //Se define el tipo de filtro
+        var typeFilter = "";
+        if (parseInt(document.getElementById("cmbPromotor").value) > 0) typeFilter = "promotor";
+        else if (parseInt(document.getElementById("cmbSupervisor").value) > 0) typeFilter = "supervisor";
+        else if (parseInt(document.getElementById("cmbEjecutivo").value) > 0) typeFilter = "ejecutivo";
+        else typeFilter = "plaza";
+
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -45,6 +146,11 @@ const payments = {
         params.fechaInicial = payments.fechaInicial;
         params.fechaFinal = payments.fechaFinal;
         params.idStatus = status;
+        params.typeFilter = typeFilter;
+        params.idPlaza = parseInt(document.getElementById("cmbPlaza").value);
+        params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
+        params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
+        params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
 
         $.ajax({
@@ -66,25 +172,29 @@ const payments = {
                 dataTable = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    "order": [],
+                    ordering: false,
                     paging: false,
                     scrollY: '400px',
-                    scrollCollapse: true,
+                    scrollX: true,
                     data: data,
-                    select: true,
                     columns: [
                         //{ data: 'IdPago' },
                         { data: 'NumeroSemana' },
                         { data: 'NombreCliente' },
-                        { data: 'MontoPrestamo' },
+                        {
+                            data: 'MontoPrestamo',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
                         {
                             data: 'Fecha',
+                            type: 'date',
                             render: function (data, type, full, meta) {
                                 return moment(data).format('DD/MM/YYYY');
                             }
                         },
                         {
                             data: 'FechaUltimoPago',
+                            type: 'date',
                             render: function (data, type, full, meta) {
                                 var dateparse = moment(data);
                                 if (dateparse.isValid())
@@ -93,8 +203,23 @@ const payments = {
                                     return null;
                             }
                         },
-                        { data: 'TotalFalla' },
+                        {
+                            data: 'TotalFalla',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
                         { data: 'SemanasFalla' },
+                        //{
+                        //    data: 'Mensaje',
+                        //    type: 'unknownType',
+                        //    className: 'dt-body-center',
+                        //    render: function (data, type, full, meta) {
+                        //        if (data == 1) {
+                        //            return '<input type="checkbox" name="mensaje[]" value="1" checked="checked" disabled="disabled">';
+                        //        } else {
+                        //            return '<input type="checkbox" name="mensaje[]" value="0" disabled="disabled">';
+                        //        }
+                        //    }
+                        //},
                         {
                             data: null,
                             searchable: false,
@@ -120,7 +245,11 @@ const payments = {
                             title: descargas,
                             text: '&nbsp; Descargar Excel', className: 'csvbtn',
                             exportOptions: {
-                                columns: [0,1,2,3,4,5,6,8],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8],
+                                rows: function (idx, data, node) {
+                                    var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
+                                    return checkbox.checked;
+                                },
                                 modifier: {
                                     selected: true
                                 }
@@ -153,9 +282,10 @@ const payments = {
                             return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                         };
 
+
                         // Total over all pages
                         totalPrestamo = api
-                            .column(2)
+                            .column(2, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -163,7 +293,7 @@ const payments = {
                         ;
 
                         totalFallas = api
-                            .column(5)
+                            .column(5, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -173,8 +303,51 @@ const payments = {
                         $(api.column(2).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalPrestamo));
                         $(api.column(5).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
                     },
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
 
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
 
+                                switch (dataHeader) {
+                                    case 'NumeroSemana':
+                                    case 'MontoPrestamo':
+                                    case 'TotalFalla':
+                                        $('input', column.header()).on('keyup', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'NombreCliente':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Fecha':
+                                    case 'FechaUltimoPago':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Status':
+                                        $('select', column.header()).on('change', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Mensaje':
+                                        $('select', column.header()).on('change', function () {
+                                            column.search(this.value).draw();
+                                        });
+                                        break;
+                                }
+                            });
+                    }
                 });
 
 
@@ -185,6 +358,8 @@ const payments = {
             }
 
         });
+
+        
 
 
     },
@@ -381,6 +556,7 @@ const payments = {
     loadComboSupervisor: () => {
         var params = {};
         params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
         params = JSON.stringify(params);
 
@@ -412,6 +588,7 @@ const payments = {
     loadComboPromotor: () => {
         var params = {};
         params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
         params = JSON.stringify(params);
 
@@ -559,11 +736,10 @@ const payments = {
 
             $('#panelMensajeControlado').modal('hide');
 
-            $('#panelTabla').show();
             $('#panelForm').hide();
+            $('#panelTabla').show();
 
-
-
+            payments.cargarItems();
         });
 
         $('#btnCancelar').on('click', (e) => {
@@ -617,9 +793,6 @@ const payments = {
 
                         $('#spnMensajeControlado').html(mensajesAlertas.pagoRegistradoExito);
                         $('#panelMensajeControlado').modal('show');
-
-                        //payments.cargarItems();
-                        window.location.reload();
 
                     } else {
                         $('#spnMensajes').html(valores.MensajeError);

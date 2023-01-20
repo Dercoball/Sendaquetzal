@@ -198,16 +198,55 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <%--<th>No.</th>--%>
-                                            <th>Nombre cliente</th>
-                                            <th>Nombre aval</th>
-                                            <th>Prestamo</th>
-                                            <th>Fecha</th>
+                                            <th>
+                                                Nombre cliente<br />
+                                                <input placeholder="Nombre" />
+                                            </th>
+                                            <th>
+                                                Nombre aval<br />
+                                                <input placeholder="Nombre" />
+                                            </th>
+                                            <th>
+                                                Prestamo<br />
+                                                <input id="pmax" type="number" placeholder="MAX" style="width:120px;" /><br />
+                                                <input id="pmin" type="number" placeholder="MIN" style="width:120px;" />
+                                            </th>
+                                            <th>
+                                                Fecha<br />
+                                                <input id="fpmax" type="date" placeholder="MAX" /><br />
+                                                <input id="fpmin" type="date" placeholder="MIN" />
+                                            </th>
                                             <th>Fallas</th>
-                                            <th>Pagos</th>
-                                            <th>Monto</th>
-                                            <th>Total</th>
-                                            <th>Abonado</th>
-                                            <th>Estatus</th>
+                                            <th>
+                                                Pagos<br />
+                                                <input id="fmax" type="number" placeholder="MAX" style="width:120px;" /><br />
+                                                <input id="fmin" type="number" placeholder="MIN" style="width:120px;" />
+                                            </th>
+                                            <th>
+                                                Monto<br />
+                                                <input id="mmax" type="number" placeholder="MAX" style="width:120px;" /><br />
+                                                <input id="mmin" type="number" placeholder="MIN" style="width:120px;" />
+                                            </th>
+                                            <th>
+                                                Total<br />
+                                                <input id="tmax" type="number" placeholder="MAX" style="width:120px;" /><br />
+                                                <input id="tmin" type="number" placeholder="MIN" style="width:120px;" />
+                                            </th>
+                                            <th>
+                                                Abonado<br />
+                                                <input id="amax" type="number" placeholder="MAX" style="width:120px;" /><br />
+                                                <input id="amin" type="number" placeholder="MIN" style="width:120px;" />
+                                            </th>
+                                            <th>
+                                                Estatus<br />
+                                                <select id="estatus">
+                                                    <option value="">Todos</option>
+                                                    <option value="Rechazado">Rechazado</option>
+                                                    <option value="Aprobado">Aprobado</option>
+                                                    <option value="Pagado">Pagado</option>
+                                                    <option value="Condonado">Condonado</option>
+                                                </select>
+                                            </th>
                                             <th>
                                                 <input type="checkbox" name="select_all" value="1" id="checked-select-all" checked="checked" />
                                                 Select</th>
@@ -286,7 +325,7 @@
                                                     <label for="txtCliente">
                                                         Notas
                                                     </label>
-                                                    <textarea rows="5" class="form-control" id="txtNotasCliente" disabled="disabled"></textarea>
+                                                    <textarea rows="5" class="form-control" id="txtNotasCliente" ></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12">
@@ -328,7 +367,7 @@
                                                     <label for="txtCliente">
                                                         Notas
                                                     </label>
-                                                    <textarea rows="5" class="form-control" id="txtNotasAval" disabled="disabled"></textarea>
+                                                    <textarea rows="5" class="form-control" id="txtNotasAval" ></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -394,8 +433,9 @@
                                             </div>
                                         </div>
                                         <div class="col-12 text-right mt-5">
-                                            <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable mr-4"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
-                                            <button id="btnCapturar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                            <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable mr-3"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                                            <button id="btnCapturar" class="btn btn-primary deshabilitable mr-3"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                            <button id="btnRecibo" class="btn btn-warning" disabled="disabled"><i class="fa fa-save mr-1"></i>Recibo</button>
                                         </div>
                                     </div>
                                 </div>
@@ -516,13 +556,10 @@
     <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
     <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
     <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
-    <%--<script src="https://cdn.datatables.net/select/1.5.0/js/dataTables.select.min.js"></script>--%>
 
     <!-- DataTables StyleSheet -->
-    <%--<link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />--%>
     <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
     <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
-    <%--<link href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css" rel="stylesheet" />--%>
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/paymentsOverdue.js"></script>

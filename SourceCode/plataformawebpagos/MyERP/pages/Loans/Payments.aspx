@@ -128,8 +128,8 @@
                 <div id="panelTabla">
                     <div class="card">
                         <div class="card-header">
-                            <div id="panelFiltro">
-                                <div class="container-fluid">
+                            <div id="panelFiltro" class="table-responsive">
+                                <div class="col-auto">
                                     <div class="mt-2 mb-4">
                                         <div class="row align-items-end">
                                             <div class="col fv-row">
@@ -182,9 +182,6 @@
 
                                             </div>
                                         </div>
-
-
-
                                     </div>
                                 </div>
                                 <hr />
@@ -198,17 +195,58 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <%--<th>No.</th>--%>
-                                            <th>Semana</th>
-                                            <th>Nombre</th>
-                                            <th>Prestamo</th>
-                                            <th>Fecha prestamo</th>
-                                            <th>Último pago</th>
-                                            <th>Falla</th>
+                                            <th>
+                                                Semana<br />
+                                                <input id="semmax" type="number" min="0" max="100" placeholder="MAX" /><br />
+                                                <input id="semmin" type="number" min="0" max="100" placeholder="MIN" />
+                                            </th>
+                                            <th>
+                                                Nombre<br />
+                                                <input id="nombre" placeholder="Nombre" />
+                                            </th>
+                                            <th>
+                                                Prestamo<br />
+                                                <input id="pmax" type="number" placeholder="MAX" /><br />
+                                                <input id="pmin" type="number" placeholder="MIN" />
+                                            </th>
+                                            <th>
+                                                Fecha prestamo<br />
+                                                <input id="fpmax" type="date" placeholder="MAX" /><br />
+                                                <input id="fpmin" type="date" placeholder="MIN" />
+                                            </th>
+                                            <th>
+                                                Último pago<br />
+                                                <input id="uppmax" type="date" placeholder="MAX" /><br />
+                                                <input id="uppmin" type="date" placeholder="MIN" />
+                                            </th>
+                                            <th>
+                                                Falla<br />
+                                                <input id="fmax" type="number" placeholder="MAX" /><br />
+                                                <input id="fmin" type="number" placeholder="MIN" />
+                                            </th>
                                             <th>Semanas</th>
+                                            <%--<th>
+                                                Mensajes<br />
+                                                <select id="mensajes">
+                                                    <option value="">Todos</option>
+                                                    <option value="1">Activo</option>
+                                                    <option value="0">Inactivo</option>
+                                                </select>
+
+                                            </th>--%>
                                             <th>
                                                 <input type="checkbox" name="select_all" value="1" id="checked-select-all" checked="checked" />
                                                 Descarga</th>
-                                            <th>Estatus</th>
+                                            <th>
+                                                Estatus<br />
+                                                <select id="estatus">
+                                                    <option value="">Todos</option>
+                                                    <option value="Rechazado">Rechazado</option>
+                                                    <option value="Aprobado">Aprobado</option>
+                                                    <option value="Pagado">Pagado</option>
+                                                    <option value="Condonado">Condonado</option>
+                                                </select>
+                                            </th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
@@ -225,6 +263,7 @@
                                             <th></th>
                                             <th></th>
                                             <th></th>
+                                            <%--<th></th>--%>
                                             <th></th>
                                             <th></th>
                                             <th></th>
@@ -430,13 +469,10 @@
     <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
     <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
     <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
-    <%--<script src="https://cdn.datatables.net/select/1.5.0/js/dataTables.select.min.js"></script>--%>
 
     <!-- DataTables StyleSheet -->
-    <%--<link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />--%>
     <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
     <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
-    <%--<link href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css" rel="stylesheet" />--%>
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/payments.js"></script>

@@ -158,6 +158,7 @@
     <Content Include="flyway\migrations\V2.1__PruebaFlyway.sql" />
     <Content Include="flyway\migrations\V2.2__Droptable.sql" />
     <Content Include="flyway\migrations\V2__NewField_Collected_data.sql" />
+    <Content Include="flyway\migrations\V5__InversioneseInversio.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
@@ -277,6 +278,8 @@
     <Content Include="js\app\faq.min - Copy.js">
       <DependentUpon>tutorials.js</DependentUpon>
     </Content>
+    <Content Include="js\app\loans\loanlist.js" />
+    <Content Include="js\app\loans\loans.js" />
     <Content Include="js\app\loans\paymentsOverdue.js" />
     <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
@@ -363,6 +366,8 @@
     <Content Include="js\toastr.min.js" />
     <Content Include="js\validator.js" />
     <Content Include="pages\Config\CategoriesMaterials.aspx" />
+    <Content Include="pages\Controles\UcDocumentacion.ascx" />
+    <Content Include="pages\Controles\UcCliente.ascx" />
     <Content Include="pages\Loans\PaymentOverdue.aspx" />
     <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
@@ -404,7 +409,6 @@
     <Content Include="pages\Home.aspx" />
     <Content Include="pages\Index.aspx" />
     <Content Include="pages\Login.aspx" />
-    <Content Include="pages\Uploads\1_1.png" />
     <Content Include="pages\Web\WTutoriales.aspx" />
     <Content Include="pages\Web\WNoticyOfPrivacy.aspx" />
     <Content Include="pages\Web\WTermsAndConditions.aspx" />
@@ -1354,6 +1358,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clases\CategoriaMateriales.cs" />
+    <Compile Include="Clases\Enums\EStatusInversion.cs" />
     <Compile Include="Clases\MaterialEntrega.cs" />
     <Compile Include="Clases\Activo.cs" />
     <Compile Include="Clases\InversionMovimiento.cs" />
@@ -1362,6 +1367,11 @@
     <Compile Include="Clases\Inversionista.cs" />
     <Compile Include="Clases\Gasto.cs" />
     <Compile Include="Clases\EvaluacionModulo.cs" />
+    <Compile Include="Clases\Request\PrestamoRequest.cs" />
+    <Compile Include="Clases\Request\InversionRequest.cs" />
+    <Compile Include="Clases\Request\InversionistaRequest.cs" />
+    <Compile Include="Clases\Response\ResponseGridPrestamos.cs" />
+    <Compile Include="Clases\StatusInversion.cs" />
     <Compile Include="Clases\ValorReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\ReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\SolicitudAumentoCredito.cs" />
@@ -1404,12 +1414,21 @@
     <Compile Include="Clases\TipoUsuario.cs" />
     <Compile Include="Clases\Usuario.cs" />
     <Compile Include="Clases\Utils.cs" />
+    <Compile Include="Extensions\ParseHelpers.cs" />
     <Compile Include="pages\Config\CategoriesMaterials.aspx.cs">
       <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="pages\Config\CategoriesMaterials.aspx.designer.cs">
       <DependentUpon>CategoriesMaterials.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Controles\UcDocumentacion.ascx.cs">
+      <DependentUpon>UcDocumentacion.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Controles\UcCliente.ascx.cs">
+      <DependentUpon>UcCliente.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="pages\Loans\PaymentOverdue.aspx.cs">
       <DependentUpon>PaymentOverdue.aspx</DependentUpon>
@@ -1886,6 +1905,7 @@
     <Folder Include="DAL\" />
     <Folder Include="img\photos\" />
     <Folder Include="manuales\" />
+    <Folder Include="pages\Uploads\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>

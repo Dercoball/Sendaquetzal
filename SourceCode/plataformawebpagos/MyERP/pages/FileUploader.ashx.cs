@@ -407,7 +407,7 @@ namespace Plataforma
 
 
                 sql = " UPDATE inversion " +
-                                        " SET comprobante = @fotografia_b64 WHERE id_inversion =  @id";
+                                        " SET comprobante_desposito = @fotografia_b64 WHERE id_inversion =  @id";
 
                 Log("sql = " + sql);
 
@@ -450,38 +450,22 @@ namespace Plataforma
             Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
-
-
-
             int r = 0;
             try
             {
-
                 conn.Open();
-
                 string sql = "";
-
-
-                sql = " UPDATE inversion_retiro " +
-                                        " SET comprobante = @fotografia_b64 WHERE id_inversion_retiro =  @id";
-
+                sql = " UPDATE inversion " +
+                                        " SET comprobante_retiro = @fotografia_b64 WHERE id_inversion =  @id";
                 Log("sql = " + sql);
-
 
                 SqlCommand cmdGrupo = new SqlCommand(sql, conn);
                 cmdGrupo.CommandType = CommandType.Text;
                 cmdGrupo.Parameters.AddWithValue("@id", id);
                 cmdGrupo.Parameters.AddWithValue("@fotografia_b64", b64);
 
-
                 r = (int)cmdGrupo.ExecuteNonQuery();
-
-
-
                 Log("Guardado comprobante inversion -> OK " + r);
-
-
-
             }
             catch (Exception ex)
             {
@@ -496,8 +480,6 @@ namespace Plataforma
                 conn.Close();
             }
             return r;
-
-
         }
 
         public int InsertarFotoEmpleado(string path, string id, string b64, string descripcionArchivo,

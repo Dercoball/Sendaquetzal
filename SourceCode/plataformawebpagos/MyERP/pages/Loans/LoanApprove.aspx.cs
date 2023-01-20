@@ -1,14 +1,11 @@
 ﻿using Plataforma.Clases;
+using Plataforma.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -16,16 +13,12 @@ namespace Plataforma.pages
     {
         const string pagina = "13";
 
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
             string usuario = (string)Session["usuario"];
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
-
-
 
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
@@ -36,358 +29,263 @@ namespace Plataforma.pages
             {
                 Response.Redirect("Login.aspx");
             }
-
-
         }
 
+        #region Privados
+        static void RegistrarPrestamo(Prestamo oPrestamo, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
 
-        /// <summary>
-        /// Aprobación de un préstamo por un supervisor o por un ejecutivo.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="idPrestamo"></param>
-        /// <param name="idUsuario"></param>
-        /// <param name="idPosicion"></param>
-        /// <param name="nota"></param>
-        /// <returns></returns>
+            if (oPrestamo.IdPrestamo > 0)
+            {
+                sql = @"UPDATE prestamo
+                                SET fecha_solicitud = @fecha_solicitud, monto = @monto
+                          WHERE
+                                id_prestamo = @id_prestamo ";
+                Utils.Log("ACTUALIZAR PRESTAMO " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO prestamo 
+                            OUTPUT INSERTED.id_prestamo
+                    VALUES (@fecha_solicitud, @monto, 1, @id_cliente, @id_usuario,NULL,NULL,1,NULL,NULL,@id_tipo_cliente,@id_aval) ";
+                Utils.Log("INSERTAR PRESTAMO " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@fecha_solicitud", oPrestamo.FechaSolicitud);
+            cmd.Parameters.AddWithValue("@monto", oPrestamo.Monto);
+            cmd.Parameters.AddWithValue("@id_cliente", oPrestamo.IdCliente);
+            cmd.Parameters.AddWithValue("@id_usuario", oPrestamo.idUsuario);
+            cmd.Parameters.AddWithValue("@id_tipo_cliente", oPrestamo.IdTipoCliente);
+            cmd.Parameters.AddWithValue("@id_aval", oPrestamo.IdAval);
+
+            if (oPrestamo.IdPrestamo > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_prestamo", oPrestamo.IdPrestamo);
+
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oPrestamo.IdPrestamo = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+        }
+
+        static void RegistraClienteAval(Cliente oCliente, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+           
+            if (oCliente.IdCliente > 0)
+            {
+                sql = @"UPDATE cliente
+                                SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
+                                segundo_apellido = @segundo_apellido,
+                                ocupacion = @ocupacion, telefono = @telefono 
+                          WHERE
+                                id_cliente = @id_cliente ";
+                Utils.Log("ACTUALIZAR CLIENTE " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO cliente 
+                            OUTPUT INSERTED.id_cliente
+                    VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,2,NULL,NULL) ";
+                Utils.Log("INSERTAR CLIENTE " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@curp", oCliente.Curp);
+            cmd.Parameters.AddWithValue("@nombre", oCliente.Nombre);
+            cmd.Parameters.AddWithValue("@primer_apellido", oCliente.PrimerApellido);
+            cmd.Parameters.AddWithValue("@segundo_apellido", oCliente.SegundoApellido);
+            cmd.Parameters.AddWithValue("@ocupacion", oCliente.Ocupacion);
+            cmd.Parameters.AddWithValue("@telefono", oCliente.Telefono);
+           
+            if (oCliente.IdCliente > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_cliente", oCliente.IdCliente);
+
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oCliente.IdCliente = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+
+            RegistrarDireccion(oCliente.direccion, transaccion,conn);
+        }
+
+        static void RegistrarDireccion(Direccion oDireccion, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+
+            if (oDireccion.idDireccion > 0)
+            {
+                sql = @"  UPDATE direccion
+                             SET calleyno = @calleyno, 
+                                    colonia = @colonia, 
+                                    municipio = @municipio, 
+                                    estado = @estado,
+                                   codigo_postal = @codigo_postal, 
+                                   direccion_trabajo = @direccion_trabajo, 
+                                   ubicacion = @ubicacion
+                            WHERE id_direccion = @id_direccion
+                        ";
+
+                Utils.Log("ACTUALIZAR DIRECCIÓN " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO direccion 
+                      OUTPUT INSERTED.id_direccion
+                    VALUES (NULL, NULL,@calleyno, @colonia, @municipio, @estado,NULL, @codigo_postal,NULL,NULL,1,NULL, @direccion_trabajo,NULL,  @ubicacion);";
+                Utils.Log("INSERTAR id_direccion " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@calleyno", oDireccion.Calle);
+            cmd.Parameters.AddWithValue("@colonia", oDireccion.Colonia);
+            cmd.Parameters.AddWithValue("@municipio", oDireccion.Municipio);
+            cmd.Parameters.AddWithValue("@estado", oDireccion.Estado);
+            cmd.Parameters.AddWithValue("@codigo_postal", oDireccion.CodigoPostal);
+            cmd.Parameters.AddWithValue("@direccion_trabajo", oDireccion.DireccionTrabajo);
+            cmd.Parameters.AddWithValue("@ubicacion", oDireccion.Ubicacion);
+
+            if (oDireccion.idDireccion > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_direccion", oDireccion.idDireccion);
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oDireccion.idDireccion = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+        }
+
+        static void RegistrarDocumento(Documento oDocumento, SqlTransaction transaccion, SqlConnection conn)
+        {
+            string sql = "";
+
+            if (oDocumento.IdDocumento > 0)
+            {
+                sql = @"  UPDATE Documento
+                             SET contenido = @contenido
+                            WHERE id_documento_colaborador = @id_documento_colaborador
+                        ";
+
+                Utils.Log("ACTUALIZAR Documento " + sql);
+            }
+            else
+            {
+                sql = @" INSERT INTO Documento 
+                      OUTPUT INSERTED.id_documento_colaborador
+                    VALUES (@nombre, @id_tipo_documento,@contenido, 0, null, null,NULL, @fecha_ingreso,@id_cliente,  @extension);";
+                Utils.Log("INSERTAR Documento " + sql);
+            }
+
+            var cmd = new SqlCommand(sql, conn);
+            cmd.Transaction = transaccion;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@nombre", oDocumento.Nombre);
+            cmd.Parameters.AddWithValue("@id_tipo_documento", oDocumento.IdTipoDocumento);
+            cmd.Parameters.AddWithValue("@contenido", oDocumento.Contenido);
+            cmd.Parameters.AddWithValue("@fecha_ingreso", DateTime.Now);
+            cmd.Parameters.AddWithValue("@id_cliente", oDocumento.IdCliente);
+            cmd.Parameters.AddWithValue("@extension", oDocumento.Extension);
+
+            if (oDocumento.IdDocumento > 0)
+            {
+                cmd.Parameters.AddWithValue("@id_documento_colaborador", oDocumento.IdDocumento);
+                var rows = cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                oDocumento.IdDocumento = cmd.ExecuteScalar().ToString().ParseStringToInt();
+            }
+        }
+        #endregion
+
+        #region Metodos 
         [WebMethod]
-        public static DatosSalida Approve(string path, string idPrestamo, string idUsuario, string idPosicion, string nota)
+        public static DatosSalida SaveCustomerOrAval(string path, 
+            PrestamoRequest Request,
+            string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
             SqlConnection conn = new SqlConnection(strConexion);
-            List<StatusPrestamo> items = new List<StatusPrestamo>();
-            DatosSalida response = new DatosSalida();
 
-            Utils.Log("\n\n******************Inicia la aprobación del préstamo ");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
-            SqlTransaction transaction = null;
+
+            //verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso)
+            {
+                return null;//No tiene permisos
+            }
+
+            DatosSalida salida = new DatosSalida();
+            SqlTransaction transaccion = null;
 
             int r = 0;
             try
             {
-
                 conn.Open();
-                transaction = conn.BeginTransaction();
+                transaccion = conn.BeginTransaction();
 
+                RegistraClienteAval(Request.Cliente, transaccion, conn);
+                RegistraClienteAval(Request.Aval, transaccion, conn);
 
-                //  Traer los datos del préstamo y cliente
-                Prestamo prestamo = LoanRequest.GetDataPrestamo(path, idPrestamo);
-
-                //  VALIDACIONES
-                // 1) Validar campos vacíos
-                var dataStringsValidations = ValidateCustomerData(prestamo.Cliente);
-                if (dataStringsValidations.Count > 0)
-                {
-                    response.MensajeError = "Se necesitan valores para los siguientes campos: " + string.Join(", ", dataStringsValidations.ToArray());
-                    response.CodigoError = 1;
-                    return response;
+                if (Request.Cliente.IdCliente > 0) {
+                    Request.DocumentosCliente
+                        .ForEach(f => 
+                        {
+                            f.Extension = System.IO.Path.GetExtension(f.Nombre);
+                            f.IdCliente = Request.Cliente.IdCliente;
+                            RegistrarDocumento(f, transaccion, conn);
+                        });
                 }
 
-
-
-                //  -------Validar que las fotos esten subidas para cliente y aval
-                // 2) Traer los documentos actuales del pr+éstamo
-                List<Documento> documentsInLoan = GetDocumentsByCustomerId(path, prestamo.IdCliente, conn, transaction);
-
-
-                //  Traer todos los tipos de documenos necesarios para un prestamo
-                List<Documento> allDocumentTypes = GetDocumentCustomerTypes(path, conn, transaction);
-                HashSet<int> docs = new HashSet<int>(documentsInLoan.Select(x => x.IdTipoDocumento));
-                //  Restar los documentos del documento a la lista de todos los documentos necesarios
-                allDocumentTypes.RemoveAll(x => docs.Contains(x.IdTipoDocumento));
-
-                //  Lista final de documentos faltantes
-                List<string> missingsDocs = new List<string>();
-                foreach (var item in allDocumentTypes)
+                if (Request.Aval.IdCliente > 0)
                 {
-                    missingsDocs.Add("<li>" + item.Nombre + "</li>");
+                    Request.DocumentosAval
+                        .ForEach(f =>
+                        {
+                            f.Extension = System.IO.Path.GetExtension(f.Nombre);
+                            f.IdCliente = Request.Aval.IdCliente;
+                            RegistrarDocumento(f, transaccion, conn);
+                        });
                 }
 
-                if (allDocumentTypes.Count > 0)
-                {
-                    response.MensajeError = "<p>Se necesita todos los documentos solicitados. </p><ul>" + string.Join(", ", missingsDocs.ToArray()) + "</ul>";
-                    response.CodigoError = 1;
-                    return response;
-                }
-                //  -------
+                Request.Prestamo.idUsuario = idUsuario.ParseStringToInt();
+                Request.Prestamo.IdCliente = Request.Cliente.IdCliente.ToString();
+                Request.Prestamo.IdAval = Request.Aval.IdCliente;
 
-                //  Tipo de cliente
-                TipoCliente customerType = GetCustomerTypeById(path, prestamo.Cliente.IdTipoCliente.ToString(), conn, transaction);
+                RegistrarPrestamo(Request.Prestamo, transaccion, conn);
 
+                Utils.Log("Guardado -> OK ");
+                transaccion.Commit();
+                salida.MensajeError = "Guardado correctamente";
+                salida.CodigoError = 0;
+                salida.IdItem = String.Empty;
 
-                Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
-                Utils.Log("GarantiasPorMonto " + customerType.GarantiasPorMonto);
-                Utils.Log("prestamo.Monto " + prestamo.Monto);
-
-                float guaranteeAmmount = prestamo.Monto * customerType.GarantiasPorMonto;
-                Utils.Log("Monto A cubrir por las garantias = " + guaranteeAmmount);
-
-                // 3) Validar que la suma de los costos de los articulos en garantia del cliente,
-                //  sean mas o igual al monto del prestamo mas el porcentaje configurado
-                List<Garantia> guaranteeCustomerList = GetListGuaranteeCustomer(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaction);
-                float guaranteeAmmountSumCustomer = 0;
-                foreach (var item in guaranteeCustomerList)
-                {
-                    guaranteeAmmountSumCustomer += item.Costo;
-                }
-                if (guaranteeAmmountSumCustomer < guaranteeAmmount)
-                {
-                    response.MensajeError = "El total de las garantías del cliente no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
-                        customerType.GarantiasPorMonto + "<br/><br/>" +
-                        "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
-                        "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
-                        "La suma de costos de las garantías es: " + guaranteeAmmountSumCustomer.ToString("C2");
-
-                    response.CodigoError = 1;
-                    return response;
-                }
-
-                // 4) Validar que la suma de los costos de los articulos en garantia del aval,
-                //  sean mas o igual al monto del prestamo mas el porcentaje configurado
-                List<Garantia> guaranteeAvalList = GetListGuaranteeAval(path, idUsuario, prestamo.IdPrestamo.ToString(), conn, transaction);
-                float guaranteeAmmountSumAval = 0;
-                foreach (var item in guaranteeAvalList)
-                {
-                    guaranteeAmmountSumAval += item.Costo;
-                }
-                if (guaranteeAmmountSumAval < guaranteeAmmount)
-                {
-                    response.MensajeError = "El total de las garantías del aval no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
-                        customerType.GarantiasPorMonto + "<br/><br/>" +
-                       "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
-                       "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
-                       "La suma de costos de las garantías es: " + guaranteeAmmountSumAval.ToString("C2");
-
-                    response.CodigoError = 1;
-                    return response;
-                }
-
-
-                //  5) Validar el monto máximo al ser un préstamo inicial
-                List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaction);
-                if (prestamosAnteriores.Count > 0)
-                {
-                    if (prestamo.Monto > customerType.PrestamoInicialMaximo)
-                    {
-                        response.MensajeError = "El monto para un préstamo inicial sobrepasa el monto configurado para este tipo de cliente (" + customerType.NombreTipoCliente?.Trim() + ").<br/><br/>" +
-                      "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
-                      "El préstamo inicial máximo: " + customerType.PrestamoInicialMaximo.ToString("C2") + "<br/>";
-
-                        response.CodigoError = 1;
-                        return response;
-                    }
-
-                }
-
-
-
-
-                // 6) Validar que el promotor no exceda el límite de crédito que puede otorgar y creación de alerta de límite de crédito
-                if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
-                {
-
-                    //  Traer datos del empleado promotor
-                    Empleado empleado = GetItemEmployee(prestamo.IdEmpleado.ToString(), conn, transaction);
-
-                    if (empleado.MontoLimiteInicial < prestamo.Monto)
-                    {
-                        //  Insertar solicitud de aumento de limite de credito
-
-                        int rowsAffected = InsertarSolicitudLimiteCredito(idPrestamo, idUsuario, conn, transaction);
-                        Utils.Log("rowsAffected InsertarSolicitudLimiteCredito " + r);
-
-                        transaction.Commit();
-
-                        Utils.Log("\n\n******************Fin de la aprobación del préstamo debido a que el supervisor necesita aumento de crédito. ");
-
-                        response.MensajeError = "El monto límite de crédito con el que cuenta no es suficiente para aprobar el préstamo. " +
-                            "<br/>Monto límite del promotor: " + empleado.MontoLimiteInicial.ToString("C2") +
-                            "<br/>Monto a solicitar: " + prestamo.Monto.ToString("C2") +
-                            "<br/>Se ha generado una solicitud de aumento de crédito que debera ser aprobada.";
-                        response.CodigoError = 2;
-                        return response;
-
-                    }
-
-
-                }
-
-                //  Para recalcular el monto a prestar restandole el monto pendiente de un anterior préstamo si es que tuviese uno
-                //float newMonto = prestamo.Monto;
-
-                // Traer al prestamo actual(anterior, no este nuevo que estamos aprobando)
-                Prestamo currentLoan = GetPrestamoByIdCliente(prestamo.IdCliente.ToString(), conn, transaction);
-                Prestamo deudaActual = null;
-
-                if (currentLoan != null)
-                {
-
-                    //   Tiene un prestamo activo anterior 
-                    //  Traer pagos del prestamo actual, con fecha de hasta este fin de semana
-                    LoanValidation validations = new LoanValidation();
-                    LoanValidation.WeekData currentWeek = validations.GetFechas();
-
-
-                    // Traer pagos sin importar el status
-                    List<Pago> paymentsByCurrentLoan = GetPaymentsByIdPrestamoAndDate(false, currentLoan.IdPrestamo.ToString(), currentWeek.fechaFinal, conn, transaction);
-
-                    //  7) Validar que préstamo anterior se encuentre en la semana>=10, 
-                    if (paymentsByCurrentLoan.Count < 10)
-                    {
-                        response.MensajeError = "El cliente cuenta con un préstamo activo en la semana número " + paymentsByCurrentLoan.Count + ".<br/>" +
-                       "Para poder ser aprobado debe estar en la semana 10 o posterior.<br/><br/>" +
-                       "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
-
-                        response.CodigoError = 1;
-                        return response;
-
-                    }
-
-                    //  8) Validar que no tenga pagos en falla o abonados en prestamo actual sin importar la semana
-                    var paymentsInFail = paymentsByCurrentLoan.Find(x => x.IdStatusPago == Pago.STATUS_PAGO_ABONADO || x.IdStatusPago == Pago.STATUS_PAGO_FALLA);
-                    if (paymentsInFail != null)
-                    {
-                        response.MensajeError = "El cliente cuenta con un préstamo activo y este tiene pagos con status de falla o abonado.<br/><br/>" +
-                       "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
-
-                        response.CodigoError = 1;
-                        return response;
-                    }
-
-
-                    //  Obtener la deuda actual
-                    deudaActual = CurrentDebtByIdLoan(currentLoan.IdPrestamo.ToString(), conn, transaction);
-
-
-                    //  Validar que el monto de la deuda actual sea menor al monto del prestamo nuevo solicitado
-                    if (prestamo.Monto < deudaActual.Saldo)
-                    {
-                        response.MensajeError = "El cliente cuenta con un préstamo activo con un saldo total por pagar de " + deudaActual.Saldo.ToString("C2") + " .<br/><br/>" +
-                        "El nuevo préstamo es por la cantidad de " + prestamo.Monto.ToString("C2") + ", no alcanza a cubrir la deuda actual.<br/><br/>" +
-                        "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
-
-                        response.CodigoError = 1;
-                        return response;
-                    }
-
-
-
-
-
-                }
-
-                //  Actualizar status y monto del préstamo
-
-                if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
-                {
-                    
-                    //  -1 para montoConInteres porque no queremos actualizar ese valor aún
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1,  Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
-
-                    Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
-
-                }
-                else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
-                {
-
-                    //  Si se esta cubriendo deuda restante anterior de un prestamo con el nuevo que se esta aprobando
-                    if (currentLoan != null && deudaActual != null)
-                    {
-                        //  Nuevo monto
-                        prestamo.Monto = prestamo.Monto - deudaActual.Saldo;
-                        
-                        //  Efectuar los pagos para cada Pago semanal pendiente
-                        int rowsPago = UpdatePagos(currentLoan.IdPrestamo.ToString(), idPrestamo, conn, transaction);
-                        Utils.Log("\nrowsPago affected " + rowsPago);
-
-
-                        //  Pasar a status pagado el prestamo anterior
-                        string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. " ;
-                        
-                        int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);                        
-
-                        Utils.Log("\nrowsPago rowsAffectedStatusPrestamoAnterior " + rowsAffectedStatusPrestamoAnterior);
-
-                    }
-
-                    float pagoAmmountWithInteres = prestamo.Monto + (prestamo.Monto * customerType.PorcentajeSemanal / 100);
-
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, pagoAmmountWithInteres, Prestamo.STATUS_APROBADO, prestamo.Monto, conn, transaction);
-
-                    Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
-
-                    //  Pago semanal incluyendo interes
-                    float pagoAmmount = pagoAmmountWithInteres  / customerType.SemanasAPrestar;
-
-
-                    //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
-                    //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
-                    DateTime startDate = new DateTime(2022, 4, 1);    //TODO: CAMBIAR ESTE TEST
-
-
-                    //  Se agrega la semana extra por si le aplica
-                    int numSemanas = customerType.SemanasAPrestar;
-                    if (customerType.SemanasExtra == 1)
-                    {
-                        numSemanas++;
-                    }
-
-                    for (int i = 0; i < numSemanas; i++)
-                    {
-
-                        DateTime nextDate = startDate.AddDays(7);
-
-                        Pago pago = new Pago();
-                        pago.IdPrestamo = int.Parse(idPrestamo);
-                        pago.Monto = pagoAmmount;
-                        pago.NumeroSemana = (i + 1);
-                        pago.Fecha = nextDate;
-                        pago.IdUsuario = int.Parse(idUsuario);
-
-                        bool isExtraWeek = (customerType.SemanasExtra == 1 && (i + 1) == numSemanas);
-
-                        pago.SemanaExtra = isExtraWeek ? 1 : 0;
-
-                        InsertPago(pago, conn, transaction);
-
-                        startDate = nextDate;
-
-                    }
-
-
-                    //  Pasar el status del cliente a ACTIVO
-                    int rowsAffectedPrestamo = UpdateStatusCustomer(prestamo.IdCliente, idUsuario, Cliente.STATUS_ACTIVO, conn, transaction);
-                    Utils.Log("rowsAffectedCliente ... " + rowsAffectedPrestamo);
-
-
-
-                }
-
-
-                //  Actualizar relacion de aprobaciones
-                int rowsAffectedRPA = UpdateRelacionPrestamoAprobacion(idPrestamo, idUsuario, nota, idPosicion.ToString(), conn, transaction);
-
-
-                transaction.Commit();
-
-
-                Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
-
-
-                return response;
             }
             catch (Exception ex)
             {
-
-                transaction.Rollback();
-
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 r = -1;
-                response.MensajeError = "Se ha generado un error inesperado. No se pudo completar la operación. Por favor intente mas tarde.";
-                response.CodigoError = 1;
+                salida.MensajeError = "Se ha generado un error.";
+                salida.CodigoError = 1;
+                transaccion.Rollback();
             }
 
             finally
@@ -395,10 +293,11 @@ namespace Plataforma.pages
                 conn.Close();
             }
 
-            return response;
+            return salida;
 
 
         }
+        #endregion
 
         public static int UpdateStatusCustomer(string idCliente, string idUsuario, int idStatus,
           SqlConnection conn, SqlTransaction transaction)
@@ -667,7 +566,7 @@ namespace Plataforma.pages
 
         }
 
-        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus, 
+        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus,
         SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -1516,9 +1415,6 @@ namespace Plataforma.pages
 
         }
 
-
-
-
         [WebMethod]
         public static DatosSalida UpdateCustomer(string path, Cliente item, Direccion itemAddress, string accion,
             string idUsuario, string idTipoUsuario, string idPrestamo)
@@ -1635,8 +1531,6 @@ namespace Plataforma.pages
 
 
         }
-
-
 
         [WebMethod]
         public static DatosSalida UpdateCustomerAval(string path, Cliente item, Direccion itemAddressAval, string accion, string idUsuario,
@@ -1758,8 +1652,6 @@ namespace Plataforma.pages
 
         }
 
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -1839,8 +1731,6 @@ namespace Plataforma.pages
 
         }
 
-
-
         /// <summary>
         /// Obtener lista de prestamos de un cliente
         /// </summary>
@@ -1850,9 +1740,6 @@ namespace Plataforma.pages
         [WebMethod]
         public static List<Prestamo> GetLoansByCustomerId(string path, string customerId, SqlConnection conn, SqlTransaction transaction)
         {
-
-
-
             //  Lista de datos a devolver
             List<Prestamo> items = new List<Prestamo>();
 
@@ -1990,7 +1877,6 @@ namespace Plataforma.pages
 
 
         }
-
 
         [WebMethod]
         public static Empleado GetItemEmployee(string id, SqlConnection conn, SqlTransaction transaction)
@@ -2147,11 +2033,5 @@ namespace Plataforma.pages
 
 
         }
-
-
-
     }
-
-
-
 }

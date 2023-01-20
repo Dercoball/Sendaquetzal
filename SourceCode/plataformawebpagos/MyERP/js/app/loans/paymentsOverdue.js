@@ -3,7 +3,8 @@ let date = new Date();
 let descargas = "Pagos_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '15';
 let totalPrestamo = 0;
-let totalFallas;
+let totalFallas = 0;
+let totalAbonado = 0;
 let dataTable;
 
 
@@ -21,6 +22,7 @@ const payments = {
         payments.idPago = "-1";
         payments.accion = "";
         payments.idPrestamo = "-1";
+        payments.idCliente = "-1";
         payments.numeroSemana = "-1";
 
         payments.fechaInicial = '';
@@ -33,39 +35,9 @@ const payments = {
 
         //Filtros personalizados en datatable
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-            var min = parseInt($('#semmin').val(), 10);
-            var max = parseInt($('#semmax').val(), 10);
-            var semana = parseFloat(data[0]) || 0;
-            if (
-                (isNaN(min) && isNaN(max)) ||
-                (isNaN(min) && semana <= max) ||
-                (min <= semana && isNaN(max)) ||
-                (min <= semana && semana <= max)
-            ) {
-                return true;
-            }
-            return false;
-        });
-
-        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
             var min = parseInt($('#pmin').val(), 10);
             var max = parseInt($('#pmax').val(), 10);
             var prestamo = parseFloat(data[2]) || 0;
-            if (
-                (isNaN(min) && isNaN(max)) ||
-                (isNaN(min) && prestamo <= max) ||
-                (min <= prestamo && isNaN(max)) ||
-                (min <= prestamo && prestamo <= max)
-            ) {
-                return true;
-            }
-            return false;
-        });
-
-        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-            var min = parseInt($('#fmin').val(), 10);
-            var max = parseInt($('#fmax').val(), 10);
-            var prestamo = parseFloat(data[5]) || 0;
             if (
                 (isNaN(min) && isNaN(max)) ||
                 (isNaN(min) && prestamo <= max) ||
@@ -101,29 +73,65 @@ const payments = {
             }
         );
 
-        $.fn.dataTable.ext.search.push(
-            function (settings, data, dataIndex) {
-                var min = $('#uppmin').val();
-                var max = $('#uppmax').val();
-                var createdAt = data[4] || 0; // Our date column in the table
-
-                if (min != "" && max == "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
-                }
-                else if (min != "" && max != "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    max = moment(max, 'YYY-MM-DD');
-                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
-                }
-                else if (min == "" && max != "") {
-                    max = moment(max, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
-                }
-                else
-                    return true;
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#fmin').val(), 10);
+            var max = parseInt($('#fmax').val(), 10);
+            var semana = parseFloat(data[5]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
             }
-        );
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#mmin').val(), 10);
+            var max = parseInt($('#mmax').val(), 10);
+            var semana = parseFloat(data[6]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#tmin').val(), 10);
+            var max = parseInt($('#tmax').val(), 10);
+            var semana = parseFloat(data[7]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#amin').val(), 10);
+            var max = parseInt($('#amax').val(), 10);
+            var semana = parseFloat(data[8]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
     },
 
     cargarItems: () => {
@@ -131,7 +139,6 @@ const payments = {
         let status = null;//document.querySelector('input[name="filtroPagos"]:checked').value
 
         status = status == null ? "0" : status;
-
         //Se define el tipo de filtro
         var typeFilter = "";
         if (parseInt(document.getElementById("cmbPromotor").value) > 0) typeFilter = "promotor";
@@ -146,8 +153,8 @@ const payments = {
         params.fechaInicial = payments.fechaInicial;
         params.fechaFinal = payments.fechaFinal;
         params.idStatus = status;
-        params.typeFilter = typeFilter;
         params.idPlaza = parseInt(document.getElementById("cmbPlaza").value);
+        params.typeFilter = typeFilter;
         params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
         params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
         params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
@@ -155,7 +162,7 @@ const payments = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/Payments.aspx/GetListaItems",
+            url: "../../pages/Loans/PaymentOverdue.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -172,15 +179,17 @@ const payments = {
                 dataTable = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
+                    "order": [],
                     ordering: false,
                     paging: false,
                     scrollY: '400px',
                     scrollX: true,
                     data: data,
+                    select: true,
                     columns: [
                         //{ data: 'IdPago' },
-                        { data: 'NumeroSemana' },
                         { data: 'NombreCliente' },
+                        { data: 'NombreAval' },
                         {
                             data: 'MontoPrestamo',
                             render: $.fn.dataTable.render.number(',', '.', 2, '$')
@@ -192,34 +201,28 @@ const payments = {
                                 return moment(data).format('DD/MM/YYYY');
                             }
                         },
+                        { data: 'SemanasFalla' },
                         {
-                            data: 'FechaUltimoPago',
+                            data: 'SemanasFalla',
                             type: 'date',
                             render: function (data, type, full, meta) {
-                                var dateparse = moment(data);
-                                if (dateparse.isValid())
-                                    return dateparse.format('DD/MM/YYYY');
-                                else
-                                    return null;
+                                var res = data.split(",");
+                                return res.length;
                             }
+                        },
+                        {
+                            data: 'Monto',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
                         },
                         {
                             data: 'TotalFalla',
                             render: $.fn.dataTable.render.number(',', '.', 2, '$')
                         },
-                        { data: 'SemanasFalla' },
-                        //{
-                        //    data: 'Mensaje',
-                        //    type: 'unknownType',
-                        //    className: 'dt-body-center',
-                        //    render: function (data, type, full, meta) {
-                        //        if (data == 1) {
-                        //            return '<input type="checkbox" name="mensaje[]" value="1" checked="checked" disabled="disabled">';
-                        //        } else {
-                        //            return '<input type="checkbox" name="mensaje[]" value="0" disabled="disabled">';
-                        //        }
-                        //    }
-                        //},
+                        {
+                            data: 'Pagado',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
+                        { data: 'Status' },
                         {
                             data: null,
                             searchable: false,
@@ -229,14 +232,18 @@ const payments = {
                                 return '<input type="checkbox" name="id[]" value="true" checked="checked">';
                             }
                         },
-                        { data: 'Status' },
-                        { data: 'Accion' }
+                        {
+                            data: null,
+                            render: function (data, type, full, meta) {
+                                return `<button data-idcliente="${data.IdCliente}" data-idprestamo="${data.IdPrestamo}" onclick="payments.view(${data.IdPrestamo})" class="btn btn-outline-primary"> <span class="fa fa-folder-open mr-1"></span>Abrir</button>`;
+                            }
+                        }
                     ],
                     "language": textosEsp,
                     columnDefs: [{
                         orderable: false,
                         className: 'select-checkbox',
-                        targets: 7
+                        targets: 10
                     }],
                     dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
@@ -245,7 +252,7 @@ const payments = {
                             title: descargas,
                             text: '&nbsp; Descargar Excel', className: 'csvbtn',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6, 8],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8, 9],
                                 rows: function (idx, data, node) {
                                     var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
                                     return checkbox.checked;
@@ -263,7 +270,7 @@ const payments = {
                             pageSize: 'LEGAL',
                             className: 'csvbtn ml-2',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6, 8],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8, 9],
                                 rows: function (idx, data, node) {
                                     var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
                                     return checkbox.checked;
@@ -282,7 +289,6 @@ const payments = {
                             return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                         };
 
-
                         // Total over all pages
                         totalPrestamo = api
                             .column(2, { page: 'current' })
@@ -293,7 +299,15 @@ const payments = {
                         ;
 
                         totalFallas = api
-                            .column(5, { page: 'current' })
+                            .column(6, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+
+                        totalAbonado = api
+                            .column(7, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -301,7 +315,8 @@ const payments = {
                         ;
                         // Update footer
                         $(api.column(2).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalPrestamo));
-                        $(api.column(5).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
+                        $(api.column(6).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
+                        $(api.column(7).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalAbonado));
                     },
                     initComplete: function () {
                         let columnsSettings = this.api().settings().init().columns;
@@ -313,14 +328,17 @@ const payments = {
                                 let dataHeader = columnsSettings[idx].data;
 
                                 switch (dataHeader) {
-                                    case 'NumeroSemana':
                                     case 'MontoPrestamo':
+                                    case 'SemanasFalla':
+                                    case 'Monto':
                                     case 'TotalFalla':
+                                    case 'Pagado':
                                         $('input', column.header()).on('keyup', function () {
                                             column.draw();
                                         });
                                         break;
                                     case 'NombreCliente':
+                                    case 'NombreAval':
                                         $('input', column.header()).on('keyup change clear', function () {
                                             if (column.search() !== this.value) {
                                                 column.search(this.value).draw();
@@ -328,7 +346,6 @@ const payments = {
                                         });
                                         break;
                                     case 'Fecha':
-                                    case 'FechaUltimoPago':
                                         $('input', column.header()).on('change', function () {
                                             column.draw();
                                         });
@@ -340,14 +357,10 @@ const payments = {
                                             }
                                         });
                                         break;
-                                    case 'Mensaje':
-                                        $('select', column.header()).on('change', function () {
-                                            column.search(this.value).draw();
-                                        });
-                                        break;
                                 }
                             });
                     }
+
                 });
 
 
@@ -359,14 +372,12 @@ const payments = {
 
         });
 
-        
-
 
     },
 
-    view(idPago) {
+    view(id) {
 
-        console.log(idPago);
+        console.log(id);
 
         $('#frmPago')[0].reset();
 
@@ -374,12 +385,12 @@ const payments = {
         let params = {};
         params.path = window.location.hostname;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.idPago = idPago;
+        params.idPrestamo = id;
         params = JSON.stringify(params);
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/Payments.aspx/GetPayment",
+            url: "../../pages/Loans/PaymentOverdue.aspx/GetPaymentByIdPrestamo",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -387,32 +398,30 @@ const payments = {
             success: function (msg) {
 
                 let data = msg.d;
-                console.log(data);
-
                 $('#txtCliente').val(data.NombreCliente);
+                $('#txtAval').val(data.NombreAval);
                 $('#txtCliente').attr('data-idcliente', data.IdCliente);
                 $('#txtCliente').attr('data-idprestamo', data.IdPrestamo);
+                $('#txtCalleCliente').val(data.CalleCliente);
+                $('#txtCalleAval').val(data.CalleAval);
+                $('#txtTelefonoCliente').val(data.TelefonoCliente);
+                $('#txtTelefonoAval').val(data.TelefonoAval);
 
-                $('#txtMontoPrestamo').val(data.MontoPrestamoFormateadoMx);
-                $('#txtSaldo').val(data.SaldoFormateadoMx);
-                $('#txtAbono').val(data.Saldo);
+                $('#txtSemanasFallas').val(data.SemanasFalla);
+                var semanas = data.SemanasFalla.split(',');
+                $('#txtPagos').val(semanas.length);
+                $('#txtMonto').val(data.MontoFormateadoMx);
+                $('#txtMonto').attr('data-monto', data.Monto);
+                $('#txtTotal').val(data.TotalFallaFormateadoMx);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
                 payments.idPago = data.IdPago;
 
                 payments.idPrestamo = data.IdPrestamo;
+                payments.idCliente = data.IdCliente;
                 payments.numeroSemana = data.NumeroSemana;
 
-                payments.historial(data.IdPrestamo, data.NumeroSemana);
-
-                //if (Number(data.IdStatusPago) === 1) {
-                //    //$('#btnCapturar').show();
-                //} else {
-                //    $('#btnCapturar').hide();
-                //}
-
-
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
 
@@ -423,74 +432,6 @@ const payments = {
 
     },
 
-    historial: (idPrestamo, numeroSemanaActual) => {
-
-        console.log(`Historial  idPrestamo ${idPrestamo}`);
-
-        let params = {};
-        params.path = window.location.hostname;
-        params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
-        params.idPrestamo = idPrestamo;
-        params.numeroSemanaActual = numeroSemanaActual;
-        params = JSON.stringify(params);
-
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Loans/Payments.aspx/GetPaymentsByIdPrestamo",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-
-                let data = msg.d;
-
-                //console.log(data);
-                let headers = '';
-
-                let rows = '';
-
-
-                for (var i = 0; i < data.length; i++) {
-                    headers += `<th scope="col text-center">${(i + 1)}</th>`;
-                    let pago = data[i];
-                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="background-color: ${pago.Color}">${pago.SaldoFormateadoMx}${pago.Accion}</th>`;
-
-                }
-
-                const htmlTable = `           
-                    <table class="table table-bordered table-sm text-center" style="width:auto;"
-                        id="tableSolicitudes">
-
-                        <thead class="thead-light">
-
-                            ${headers}
-                       
-                        </thead>
-                        <tbody>
-                            <tr>
-                            ${rows}
-                            </tr>
-                        
-                        </tbody>
-                    </table>`;
-
-
-                $('#table_').html(htmlTable);
-
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-
-
-            }
-
-        });
-
-
-
-    },
 
     loadComboPlaza: () => {
         var params = {};
@@ -662,10 +603,6 @@ const payments = {
 
         payments.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
 
-
-        console.log(`fechaInicial ${payments.fechaInicial}`);
-        console.log(`fechaFinal ${payments.fechaFinal}`);
-
     },
 
     updatePayment(idPago, idStatus) {
@@ -679,15 +616,13 @@ const payments = {
 
         $.ajax({
             type: "POST",
-            url: `../../pages/Loans/Payments.aspx/UpdateStatusPagoByPagoAndStatus`,
+            url: `../../pages/Loans/PaymentOverdue.aspx/UpdateStatusPagoByPagoAndStatus`,
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
                 let valores = msg.d;
-
-                console.log(valores);
                 payments.historial(payments.idPrestamo, payments.numeroSemana);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -736,20 +671,27 @@ const payments = {
 
             $('#panelMensajeControlado').modal('hide');
 
-            $('#panelForm').hide();
-            $('#panelTabla').show();
+            //$('#panelForm').hide();
+            //$('#panelTabla').show();
+            //payments.cargarItems();
 
-            payments.cargarItems();
         });
 
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
 
+            var pago = parseFloat($('#btnRecibo').data('pago'));
+            $('#btnRecibo').attr('data-pago', 0);
+            $('#btnRecibo').removeClass("deshabilitable");
+            $('#btnRecibo').prop('disabled', true);
 
-            $('#panelTabla').show();
             $('#panelForm').hide();
-
-
+            $('#panelTabla').show();
+            
+            if (pago > 0) {
+                console.log('cargaitems');
+                payments.cargarItems();
+            }
 
         });
 
@@ -771,15 +713,17 @@ const payments = {
             params.path = window.location.hostname;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
-            params.idPago = payments.idPago;
-            params.abono = Number($('#txtAbono').val());
-            params.recuperado = $('#txtRecuperado').val() === '' ? 0 : Number($('#txtRecuperado').val());
+            params.idPrestamo = payments.idPrestamo;
+            params.idCliente = payments.idCliente;
+            params.abono = Number($('#txtMontoPago').val());
+            params.notaCliente = $('#txtNotasCliente').val();
+            params.notaAval = $('#txtNotasAval').val();
             params = JSON.stringify(params);
 
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/Payments.aspx/SavePayment`,
+                url: `../../pages/Loans/PaymentOverdue.aspx/SavePayment`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -794,6 +738,12 @@ const payments = {
                         $('#spnMensajeControlado').html(mensajesAlertas.pagoRegistradoExito);
                         $('#panelMensajeControlado').modal('show');
 
+                        $('#btnRecibo').attr('data-pago', valores.IdItem);
+                        $('#btnRecibo').addClass("deshabilitable");
+                        $('#btnRecibo').prop('disabled', false);
+                        payments.cargarItems();
+                        //window.location.reload();
+
                     } else {
                         $('#spnMensajes').html(valores.MensajeError);
                         $('#panelMensajes').modal('show');
@@ -804,6 +754,82 @@ const payments = {
 
                     $('#spnMensajes').html(mensajesAlertas.errorInesperado);
                     $('#panelMensajes').modal('show');
+
+                }
+
+            });
+
+
+        });
+
+        $('#btnRecibo').on('click', (e) => {
+            e.preventDefault();
+
+            let hasErrors = $('form[name="frmPago"]').validator('validate').has('.has-error').length;
+
+            if (hasErrors) {
+
+                return;
+            }
+
+            $('.deshabilitable').prop('disabled', true);
+
+            let params = {};
+            params.path = window.location.hostname;
+            params.idUsuario = Number(document.getElementById('txtIdUsuario').value);
+            params.idPosicion = Number(document.getElementById('txtIdTipoUsuario').value);
+            params.idPrestamo = payments.idPrestamo;
+            params.idCliente = payments.idCliente;
+            params.abono = Number($('#btnRecibo').data('pago'));
+            params.abonoPactado = Number($('#txtMonto').data('monto'));
+            params.semanas = $('#txtSemanasFallas').val();
+            params = JSON.stringify(params);
+
+            //fetch(`../../pages/Loans/PaymentOverdue.aspx/GenerateReport`, {
+            //    body: params,
+            //    method: 'POST',
+            //    headers: {
+            //        'Content-Type': 'application/json; charset=utf-8'
+            //    },
+            //})
+            //    .then(response => response.json())
+            //    .then(response => {
+            //        $('.deshabilitable').prop('disabled', false);
+            //        console.log(d);
+            //        //const blob = new Blob([response], { type: 'application/pdf' });
+            //        //const downloadUrl = URL.createObjectURL(blob);
+            //        const a = document.createElement("a");
+            //        a.href = response.d;
+            //        a.download = "reporte.pdf";
+            //        document.body.appendChild(a);
+            //        a.click();
+            //        $('.deshabilitable').prop('disabled', false);
+            //    })
+            //    .catch(() => {
+            //        $('.deshabilitable').prop('disabled', false);
+            //    });
+
+
+
+
+
+            $.ajax({
+                type: "POST",
+                url: `../../pages/Loans/PaymentOverdue.aspx/GenerateReport`,
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    let valores = msg.d;
+                    const a = document.createElement("a");
+                    a.href = valores;
+                    a.download = "reporte.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                    $('.deshabilitable').prop('disabled', false);
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.deshabilitable').prop('disabled', false);
 
                 }
 

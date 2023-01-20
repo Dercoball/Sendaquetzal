@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\plataformawebpagos",
+    "\\plataformawebpagos\\MyERP",
+    "\\plataformawebpagos\\MyERP\\flyway",
+    "\\plataformawebpagos\\MyERP\\flyway\\migrations"
+  ],
+  "SelectedNode": "\\plataformawebpagos\\MyERP\\flyway\\migrations\\V1__BaseLine.sql",
+  "PreviewInSolutionExplorer": false
+}

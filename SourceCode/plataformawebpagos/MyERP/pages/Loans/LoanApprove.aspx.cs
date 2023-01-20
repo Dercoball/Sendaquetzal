@@ -1501,7 +1501,7 @@ namespace Plataforma.pages
 
                 Utils.Log("Guardado -> OK ");
 
-                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente, item.NotaAval,
+                DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente, item.NotaAval, item.NotaEjecutivoCliente, item.NotaEjecutivoAval,
                     idUsuario, idPrestamo, conn, transaccion, 1);
 
 
@@ -1622,7 +1622,7 @@ namespace Plataforma.pages
                 Utils.Log("Guardado -> OK ");
 
                 DatosSalida dataUpdateNotas = UpdateRelacionPrestamoAprobacion(path, idTipoUsuario, item.NotaCliente,
-                    item.NotaAval, idUsuario, idPrestamo, conn, transaccion, 2);
+                    item.NotaAval, item.NotaEjecutivoCliente, item.NotaEjecutivoAval, idUsuario, idPrestamo, conn, transaccion, 2);
 
 
                 transaccion.Commit();
@@ -1661,7 +1661,7 @@ namespace Plataforma.pages
         /// <returns></returns>
         [WebMethod]
         public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string idPosicion,
-                string notaCliente, string notaAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction,
+                string notaCliente, string notaAval,string notasEjecutivoCliente, string notasEjecutivoAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction,
                 int tipo)
         {
             //tipo 1 cliente, 2 aval
@@ -1675,8 +1675,8 @@ namespace Plataforma.pages
             {
 
                 string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
-                string sqlActualizaNotaCliente = tipo == 1 ? ", notas_cliente = @notas_cliente " : " ";
-                string sqlActualizaNotaAval = tipo == 2 ? ", notas_aval = @notas_aval " : " ";
+                string sqlActualizaNotaCliente = tipo == 1 ? ", notas_cliente = @notas_cliente, notas_ejecutivo_cliente = @notas_ejecutivo_cliente " : " ";
+                string sqlActualizaNotaAval = tipo == 2 ? ", notas_aval = @notas_aval, notas_ejecutivo_aval = @notas_ejecutivo_aval " : " ";
 
                 string sql = "";
 
@@ -1700,7 +1700,9 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
                 cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
                 cmd.Parameters.AddWithValue("@notas_cliente", notaCliente == null ? "" : notaCliente);
+                cmd.Parameters.AddWithValue("@notas_ejecutivo_cliente", notasEjecutivoCliente == null ? "" : notasEjecutivoCliente);
                 cmd.Parameters.AddWithValue("@notas_aval", notaAval == null ? "" : notaAval);
+                cmd.Parameters.AddWithValue("@notas_ejecutivo_aval", notasEjecutivoAval == null ? "" : notasEjecutivoAval);
                 cmd.Transaction = transaction;
 
                 r += cmd.ExecuteNonQuery();

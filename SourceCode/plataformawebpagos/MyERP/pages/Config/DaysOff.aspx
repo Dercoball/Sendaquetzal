@@ -105,7 +105,7 @@
                 <div id="panelTabla">
                     <div class="table-responsive">
 
-                        <table class="table table-bordered table-hover table-sm" id="table">
+                        <table class="table table-bordered table-hover table-sm w-100" id="table">
 
 
                             <thead class="thead-light">

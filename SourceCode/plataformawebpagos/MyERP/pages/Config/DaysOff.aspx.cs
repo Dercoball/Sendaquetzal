@@ -174,8 +174,12 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-				string query = @" SELECT id_dias_paro, nota, fecha_inicio,
-                     fecha_fin, id_tipo_paro
+				string query = @" SELECT 
+                    id_dias_paro IdDiaParo, 
+                    nota Nota, 
+                    fecha_inicio FechaInicio,
+                    fecha_fin FechaFin, 
+                    id_tipo_paro IdTipoParo
                      FROM dias_paro
                      WHERE 
                      ISNull(eliminado, 0) = 0

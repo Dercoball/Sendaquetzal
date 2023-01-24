@@ -59,11 +59,23 @@ const dayOff = {
 
                         { data: 'IdDiaParo' },
                         { data: 'Nota' },
-                        { data: 'FechaInicio' },
-                        { data: 'FechaFin' },
+                        {
+                            data: 'FechaInicio',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {
+                            data: 'FechaFin',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
                         { data: null, render: '' },
                         { data: null, render: '' },
-                        { data: 'Accion' }
+                        { data: null, render: '' },
                     ],
                     "language": textosEsp,
                     "columnDefs": [

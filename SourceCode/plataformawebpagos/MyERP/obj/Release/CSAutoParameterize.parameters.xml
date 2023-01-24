@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="sendaquetzalv2.gear.host-Web.config Connection String" description="sendaquetzalv2.gear.host Connection String used in web.config by the application to access the database." defaultValue="server=den1.mssql8.gear.host;database=sendaquetzalv2;uid=sendaquetzalv2;pwd=Io1ffhf~S!0K" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\GitRepos\\SendaQuetzal\\SourceCode\\plataformawebpagos\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='sendaquetzalv2.gear.host']/@connectionString" />
-  </parameter>
-</parameters>

@@ -11,7 +11,7 @@ namespace Plataforma.pages
 {
 
 
-    public partial class LoanApprove
+    public partial class LoanApproveCopia
     {
 
         /// <summary>

@@ -10,6 +10,7 @@ namespace Plataforma.Clases
 
         public int IdDocumento;
         public int IdTipoDocumento;
+        public int IdCliente;
         public String Nombre;
         public String Descripcion;
         public String Contenido;

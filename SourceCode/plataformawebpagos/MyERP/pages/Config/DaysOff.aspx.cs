@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dapper;
+using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
@@ -50,8 +51,8 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_dias_paro, nota, FORMAT(fecha_inicio, 'yyyy-MM-dd') fecha_inicio,
-                     FORMAT(fecha_fin, 'yyyy-MM-dd') fecha_fin, id_tipo_paro
+                string query = @" SELECT id_dias_paro, nota, fecha_inicio,
+                     fecha_fin, id_tipo_paro
                      FROM dias_paro
                      WHERE  id_dias_paro =  @id ";
 
@@ -59,26 +60,7 @@ namespace Plataforma.pages
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_puesto =  " + id);
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id", id);
-
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        item = new DiaDeParo();
-
-                        item.IdDiaParo = int.Parse(ds.Tables[0].Rows[i]["id_dias_paro"].ToString());
-                        item.Nota = (ds.Tables[0].Rows[i]["nota"].ToString());
-                        item.FechaInicio = ds.Tables[0].Rows[i]["fecha_inicio"].ToString();
-                        item.FechaFin = ds.Tables[0].Rows[i]["fecha_fin"].ToString();
-
-
-                    }
-                }
+                item = conn.QueryFirstOrDefault<DiaDeParo>(query, new {id = id});
 
                 return item;
             }
@@ -171,8 +153,6 @@ namespace Plataforma.pages
         }
 
 
-
-
         [WebMethod]
         public static List<DiaDeParo> GetListaItems(string path, string idUsuario)
         {
@@ -194,45 +174,54 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_dias_paro, nota, FORMAT(fecha_inicio, 'dd/MM/yyyy') fecha_inicio,
-                     FORMAT(fecha_fin, 'dd/MM/yyyy') fecha_fin, id_tipo_paro
+				string query = @" SELECT id_dias_paro, nota, fecha_inicio,
+                     fecha_fin, id_tipo_paro
                      FROM dias_paro
                      WHERE 
                      ISNull(eliminado, 0) = 0
                      ORDER BY id_dias_paro ";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                items = conn.Query<DiaDeParo>(query).ToList();
+
+				//DataSet ds = new DataSet();
+    //            string query = @" SELECT id_dias_paro, nota, FORMAT(fecha_inicio, 'dd/MM/yyyy') fecha_inicio,
+    //                 FORMAT(fecha_fin, 'dd/MM/yyyy') fecha_fin, id_tipo_paro
+    //                 FROM dias_paro
+    //                 WHERE 
+    //                 ISNull(eliminado, 0) = 0
+    //                 ORDER BY id_dias_paro ";
+
+    //            SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
-                adp.Fill(ds);
+                //adp.Fill(ds);
 
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        DiaDeParo item = new DiaDeParo();
-                        item.IdDiaParo = int.Parse(ds.Tables[0].Rows[i]["id_dias_paro"].ToString());
-                        item.Nota = (ds.Tables[0].Rows[i]["nota"].ToString());
+                //if (ds.Tables[0].Rows.Count > 0)
+                //{
+                //    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                //    {
+                //        DiaDeParo item = new DiaDeParo();
+                //        item.IdDiaParo = int.Parse(ds.Tables[0].Rows[i]["id_dias_paro"].ToString());
+                //        item.Nota = (ds.Tables[0].Rows[i]["nota"].ToString());
 
-                        item.FechaInicio = ds.Tables[0].Rows[i]["fecha_inicio"].ToString();
-                        item.FechaFin = ds.Tables[0].Rows[i]["fecha_fin"].ToString();
-                        item.IdTipoParo = int.Parse(ds.Tables[0].Rows[i]["id_tipo_paro"].ToString());
-
-
-
-                        string botones = "<button  onclick='dayOff.edit(" + item.IdDiaParo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='dayOff.delete(" + item.IdDiaParo + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
+                //        item.FechaInicio = ds.Tables[0].Rows[i]["fecha_inicio"].ToString();
+                //        item.FechaFin = ds.Tables[0].Rows[i]["fecha_fin"].ToString();
+                //        item.IdTipoParo = int.Parse(ds.Tables[0].Rows[i]["id_tipo_paro"].ToString());
 
 
-                    }
-                }
+
+                //        string botones = "<button  onclick='dayOff.edit(" + item.IdDiaParo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                //        botones += "&nbsp; <button  onclick='dayOff.delete(" + item.IdDiaParo + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+
+                //        item.Accion = botones;
+
+                //        items.Add(item);
+
+
+                //    }
+                //}
 
 
                 return items;

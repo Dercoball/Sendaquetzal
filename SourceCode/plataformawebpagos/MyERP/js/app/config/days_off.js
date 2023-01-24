@@ -50,17 +50,20 @@ const dayOff = {
                 let table = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    "order": [],
+                    ordering: false,
                     data: data,
+                    paging: false,
+                    scrollY: '400px',
+                    scrollX: true,
                     columns: [
 
                         { data: 'IdDiaParo' },
                         { data: 'Nota' },
                         { data: 'FechaInicio' },
                         { data: 'FechaFin' },
+                        { data: null, render: '' },
+                        { data: null, render: '' },
                         { data: 'Accion' }
-
-                        
                     ],
                     "language": textosEsp,
                     "columnDefs": [
@@ -69,19 +72,70 @@ const dayOff = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtipl',
+                    dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
                         {
                             extend: 'excelHtml5',
                             title: descargas,
-                            text: 'Xls', className: 'excelbtn'
+                            text: '&nbsp; Descargar Excel', className: 'csvbtn',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5],
+                            }
                         },
                         {
                             extend: 'pdfHtml5',
+                            text: 'Descargar PDF',
                             title: descargas,
-                            text: 'Pdf', className: 'pdfbtn'
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            className: 'csvbtn ml-2',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5],
+                            }
                         }
-                    ]
+                    ],
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
+
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
+
+                                switch (dataHeader) {
+                                    case 'MontoPrestamo':
+                                    case 'SemanasFalla':
+                                    case 'Monto':
+                                    case 'TotalFalla':
+                                    case 'Pagado':
+                                        $('input', column.header()).on('keyup', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'NombreCliente':
+                                    case 'NombreAval':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Fecha':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Status':
+                                        $('select', column.header()).on('change', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                }
+                            });
+                    }
 
                 });
 

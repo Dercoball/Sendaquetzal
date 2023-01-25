@@ -103,46 +103,111 @@
                 </header>
 
                 <div id="panelTabla">
-                    <div class="table-responsive">
+                    <div class="card">
+                        <div class="card-body">
+                            <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nueva Semana</button>
+                            <div class="table-responsive">
 
-                        <table class="table table-bordered table-hover table-sm w-100" id="table">
+                                <table class="table table-bordered table-hover table-sm w-100" id="table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Folio</th>
+                                            <th>Evento<br />
+                                                <input placeholder="Evento" />
+                                            </th>
+                                            <th>Fecha inicial<br />
+                                                <input id="finicial" type="date" />
+                                            </th>
+                                            <th>Fecha final<br />
+                                                <input id="ffinal" type="date" />
+                                            </th>
+                                            <th>Plaza<br />
+                                                <select id="cmbPlaza"></select>
+                                            </th>
+                                            <th>Estatus<br />
+                                                <select>
+                                                    <option value="">Todos</option>
+                                                    <option value="Programado">Programado</option>
+                                                    <option value="Realizado">Realizado</option>
+                                                </select>
+                                            </th>
+                                            <th class="text-center">Acción
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
 
-
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Folio</th>
-                                    <th>
-                                        Evento<br />
-                                        <input placeholder="Evento" />
-                                    </th>
-                                    <th>
-                                        Fecha inicial<br />
-                                        <input id="finicial" type="date" />
-                                    </th>
-                                    <th>
-                                        Fecha final<br />
-                                        <input id="ffinal" type="date" />
-                                    </th>
-                                    <th>
-                                        Plaza
-                                    </th>
-                                    <th>Estatus</th>
-                                    <th class="text-center">
-                                        Acción
-                                        <%--<button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>--%>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
+                            </div>
+                        </div>
                     </div>
+
                 </div>
 
 
-                <div id="panelForm">
-                    <div class="modal-body form">
+                <div id="panelForm" style="display:none;">
+                    <form id="frm" name="frm">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtNota">
+                                                Evento
+                                            </label>
+                                            <input type="text" class="form-control" id="txtNota" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="comboPlaza">
+                                                Plazas a paro
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboPlaza" required="required" data-required-error='Requerido'>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtFechaInicio">
+                                                Fecha inicio
+                                            </label>
+                                            <input type="date" class="form-control campo-date" id="txtFechaInicio"
+                                                required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                        <label for="txtFechaFin">
+                                            Fecha fin
+                                        </label>
+                                        <input type="date" class="form-control campo-date" id="txtFechaFin"
+                                            required="required" data-required-error='Requerido' />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-12 col-md-6 col-lg-4 text-right">
+                                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <%--<div class="modal-body form">
                         <form role="form" id="frm" name="frm">
 
                             <div class="form-body">
@@ -150,68 +215,15 @@
                                     <span id="spnTituloForm"></span>
                                     <hr />
                                 </h3>
-
                                 <div class="row">
 
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNota">
-                                            Nota
-                                        </label>
-                                        <input type="text" class="form-control" id="txtNota" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
+                                    
 
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="comboPlaza">
-                                            Plazas a paro
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboPlaza">
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFechaInicio">
-                                            Fecha inicio
-                                        </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaInicio"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFechaFin">
-                                            Fecha final
-                                        </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaFin"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </form>
-                    </div>
-
-
-
-                    <div class="row mt-3 mb-3">
-
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
-                        </div>
-
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
-
-                    </div>
-
+                    </div>--%>
                 </div>
 
             </div>

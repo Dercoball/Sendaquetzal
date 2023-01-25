@@ -50,9 +50,13 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_dias_paro, nota, fecha_inicio,
-                     fecha_fin, id_tipo_paro
+                string query = @" SELECT 
+                    id_dias_paro IdDiasParo, 
+                    nota Nota, 
+                    fecha_inicio FechaInicio,
+                     fecha_fin FechaFin, 
+                    id_tipo_paro IdTipoParo,
+                    id_plaza IdPlaza
                      FROM dias_paro
                      WHERE  id_dias_paro =  @id ";
 
@@ -102,8 +106,8 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO dias_paro(nota, fecha_inicio, fecha_fin, id_tipo_paro, eliminado) 
-                    VALUES (@nota, @fecha_inicio, @fecha_fin, @id_tipo_paro, 0) ";
+                    sql = @" INSERT INTO dias_paro(nota, fecha_inicio, fecha_fin, id_tipo_paro, id_plaza, eliminado) 
+                    VALUES (@nota, @fecha_inicio, @fecha_fin, @id_tipo_paro, @id_plaza, 0) ";
                 }
                 else
                 {
@@ -111,7 +115,8 @@ namespace Plataforma.pages
                           SET nota = @nota,
                               fecha_inicio = @fecha_inicio,        
                               fecha_fin = @fecha_fin,
-                              id_tipo_paro = @id_tipo_paro
+                              id_tipo_paro = @id_tipo_paro,
+                              id_plaza = @id_plaza
                           WHERE 
                               id_dias_paro = @id";
 
@@ -127,8 +132,9 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@fecha_inicio", item.FechaInicio);
                 cmd.Parameters.AddWithValue("@fecha_fin", item.FechaFin);
                 cmd.Parameters.AddWithValue("@id_tipo_paro", item.IdTipoParo);
+				cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza);
 
-                cmd.Parameters.AddWithValue("@id", item.IdDiaParo);
+                cmd.Parameters.AddWithValue("@id", item.IdDiasParo);
 
 
                 int r = cmd.ExecuteNonQuery();
@@ -174,59 +180,30 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-				string query = @" SELECT 
-                    id_dias_paro IdDiaParo, 
-                    nota Nota, 
-                    fecha_inicio FechaInicio,
-                    fecha_fin FechaFin, 
-                    id_tipo_paro IdTipoParo
-                     FROM dias_paro
-                     WHERE 
-                     ISNull(eliminado, 0) = 0
-                     ORDER BY id_dias_paro ";
+				string query = @"SELECT 
+	                            dp.id_dias_paro IdDiasParo,
+	                            dp.nota Nota,
+	                            dp.fecha_inicio FechaInicio,
+	                            dp.fecha_fin FechaFin,
+	                            dp.id_tipo_paro IdTipoParo,
+	                            dp.id_plaza IdPlaza,
+	                            p.nombre Plaza
+                            FROM
+	                            dias_paro dp 
+	                            LEFT JOIN plaza p ON (p.id_plaza = dp.id_plaza)
+                            WHERE
+	                            ISNULL(dp.eliminado, 0) = 0
+                            ORDER BY dp.id_dias_paro";
 
                 items = conn.Query<DiaDeParo>(query).ToList();
 
-				//DataSet ds = new DataSet();
-    //            string query = @" SELECT id_dias_paro, nota, FORMAT(fecha_inicio, 'dd/MM/yyyy') fecha_inicio,
-    //                 FORMAT(fecha_fin, 'dd/MM/yyyy') fecha_fin, id_tipo_paro
-    //                 FROM dias_paro
-    //                 WHERE 
-    //                 ISNull(eliminado, 0) = 0
-    //                 ORDER BY id_dias_paro ";
-
-    //            SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                items.ForEach(item =>
+                {
+                    item.Estatus = item.FechaFin.Date > DateTime.Now.Date ? "Programado" : "Realizado";
+                });
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                //adp.Fill(ds);
-
-                //if (ds.Tables[0].Rows.Count > 0)
-                //{
-                //    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                //    {
-                //        DiaDeParo item = new DiaDeParo();
-                //        item.IdDiaParo = int.Parse(ds.Tables[0].Rows[i]["id_dias_paro"].ToString());
-                //        item.Nota = (ds.Tables[0].Rows[i]["nota"].ToString());
-
-                //        item.FechaInicio = ds.Tables[0].Rows[i]["fecha_inicio"].ToString();
-                //        item.FechaFin = ds.Tables[0].Rows[i]["fecha_fin"].ToString();
-                //        item.IdTipoParo = int.Parse(ds.Tables[0].Rows[i]["id_tipo_paro"].ToString());
-
-
-
-                //        string botones = "<button  onclick='dayOff.edit(" + item.IdDiaParo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                //        botones += "&nbsp; <button  onclick='dayOff.delete(" + item.IdDiaParo + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                //        item.Accion = botones;
-
-                //        items.Add(item);
-
-
-                //    }
-                //}
-
 
                 return items;
             }

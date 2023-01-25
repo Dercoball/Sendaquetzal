@@ -154,6 +154,7 @@
     <Content Include="css\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="flyway\.gitignore" />
     <Content Include="flyway\migrations\V5__InversioneseInversio.sql" />
+    <Content Include="flyway\migrations\V6__AlterTableParoeFestivo.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />

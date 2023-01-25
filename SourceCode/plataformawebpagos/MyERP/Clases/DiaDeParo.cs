@@ -9,23 +9,20 @@ namespace Plataforma.Clases
     public class DiaDeParo
     {
 
-        [Column("id_dias_paro")]
-        public int IdDiaParo;
+        public int IdDiasParo;
 
-        [Column("nota")]
         public string Nota;
 
-        [Column("fecha_inicio")]
         public DateTime FechaInicio;
 
-        [Column("fecha_fin")]
         public DateTime FechaFin;
+
+        public int IdPlaza;
 
         public string Plaza;
 
         public string Estatus;
 
-        [Column("id_tipo_paro")]
         public int IdTipoParo;
     }
 }

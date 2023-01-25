@@ -85,7 +85,7 @@ namespace Plataforma.pages
                         item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.FechaMx = ds.Tables[0].Rows[i]["fecha_mx"].ToString();
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
+                        //item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
                         item.FechaFinal = ds.Tables[0].Rows[i]["fecha_final"].ToString();
                         item.Tipo = ds.Tables[0].Rows[i]["tipo"].ToString();
 
@@ -173,7 +173,7 @@ namespace Plataforma.pages
                         item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.FechaMx = ds.Tables[0].Rows[i]["fecha_mx"].ToString();
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
+                        //item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
                         item.FechaLarga = DateTime.Parse(ds.Tables[0].Rows[i]["fecha"].ToString()).ToLongDateString();
                         item.FechaFinal = ds.Tables[0].Rows[i]["fecha_final"].ToString();
                         item.Tipo = ds.Tables[0].Rows[i]["tipo"].ToString();

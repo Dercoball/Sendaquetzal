@@ -20,7 +20,34 @@ const dayOff = {
         dayOff.loadComboPlaza();
 
         dayOff.loadContent();
-        
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#finicial').val();
+                var createdAt = data[2] || 0; // Our date column in the table
+
+                if (min != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var max = $('#ffinal').val();
+                var createdAt = data[3] || 0; // Our date column in the table
+
+                if (max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
 
     },
 
@@ -57,7 +84,7 @@ const dayOff = {
                     scrollX: true,
                     columns: [
 
-                        { data: 'IdDiaParo' },
+                        { data: 'IdDiasParo' },
                         { data: 'Nota' },
                         {
                             data: 'FechaInicio',
@@ -73,9 +100,27 @@ const dayOff = {
                                 return moment(data).format('DD/MM/YYYY');
                             }
                         },
-                        { data: null, render: '' },
-                        { data: null, render: '' },
-                        { data: null, render: '' },
+                        {
+                            data: 'Plaza'
+                        },
+                        {
+                            data: 'Estatus',
+                            name: 'Estatus',
+                            render: function (data, type, full, meta) {
+                                if(data === 'Programado')
+                                    return `<button type="button" class='btn btn-success btn-sm'>${data}</button>`;
+                                else
+                                    return `<button type="button" class='btn btn-warning btn-sm'>${data}</button>`;
+                            }
+                        },
+                        {
+                            data: null,
+                            className: 'dt-body-center',
+                            render: function (data, type, full, meta) {
+                                return `<button type="button" onclick="dayOff.edit(${full.IdDiasParo})" class='btn btn-primary btn-sm'> <span class='fa fa-edit mr-1'></span></button>
+                                        <button type="button" onclick="dayOff.delete(${full.IdDiasParo})" class='btn btn-danger btn-sm'> <span class='fa fa-remove mr-1'></span></button>`;
+                            }
+                        },
                     ],
                     "language": textosEsp,
                     "columnDefs": [
@@ -92,6 +137,33 @@ const dayOff = {
                             text: '&nbsp; Descargar Excel', className: 'csvbtn',
                             exportOptions: {
                                 columns: [0, 1, 2, 3, 4, 5],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 1:
+                                                name = "Evento";
+                                                break;
+                                            case 2:
+                                                name = "Fecha Inicial";
+                                                break;
+                                            case 3:
+                                                name = "Fecha Final";
+                                                break;
+                                            case 4:
+                                                name = "Plaza";
+                                                break;
+                                            case 5:
+                                                name = "Estatus";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
                             }
                         },
                         {
@@ -103,6 +175,33 @@ const dayOff = {
                             className: 'csvbtn ml-2',
                             exportOptions: {
                                 columns: [0, 1, 2, 3, 4, 5],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 1:
+                                                name = "Evento";
+                                                break;
+                                            case 2:
+                                                name = "Fecha Inicial";
+                                                break;
+                                            case 3:
+                                                name = "Fecha Final";
+                                                break;
+                                            case 4:
+                                                name = "Plaza";
+                                                break;
+                                            case 5:
+                                                name = "Estatus";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
                             }
                         }
                     ],
@@ -116,29 +215,21 @@ const dayOff = {
                                 let dataHeader = columnsSettings[idx].data;
 
                                 switch (dataHeader) {
-                                    case 'MontoPrestamo':
-                                    case 'SemanasFalla':
-                                    case 'Monto':
-                                    case 'TotalFalla':
-                                    case 'Pagado':
-                                        $('input', column.header()).on('keyup', function () {
-                                            column.draw();
-                                        });
-                                        break;
-                                    case 'NombreCliente':
-                                    case 'NombreAval':
+                                    case 'Nota':
                                         $('input', column.header()).on('keyup change clear', function () {
                                             if (column.search() !== this.value) {
                                                 column.search(this.value).draw();
                                             }
                                         });
                                         break;
-                                    case 'Fecha':
+                                    case 'FechaInicio':
+                                    case 'FechaFin':
                                         $('input', column.header()).on('change', function () {
                                             column.draw();
                                         });
                                         break;
-                                    case 'Status':
+                                    case 'Plaza':
+                                    case 'Estatus':
                                         $('select', column.header()).on('change', function () {
                                             if (column.search() !== this.value) {
                                                 column.search(this.value).draw();
@@ -182,10 +273,20 @@ const dayOff = {
                 let items = msg.d;
                 let opcion = '<option value="">Seleccione...</option>';
 
+                let selectEl = document.getElementById('cmbPlaza');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "", true, true));
+
+
+
                 for (let i = 0; i < items.length; i++) {
                     let item = items[i];
 
                     opcion += `<option value = '${item.IdPlaza}' > ${item.Nombre}</option > `;
+                    const option = new Option(item.Nombre, item.Nombre, false, false);
+                    selectEl.add(option);
 
                 }
 
@@ -201,14 +302,9 @@ const dayOff = {
     delete: (id) => {
 
         dayOff.idSeleccionado = id;
-
-
         $('#mensajeEliminar').text(`Se eliminará el registro seleccionado (No. ${id}). ¿Desea continuar ?`);
         $('#panelEliminar').modal('show');
-
     },
-
-
 
 
     edit: (id) => {
@@ -231,19 +327,20 @@ const dayOff = {
             success: function (msg) {
 
                 var item = msg.d;
-                dayOff.idSeleccionado = item.IdDiaParo;
+                dayOff.idSeleccionado = item.IdDiasParo;
 
                 $('#txtNota').val(item.Nota);
-
-                $('#txtFechaInicio').val(item.FechaInicio);
-                $('#txtFechaFin').val(item.FechaFin);
+                $('#txtFechaInicio').val(moment(item.FechaInicio).format('YYYY-MM-DD'));
+                $('#txtFechaFin').val(moment(item.FechaFin).format('YYYY-MM-DD'));
+                if (item.IdPlaza > 0) {
+                    $('#comboPlaza').val(item.IdPlaza);
+                }
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
 
                 dayOff.accion = "editar";
-                $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -262,10 +359,6 @@ const dayOff = {
         $('#frm')[0].reset();
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        $('#spnTituloForm').text('Nuevo');
-
-
-
 
         $('#panelTabla').hide();
         $('#panelForm').show();
@@ -273,9 +366,6 @@ const dayOff = {
         dayOff.idSeleccionado = -1;
 
         $('.deshabilitable').prop('disabled', false);
-
-
-
 
     },
 
@@ -300,10 +390,11 @@ const dayOff = {
 
                 //  Objeto con los valores a enviar
                 let item = {};
-                item.IdDiaParo = dayOff.idSeleccionado;
+                item.IdDiasParo = dayOff.idSeleccionado;
                 item.Nota = $('#txtNota').val();
                 item.FechaInicio = document.getElementById('txtFechaInicio').value;
                 item.FechaFin = document.getElementById('txtFechaFin').value;
+                item.IdPlaza = Number($('#comboPlaza').val());
 
                 let tiposParo = $('#comboPlaza').val();
 
@@ -346,7 +437,6 @@ const dayOff = {
 
                             utils.toast(mensajesAlertas.errorGuardar, 'fail');
 
-
                         }
 
                         $('#panelEdicion').modal('hide');
@@ -362,7 +452,6 @@ const dayOff = {
             }
 
         });
-
 
 
         $('#btnCancelar').on('click', (e) => {

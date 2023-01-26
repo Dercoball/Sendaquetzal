@@ -225,7 +225,7 @@
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/assets/calendar.js"></script>
     <script src="../../js/app/general.js"></script>
-    <script src="../../vendor/momentjs/moment.min.js"></script>
+    <script src="../../vendor/momentjs/moment-with-locales.min.js"></script>
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet">

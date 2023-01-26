@@ -12,7 +12,7 @@ const calendar = {
 
     init: () => {
 
-
+        moment.locale('es-mx');
         calendar.setCalendar();
 
 

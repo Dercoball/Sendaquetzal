@@ -34,6 +34,22 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 
     <link rel="stylesheet" href="../../vendor/fullcallendar/main.min.css">
+    <style>
+        .fc .fc-bg-event{
+            opacity:inherit;
+        }
+        .ev-paro{
+            border: 2px solid red;
+        }
+
+        .ev-feriado{
+            border: 2px solid orange;
+        }
+
+        .ev-normal{
+            border: 2px solid green;
+        }
+    </style>
 </head>
 
 <body>
@@ -97,62 +113,24 @@
 
 
         <section class="forms">
-
             <div class="container-fluid">
-
                 <header>
                     <h1 class="h3 display">Calendario</h1>
                 </header>
 
                 <div id="panelPrincipal">
-
-
                     <div class="row">
-
-
                         <%-- SECCION DEL CALENDARIO--%>
-                        <div id="calendar" class="form-group col-md-8">
+                        <div id="calendar" class="col-md-8 col-lg-7">
                         </div>
 
                         <%--SECCION LISTADO DE FECHAS--%>
-                        <div id="fechas" class="form-group col-md-4">
-
-                            <ul id="listaFechas" class="border mt-5" style="list-style-type: none;"></ul>
-
+                        <div id="container-eventos" class="col-md-4 col-lg-5">
+                            
                         </div>
-
-
-
                     </div>
-
-
-
                 </div>
-
-                <div class="row mt-5">
-
-
-                    <div class=" col-md-12 text-left">
-                        <h2 class="h3 display"><i class="fa fa-stop mr-1"></i>Dias de paro</h2>
-                    </div>
-
-                    <div class=" col-md-12 text-left">
-                        <h2 class="h3 display"><i class="fa fa-birthday-cake mr-1"></i>Cumpleaños</h2>
-                    </div>
-
-                    <div class=" col-md-12 text-left">
-                        <h2 class="h3 display"><i class="fa fa-th-list mr-1"></i>Dias no laborales</h2>
-                    </div>
-
-
-                </div>
-
-
-
-
-
             </div>
-
         </section>
 
 
@@ -244,25 +222,10 @@
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
 
-
-    <!-- DataTables JavaScript -->
-    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
-
-    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
-
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
-
-
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/assets/calendar.js"></script>
     <script src="../../js/app/general.js"></script>
+    <script src="../../vendor/momentjs/moment.min.js"></script>
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet">

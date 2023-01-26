@@ -12,12 +12,14 @@ namespace Plataforma.Clases
         public string Nombre;
 
         public DateTime Fecha;
+        public DateTime FechaFinal;
+
         public bool EsLaboral;
 		public string Estatus;
         public string FechaMx;
         public string FechaLarga;
         
-        public string FechaFinal;
+        //public string FechaFinal;
         public string Tipo;
 
         public string Dia;

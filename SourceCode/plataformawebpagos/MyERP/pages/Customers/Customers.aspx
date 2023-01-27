@@ -126,6 +126,7 @@
 
                 <div id="panelFiltro">
                     <div class="container-fluid">
+
                         <div class="mt-2 mb-4">
                             <div class="row align-items-end">
                                 <div class="col fv-row">
@@ -195,47 +196,12 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>No.</th>
-                                    <th>
-                                        Nombre<br />
-                                        <input placeholder="Nombre" />
-                                    </th>
-                                    <th>
-                                        CURP<br />
-                                        <input placeholder="CURP" />
-                                    </th>
-                                    <th>
-                                        Teléfono<br />
-                                        <input placeholder="Teléfono" />
-                                    </th>
-                                    <th>
-                                        Monto<br />
-                                        <input id="pmax" type="number" placeholder="MAX" /><br />
-                                        <input id="pmin" type="number" placeholder="MIN" />
-                                    </th>
-                                    <th>
-                                        Dirección<br />
-                                        <input placeholder="Dirección" style="width:100%;" />
-                                    </th>
-                                    <th>
-                                        Estatus<br />
-                                        <select id="estatus">
-                                            <option value="">Todos</option>
-                                            <option value="Inactivo">Inactivo</option>
-                                            <option value="Activo">Activo</option>
-                                            <option value="Vencido">Vencido</option>
-                                            <option value="Condonado">Condonado</option>
-                                            <option value="Demanda">Demanda</option>
-                                        </select>
-                                    </th>
-                                    <th>
-                                        Mensajes<br />
-                                        <select id="mensajes">
-                                            <option value="">Todos</option>
-                                            <option value="1">Activo</option>
-                                            <option value="0">Inactivo</option>
-                                        </select>
-
-                                    </th>
+                                    <th>Nombre</th>
+                                    <th>CURP</th>
+                                    <th>Teléfono</th>
+                                    <th>Monto</th>
+                                    <th>Dirección</th>
+                                    <th>Estatus</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -244,9 +210,9 @@
                             </tbody>
                             <tfoot class="thead-light">
                                 <tr>
-                                    <th colspan="4"></th>
+                                    <th colspan="4" style="text-align:right">Total:</th>
                                     <th></th>
-                                    <th colspan="4"></th>
+                                    <th colspan="3"></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -384,7 +350,6 @@
     <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="../../vendor/momentjs/moment.min.js"></script>
 
     <!-- DataTables JavaScript -->
     <script src="../../vendor/datatables/1.13.1/js/jquery.dataTables.min.js"></script>

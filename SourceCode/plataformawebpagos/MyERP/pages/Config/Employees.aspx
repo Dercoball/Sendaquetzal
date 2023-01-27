@@ -11,23 +11,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow" />
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
     <!-- Font Awesome CSS-->
-    <link rel="stylesheet" href="../../vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
     <!-- Fontastic Custom icon font-->
-    <link rel="stylesheet" href="../../css/fontastic.css">
+    <link rel="stylesheet" href="/css/fontastic.css">
     <!-- Google fonts - Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
     <!-- jQuery Circle-->
-    <link rel="stylesheet" href="../../css/grasp_mobile_progress_circle-1.0.0.min.css">
+    <link rel="stylesheet" href="/css/grasp_mobile_progress_circle-1.0.0.min.css">
     <!-- Custom Scrollbar-->
-    <link rel="stylesheet" href="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="../../css/style.sea.css">
+    <link rel="stylesheet" href="/css/style.sea.css">
     <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="../../css/custom.css">
+    <link rel="stylesheet" href="/css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="../../img/sq.jpg">
+    <link rel="shortcut icon" href="/img/sq.jpg">
     <!-- Tweaks for older IEs-->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -36,14 +36,11 @@
 
 
 <body>
-
-
     <form class="form-signin" id="form1" runat="server">
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
     </form>
-
 
     <!-- Side Navbar -->
     <nav class="side-navbar">
@@ -70,11 +67,8 @@
     <div class="page">
         <!-- navbar-->
         <header class="header">
-
-
             <nav class="navbar">
                 <div class="container-fluid">
-
                     <div class="navbar-header">
                         <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a>
                         <a href="Index.aspx" class="navbar-brand">
@@ -88,640 +82,99 @@
                             <span class="d-none d-sm-inline-block">Salir</span><i class="fa fa-sign-out"></i></a>
                         </li>
                     </ul>
-
-
                 </div>
             </nav>
         </header>
 
-
-
         <section class="forms">
-
             <div class="container-fluid">
-
-                <header>
-                    <h1 class="h3 display">Colaboradores</h1>
-
-                </header>
-
-                <div id="panelTabla">
-                    <div class="table-responsive">
-
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
-
-
-                            <thead>
-
-                                <th>No.</th>
-                                <th>Nombre</th>
-                                <th>Usuario</th>
-                                <th>Módulo</th>
-                                <th>Tipo usuario</th>
-                                <th>Plaza</th>
-                                <th>Fecha ingreso</th>
-                                <th>
-                                    <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="glyphicon glyphicon-plus mr-1"></i>Nuevo</button>
-                                </th>
-
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
+                <!-- Inicio Titulo -->
+                <div class="row mt-4 mb-3 border-bottom col-12">
+                    <h3>COLABORADORES</h3>
                 </div>
+                <!-- Fin titulo -->
 
-
-
-
-                <div id="panelForm" style="overflow-y: auto;">
-                    <form role="form" id="frm" name="frm" data-toggle="validator">
-
-                        <%--Datos de ingreso--%>
-                        <div class="card">
-
-                            <div class="card-header">
-                                Datos de ingreso
-                            </div>
-
-                            <div class="card-body">
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtFechaIngreso">
-                                            Fecha de ingreso
-                                        </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaIngreso"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="comboPosicion">
-                                            Posición
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboPosicion" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <div class="combo-supervisor">
-                                            <label for="comboSupervisor">
-                                                Supervisor
-                                            </label>
-                                            <select class="form-control campo-combo" id="comboSupervisor">
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="combo-ejecutivo">
-                                            <label for="comboEjecutivo">
-                                                Ejecutivo
-                                            </label>
-                                            <select class="form-control campo-combo" id="comboEjecutivo">
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                        <div class="combo-coordinador">
-                                            <label for="comboCoordinador">
-                                                Coordinador
-                                            </label>
-                                            <select class="form-control campo-combo" id="comboCoordinador">
-                                            </select>
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-
-                            </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Inicio botones -->
+                        <div class="row mb-4 col-12">
+                            <a href="/pages/Config/NewEmployee.aspx" class="btn btn-primary mr-1 rounded" id="btnNuevo">
+                                <i class="fa fa-user mr-1"></i>NUEVO COLOBORADOR
+                            </a>
+                            <button class="btn btn-primary rounded mr-2" id="btnBuscar">
+                                <i class="fa fa-search mr-1"></i>BUSCAR
+                            </button>
+                            <button class="btn btn-secondary rounded" id="btnLimpiar">
+                                <i class="fa fa-eraser mr-1"></i>LIMPIAR
+                            </button>
                         </div>
-
-                        <%--Datos del Colaborador--%>
-                        <div class="card">
-
-                            <div class="card-header">
-                                Colaborador
-                            </div>
-
-                            <div class="card-body">
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtCURP">
-                                            CURP
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtCURP" title=""
-                                            required="required" data-required-error='Requerido'
-                                            <%--pattern="([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)"
-                                            data-pattern-error="Debe ingresar una CURP válida." --%>
-                                            />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtFechaNacimiento">
-                                            Fecha de nacimiento
-                                        </label>
-                                        <input type="date" class="form-control campo-date" id="txtFechaNacimiento"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                </div>
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtPrimerApellido">
-                                            Primer apellido
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtPrimerApellido"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtSegundoApellido">
-                                            Segundo apellido
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtSegundoApellido" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtNombre">
-                                            Nombre(s)
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtNombre"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtCalle">
-                                            Calle y número
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtCalle"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtColonia">
-                                            Colonia
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtColonia"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtMunicipio">
-                                            Municipio
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtMunicipio"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtEstado">
-                                            Estado
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtEstado"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtCodigoPostal">
-                                            Código postal
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtCodigoPostal"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtTelefono">
-                                            Teléfono
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtTelefono"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                </div>
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="comboPlaza">
-                                            Plaza
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboPlaza" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtMontoLimiteInicial">
-                                            Monto límite inicial
-                                        </label>
-                                        <input type="number" class="form-control campo-number" id="txtMontoLimiteInicial" step="1"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-4 ejecutivo">
-                                        <label for="comboComisionInicial">
-                                            Comisión inicial
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboComisionInicial" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtNombreUsuario">
-                                            Usuario
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtNombreUsuario" title=""
-                                            required="required" data-required-error='Requerido'
-                                            pattern="[0-9A-Za-z._]{4,}"
-                                            data-pattern-error="Solo se permiten letras, números punto y guión bajo. Mínimo 4." />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtPassword">
-                                            Contraseña
-                                        </label>
-                                        <input type="password" class="form-control campo-input" id="txtPassword"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Fotografía
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-fotografia documentos-colaborador" data-tipo="1" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Identificación frente
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-colaborador" data-tipo="2" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Identificación reverso
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-colaborador" data-tipo="3" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="row">
-
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="1" id="href_1">
-                                                <img src="../../img/upload.png" id="img_1" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="2" id="href_2">
-                                                <img src="../../img/upload.png" id="img_2" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="3" id="href_3">
-                                                <img src="../../img/upload.png" id="img_3" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Comprobante de domicilio
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-colaborador" data-tipo="4" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Carta no antecedentes penales
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-carta-no-antecedentes documentos-colaborador" data-tipo="5" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="4" id="href_4">
-                                                <img src="../../img/upload.png" id="img_4" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="5" id="href_5">
-                                                <img src="../../img/upload.png" id="img_5" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-                        </div>
-
-                        <%--Datos del Aval--%>
-                        <div class="card">
-
-                            <div class="card-header">
-                                Aval
-                            </div>
-
-                            <div class="card-body">
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtCURPAval">
-                                            CURP
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtCURPAval"
-                                            required="required" data-required-error='Requerido' 
-
-                                            />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                </div>
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtPrimerApellidoAval">
-                                            Primer apellido
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtPrimerApellidoAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtSegundoApellidoAval">
-                                            Segundo apellido
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtSegundoApellidoAval" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtNombreAval">
-                                            Nombre(s)
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtNombreAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtCalleAval">
-                                            Calle y número
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtCalleAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtColoniaAval">
-                                            Colonia
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtColoniaAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtMunicipioAval">
-                                            Municipio
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtMunicipioAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtEstadoAval">
-                                            Estado
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtEstadoAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtCodigoPostalAval">
-                                            Código postal
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtCodigoPostalAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="txtTelefonoAval">
-                                            Teléfono
-                                        </label>
-                                        <input type="text" class="form-control campo-input" id="txtTelefonoAval"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                </div>
-
-
-
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Identificación frente
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-identificacion-frente documentos-aval" data-tipo="6" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Identificación reverso
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-identificacion-reverso documentos-aval" data-tipo="7" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-
-                                        <label>
-                                            Comprobante de domicilio
-                                        </label>
-
-                                        <input type="file" class="form-control campo-imagen file-comprobante-domicilio documentos-aval" data-tipo="8" />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="6" id="href_6">
-                                                <img src="../../img/upload.png" id="img_6" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="7" id="href_7">
-                                                <img src="../../img/upload.png" id="img_7" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 text-center">
-                                        <div class="card">
-                                            <a href="#" class="img-document" data-tipo="8" id="href_8">
-                                                <img src="../../img/upload.png" id="img_8" class="img-fluid documentos" />
-                                            </a>
-                                        </div>
-                                    </div>
-
+                        <!-- Fin botones -->
+
+                        <form id="frmFiltros">
+                            <div id="panelTabla">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover w-100" id="table">
+                                        <thead>
+                                            <tr>
+                                                <td  class="p-1">
+                                                    <input id="txtNombreBusqueda" class="form-control w-100 mt-2" placeholder="Nombre" />
+                                                </td>
+                                                <td style="width:135px;"  class="p-1">
+                                                    <input id="txtUsuarioBusqueda" class="form-control w-100 mt-2" placeholder="usuario" />
+                                                </td>
+                                                 <td style="width:130px;" class="p-3">
+                                                    <select class="form-control w-100" id="cboModuloBusqueda">
+                                                    </select>
+                                                </td>
+                                                <td style="width:130px;"  class="p-3">
+                                                    <select class="form-control w-100" id="cboTipoBusqueda">
+                                                    </select>
+                                                </td>
+                                                <td  class="p-3">
+                                                    <select class="form-control w-100" id="cboPlazaBusqueda">
+                                                    </select>
+                                                </td>
+                                                <td  class="p-1">
+                                                    <input id="txtEjecutivoBusqueda" class="form-control w-100 mt-2" placeholder="Ejecutivo" />
+                                                </td>
+                                                <td  class="p-1">
+                                                    <input id="txtSupervisorBusqueda" class="form-control w-100 mt-2" placeholder="Supervisor" />
+                                                </td>
+                                                 <td class="p-1">
+                                                    <input id="dtpFechaIngresoBusqueda" class="form-control w-100 mt-2" type="date" />
+                                                </td>
+                                                <td  class="p-3">
+                                                    <select class="form-control w-100" id="cboStatusBusqueda">
+                                                        <option value="">Seleccione</option>
+                                                        <option value="1">Activo</option>
+                                                        <option vbalue="0">Baja</option>
+                                                    </select>
+                                                </td>
+                                                <td  style="width:90px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Usuario</th>
+                                                <th>Módulo</th>
+                                                <th>Tipo</th>
+                                                <th>Plaza</th>
+                                                <th>Ejecutivo</th>
+                                                <th>Supervisor</th>
+                                                <th>Ingreso</th>
+                                                <th>Estatus</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </div>
-
-
-                        <div class="row mt-3 mb-3">
-
-                            <div class=" col-md-6 text-left">
-                                <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
-                            </div>
-
-                            <div class=" col-md-6 text-right">
-                                <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                            </div>
-
-                        </div>
-                    </form>
-
+                        </form>
+                    </div>
                 </div>
             </div>
         </section>
-
-
-
 
         <footer class="main-footer">
             <div class="container-fluid">
@@ -735,13 +188,7 @@
                 </div>
             </div>
         </footer>
-
-
-
-
     </div>
-
-
 
     <div class="modal fade" id="panelEdicionPass" role="dialog" data-backdrop="static">
         <div class="modal-dialog">
@@ -861,38 +308,38 @@
 
 
     <!-- JavaScript files-->
-    <script src="../../vendor/jquery/jquery.min.js"></script>
-    <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
-    <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
-    <script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>
-    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
-    <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/popper.js/umd/popper.min.js"> </script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="/vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="/vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
 
     <!-- DataTables JavaScript -->
-    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
+    <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="/vendor/datatables-responsive/dataTables.responsive.js"></script>
+    <script src="/vendor/datatables/js/dataTables.bootstrap4.js"></script>
 
-    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="/vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
+    <link href="/vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="/vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="/vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
 
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <script src="/vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="/vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
 
-    <script src="../../js/validator.js"></script>
-    <script src="../../js/app/config/employees.js"></script>
-    <script src="../../js/app/general.js"></script>
+    <script src="/js/validator.js"></script>
+    <script src="/js/app/config/employees.js"></script>
+    <script src="/js/app/general.js"></script>
 
     <!-- Toastr style -->
-    <link href="../../css/toastr.min.css" rel="stylesheet">
-    <script src="../../js/toastr.min.js"></script>
+    <link href="/css/toastr.min.css" rel="stylesheet" />
+    <script src="/js/toastr.min.js"></script>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 </body>
 </html>

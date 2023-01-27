@@ -13,11 +13,11 @@ namespace Plataforma.Clases
         public String PrimerApellido;
         public String SegundoApellido;
 
-        public String CURPAval;
-        public String NombreAval;
-        public String PrimerApellidoAval;
-        public String SegundoApellidoAval;
-        public String TelefonoAval;
+        //public String CURPAval;
+        //public String NombreAval;
+        //public String PrimerApellidoAval;
+        //public String SegundoApellidoAval;
+        //public String TelefonoAval;
 
 
         public String AMaterno;
@@ -28,13 +28,14 @@ namespace Plataforma.Clases
         public String NombreCompletoSupervisor;
         public String NombreCompletoEjecutivo;
         public String NombreCompletoAval;
-        public String FechaIngreso;
+        public DateTime FechaIngreso;
         public String FechaNacimiento;
         
         //  fechas dd/mm/aaaa
         public String FechaIngresoMx;
         public String FechaNacimientoMx;
 
+        public String Ocupacion;
         public String Telefono;
         //public String NombreModulo;
         public String NombreComision;
@@ -59,8 +60,12 @@ namespace Plataforma.Clases
         public string Accion;
         public string ActivoStr;
 
-        public Direccion direccion;
-        public Direccion direccionAval;
+        public float limite_venta_ejercicio;
+        public float limite_incremento_ejercicio;
+        public bool? fizcalizable;
+        public string NotaFoto;
+        public Direccion Direccion;
+        public Direccion DireccionAval;
         public Usuario usuario;
         public Comision nivelNomision;// comision o modulo
     }

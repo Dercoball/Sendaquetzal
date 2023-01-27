@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Plataforma.Clases;
+﻿using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -74,51 +73,19 @@ namespace Plataforma.pages
                 if (idPlaza > 0)
                 {
                     var sqlEmpleado = "";
-                    var empleados = conn.Query<Empleado>("SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado WHERE id_plaza = " + idPlaza).ToList();
-                    List<Empleado> empleadosFiltrados = new List<Empleado>();
-
-                    switch (typeFilter)
-                    {
+					switch (typeFilter)
+					{
                         case "promotor":
-                            empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor).ToList();
+                            sqlEmpleado = " AND id_empleado = " + idPromotor;
                             break;
                         case "supervisor":
-                            //obtenemos el supervisor
-                            var supervisor = empleados.Where(w=>w.IdEmpleado == idSupervisor && w.IdPosicion == 4).ToList();
-
-							//obtenemos los promotores asignados al supervisor
-							var promotores = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5).ToList();
-
-							//empleadosFiltrados.AddRange(supervisor);
-							empleadosFiltrados.AddRange(promotores);
+                            sqlEmpleado = " AND id_supervisor = " + idSupervisor;
                             break;
                         case "ejecutivo":
-                            //obtenemos el ejecutivo
-                            var ejecutivo = empleados.Where(w => w.IdEmpleado == idEjecutivo && w.IdPosicion == 3).ToList();
-
-							//obtenemos los supervisores
-							var supervisores = empleados.Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4).ToList();
-                            var supervisoresIDs = supervisores.Select(s=>s.IdEmpleado).ToList();
-
-                            //obtenemos los promotores
-                            var promotoresEjecutivo = empleados.Where(w => supervisoresIDs.Contains(w.IdSupervisor) && w.IdPosicion == 5).ToList();
-
-							//empleadosFiltrados.AddRange(ejecutivo);
-							//empleadosFiltrados.AddRange(supervisores);
-							empleadosFiltrados.AddRange(promotoresEjecutivo);
-
+                            sqlEmpleado = " AND id_ejecutivo = " + idEjecutivo;
                             break;
 					}
-                    if(empleadosFiltrados.Count > 0)
-                    {
-                        sqlEmpleado = string.Join<int>(",", empleadosFiltrados.Select(s => s.IdEmpleado).ToList());
-                    }
-                    else
-                    {
-						sqlEmpleado = string.Join<int>(",", empleados.Select(s => s.IdEmpleado).ToList());
-					}
-
-					sqlPlaza = " AND p.id_empleado IN (" + sqlEmpleado  + ") ";
+                    sqlPlaza = " AND p.id_empleado IN (SELECT id_empleado FROM empleado WHERE id_plaza = " + idPlaza + sqlEmpleado + ") ";
                 }
 
 
@@ -127,15 +94,14 @@ namespace Plataforma.pages
                      concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                      c.telefono , c.curp, c.ocupacion,
                      IsNull(c.id_status_cliente, 2) id_status_cliente,
-                     ISNULL(c.mensaje, 1) mensaje,
                      st.nombre nombre_status_cliente, st.color, p.id_prestamo, p.monto, d.calleyno, d.colonia, d.municipio, d.estado
                      FROM cliente c 
                      JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
                      JOIN status_cliente st ON (st.id_status_cliente = c.id_status_cliente)   
-                     LEFT JOIN direccion d ON (d.id_cliente = c.id_cliente AND d.aval = 0)
+                     LEFT JOIN direccion d ON (d.id_cliente = c.id_cliente)
                     WHERE 1=1 
                     "
-					+ sqlPlaza 
+                    + sqlPlaza 
                     + @" AND p.id_prestamo =   
                       (SELECT TOP 1 pp.id_prestamo FROM prestamo pp WHERE pp.id_cliente = c.id_cliente 
                             ORDER BY pp.id_prestamo desc) 
@@ -174,8 +140,8 @@ namespace Plataforma.pages
 
                         item.Color = ds.Tables[0].Rows[i]["color"].ToString();
                         item.NombreStatus = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_cliente"].ToString() + "</span>";
-						item.Mensaje = int.Parse(ds.Tables[0].Rows[i]["mensaje"].ToString());
-						string botones = "";
+
+                        string botones = "";
 
                         //  visualizar
                         botones += "<button onclick='customers.view(" + item.IdPrestamo  + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Visualizar</button>";
@@ -529,7 +495,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static List<Empleado> GetListaSupervisor(string path, int idejecutivo, int idplaza)
+        public static List<Empleado> GetListaSupervisor(string path, int idejecutivo)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -541,7 +507,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idejecutivo + " AND id_posicion = 4 AND id_plaza = " + idplaza;
+                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idejecutivo + " AND id_posicion = 4";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -580,7 +546,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static List<Empleado> GetListaPromotor(string path, int idsupervisor, int idplaza)
+        public static List<Empleado> GetListaPromotor(string path, int idsupervisor)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -592,7 +558,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idsupervisor + " AND id_posicion = 5 AND id_plaza = " + idplaza;
+                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idsupervisor + " AND id_posicion = 5";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 

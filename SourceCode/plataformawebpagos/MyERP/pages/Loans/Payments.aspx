@@ -34,12 +34,8 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 
-
+    
     <style>
-
-        #tableSolicitudes thead tr th{
-            min-width: 40px;
-        }
         .bd-placeholder-img {
             font-size: 1.125rem;
             text-anchor: middle;
@@ -89,7 +85,6 @@
             </div>
         </div>
     </nav>
-
     <div class="page">
         <!-- navbar-->
         <header class="header">
@@ -121,166 +116,99 @@
         <section class="forms">
 
             <div class="container-fluid">
+
+
                 <header>
                     <h1 class="h3 display" id="paginaName">Pagos</h1>
+
                 </header>
 
                 <div id="panelTabla">
                     <div class="card">
                         <div class="card-header">
-                            <div id="panelFiltro" class="table-responsive">
-                                <div class="col-auto">
-                                    <div class="mt-2 mb-4">
-                                        <div class="row align-items-end">
-                                            <div class="col fv-row">
-                                                <!--begin::Label-->
-                                                <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                    <span>PLAZA</span>
-                                                </label>
-                                                <!--end::Label-->
-                                                <select class="form-control" id="cmbPlaza" name="cmbPlaza">
-                                                    <option value="0">Todos</option>
-                                                </select>
-                                            </div>
 
-                                            <div class="col fv-row">
-                                                <!--begin::Label-->
-                                                <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                    <span>EJECUTIVO</span>
-                                                </label>
-                                                <!--end::Label-->
-                                                <select class="form-control" id="cmbEjecutivo" name="cmbEjecutivo">
-                                                    <option value="0">Todos</option>
-                                                </select>
-                                            </div>
+                            <div id="panelFiltro">
 
-                                            <div class="col fv-row">
-                                                <!--begin::Label-->
-                                                <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                    <span>SUPERVISOR</span>
-                                                </label>
-                                                <!--end::Label-->
-                                                <select class="form-control" id="cmbSupervisor" name="cmbSupervisor">
-                                                    <option value="0">Todos</option>
-                                                </select>
-                                            </div>
+                                <div class="mt-2 mb-4">
 
-                                            <div class="col fv-row">
-                                                <!--begin::Label-->
-                                                <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                    <span>PROMOTOR</span>
-                                                </label>
-                                                <!--end::Label-->
-                                                <select class="form-control" id="cmbPromotor" name="cmbPromotor">
-                                                    <option value="0">Todos</option>
-                                                </select>
-                                            </div>
 
-                                            <div class="col">
-                                                <div class="d-flex align-items-center ">
-                                                    <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button></div>
 
-                                            </div>
+                                    <div class="row mt-3 mb-3">
+
+
+                                        <div class="form-group col-md-2">
+                                            <input type="radio" class="form-check-control" id="optTodos" name="filtroPagos" checked="checked" value="0" />
+                                            <label for="optTodos">
+                                                Todos
+                                            </label>
                                         </div>
-                                    </div>
-                                </div>
-                                <hr />
 
+                                        <div class="form-group col-md-2">
+                                            <input type="radio" class="form-check-control" id="optPendientes" name="filtroPagos" value="1" />
+                                            <label for="optPendientes">
+                                                Pendientes
+                                            </label>
+                                        </div>
+
+                                        <div class="form-group col-md-2">
+                                            <input type="radio" class="form-check-control" id="optPagados" name="filtroPagos" value="2" />
+                                            <label for="optPagados">
+                                                Pagados
+                                            </label>
+                                        </div>
+
+                                        <div class=" col-md-3">
+                                            <button class="btn btn-outline btn-primary" id="btnFiltrar"><i class="fa fa-search mr-1"></i>Filtrar</button>
+                                        </div>
+
+                                    </div>
+
+                                </div>
                             </div>
+
                         </div>
 
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table style="width: 100%!important;" class="table table-bordered table-hover table-sm" id="table">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <%--<th>No.</th>--%>
-                                            <th>
-                                                Semana<br />
-                                                <input id="semmax" type="number" min="0" max="100" placeholder="MAX" /><br />
-                                                <input id="semmin" type="number" min="0" max="100" placeholder="MIN" />
-                                            </th>
-                                            <th>
-                                                Nombre<br />
-                                                <input id="nombre" placeholder="Nombre" />
-                                            </th>
-                                            <th>
-                                                Prestamo<br />
-                                                <input id="pmax" type="number" placeholder="MAX" /><br />
-                                                <input id="pmin" type="number" placeholder="MIN" />
-                                            </th>
-                                            <th>
-                                                Fecha prestamo<br />
-                                                <input id="fpmax" type="date" placeholder="MAX" /><br />
-                                                <input id="fpmin" type="date" placeholder="MIN" />
-                                            </th>
-                                            <th>
-                                                Último pago<br />
-                                                <input id="uppmax" type="date" placeholder="MAX" /><br />
-                                                <input id="uppmin" type="date" placeholder="MIN" />
-                                            </th>
-                                            <th>
-                                                Falla<br />
-                                                <input id="fmax" type="number" placeholder="MAX" /><br />
-                                                <input id="fmin" type="number" placeholder="MIN" />
-                                            </th>
-                                            <th>Semanas</th>
-                                            <%--<th>
-                                                Mensajes<br />
-                                                <select id="mensajes">
-                                                    <option value="">Todos</option>
-                                                    <option value="1">Activo</option>
-                                                    <option value="0">Inactivo</option>
-                                                </select>
 
-                                            </th>--%>
-                                            <th>
-                                                <input type="checkbox" name="select_all" value="1" id="checked-select-all" checked="checked" />
-                                                Descarga</th>
-                                            <th>
-                                                Estatus<br />
-                                                <select id="estatus">
-                                                    <option value="">Todos</option>
-                                                    <option value="Rechazado">Rechazado</option>
-                                                    <option value="Aprobado">Aprobado</option>
-                                                    <option value="Pagado">Pagado</option>
-                                                    <option value="Condonado">Condonado</option>
-                                                </select>
-                                            </th>
+                            <div class="table-responsive">
+
+                                <table style="width: 100%!important;" class="table table-striped table-bordered table-hover table-sm" id="table">
+
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>No. semana</th>
+                                            <th>Nombre</th>
+                                            <th>Monto</th>
+                                            <th>Fecha de pago</th>
+                                            <th>Falla</th>
+                                            <th>Semana de falla</th>
+                                            <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
                                     </tbody>
-
-                                    <tfoot class="thead-light">
-                                        <tr>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <%--<th></th>--%>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                    </tfoot>
                                 </table>
+
                             </div>
+
                         </div>
                     </div>
                 </div>
 
                 <div id="panelForm">
+
                     <form role="form" id="frmPago" name="frmPago" data-toggle="validator">
+
                         <div class="card">
+
                             <div class="card-body">
+
                                 <div class="row">
-                                    <div class="col-12 col-md-6 col-lg-4">
+
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="txtCliente">
                                                 Cliente
@@ -289,22 +217,12 @@
                                                 disabled="disabled" />
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="form-group">
-                                            <label for="txtCliente">
-                                                Cantidad Prestada
-                                            </label>
-                                            <input type="text" class="form-control campo-input" id="txtMontoPrestamo"
-                                                disabled="disabled" />
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="txtSaldo">
                                                 Saldo
@@ -313,9 +231,8 @@
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="txtAbono">
                                                 Abono
@@ -325,9 +242,8 @@
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-12 col-md-6 col-lg-4">
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="txtRecuperado">
                                                 Recuperado
@@ -336,23 +252,23 @@
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
+
                                 </div>
 
-                                <div class="row mt-5" >
-                                    <div class="col-auto">
-                                        <h3>Historial</h3>
-                                        <div class="table-responsive" id="table_">
 
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12 text-right mt-5">
-                                                <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable mr-4"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
-                                                <button id="btnCapturar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                                            </div>
-                                        </div>
+                                <div class="row mt-5 col-md-12" id="table_">
+                                </div>
+
+                                <div class="row mt-5 ">
+                                    <div class=" col-md-6 text-left">
+                                        <button id="btnCancelar" class="btn btn-secondary cancelar deshabilitable"><i class="fa fa-arrow-circle-left mr-1"></i>Listado</button>
                                     </div>
-                                    
+
+                                    <div class=" col-md-6 text-right">
+                                        <button id="btnCapturar" class="btn btn-primary deshabilitable boton-ocultable"><i class="fa fa-save mr-1"></i>Capturar</button>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </form>
@@ -377,7 +293,12 @@
                 </div>
             </div>
         </footer>
+
+
+
+
     </div>
+
 
 
     <div id="panelMensajes" class="modal fade" role="dialog" data-backdrop="static" style="margin-top: 200px;">
@@ -448,35 +369,37 @@
     </div>
 
 
+
+
+
     <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/popper.js/umd/popper.min.js"> </script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <%--<script src="../../js/front.js"></script>--%>
-    <script src="../../vendor/momentjs/moment.min.js"></script>
 
 
     <!-- DataTables JavaScript -->
-    <%--<script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>--%>
-    <script src="../../vendor/datatables/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/dataTables.bootstrap4.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/buttons.bootstrap4.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/jszip.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/pdfmake.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/vfs_fonts.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
-    <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
+    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
+    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
 
-    <!-- DataTables StyleSheet -->
-    <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
+
+    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+
 
     <script src="../../js/validator.js"></script>
     <script src="../../js/app/loans/payments.js"></script>
     <script src="../../js/app/general.js"></script>
+
+
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet">

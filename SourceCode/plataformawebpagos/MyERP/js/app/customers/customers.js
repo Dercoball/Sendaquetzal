@@ -35,21 +35,6 @@ const customers = {
             customers.loadComboPromotor();
         });
 
-        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-            var min = parseInt($('#pmin').val(), 10);
-            var max = parseInt($('#pmax').val(), 10);
-            var prestamo = parseFloat(data[4]) || 0;
-            if (
-                (isNaN(min) && isNaN(max)) ||
-                (isNaN(min) && prestamo <= max) ||
-                (min <= prestamo && isNaN(max)) ||
-                (min <= prestamo && prestamo <= max)
-            ) {
-                return true;
-            }
-            return false;
-        });
-
     },
 
     cargarItems: () => {
@@ -97,11 +82,7 @@ const customers = {
                 let table = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    ordering: false,
-                    //"order": [],
-                    paging: false,
-                    scrollY: '400px',
-                    scrollX: true,
+                    "order": [],
                     columnDefs: [
                         {
                             "targets": [-1],
@@ -115,10 +96,7 @@ const customers = {
                         { data: 'NombreCompleto' },
                         { data: 'Curp' },
                         { data: 'Telefono' },
-                        {
-                            data: 'Monto',
-                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
-                        },
+                        { data: 'Monto' },
                         {
                             data: 'Direccion', render: function (data, type, row) {
 
@@ -126,18 +104,6 @@ const customers = {
                             }
                         },
                         { data: 'NombreStatus' },
-                        {
-                            data: 'Mensaje',
-                            type: 'unknownType',
-                            className: 'dt-body-center',
-                            render: function (data, type, full, meta) {
-                                if (data == 1) {
-                                    return '<input type="checkbox" name="mensaje[]" value="1" checked="checked" disabled="disabled">';
-                                } else {
-                                    return '<input type="checkbox" name="mensaje[]" value="0" disabled="disabled">';
-                                }
-                            }
-                        },
                         { data: 'Accion' }
 
 
@@ -147,33 +113,22 @@ const customers = {
                     dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
                         {
-                            extend: 'excelHtml5',
+                            extend: 'csvHtml5',
                             title: descargas,
-                            text: '&nbsp; Descargar Excel', className: 'csvbtn',
-                            exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6],
-                                //modifier: {
-                                //    selected: true
-                                //}
-                            }
+                            text: '&nbsp; Descargar CSV', className: 'csvbtn'
                         },
+                        //{
+                        //    extend: 'pdfHtml5',
+                        //    title: descargas,
+                        //    text: 'Pdf', className: 'pdfbtn'
+                        //}
                         {
                             extend: 'pdfHtml5',
                             text: 'Descargar PDF',
                             title: descargas,
                             orientation: 'landscape',
                             pageSize: 'LEGAL',
-                            className: 'csvbtn ml-2',
-                            exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6],
-                                //rows: function (idx, data, node) {
-                                //    var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
-                                //    return checkbox.checked;
-                                //},
-                                //modifier: {
-                                //    selected: true
-                                //}
-                            }
+                            className: 'csvbtn ml-2'
                         }
                     ],
                     footerCallback: function (row, data, start, end, display) {
@@ -186,55 +141,23 @@ const customers = {
 
                         // Total over all pages
                         total = api
+                            .column(4)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+
+                        // Total over this page
+                        pageTotal = api
                             .column(4, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
                             }, 0);
-;
+
                         // Update footer
-                        $(api.column(4).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(total));
+                        $(api.column(4).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(pageTotal) + ' ( $' + $.fn.dataTable.render.number(',', '.', 2, '').display(total) + ' total)');
                     },
-                    initComplete: function () {
-                        let columnsSettings = this.api().settings().init().columns;
-
-                        this.api()
-                            .columns()
-                            .every(function (idx) {
-                                var column = this;
-                                let dataHeader = columnsSettings[idx].data;
-
-                                switch (dataHeader) {
-                                    case 'Monto':
-                                        $('input', column.header()).on('keyup', function () {
-                                            column.draw();
-                                        });
-                                        break;
-                                    case 'NombreCompleto':
-                                    case 'Curp':
-                                    case 'Telefono':
-                                    case 'Direccion':
-                                        $('input', column.header()).on('keyup change clear', function () {
-                                            if (column.search() !== this.value) {
-                                                column.search(this.value).draw();
-                                            }
-                                        });
-                                        break;
-                                    case 'NombreStatus':
-                                        $('select', column.header()).on('change', function () {
-                                            if (column.search() !== this.value) {
-                                                column.search(this.value).draw();
-                                            }
-                                        });
-                                        break;
-                                    case 'Mensaje':
-                                        $('select', column.header()).on('change', function () {
-                                            column.search(this.value).draw();
-                                        });
-                                        break;
-                                }
-                            });
-                    }
 
                 });
 
@@ -386,7 +309,6 @@ const customers = {
     loadComboSupervisor: () => {
         var params = {};
         params.path = window.location.hostname;
-        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
         params = JSON.stringify(params);
 
@@ -418,7 +340,6 @@ const customers = {
     loadComboPromotor: () => {
         var params = {};
         params.path = window.location.hostname;
-        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
         params = JSON.stringify(params);
 

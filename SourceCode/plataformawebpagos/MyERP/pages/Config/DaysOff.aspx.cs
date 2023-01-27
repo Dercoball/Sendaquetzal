@@ -132,7 +132,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@fecha_inicio", item.FechaInicio);
                 cmd.Parameters.AddWithValue("@fecha_fin", item.FechaFin);
                 cmd.Parameters.AddWithValue("@id_tipo_paro", item.IdTipoParo);
-				cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza);
+				cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza == 0 ? (object)DBNull.Value : item.Plaza);
 
                 cmd.Parameters.AddWithValue("@id", item.IdDiasParo);
 

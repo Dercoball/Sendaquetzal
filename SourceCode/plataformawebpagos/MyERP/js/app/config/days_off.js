@@ -272,6 +272,7 @@ const dayOff = {
 
                 let items = msg.d;
                 let opcion = '<option value="">Seleccione...</option>';
+                opcion += '<option value="0">Todos</option>';
 
                 let selectEl = document.getElementById('cmbPlaza');
                 //remueve las opciones del combo

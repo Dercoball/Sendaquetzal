@@ -113,7 +113,7 @@ const calendar = {
                     {
                         title: '',
                         start: fechaInicial.format('YYYY-MM-DD'),
-                        end: fechaFinal.format('YYYY-MM-DD'),
+                        end: fechaFinal.add(1, 'days').format('YYYY-MM-DD'),
                         allDay: true,
                         display: 'background',
                         backgroundColor: item.Tipo === 'paro' ? 'rgba(255, 0, 0, 0.3)' : (item.EsLaboral ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 165, 0, 0.3)'),
@@ -121,6 +121,8 @@ const calendar = {
                         classNames: [item.Tipo === 'paro' ? 'ev-paro' : (item.EsLaboral ? 'ev-normal' : 'ev-feriado')],
                         textColor: 'white'
                     };
+
+                    console.log(event);
 
                     calendar.calendarControl.addEvent(event);
 

@@ -1,0 +1,83 @@
+version: "2.1"
+
+orbs:
+  node: circleci/node@5.0.2
+  slack: circleci/slack@4.10.1
+jobs:
+  deploy_on_server:
+    docker:
+      - image: "cimg/base:stable"
+    parameters:
+      SERVER_IP:
+        type: string
+        default: $SERVER_IP
+      SERVER_PASSWORD:
+        type: string
+        default: $SERVER_PASSWORD
+      SERVER_USER:
+        type: string
+        default: $SERVER_USER
+    steps:
+      - checkout
+      - run: ssh-keyscan -H << parameters.SERVER_IP >> >> ~/.ssh/known_hosts
+      - run: sudo apt-get install sshpass -y
+      - run: sshpass -p "<< parameters.SERVER_PASSWORD >>" ssh << parameters.SERVER_USER >>@<< parameters.SERVER_IP >> "cd ADCCOM;git pull"
+      - run: sshpass -p "<< parameters.SERVER_PASSWORD >>" ssh << parameters.SERVER_USER >>@<< parameters.SERVER_IP >> "sh runAdcom.sh"
+  flyway-migrate:
+      docker:
+        - image: "cimg/base:stable"
+      parameters:
+        SERVER_IP:
+          type: string
+          default: $SERVER_IP
+        SERVER_PASSWORD:
+          type: string
+          default: $SERVER_PASSWORD
+        SERVER_USER:
+          type: string
+          default: $SERVER_USER
+        DB_URL:
+          type: string
+          default: $DB_FLYWAY_URL
+        DB_USER:
+          type: string
+          default: $DB_USER
+        DB_PASSWORD:
+          type: string
+          default: $DB_PASSWORD
+        PATH_CONF:
+          type: string
+          default: $PATH_CONF
+        PATH_SQL:
+          type: string
+          default: migrations
+      steps:
+        - checkout
+        - run: ssh-keyscan -H <<parameters.SERVER_IP>> >> ~/.ssh/known_hosts
+        - run: sudo apt-get install sshpass -y
+        - run: sshpass -p "<<parameters.SERVER_PASSWORD>>" ssh <<parameters.SERVER_USER>>@<<parameters.SERVER_IP>> "cd ADCCOM/flyway;flyway info -user=<< parameters.DB_USER >> -password=<< parameters.DB_PASSWORD >> -configFiles=<< parameters.PATH_CONF >>"
+        - run: sshpass -p "<<parameters.SERVER_PASSWORD>>" ssh <<parameters.SERVER_USER>>@<<parameters.SERVER_IP>> "cd ADCCOM/flyway;flyway repair -user=<< parameters.DB_USER >> -password=<< parameters.DB_PASSWORD >> -configFiles=<< parameters.PATH_CONF >>"
+        - run: sshpass -p "<<parameters.SERVER_PASSWORD>>" ssh <<parameters.SERVER_USER>>@<<parameters.SERVER_IP>> "cd ADCCOM/flyway;flyway migrate -user=<< parameters.DB_USER >> -password=<< parameters.DB_PASSWORD >> -configFiles=<< parameters.PATH_CONF >>"
+workflows:
+  build test and deploy:
+    jobs:
+      - deploy_on_server:
+          context:
+            - << pipeline.git.branch >>
+          filters:
+            branches:
+              only:
+                - develop
+                - main
+      - flyway-migrate:
+          context:
+            - << pipeline.git.branch >>
+          filters:
+            branches:
+              only:
+                - develop
+                - main
+          requires:
+            - deploy_on_server
+      
+

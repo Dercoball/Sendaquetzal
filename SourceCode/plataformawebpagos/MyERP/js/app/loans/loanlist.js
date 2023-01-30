@@ -6,18 +6,100 @@ let pagina = '13';
 
 const loans = {
     init: () => {
-        
+        loans.loadPrestamos();
+        loans.loadStatus();
     },
-    createTableInvestments: (data) => {
+    getFilter: () => {
+        var oRequest =
+        {
+            Status: $("#cboStatus option:selected").val(),
+            Nombre: $("#txtNombreClienteBusqueda").val(),
+            NoPrestamoMinimo: $("#txtNoPrestamoMinimoBusqueda").val(),
+            NoPrestamoMaximo: $("#txtNoPrestamoMaximaBusqueda").val(),
+            RechazoMinimo: $("#txtRechazosPrestamoMinimoBusqueda").val(),
+            RechazosMaximo: $("#txtRechazosPrestamoMaximaBusqueda").val(),
+            AvalMinimo: $("#txtAvalPrestamoMinimoBusqueda").val(),
+            AvalMaximo: $("#txtAvalPrestamoMaximaBusqueda").val(),
+            FechaPrimerSolicitudMinimo: moment($("#dtpFechaPrestamoMinimoBusqueda").val()).isValid()
+                ? moment($("#dtpFechaPrestamoMinimoBusqueda").val()).format('YYYY-MM-DD')
+                : null,
+            FechaPrimerSolicitudMaximo: moment($("#dtpFechaPrestamoMaximaBusqueda").val()).isValid()
+                ? moment($("#dtpFechaPrestamoMaximaBusqueda").val()).format('YYYY-MM-DD')
+                : null,
+            FechaUltimaSolicitudMaximo: moment($("#dtpFechaUltimaPrestamoMinimoBusqueda").val()).isValid()
+                ? moment($("#dtpFechaUltimaPrestamoMinimoBusqueda").val()).format('YYYY-MM-DD')
+                : null,
+            FechaUltimaSolicitudMinimo: moment($("#dtpFechaUltimaPrestamoMaximaBusqueda").val()).isValid()
+                ? moment($("#dtpFechaUltimaPrestamoMaximaBusqueda").val()).format('YYYY-MM-DD')
+                : null
+        };
+
+        return oRequest;
+    },
+    loadStatus: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $('#cboStatus').html('');
+
+        $.ajax({
+            type: "POST",
+            url: "/pages/Loans/LoanRequest.aspx/GetStatus",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                var llst_Status = msg.d;
+                let opcion = '<option value="">Seleccione...</option>';
+
+                for (let i = 0; i < llst_Status.length; i++) {
+                    let oStatus = llst_Status[i];
+                    opcion += `<option value = '${oStatus.IdStatusPrestamo}' > ${oStatus.Nombre}</option > `;
+                }
+
+                $('#cboStatus').html(opcion);
+                    
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+    loadPrestamos: () => {
+        let params = {};
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.path = window.location.hostname;
+
+        $.ajax({
+            type: "POST",
+            url: "/pages/Loans/LoanRequest.aspx/GridPrestamos",
+            data: JSON.stringify(params),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (resultado) {
+                let data = resultado.d;
+                if (data == null) {
+                    window.location = "/pages/Index.aspx";
+                }
+                loans.createTableLoans(data);
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+    createTableLoans: (data) => {
         let table = $('#table').DataTable({
             footerCallback: function (row, data, start, end, display) {
-                //var lf_TotalMontos = 0;;
+                var lf_TotalMontos = 0;;
 
-                //$.each(data, function (index, oInversion) {
-                //    lf_TotalMontos += oInversion.monto;
-                //})
+                $.each(data, function (index, oInversion) {
+                    lf_TotalMontos += oInversion.monto;
+                })
 
-                //$("#thMontoTotalInversion").html("$" + lf_TotalMontos.toFixed(2));
+                $("#thMontoTotal").html("$" + lf_TotalMontos.toLocaleString('es-MX'));
             },
             destroy: true,
             processing: true,
@@ -27,34 +109,36 @@ const loans = {
             bLengthChange: false,
             data: data,
             columns: [
-                { data: 'Inversionista.Nombre' },
+                { data: 'id_prestamo', className: 'text-center' },
+                { data: 'NoPrestamos' ,className: 'text-center' },
+                { data: 'nombreCliente' },
                 {
                     data: 'monto', className: 'text-center', render: function (datum, type, row) {
-                        return '$' + row.monto.toFixed(2);
+                        return '$ ' + row.monto.toLocaleString('es-MX')
                     }
                 },
                 {
-                    data: 'porcentaje_utilidad', className: 'text-center', render: function (datum, type, row) {
-                        return (row.porcentaje_utilidad / 100).toFixed(2) + " %";
-                    }
-                },
-                { data: 'plazo', className: 'text-center' },
-                {
-                    data: 'Estatus.id_status_inversion', className: 'text-center', render: function (datum, type, row) {
-                        return "<h2><span class='rounded text-white " + row.Estatus.color + " p-2'>" + row.Estatus.nombre + "</span></h2>";
+                    data: 'fecha_primera_solicitud', className: 'text-center', render: function (datum, type, row) {
+                        return moment(row.fecha_primera_solicitud).format('DD-MM-YYYY');
                     }
                 },
                 {
-                    data: 'fecha', className: 'text-center', render: function (datum, type, row) {
-                        return moment(row.fecha).format('DD-MM-YYYY');
+                    data: 'fecha_ultima_solicitud', className: 'text-center', render: function (datum, type, row) {
+                        return moment(row.fecha_ultima_solicitud).format('DD-MM-YYYY');
+                    }
+                },
+                { data: 'NoRechazados', className: 'text-center' },
+                { data: 'Aval', className: 'text-center' },
+                {
+                    data: 'Status', className: 'text-center', render: function (datam, type, row) {
+                        return "<span class='" + row.ColorStatus +" rounded text-white p-2'>" + row.Status + "</span>";
                     }
                 },
                 {
-                    data: 'fechaRetiro', className: 'text-center', render: function (datum, type, row) {
-                        return moment(row.fechaRetiro).format('DD-MM-YYYY');
+                    data: '', className: 'text-center', render: function (datum, type, row) {
+                        return "<a  class='btn btn-success rounded' href='/pages/Loans/LoanApprove.aspx?id=" + row.id_prestamo + "'><i class='fa fa-edit'></i></a>";
                     }
-                },
-                { data: 'Accion', className: 'text-center' }
+                }
             ],
             "language": textosEsp,
             "columnDefs": [
@@ -79,7 +163,33 @@ const loans = {
         });
     },
     accionesBotones: () => {
+        $("#btnLimpiar").click(function () {
+            $("#frmFiltros")[0].reset();
+        });
 
+        $("#btnBuscar").click(function (e) {
+            e.preventDefault();
+            let params = {};
+            params.Filtro = loans.getFilter();
+            params.path = window.location.hostname;
+            $.ajax({
+                type: "POST",
+                url: "/pages/Loans/LoanRequest.aspx/Search",
+                data: JSON.stringify(params),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (resultado) {
+                    let data = resultado.d;
+                    if (data == null) {
+                        window.location = "/pages/Index.aspx";
+                    }
+                    loans.createTableLoans(data);
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                }
+            });
+        });
     }
 }
 

@@ -185,7 +185,7 @@ namespace Plataforma.pages
 
 
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
-                        item.MontoFormateadoMx = item.Monto.ToString("C2");//moneda Mx -> $ 2.00
+                        //item.MontoFormateadoMx = item.Monto.ToString("C2");//moneda Mx -> $ 2.00
                         
                         item.FechaSolicitud = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
 
@@ -261,8 +261,8 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-                    item.IdGarantia = int.Parse(ds.Tables[0].Rows[0]["id_garantia_prestamo"].ToString());
-                    item.Fotografia = ds.Tables[0].Rows[0]["fotografia"].ToString();
+                    //item.IdGarantia = int.Parse(ds.Tables[0].Rows[0]["id_garantia_prestamo"].ToString());
+                    //item.Fotografia = ds.Tables[0].Rows[0]["fotografia"].ToString();
                 }
                 return item;
             }
@@ -371,18 +371,18 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         Garantia item = new Garantia();
-                        item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
+                        //item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
 
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
-                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
-                        item.CostoFormateadoMx = item.Costo.ToString("C2");
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
-                        item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
+                        //item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        //item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
+                        //item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        //item.CostoFormateadoMx = item.Costo.ToString("C2");
+                        //item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+                        //item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
-                        string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
+                        //string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
 
-                        item.Accion = botones;
+                        //item.Accion = botones;
 
                         items.Add(item);
 
@@ -442,21 +442,21 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        Garantia item = new Garantia();
-                        item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
+                        //Garantia item = new Garantia();
+                        //item.IdGarantia = int.Parse(ds.Tables[0].Rows[i]["id_garantia_prestamo"].ToString());
 
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
-                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
-                        item.CostoFormateadoMx = item.Costo.ToString("C2");
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
-                        item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
+                        //item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        //item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
+                        //item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                        //item.CostoFormateadoMx = item.Costo.ToString("C2");
+                        //item.Fecha = ds.Tables[0].Rows[i]["fecha_registro"].ToString();
+                        //item.Imagen = "<img src='../../img/upload.png' class='img-fluid garantias' id='img_garantia_" + item.IdGarantia + "' data-idgarantia='" + item.IdGarantia + "' />";
 
-                        string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
+                        //string botones = "<a href='#'  onclick='panelGuarantee.delete(" + item.IdGarantia + ")'   class='btn btn-outline-primary boton-ocultable'> <span class='fa fa-remove mr-1'></span>Eliminar</a>";
 
-                        item.Accion = botones;
+                        //item.Accion = botones;
 
-                        items.Add(item);
+                        //items.Add(item);
 
 
                     }
@@ -521,12 +521,12 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@numero_serie", item.NumeroSerie);
-                cmd.Parameters.AddWithValue("@costo", item.Costo);
-                cmd.Parameters.AddWithValue("@fecha_registro", DateTime.Now);
-                cmd.Parameters.AddWithValue("@id", item.IdGarantia);
+                //cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                //cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                //cmd.Parameters.AddWithValue("@numero_serie", item.NumeroSerie);
+                //cmd.Parameters.AddWithValue("@costo", item.Costo);
+                //cmd.Parameters.AddWithValue("@fecha_registro", DateTime.Now);
+                //cmd.Parameters.AddWithValue("@id", item.IdGarantia);
 
 
 
@@ -603,12 +603,12 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
-                cmd.Parameters.AddWithValue("@nombre", item.Nombre);
-                cmd.Parameters.AddWithValue("@numero_serie", item.NumeroSerie);
-                cmd.Parameters.AddWithValue("@costo", item.Costo);
-                cmd.Parameters.AddWithValue("@fecha_registro", DateTime.Now);
-                cmd.Parameters.AddWithValue("@id", item.IdGarantia);
+                //cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                //cmd.Parameters.AddWithValue("@nombre", item.Nombre);
+                //cmd.Parameters.AddWithValue("@numero_serie", item.NumeroSerie);
+                //cmd.Parameters.AddWithValue("@costo", item.Costo);
+                //cmd.Parameters.AddWithValue("@fecha_registro", DateTime.Now);
+                //cmd.Parameters.AddWithValue("@id", item.IdGarantia);
 
 
 

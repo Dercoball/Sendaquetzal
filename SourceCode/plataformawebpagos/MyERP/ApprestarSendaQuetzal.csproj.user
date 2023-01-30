@@ -8,7 +8,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
-    <LastActiveSolutionConfig>Release|Any CPU</LastActiveSolutionConfig>
+    <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
     <ProjectView>ShowAllFiles</ProjectView>
     <NameOfLastUsedPublishProfile>C:\GitRepos\SendaQuetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\Properties\PublishProfiles\sendaquetzalv2 - Web Deploy2.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>

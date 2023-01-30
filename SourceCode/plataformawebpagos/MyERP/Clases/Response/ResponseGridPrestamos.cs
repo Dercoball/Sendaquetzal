@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Plataforma.Clases
 {
     /// <summary>
     /// Clase proporcionada para el filtrado de inversionistas en el grid 
     /// </summary>
-    public class RequestGridPrestamos
+    public class ResponseGridPrestamos
     {
         public int id_prestamo
+        { get; set; }
+        public int NoPrestamos
         { get; set; }
         public string nombreCliente
         { get; set; }
@@ -23,6 +24,8 @@ namespace Plataforma.Clases
         public string Aval
         { get; set; }
         public string Status
+        { get; set; }
+        public string ColorStatus
         { get; set; }
     }
 }

@@ -12,7 +12,7 @@ const calendar = {
 
     init: () => {
 
-
+        moment.locale('es-mx');
         calendar.setCalendar();
 
 
@@ -24,7 +24,12 @@ const calendar = {
         let calendarEl = document.getElementById('calendar');
         calendar.calendarControl = new FullCalendar.Calendar(calendarEl, {
             locale: 'es',
-            initialView: 'dayGridMonth'
+            defaultView: 'month',
+            headerToolbar: {
+                start: 'prev',
+                center: 'title',
+                end: 'next'
+            },
 
         });
         calendar.calendarControl.render();
@@ -32,46 +37,28 @@ const calendar = {
 
         const month = calendar.calendarControl.getDate().getMonth(); // ene = 0
         const year = calendar.calendarControl.getDate().getFullYear();
-        console.log('month ' + month);
-        console.log('year ' + year);
         calendar.getEventsByMonth(month, year);
 
         $('.fc-next-button').on('click', (e) => {
-
-            console.log('click: ');
-
-
             const month = calendar.calendarControl.getDate().getMonth(); // ene = 0
             const year = calendar.calendarControl.getDate().getFullYear();
-            console.log('month ' + month);
-            console.log('year ' + year);
             calendar.getEventsByMonth(month, year);
 
         });
 
         $('.fc-prev-button').on('click', (e) => {
-
-            console.log('click: ');
-
-
             const month = calendar.calendarControl.getDate().getMonth(); // ene = 0
             const year = calendar.calendarControl.getDate().getFullYear();
-            console.log('month ' + month);
-            console.log('year ' + year);
             calendar.getEventsByMonth(month, year);
-
         });
-
-
     },
 
 
     getEventsByMonth: (month, year) => {
-
-
         let params = {};
         params.path = window.location.hostname;
         params.month = month;
+        params.year = year;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -86,8 +73,8 @@ const calendar = {
 
                 let data = msg.d;
 
-                let listFechas = document.getElementById("listaFechas");
-                listFechas.innerHTML = '';
+                let containerFechas = document.getElementById("container-eventos");
+                containerFechas.innerHTML = '';
 
 
                 //  Quitar eventos limpiar
@@ -97,39 +84,45 @@ const calendar = {
                 });
 
                 data.forEach((item) => {
+                    let fechaInicial = moment(item.Fecha);
+                    let fechaFinal = moment(item.FechaFinal);
+                    let tipoEvento = item.Tipo === 'paro' ? 'paro' : (item.EsLaboral ? 'especial' : 'feriado');
+                    let titulo = tipoEvento == 'paro' ? 'Semana de paro' : (tipoEvento == 'feriado' ? 'Día feriado' : item.Nombre);
+                    let bg = item.Tipo === 'paro' ? 'rgba(255, 0, 0, 0.7)' : (item.EsLaboral ? 'rgba(0, 255, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)');
+                    let div = document.createElement("div");
+                    div.classList.add("row", "mb-3");
+                   
 
-                    //  html
-                    console.log(` Fecha 1 ${JSON.stringify(item.Fecha)}`);
-                    console.log(`${JSON.stringify(item.FechaFinal)}`);
-
-                    let li = document.createElement("li");
-                    li.classList.add("border");
-                    let fechaParts = item.FechaLarga.split(' ')[0] + " " + item.FechaLarga.split(' ')[1];
-
-                    let icono = "<i class='fa fa-th-list mr-1'></i>";
-                    if (item.Tipo === 'paro') {
-                        icono = "<i class='fa fa-stop mr-1'></i>";
-                    }
-                    if (item.Nombre.includes('umplea')) {
-                        icono = "<i class='fa fa-birthday-cake mr-1'></i>";
-
-                        item.Fecha = year + "-" + item.Fecha.split('-')[1] + "-" + item.Fecha.split('-')[2];
-
-                        console.log(` Fecha 2 = ${JSON.stringify(item.Fecha)}`);
-                    }
-
-                    li.innerHTML = icono + " <strong>" + fechaParts + "</strong> <div>" + item.Nombre + "</div>";
-                    listFechas.appendChild(li);
+                    div.innerHTML = `
+                                        <div class="col-auto">
+                                            <div class="d-flex flex-column px-3 py-2" style="background-color: ${bg};">
+                                                <div class="text-center text-white font-weight-bold">${fechaInicial.format('DD')}</div>
+                                                <div class="text-uppercase text-center text-white font-weight-bold" style="font-size: 0.6rem;">${fechaInicial.format('MMM')}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <h4 class="m-0">${titulo}</h4>
+                                            <span class="text-black-50">${item.Nombre}</span>
+                                        </div>
+                                    `;
+                    containerFechas.appendChild(div);
 
 
                     //  nuevos eventos para el calendar para el mes seleccionado
                     let event =
                     {
-                        title: item.Nombre,
-                        start: item.Fecha,
-                        end: item.FechaFinal,
-                        color: item.Tipo === 'paro' ? 'red' : 'blue'
+                        title: '',
+                        start: fechaInicial.format('YYYY-MM-DD'),
+                        end: fechaFinal.add(1, 'days').format('YYYY-MM-DD'),
+                        allDay: true,
+                        display: 'background',
+                        backgroundColor: item.Tipo === 'paro' ? 'rgba(255, 0, 0, 0.3)' : (item.EsLaboral ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 165, 0, 0.3)'),
+                        borderColor: item.Tipo === 'paro' ? 'red' : (item.EsLaboral ? 'green' : 'orange'),
+                        classNames: [item.Tipo === 'paro' ? 'ev-paro' : (item.EsLaboral ? 'ev-normal' : 'ev-feriado')],
+                        textColor: 'white'
                     };
+
+                    console.log(event);
 
                     calendar.calendarControl.addEvent(event);
 

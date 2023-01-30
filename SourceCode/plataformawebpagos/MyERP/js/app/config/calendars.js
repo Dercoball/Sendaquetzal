@@ -19,7 +19,29 @@ const calendar = {
 
         calendar.loadContent();
         
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#finicial').val();
+                var max = $('#ffinal').val();
+                var createdAt = data[2] || 0; // Our date column in the table
 
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
     },
 
     loadContent() {
@@ -48,14 +70,50 @@ const calendar = {
                 let table = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    "order": [],
+                    ordering: false,
+                    paging: false,
+                    scrollY: '400px',
+                    scrollX: true,
                     data: data,
                     columns: [
 
                         { data: 'Id' },
                         { data: 'Nombre' },
-                        { data: 'FechaMx' },
-                        { data: 'Accion' }
+                        {
+                            data: 'Fecha',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {
+                            data: 'EsLaboral',
+                            className: 'dt-body-center',
+                            render: function (data) {
+                                if (data)
+                                    return 'Si';
+                                else
+                                    return 'No';
+                            }
+                        },
+                        {
+                            data: 'Estatus',
+                            name: 'Estatus',
+                            render: function (data, type, full, meta) {
+                                if (data === 'Programado')
+                                    return `<button type="button" class='btn btn-success btn-sm'>${data}</button>`;
+                                else
+                                    return `<button type="button" class='btn btn-warning btn-sm'>${data}</button>`;
+                            }
+                        },
+                        {
+                            data: null,
+                            className: 'dt-body-center',
+                            render: function (data, type, full, meta) {
+                                return `<button type="button" onclick="calendar.edit(${full.Id})" class='btn btn-primary btn-sm'> <span class='fa fa-edit mr-1'></span></button>
+                                        <button type="button" onclick="calendar.delete(${full.Id})" class='btn btn-danger btn-sm'> <span class='fa fa-remove mr-1'></span></button>`;
+                            }
+                        },
 
                         
                     ],
@@ -66,19 +124,109 @@ const calendar = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtipl',
+                    dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
                         {
                             extend: 'excelHtml5',
                             title: descargas,
-                            text: 'Xls', className: 'excelbtn'
+                            text: '&nbsp; Descargar Excel', className: 'csvbtn',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 1:
+                                                name = "Evento";
+                                                break;
+                                            case 2:
+                                                name = "Fecha";
+                                                break;
+                                            case 3:
+                                                name = "Laboral";
+                                                break;
+                                            case 4:
+                                                name = "Estatus";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
+                            }
                         },
                         {
                             extend: 'pdfHtml5',
+                            text: 'Descargar PDF',
                             title: descargas,
-                            text: 'Pdf', className: 'pdfbtn'
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            className: 'csvbtn ml-2',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 1:
+                                                name = "Evento";
+                                                break;
+                                            case 2:
+                                                name = "Fecha";
+                                                break;
+                                            case 3:
+                                                name = "Laboral";
+                                                break;
+                                            case 4:
+                                                name = "Estatus";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
+                            }
                         }
-                    ]
+                    ],
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
+
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
+
+                                switch (dataHeader) {
+                                    case 'Nombre':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Fecha':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'EsLaboral':
+                                    case 'Estatus':
+                                        $('select', column.header()).on('change', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                }
+                            });
+                    }
 
                 });
 
@@ -132,14 +280,13 @@ const calendar = {
 
                 $('#txtNombre').val(item.Nombre);
 
-                $('#txtFecha').val(item.Fecha);
-
+                $('#txtFecha').val(moment(item.Fecha).format('YYYY-MM-DD'));
+                $('#cmbLaboral').val(item.EsLaboral ? 1 : 0);
                 $('#panelTabla').hide();
                 $('#panelForm').show();
 
 
                 calendar.accion = "editar";
-                $('#spnTituloForm').text('Editar');
                 $('.deshabilitable').prop('disabled', false);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -158,10 +305,6 @@ const calendar = {
         $('#frm')[0].reset();
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        $('#spnTituloForm').text('Nuevo');
-
-
-
 
         $('#panelTabla').hide();
         $('#panelForm').show();
@@ -199,6 +342,7 @@ const calendar = {
                 item.Id = calendar.idSeleccionado;
                 item.Nombre = $('#txtNombre').val();
                 item.Fecha = document.getElementById('txtFecha').value;
+                item.EsLaboral = Number(document.getElementById('cmbLaboral').value) == 1 ? true : false;
 
                 let params = {};
                 params.path = window.location.hostname;

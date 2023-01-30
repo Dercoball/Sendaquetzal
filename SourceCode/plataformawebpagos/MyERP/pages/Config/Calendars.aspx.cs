@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dapper;
+using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
@@ -49,36 +50,17 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, FORMAT(fecha, 'yyyy-MM-dd') fecha
+                string query = @" SELECT id Id, nombre Nombre, fecha Fecha, es_laboral EsLaboral
                      FROM calendario
                      WHERE  id =  @id ";
 
-                Utils.Log("\nMétodo-> " +
+				Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_puesto =  " + id);
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id", id);
+				item = conn.QueryFirstOrDefault<Calendario>(query, new { id });
 
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        item = new Calendario();
-
-                        item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
-
-
-                    }
-                }
-
-                return item;
+				return item;
             }
             catch (Exception ex)
             {
@@ -118,14 +100,15 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO calendario(nombre, fecha, eliminado) 
-                    VALUES (@nombre, @fecha, 0) ";
+                    sql = @" INSERT INTO calendario(nombre, fecha, eliminado, es_laboral) 
+                    VALUES (@nombre, @fecha, 0, @es_laboral) ";
                 }
                 else
                 {
                     sql = @" UPDATE calendario
                           SET nombre = @nombre,
-                              fecha = @fecha
+                              fecha = @fecha,
+                            es_laboral = @es_laboral
                           WHERE 
                               id = @id";
 
@@ -139,6 +122,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@fecha", item.Fecha);
+				cmd.Parameters.AddWithValue("@es_laboral", item.EsLaboral);
    
                 cmd.Parameters.AddWithValue("@id", item.Id);
 
@@ -188,45 +172,21 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id, nombre, fecha, FORMAT(fecha, 'dd/MM/yyyy') fecha_formateada_mx
+                string query = @" SELECT id Id, nombre Nombre, fecha Fecha, es_laboral EsLaboral
                      FROM calendario
                      WHERE 
                      ISNull(eliminado, 0) = 0
                      ORDER BY id ";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+				items = conn.Query<Calendario>(query).ToList();
 
-                Utils.Log("\nMétodo-> " +
+				items.ForEach(item =>
+				{
+					item.Estatus = item.Fecha.Date > DateTime.Now.Date ? "Programado" : "Realizado";
+				});
+
+				Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Calendario item = new Calendario();
-                        item.Id = int.Parse(ds.Tables[0].Rows[i]["id"].ToString());
-                        item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
-                        item.FechaMx = ds.Tables[0].Rows[i]["fecha_formateada_mx"].ToString();
-
-
-
-
-                        string botones = "<button  onclick='calendar.edit(" + item.Id + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='calendar.delete(" + item.Id + ")'   class='btn btn-outline-secondary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
 
                 return items;
             }

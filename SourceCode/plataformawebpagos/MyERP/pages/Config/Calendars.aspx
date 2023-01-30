@@ -92,97 +92,106 @@
             <div class="container-fluid">
 
                 <header>
-                    <h1 class="h3 display">Calendarios</h1>
+                    <h1 class="h3 display">Calendario Festivo</h1>
                 </header>
 
                 <div id="panelTabla">
-                    <div class="table-responsive">
-
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
-
-
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Nombre</th>
-                                    <th>Fecha</th>
-                                    <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-
-
-
-
-                <div id="panelForm">
-
-                    <div class="modal-body form">
-                        <form role="form" id="frm" name="frm">
-
-                            <div class="form-body">
-                                <h3 class="text-left">
-                                    <span id="spnTituloForm"></span>
-                                    <hr />
-                                </h3>
-
-
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNombre">
-                                            Nombre
-                                        </label>
-                                        <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtFecha">
-                                            Fecha
-                                        </label>
-                                        <input type="date" class="form-control campo-date" id="txtFecha"
-                                            required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-
-
-                                </div>
-
-
-
-
-
+                    <div class="card">
+                        <div class="card-body">
+                            <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nueva Fecha</button>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm w-100" id="table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Folio</th>
+                                            <th>
+                                                Evento<br />
+                                                <input placeholder="Evento" />
+                                            </th>
+                                            <th>
+                                                Fecha<br />
+                                                <input id="finicial" type="date" /><br />
+                                                <input id="ffinal" type="date" />
+                                            </th>
+                                            <th>Laboral<br />
+                                                <select>
+                                                    <option value="">Todos</option>
+                                                    <option value="Si">Si</option>
+                                                    <option value="No">No</option>
+                                                </select>
+                                            </th>
+                                            <th>Estatus<br />
+                                                <select>
+                                                    <option value="">Todos</option>
+                                                    <option value="Programado">Programado</option>
+                                                    <option value="Realizado">Realizado</option>
+                                                </select>
+                                            </th>
+                                            <th class="text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
-                        </form>
-                    </div>
-
-
-
-                    <div class="row mt-3 mb-3">
-
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
                         </div>
-
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
-
                     </div>
-
                 </div>
 
+
+                <div id="panelForm" style="display:none;">
+                    <form role="form" id="frm" name="frm">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtNombre">
+                                                Evento
+                                            </label>
+                                            <input type="text" class="form-control" id="txtNombre" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="row">
+                                            <div class="col-lg-9 col-md-8">
+                                                <div class="form-group">
+                                                    <label for="txtFecha">
+                                                        Fecha calendario
+                                                    </label>
+                                                    <input type="date" class="form-control campo-date" id="txtFecha"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="txtFecha">
+                                                        Laboral
+                                                    </label>
+                                                    <select class="form-control" required="required" data-required-error='Requerido' id="cmbLaboral">
+                                                        <option value="1">Si</option>
+                                                        <option value="0">No</option>
+                                                    </select>
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-12 col-md-6 col-lg-4 text-right">
+                                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
         </section>
@@ -280,21 +289,24 @@
     <script src="../../vendor/jquery.cookie/jquery.cookie.js"> </script>
     <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="../../vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-
+    <script src="../../vendor/momentjs/moment.min.js"></script>
 
     <!-- DataTables JavaScript -->
-    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
+    <%--<script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>--%>
+    <script src="../../vendor/datatables/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/jszip.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/pdfmake.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/vfs_fonts.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
 
-    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
-
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <!-- DataTables StyleSheet -->
+    <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
 
 
     <script src="../../js/front.js"></script>

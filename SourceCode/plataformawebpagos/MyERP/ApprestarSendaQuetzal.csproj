@@ -135,12 +135,8 @@
     <Content Include="css\fonts\dashboard.svg" />
     <Content Include="css\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="flyway\.gitignore" />
-    <Content Include="flyway\migrations\V1.1__Devices_Collected_Data.sql" />
-    <Content Include="flyway\migrations\V1__DummyScript.sql" />
-    <Content Include="flyway\migrations\V2.1__PruebaFlyway.sql" />
-    <Content Include="flyway\migrations\V2.2__Droptable.sql" />
-    <Content Include="flyway\migrations\V2__NewField_Collected_data.sql" />
     <Content Include="flyway\migrations\V5__InversioneseInversio.sql" />
+    <Content Include="flyway\migrations\V6__AlterTableParoeFestivo.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
@@ -1197,6 +1193,7 @@
     <Content Include="vendor\metisMenu\metisMenu.js" />
     <Content Include="vendor\metisMenu\metisMenu.min.css" />
     <Content Include="vendor\metisMenu\metisMenu.min.js" />
+    <Content Include="vendor\momentjs\moment-with-locales.min.js" />
     <Content Include="vendor\morrisjs\morris.css" />
     <Content Include="vendor\morrisjs\morris.js" />
     <Content Include="vendor\morrisjs\morris.min.js" />
@@ -1766,11 +1763,8 @@
     <Content Include="fonts\dashboard.eot" />
     <Content Include="fonts\dashboard.ttf" />
     <Content Include="fonts\dashboard.woff" />
-    <Content Include="flyway\develop.conf" />
     <Content Include="flyway\Filter.scpf" />
     <Content Include="flyway\flyway-dev.json" />
-    <Content Include="flyway\local.conf" />
-    <Content Include="flyway\main.conf" />
     <None Include="packages.config" />
     <Content Include="vendor\bootstrap-social\bootstrap-social.less" />
     <Content Include="vendor\bootstrap-social\bootstrap-social.scss" />
@@ -1828,8 +1822,10 @@
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzalv2 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzalv2 - FTP1.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzalv2 - FTP2.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzalv2 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzalv2 - Web Deploy1.pubxml" />
+    <None Include="Properties\PublishProfiles\sendaquetzalv2 - Web Deploy2.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

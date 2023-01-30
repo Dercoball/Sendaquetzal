@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -8,16 +9,20 @@ namespace Plataforma.Clases
     public class DiaDeParo
     {
 
-        public int IdDiaParo;
+        public int IdDiasParo;
+
         public string Nota;
 
-        public string FechaInicio;
-        public string FechaFin;
+        public DateTime FechaInicio;
+
+        public DateTime FechaFin;
+
+        public int IdPlaza;
+
+        public string Plaza;
+
+        public string Estatus;
 
         public int IdTipoParo;
-
-
-        public string Accion;
-
     }
 }

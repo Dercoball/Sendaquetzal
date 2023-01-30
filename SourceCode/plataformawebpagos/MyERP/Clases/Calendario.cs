@@ -11,11 +11,15 @@ namespace Plataforma.Clases
         public int Id;
         public string Nombre;
 
-        public string Fecha;
+        public DateTime Fecha;
+        public DateTime FechaFinal;
+
+        public bool EsLaboral;
+		public string Estatus;
         public string FechaMx;
         public string FechaLarga;
         
-        public string FechaFinal;
+        //public string FechaFinal;
         public string Tipo;
 
         public string Dia;

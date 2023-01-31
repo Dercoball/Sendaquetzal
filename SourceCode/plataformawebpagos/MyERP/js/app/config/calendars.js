@@ -42,6 +42,10 @@ const calendar = {
                     return true;
             }
         );
+
+        $('#table input, #table select').click(function (e) {
+            e.stopPropagation();
+        });
     },
 
     loadContent() {
@@ -70,7 +74,7 @@ const calendar = {
                 let table = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    ordering: false,
+                    ordering: true,
                     paging: false,
                     scrollY: '400px',
                     scrollX: true,

@@ -94,7 +94,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Calendario> GetListaItemsFechasByMonth(string path, string idUsuario, int month, int year)
+        public static List<Calendario> GetListaItemsFechasByMonth(string path, string idUsuario, int month, int year, int plaza)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -104,6 +104,12 @@ namespace Plataforma.pages
 
             try
             {
+                string conditionPlaza = "";
+                if(plaza > 0)
+                {
+                    conditionPlaza = " AND c.id_plaza = @plaza ";
+                }
+
                 conn.Open();
                 string query = @" 
                                 SELECT c.id Id, 
@@ -124,6 +130,7 @@ namespace Plataforma.pages
                                     'paro' as Tipo
                                 FROM dias_paro c
                                     WHERE ISNull(c.eliminado, 0) = 0
+                                    " + conditionPlaza + @"
                                     AND year(c.fecha_inicio) = @year AND month(c.fecha_inicio) = @month
                                 ORDER BY 3
                                 ";
@@ -131,7 +138,7 @@ namespace Plataforma.pages
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
-				items = conn.Query<Calendario>(query, new { month = (month + 1), year}).ToList();
+				items = conn.Query<Calendario>(query, new { month = (month + 1), year, plaza}).ToList();
 
 				return items;
             }

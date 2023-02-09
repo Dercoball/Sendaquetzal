@@ -179,7 +179,8 @@ namespace Plataforma.pages
                               cantidad = @cantidad,
                               costo = @costo,
                               id_empleado = @id_empleado,
-                              id_categoria = @id_categoria
+                              id_categoria = @id_categoria,
+                              fecha = @fecha
                           WHERE 
                               id_material_entrega = @id";
 
@@ -194,7 +195,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@cantidad", item.Cantidad);
                 cmd.Parameters.AddWithValue("@material_entregado", item.MaterialEntregado);
                 cmd.Parameters.AddWithValue("@costo", item.Costo);
-                cmd.Parameters.AddWithValue("@fecha", DateTime.Today);
+                cmd.Parameters.AddWithValue("@fecha", item.Fecha);
 
 
                 cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);

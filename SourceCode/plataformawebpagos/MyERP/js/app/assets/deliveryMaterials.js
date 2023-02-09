@@ -687,7 +687,7 @@ const deliveryMaterial = {
                 item.IdEmpleado = $('#comboEmpleado').val();
                 item.Cantidad = $('#txtCantidad').val();
                 item.Costo = $('#txtCosto').val();
-                //item.Fecha = $('#txtFecha').val();
+                item.Fecha = $('#txtFecha').val();
 
 
 

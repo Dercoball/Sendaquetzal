@@ -328,7 +328,12 @@ const asset = {
                                     case 'Estatus':
                                         $('select', column.header()).on('change', function () {
                                             if (column.search() !== this.value) {
-                                                column.search(this.value).draw();
+                                                if (this.value !== '') {
+                                                    var searchTerm = '^' + this.value.replace('(', '\\(').replace(')', '\\)').trim() + '$';
+                                                    column.search(searchTerm, true, false).draw();
+                                                } else {
+                                                    column.search(this.value).draw();
+                                                }
                                             }
                                         });
                                         break;

@@ -125,13 +125,51 @@ const asset = {
                     data: data,
                     columns: [
 
-                        { data: 'Categoria.Nombre' },
+                        { data: 'NombreCategoria' },
                         { data: 'Descripcion' },
                         { data: 'NumeroSerie' },
-                        { data: 'Costo' },
-                        { data: 'Comentarios' },
-                        { data: 'Empleado.Nombre' },
-                        { data: 'Accion' }
+                        {
+                            data: 'Costo',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
+                        { data: 'Asignado' },
+                        {
+                            data: 'FechaIngreso',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                if (data == null)
+                                    return 'N/A'
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {
+                            data: 'Estatus',
+                            name: 'Estatus',
+                            render: function (data, type, full, meta) {
+                                if (data === 'Activo')
+                                    return `<button type="button" class='btn btn-success btn-sm'>${data}</button>`;
+                                else
+                                    return `<button type="button" class='btn btn-danger btn-sm'>${data}</button>`;
+                            }
+                        },
+                        {
+                            data: 'FechaBaja',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                if (data == null)
+                                    return 'N/A'
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {
+                            data: null,
+                            width: '150px',
+                            className: 'dt-body-center',
+                            render: function (data, type, full, meta) {
+                                return `<button type="button" onclick="asset.edit(${full.IdActivo})" class='btn btn-primary btn-sm'> <span class='fa fa-edit mr-1'></span></button>
+                                        <button type="button" onclick="asset.delete(${full.IdActivo})" class='btn btn-danger btn-sm'> <span class='fa fa-remove mr-1'></span></button>`;
+                            }
+                        },
 
                         
                     ],
@@ -174,6 +212,7 @@ const asset = {
                                                 break;
                                             case 6:
                                                 name = "Estatus";
+                                                break;
                                             case 7:
                                                 name = "Baja";
                                                 break;  
@@ -195,22 +234,34 @@ const asset = {
                             pageSize: 'LEGAL',
                             className: 'csvbtn ml-2',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7],
                                 format: {
                                     header: function (data, index, row) {
                                         var name;
                                         switch (index) {
+                                            case 0:
+                                                name = "Categoría";
+                                                break;
                                             case 1:
-                                                name = "Evento";
+                                                name = "Descripción";
                                                 break;
                                             case 2:
-                                                name = "Fecha";
+                                                name = "No. Serie";
                                                 break;
                                             case 3:
-                                                name = "Laboral";
+                                                name = "Costo";
                                                 break;
                                             case 4:
+                                                name = "Asignación";
+                                                break;
+                                            case 5:
+                                                name = "Ingreso";
+                                                break;
+                                            case 6:
                                                 name = "Estatus";
+                                                break;
+                                            case 7:
+                                                name = "Baja";
                                                 break;
                                             default:
                                                 name = data;
@@ -253,10 +304,10 @@ const asset = {
                                 var column = this;
                                 let dataHeader = columnsSettings[idx].data;
                                 switch (dataHeader) {
-                                    case 'Categoria.Nombre':
+                                    case 'NombreCategoria':
                                     case 'Descripcion':
                                     case 'NumeroSerie':
-                                    case 'Empleado.Nombre':
+                                    case 'Asignado':
                                         $('input', column.header()).on('keyup change clear', function () {
                                             if (column.search() !== this.value) {
                                                 column.search(this.value).draw();
@@ -268,8 +319,8 @@ const asset = {
                                             column.draw();
                                         });
                                         break;
-                                    case 'Ingreso':
-                                    case 'Baja':
+                                    case 'FechaIngreso':
+                                    case 'FechaBaja':
                                         $('input', column.header()).on('change', function () {
                                             column.draw();
                                         });
@@ -337,13 +388,15 @@ const asset = {
                 asset.idSeleccionado = item.IdActivo;
 
                 $('#txtDescripcion').val(item.Descripcion);
-                $('#comboCategoria').val(item.Categoria.Id);
-                $('#comboEmpleado').val(item.Empleado.IdEmpleado);
+                $('#comboCategoria').val(item.IdCategoria);
+                $('#comboEmpleado').val(item.IdEmpleado);
 
                 $('#txtNumeroSerie').val(item.NumeroSerie);
                 $('#txtCosto').val(item.Costo);
                 $('#txtComentarios').val(item.Comentarios);
 
+                $('#txtFechaIngreso').val(moment(item.FechaIngreso).format('YYYY-MM-DD'));
+                $('#txtFechaBaja').val(moment(item.FechaBaja).format('YYYY-MM-DD'));
 
 
                 $('#panelTabla').hide();
@@ -492,7 +545,8 @@ const asset = {
                 item.NumeroSerie = $('#txtNumeroSerie').val();
                 item.Costo = $('#txtCosto').val();
                 item.Comentarios = $('#txtComentarios').val();
-
+                item.FechaIngreso = document.getElementById('txtFechaIngreso').value;
+                item.FechaBaja = document.getElementById('txtFechaBaja').value;
 
 
                 let params = {};

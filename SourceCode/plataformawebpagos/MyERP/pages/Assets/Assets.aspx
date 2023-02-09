@@ -108,7 +108,7 @@
                             <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Agregar</button>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover table-sm w-100" id="table">
-                                    <thead>
+                                    <thead class="thead-light">
                                         <tr>
                                             <th>Categoría<br /><input placeholder="Categoría" /></th>
                                             <th>Descripción<br /><input placeholder="Descripción" /></th>
@@ -128,21 +128,21 @@
                                                 Estatus<br />
                                                 <select>
                                                     <option value="">Todos</option>
-                                                    <option value="Programado">Programado</option>
-                                                    <option value="Realizado">Realizado</option>
+                                                    <option value="Activo">Activo</option>
+                                                    <option value="Inactivo">Inactivo</option>
                                                 </select>
                                             </th>
                                             <th>
                                                 Baja<br />
-                                                <input id="finicialb" type="date" /><br />
-                                                <input id="ffinalb" type="date" />
+                                                 <input id="ffinalb" type="date" /><br />
+                                                <input id="finicialb" type="date" />
                                             </th>
                                             <th class="text-center">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     </tbody>
-                                    <tfoot>
+                                    <tfoot class="thead-light">
                                         <tr>
                                             <th></th>
                                             <th></th>
@@ -161,106 +161,119 @@
                     </div>
                 </div>
 
-                <div id="panelForm">
-
-                    <div class="modal-body form">
-                        <form role="form" id="frm" name="frm">
-
-                            <div class="form-body">
-                                <h3 class="text-left">
-                                    <span id="spnTituloForm"></span>
-                                </h3>
-                                <hr />
-
-
-
-
-
+                <div id="panelForm" style="display:none;">
+                    <form role="form" id="frm" name="frm">
+                        <div class="card">
+                            <div class="card-body">
                                 <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="comboCategoria">
-                                            Tipo
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboCategoria" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="comboCategoria">
+                                                Categoría
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboCategoria" required="required" data-required-error='Requerido'>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="comboEmpleado">
-                                            Empleado asignado
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboEmpleado" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
                                 </div>
 
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtDescripcion">
-                                            Descripción
-                                        </label>
-                                        <input type="text" class="form-control" id="txtDescripcion" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtDescripcion">
+                                                Descripción
+                                            </label>
+                                            <input type="text" class="form-control" id="txtDescripcion" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNumeroSerie">
-                                            Numero de serie
-                                        </label>
-                                        <input type="text" class="form-control" id="txtNumeroSerie" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
                                 </div>
 
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtCosto">
-                                            Costo  
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtCosto" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtNumeroSerie">
+                                                Numero de serie
+                                            </label>
+                                            <input type="text" class="form-control" id="txtNumeroSerie" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtComentarios">
-                                            Comentarios
-                                        </label>
-                                        <input type="text" class="form-control" id="txtComentarios" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
                                 </div>
 
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtCosto">
+                                                Costo  
+                                            </label>
+                                            <input type="number" step="any" class="form-control" id="txtCosto" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                               
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtComentarios">
+                                                Observaciones
+                                            </label>
+                                            <input type="text" class="form-control" id="txtComentarios" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="comboEmpleado">
+                                                Asignación
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboEmpleado" required="required" data-required-error='Requerido'>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="txtFechaIngreso">
+                                                        Fecha Ingreso
+                                                    </label>
+                                                    <input type="date" class="form-control campo-date" id="txtFechaIngreso"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="txtFechaBaja">
+                                                        Fecha Baja
+                                                    </label>
+                                                    <input type="date" class="form-control campo-date" id="txtFechaBaja" />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-5">
+                                    <div class="col-12 col-md-6 col-lg-4 text-right">
+                                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                    </div>
+                                </div>
                             </div>
-                                
-                        </form>
-                    </div>
-
-
-
-                    <div class="row mt-3 mb-3">
-
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
-                        </div>
-
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
-
-                    </div>
-
+                        </div>   
+                    </form>
                 </div>
 
             </div>

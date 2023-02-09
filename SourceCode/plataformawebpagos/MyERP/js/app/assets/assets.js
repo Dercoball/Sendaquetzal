@@ -2,9 +2,7 @@
 let date = new Date();
 let descargas = "ACTIVOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '52';
-
-
-
+let totalCosto = 0;
 
 const asset = {
 
@@ -12,6 +10,7 @@ const asset = {
 
     init: () => {
 
+        moment.locale('es-mx');
         $('#panelTabla').show();
         $('#panelForm').hide();
 
@@ -21,6 +20,74 @@ const asset = {
         asset.loadContent();
         asset.loadComboEmpleado();
         asset.loadComboTipo();
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#cmin').val(), 10);
+            var max = parseInt($('#cmax').val(), 10);
+            var prestamo = parseFloat(data[3]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#finicial').val();
+                var max = $('#ffinal').val();
+                var createdAt = data[5] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#finicialb').val();
+                var max = $('#ffinalb').val();
+                var createdAt = data[7] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $('#table input, #table select').click(function (e) {
+            e.stopPropagation();
+        });
+
 
     },
 
@@ -51,7 +118,10 @@ const asset = {
                 let table = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    "order": [],
+                    ordering: true,
+                    paging: false,
+                    scrollY: '400px',
+                    scrollX: true,
                     data: data,
                     columns: [
 
@@ -72,19 +142,148 @@ const asset = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtipl',
+                    dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
                         {
                             extend: 'excelHtml5',
                             title: descargas,
-                            text: 'Xls', className: 'excelbtn'
+                            text: '&nbsp; Descargar Excel', className: 'csvbtn',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 0:
+                                                name = "Categoría";
+                                                break;
+                                            case 1:
+                                                name = "Descripción";
+                                                break;
+                                            case 2:
+                                                name = "No. Serie";
+                                                break;
+                                            case 3:
+                                                name = "Costo";
+                                                break;
+                                            case 4:
+                                                name = "Asignación";
+                                                break;
+                                            case 5:
+                                                name = "Ingreso";
+                                                break;
+                                            case 6:
+                                                name = "Estatus";
+                                            case 7:
+                                                name = "Baja";
+                                                break;  
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
+                            }
                         },
                         {
                             extend: 'pdfHtml5',
+                            text: 'Descargar PDF',
                             title: descargas,
-                            text: 'Pdf', className: 'pdfbtn'
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            className: 'csvbtn ml-2',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 1:
+                                                name = "Evento";
+                                                break;
+                                            case 2:
+                                                name = "Fecha";
+                                                break;
+                                            case 3:
+                                                name = "Laboral";
+                                                break;
+                                            case 4:
+                                                name = "Estatus";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
+                            }
                         }
-                    ]
+                    ],
+                    footerCallback: function (row, data, start, end, display) {
+                        var api = this.api();
+
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) {
+                            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                        };
+
+
+                        // Total over all pages
+                        totalCosto = api
+                            .column(3, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+
+                        // Update footer
+                        $(api.column(3).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalCosto));
+                    },
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
+
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
+                                switch (dataHeader) {
+                                    case 'Categoria.Nombre':
+                                    case 'Descripcion':
+                                    case 'NumeroSerie':
+                                    case 'Empleado.Nombre':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Costo':
+                                        $('input', column.header()).on('keyup', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Ingreso':
+                                    case 'Baja':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Estatus':
+                                        $('select', column.header()).on('change', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                }
+                            });
+                    }
 
                 });
 

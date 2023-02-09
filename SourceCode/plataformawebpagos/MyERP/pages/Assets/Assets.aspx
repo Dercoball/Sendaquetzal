@@ -103,34 +103,63 @@
                 </header>
 
                 <div id="panelTabla">
-                    <div class="table-responsive">
-
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
-
-
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Descripción</th>
-                                    <th>No. Serie</th>
-                                    <th>Costo</th>
-                                    <th>Comentarios</th>
-                                    <th>Empleado Asignado</th>
-
-                                    <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
+                    <div class="card">
+                        <div class="card-body">
+                            <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Agregar</button>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm w-100" id="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Categoría<br /><input placeholder="Categoría" /></th>
+                                            <th>Descripción<br /><input placeholder="Descripción" /></th>
+                                            <th>No. Serie<br /><input placeholder="No. Serie" /></th>
+                                            <th>
+                                                Costo<br />
+                                                <input id="cmax" type="number" placeholder="MAX" /><br />
+                                                <input id="cmin" type="number" placeholder="MIN" />
+                                            </th>
+                                            <th>Asignación<br /><input placeholder="ASignación" /></th>
+                                            <th>
+                                                Ingreso<br />
+                                                <input id="finicial" type="date" /><br />
+                                                <input id="ffinal" type="date" />
+                                            </th>
+                                            <th>
+                                                Estatus<br />
+                                                <select>
+                                                    <option value="">Todos</option>
+                                                    <option value="Programado">Programado</option>
+                                                    <option value="Realizado">Realizado</option>
+                                                </select>
+                                            </th>
+                                            <th>
+                                                Baja<br />
+                                                <input id="finicialb" type="date" /><br />
+                                                <input id="ffinalb" type="date" />
+                                            </th>
+                                            <th class="text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-
-
 
                 <div id="panelForm">
 
@@ -234,13 +263,9 @@
 
                 </div>
 
-                
-
             </div>
 
         </section>
-
-
 
         <footer class="main-footer">
             <div class="container-fluid">
@@ -328,21 +353,25 @@
  <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="../../vendor/momentjs/moment.min.js"></script>
 
     <!-- DataTables JavaScript -->
-    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
+    <%--<script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>--%>
+    <script src="../../vendor/datatables/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/jszip.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/pdfmake.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/vfs_fonts.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
 
-    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
-
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <!-- DataTables StyleSheet -->
+    <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
 
 
     <%--<script src="../../js/front.js"></script>--%>

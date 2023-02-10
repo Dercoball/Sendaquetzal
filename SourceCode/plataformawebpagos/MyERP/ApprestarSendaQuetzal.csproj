@@ -1195,6 +1195,7 @@
     <Content Include="vendor\metisMenu\metisMenu.min.css" />
     <Content Include="vendor\metisMenu\metisMenu.min.js" />
     <Content Include="vendor\momentjs\moment-with-locales.min.js" />
+    <Content Include="vendor\momentjs\moment.min.js" />
     <Content Include="vendor\morrisjs\morris.css" />
     <Content Include="vendor\morrisjs\morris.js" />
     <Content Include="vendor\morrisjs\morris.min.js" />

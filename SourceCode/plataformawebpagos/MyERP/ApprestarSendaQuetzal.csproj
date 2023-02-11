@@ -79,6 +79,24 @@
     <Reference Include="QRCoder, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\QRCoder.1.4.1\lib\net40\QRCoder.dll</HintPath>
     </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Compression.Base.20.4.0.44\lib\net46\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIO.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DocIO.AspNet.20.4.0.44\lib\net46\Syncfusion.DocIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocToPdfConverter.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DocToPDFConverter.AspNet.20.4.0.44\lib\net46\Syncfusion.DocToPdfConverter.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.20.4.0.44\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.OfficeChart.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.OfficeChart.Base.20.4.0.44\lib\net46\Syncfusion.OfficeChart.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.Base, Version=20.4460.0.44, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Pdf.AspNet.20.4.0.44\lib\net46\Syncfusion.Pdf.Base.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.1.2\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
@@ -267,6 +285,7 @@
     </Content>
     <Content Include="js\app\loans\loanlist.js" />
     <Content Include="js\app\loans\loans.js" />
+    <Content Include="js\app\loans\paymentsOverdue.js" />
     <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
@@ -356,6 +375,7 @@
     <Content Include="pages\Config\Employees.aspx" />
     <Content Include="pages\Controles\UcDocumentacion.ascx" />
     <Content Include="pages\Controles\UcCliente.ascx" />
+    <Content Include="pages\Loans\PaymentsOverdue.aspx" />
     <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
     <Content Include="pages\Assets\DeliveryMaterials.aspx" />
@@ -1435,6 +1455,13 @@
       <DependentUpon>UcCliente.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="pages\Loans\PaymentsOverdue.aspx.cs">
+      <DependentUpon>PaymentsOverdue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Loans\PaymentsOverdue.aspx.designer.cs">
+      <DependentUpon>PaymentsOverdue.aspx</DependentUpon>
+    </Compile>
     <Compile Include="pages\Tutorials.aspx.cs">
       <DependentUpon>Tutorials.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1818,6 +1845,8 @@
     <Content Include="vendor\jquery.cookie\cookie.jquery.json" />
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
     <Content Include="pages\FileUploader.ashx" />
+    <Content Include="plantillas\ticket_pago_01.docx" />
+    <Content Include="plantillas\ticket_pago_01.pdf" />
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\sendaquetzal - Web Deploy.pubxml" />

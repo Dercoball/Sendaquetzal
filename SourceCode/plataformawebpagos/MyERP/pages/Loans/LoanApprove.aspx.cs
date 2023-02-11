@@ -179,7 +179,8 @@ namespace Plataforma.pages
             }
             else
             {
-                sql = @" INSERT INTO cliente 
+                sql = @" INSERT INTO cliente (curp,nombre,primer_apellido,segundo_apellido,ocupacion,telefono,id_tipo_cliente,curp_aval,nombre_aval,primer_apellido_aval
+                    ,segundo_apellido_aval,ocupacion_aval,telefono_aval,activo,eliminado,id_status_cliente,nota_fotografia,nota_fotografia_aval,mensaje)
                             OUTPUT INSERTED.id_cliente
                     VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,2,NULL,NULL, NULL) ";
                 Utils.Log("INSERTAR CLIENTE " + sql);

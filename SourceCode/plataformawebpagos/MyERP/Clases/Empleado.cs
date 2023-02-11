@@ -13,11 +13,11 @@ namespace Plataforma.Clases
         public String PrimerApellido;
         public String SegundoApellido;
 
-        //public String CURPAval;
-        //public String NombreAval;
-        //public String PrimerApellidoAval;
-        //public String SegundoApellidoAval;
-        //public String TelefonoAval;
+        public String CURPAval;
+        public String NombreAval;
+        public String PrimerApellidoAval;
+        public String SegundoApellidoAval;
+        public String TelefonoAval;
 
 
         public String AMaterno;

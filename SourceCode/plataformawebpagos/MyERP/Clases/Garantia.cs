@@ -22,18 +22,18 @@ namespace Plataforma.Clases
         { get; set; }
         public int id_usuario
         { get; set; }
-        //public int IdGarantia;
-        //public string Nombre;
+        public int IdGarantia;
+        public string Nombre;
 
-        //public string NumeroSerie;
-        //public float Costo;
-        //public string CostoFormateadoMx;
-        //public string Fotografia;
-        //public string Fecha;
-        //public string Imagen;
+        public string NumeroSerie;
+        public float Costo;
+        public string CostoFormateadoMx;
+        public string Fotografia;
+        public string Fecha;
+        public string Imagen;
 
 
-        //public string Accion;
+        public string Accion;
 
     }
 }

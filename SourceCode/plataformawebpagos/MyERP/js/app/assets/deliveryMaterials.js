@@ -2,9 +2,8 @@
 let date = new Date();
 let descargas = "ACTIVOS_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '57';
-
-
-
+let totalCosto = 0;
+let totalPiezas = 0;
 
 const deliveryMaterial = {
 
@@ -22,6 +21,64 @@ const deliveryMaterial = {
         deliveryMaterial.loadComboEmpleado();
         deliveryMaterial.loadComboTipo();
         deliveryMaterial.fechas();
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#pmin').val(), 10);
+            var max = parseInt($('#pmax').val(), 10);
+            var prestamo = parseFloat(data[2]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#cmin').val(), 10);
+            var max = parseInt($('#cmax').val(), 10);
+            var prestamo = parseFloat(data[4]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#finicial').val();
+                var max = $('#ffinal').val();
+                var createdAt = data[5] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $('#table input, #table select').click(function (e) {
+            e.stopPropagation();
+        });
 
     },
 
@@ -56,16 +113,7 @@ const deliveryMaterial = {
 
         let params = {};
         params.path = window.location.hostname;
-        params.idColaborador = idColaborador;
-        params.idColaborador = document.getElementById('comboFiltroEmpleado').value;
-        params.fechaInicial = fechaInicial;
-        params.fechaFinal = fechaFinal;
-        params.costoDesde = costoDesde;
-        params.costoHasta = costoHasta;
-        params.idCategoria = idCategoria;
-
         console.log(params.idUsuario = document.getElementById('txtIdUsuario').value);
-
         params = JSON.stringify(params);
 
         $.ajax({
@@ -87,19 +135,38 @@ const deliveryMaterial = {
                 let table = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    "order": [],
+                    ordering: true,
+                    paging: false,
+                    scrollY: '400px',
+                    scrollX: true,
                     data: data,
                     columns: [
-
-                        { data: 'Empleado.Nombre' },
-                        { data: 'Categoria.Nombre' },
+                        { data: 'NombreCategoria' },
                         { data: 'MaterialEntregado' },
                         { data: 'Cantidad' },
-                        { data: 'CostoMx' },
-                        { data: 'Fecha' },
-                        { data: 'Accion' }
-
-
+                        { data: 'Colaborador' },
+                        {
+                            data: 'Costo',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
+                        {
+                            data: 'Fecha',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                if (data == null)
+                                    return 'N/A'
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {
+                            data: null,
+                            width: '150px',
+                            className: 'dt-body-center',
+                            render: function (data, type, full, meta) {
+                                return `<button type="button" onclick="deliveryMaterial.edit(${full.IdMaterialEntrega})" class='btn btn-primary btn-sm'> <span class='fa fa-edit mr-1'></span></button>
+                                        <button type="button" onclick="deliveryMaterial.delete(${full.IdMaterialEntrega})" class='btn btn-danger btn-sm'> <span class='fa fa-remove mr-1'></span></button>`;
+                            }
+                        }
                     ],
                     "language": textosEsp,
                     "columnDefs": [
@@ -108,23 +175,152 @@ const deliveryMaterial = {
                             "orderable": false
                         },
                     ],
-                    dom: 'frBtipl',
+                    dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
                         {
                             extend: 'excelHtml5',
                             title: descargas,
-                            text: 'Xls', className: 'excelbtn'
+                            text: '&nbsp; Descargar Excel', className: 'csvbtn',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 0:
+                                                name = "Categoría";
+                                                break;
+                                            case 1:
+                                                name = "Material";
+                                                break;
+                                            case 2:
+                                                name = "Piezas";
+                                                break;
+                                            case 3:
+                                                name = "Colaborador";
+                                                break;
+                                            case 4:
+                                                name = "Costo Total";
+                                                break;
+                                            case 5:
+                                                name = "Fecha";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
+                            }
                         },
                         {
                             extend: 'pdfHtml5',
+                            text: 'Descargar PDF',
                             title: descargas,
-                            text: 'Pdf', className: 'pdfbtn'
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            className: 'csvbtn ml-2',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5],
+                                format: {
+                                    header: function (data, index, row) {
+                                        var name;
+                                        switch (index) {
+                                            case 0:
+                                                name = "Categoría";
+                                                break;
+                                            case 1:
+                                                name = "Material";
+                                                break;
+                                            case 2:
+                                                name = "Piezas";
+                                                break;
+                                            case 3:
+                                                name = "Colaborador";
+                                                break;
+                                            case 4:
+                                                name = "Costo Total";
+                                                break;
+                                            case 5:
+                                                name = "Fecha";
+                                                break;
+                                            default:
+                                                name = data;
+                                                break;
+                                        }
+
+                                        return name
+                                    }
+                                }
+                            }
                         }
-                    ]
+                    ],
+                    footerCallback: function (row, data, start, end, display) {
+                        var api = this.api();
+
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) {
+                            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                        };
+
+
+                        // Total over all pages
+                        totalCosto = api
+                            .column(4, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+
+                        totalPiezas = api
+                            .column(2, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+
+                        // Update footer
+                        $(api.column(2).footer()).html($.fn.dataTable.render.number(',', '.', 2, '').display(totalPiezas));
+                        $(api.column(4).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalCosto));
+                    },
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
+
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
+                                switch (dataHeader) {
+                                    case 'NombreCategoria':
+                                    case 'MaterialEntregado':
+                                    case 'Colaborador':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Costo':
+                                    case 'Cantidad':
+                                        $('input', column.header()).on('keyup', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Fecha':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                }
+                            });
+                    }
 
                 });
-
-                deliveryMaterial.generateChart(data);
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -175,14 +371,11 @@ const deliveryMaterial = {
                 deliveryMaterial.idSeleccionado = item.IdMaterialEntrega;
 
                 $('#txtMaterial').val(item.MaterialEntregado);
-                $('#comboCategoria').val(item.Categoria.Id);
-                $('#comboEmpleado').val(item.Empleado.IdEmpleado);
-
+                $('#comboCategoria').val(item.IdCategoria);
+                $('#comboEmpleado').val(item.IdEmpleado);
                 $('#txtCantidad').val(item.Cantidad);
                 $('#txtCosto').val(item.Costo);
-                $('#txtFecha').val(item.Fecha);
-
-
+                $('#txtFecha').val(moment(item.Fecha).format('YYYY-MM-DD'));
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -494,7 +687,7 @@ const deliveryMaterial = {
                 item.IdEmpleado = $('#comboEmpleado').val();
                 item.Cantidad = $('#txtCantidad').val();
                 item.Costo = $('#txtCosto').val();
-                //item.Fecha = $('#txtFecha').val();
+                item.Fecha = $('#txtFecha').val();
 
 
 

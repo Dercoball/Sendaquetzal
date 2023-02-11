@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dapper;
+using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
@@ -58,57 +59,80 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, 
-                                         concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_empleado,
-                                         c.nombre as tipo
-                                         FROM activo a   
-                                         JOIN empleado e ON (e.id_empleado = a.id_empleado)
-                                         JOIN categoria c ON (c.id = a.id_categoria)
-                                         WHERE 
-                                            e.id_plaza = 
-                                	        (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
-                                		    WHERE u.id_usuario = @id_usuario)
-                                         AND ISNull(a.eliminado, 0) = 0      
-                                         ORDER BY a.id_activo
-                                ";
+                //DataSet ds = new DataSet();
+                //string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, 
+                //                         concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_empleado,
+                //                         c.nombre as tipo
+                //                         FROM activo a   
+                //                         JOIN empleado e ON (e.id_empleado = a.id_empleado)
+                //                         JOIN categoria c ON (c.id = a.id_categoria)
+                //                         WHERE 
+                //                            e.id_plaza = 
+                //                	        (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
+                //                		    WHERE u.id_usuario = @id_usuario)
+                //                         AND ISNull(a.eliminado, 0) = 0      
+                //                         ORDER BY a.id_activo
+                //                ";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                string query = @"SELECT 
+	                            a.id_activo IdActivo, 
+	                            a.descripcion Descripcion, 
+	                            a.numero_serie NumeroSerie, 
+	                            a.costo Costo, 
+	                            concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS 'Empleado.NombreCompleto',
+	                            concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS Asignado,
+	                            c.nombre as NombreCategoria,
+	                            a.fecha_ingreso FechaIngreso,
+	                            a.fecha_baja FechaBaja
+                            FROM 
+	                            activo a   
+	                            JOIN empleado e ON (e.id_empleado = a.id_empleado)
+	                            JOIN categoria c ON (c.id = a.id_categoria)
+                            WHERE 
+	                            ISNull(a.eliminado, 0) = 0      
+                            ORDER BY a.id_activo";
+
+                //SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                items = conn.Query<Activo>(query).ToList();
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
+                //adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
+
+                items.ForEach(item => {
+                    item.Estatus = item.FechaBaja.HasValue ? "Inactivo" : "Activo";
+                
+                });
 
 
-                adp.Fill(ds);
+                //adp.Fill(ds);
 
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Activo item = new Activo();
-                        item.Categoria = new Categoria();
-                        item.Empleado = new Empleado();
+                //if (ds.Tables[0].Rows.Count > 0)
+                //{
+                //    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                //    {
+                //        Activo item = new Activo();
+                //        item.Categoria = new Categoria();
+                //        item.Empleado = new Empleado();
 
-                        item.IdActivo = int.Parse(ds.Tables[0].Rows[i]["id_activo"].ToString());
-                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
-                        item.Descripcion = ds.Tables[0].Rows[i]["descripcion"].ToString();
-                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
-                        item.Comentarios = ds.Tables[0].Rows[i]["comentarios"].ToString();
-                        item.Categoria.Nombre = ds.Tables[0].Rows[i]["tipo"].ToString();
-                        item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
+                //        item.IdActivo = int.Parse(ds.Tables[0].Rows[i]["id_activo"].ToString());
+                //        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
+                //        item.Descripcion = ds.Tables[0].Rows[i]["descripcion"].ToString();
+                //        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
+                //        item.Comentarios = ds.Tables[0].Rows[i]["comentarios"].ToString();
+                //        item.Categoria.Nombre = ds.Tables[0].Rows[i]["tipo"].ToString();
+                //        item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
 
-                        string botones = "<button  onclick='asset.edit(" + item.IdActivo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='asset.delete(" + item.IdActivo + ")'   class='btn btn-outline-secondary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                //        string botones = "<button  onclick='asset.edit(" + item.IdActivo + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
+                //        botones += "&nbsp; <button  onclick='asset.delete(" + item.IdActivo + ")'   class='btn btn-outline-secondary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
 
-                        item.Accion = botones;
+                //        item.Accion = botones;
 
-                        items.Add(item);
+                //        items.Add(item);
 
 
-                    }
-                }
-
+                //    }
+                //}
 
                 return items;
             }
@@ -137,13 +161,16 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT a.id_activo, a.descripcion, a.numero_serie, a.costo, a.comentarios, e.nombre as nombre_empleado, e.id_empleado,
-                                         c.nombre as tipo, c.id as id_categoria
-                                         FROM activo a   
-                                         JOIN empleado e ON (e.id_empleado = a.id_empleado)
-                                         JOIN categoria c ON (c.id = a.id_categoria)
-                                                       
+                string query = @" SELECT a.id_activo IdActivo, 
+                                        a.descripcion Descripcion, 
+                                        a.numero_serie NumeroSerie, 
+                                        a.costo Costo, 
+                                        a.comentarios Comentarios, 
+                                        a.id_empleado IdEmpleado,
+                                        a.id_categoria IdCategoria,
+                                        a.fecha_ingreso FechaIngreso,
+                                        a.fecha_baja FechaBaja
+                                         FROM activo a      
                                          WHERE 
                                          a.id_activo = @id ";
 
@@ -151,37 +178,7 @@ namespace Plataforma.pages
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_comision =  " + id);
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id", id);
-
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        item = new Activo();
-
-                        item.Categoria = new Categoria();
-                        item.Empleado = new Empleado();
-
-                        item.IdActivo = int.Parse(ds.Tables[0].Rows[i]["id_activo"].ToString());
-                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
-                        item.Descripcion = ds.Tables[0].Rows[i]["descripcion"].ToString();
-                        item.NumeroSerie = ds.Tables[0].Rows[i]["numero_serie"].ToString();
-                        item.Comentarios = ds.Tables[0].Rows[i]["comentarios"].ToString();
-                        item.Categoria.Nombre = ds.Tables[0].Rows[i]["tipo"].ToString();
-                        item.Categoria.Id = int.Parse(ds.Tables[0].Rows[i]["id_categoria"].ToString());
-                        item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
-                        item.Empleado.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-
-
-
-
-                    }
-                }
-
+                item = conn.QueryFirstOrDefault<Activo>(query, new { id = id });
                 return item;
             }
             catch (Exception ex)
@@ -214,9 +211,6 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-
-
-
             try
             {
 
@@ -225,8 +219,8 @@ namespace Plataforma.pages
                 string sql = "";
                 if (accion == "nuevo")
                 {
-                    sql = @" INSERT INTO activo(descripcion, numero_serie,costo, comentarios, eliminado, id_empleado, id_categoria) 
-                    VALUES (@descripcion, @numero_serie, @costo, @comentarios, 0, @id_empleado, @id_categoria) ";
+                    sql = @" INSERT INTO activo(descripcion, numero_serie,costo, comentarios, eliminado, id_empleado, id_categoria, fecha_ingreso, fecha_baja) 
+                    VALUES (@descripcion, @numero_serie, @costo, @comentarios, 0, @id_empleado, @id_categoria, @fecha_ingreso, @fecha_baja) ";
                 }
                 else
                 {
@@ -236,7 +230,9 @@ namespace Plataforma.pages
                               costo = @costo,
                               comentarios = @comentarios,
                               id_empleado = @id_empleado,
-                              id_categoria = @id_categoria
+                              id_categoria = @id_categoria,
+                              fecha_ingreso = @fecha_ingreso,
+                              fecha_baja = @fecha_baja
                           WHERE 
                               id_activo = @id";
 
@@ -256,6 +252,8 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
                 cmd.Parameters.AddWithValue("@id_categoria", item.IdCategoria);
+                cmd.Parameters.AddWithValue("@fecha_ingreso", item.FechaIngreso);
+                cmd.Parameters.AddWithValue("@fecha_baja", !item.FechaBaja.HasValue ?  (object)DBNull.Value : item.FechaBaja);
 
                 cmd.Parameters.AddWithValue("@id", item.IdActivo);
 
@@ -297,13 +295,18 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
+                //string query = @" SELECT em.id_empleado, 
+                //                        concat(em.nombre ,  ' ' , em.primer_apellido , ' ' , em.segundo_apellido) AS nombre_completo
+                //                        FROM empleado em 
+                //                	    WHERE em.id_plaza = 
+                //                	    (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
+                //                		WHERE u.id_usuario = @id) 
+                //                        AND ISNull(eliminado, 0) = 0";
+
                 string query = @" SELECT em.id_empleado, 
                                         concat(em.nombre ,  ' ' , em.primer_apellido , ' ' , em.segundo_apellido) AS nombre_completo
                                         FROM empleado em 
-                                	    WHERE em.id_plaza = 
-                                	    (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
-                                		WHERE u.id_usuario = @id) 
-                                        AND ISNull(eliminado, 0) = 0";
+                                	    WHERE ISNull(eliminado, 0) = 0";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", idUsuario);
@@ -358,7 +361,7 @@ namespace Plataforma.pages
                 conn.Open();
                 DataSet ds = new DataSet();
                 string query = @" SELECT c.id, c.nombre FROM categoria c
-                                  WHERE ISNull(eliminado, 0) = 0
+                                  WHERE ISNull(eliminado, 0) = 0 AND ISNull(es_material_entrega, 0) = 0
                                 ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);

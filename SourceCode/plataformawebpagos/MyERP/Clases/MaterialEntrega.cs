@@ -11,12 +11,14 @@ namespace Plataforma.Clases
         public int IdMaterialEntrega;
         public string MaterialEntregado;
         public float Cantidad;
-        public string Fecha;
+        public DateTime Fecha;
         public float Costo;
         public string CostoMx;
         public int Eliminado;
         public int IdEmpleado;
         public int IdCategoria;
+        public string Colaborador;
+        public string NombreCategoria;
 
         public Categoria Categoria;
         public Empleado Empleado;

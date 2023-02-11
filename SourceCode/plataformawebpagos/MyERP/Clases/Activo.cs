@@ -14,9 +14,14 @@ namespace Plataforma.Clases
         public string NumeroSerie;
         public float Costo;
         public string Comentarios;
+        public string NombreCategoria;
+        public string Asignado;
         public int Eliminado;
         public int IdEmpleado;
         public int IdCategoria;
+        public DateTime? FechaIngreso;
+        public DateTime? FechaBaja;
+        public string Estatus { get; set; }
 
         public Categoria Categoria;
         public Empleado Empleado;

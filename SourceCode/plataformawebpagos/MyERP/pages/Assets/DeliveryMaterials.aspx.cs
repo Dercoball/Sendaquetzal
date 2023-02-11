@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dapper;
+using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
@@ -38,8 +39,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<MaterialEntrega> GetListaItems(string path, string idUsuario, string fechaInicial, string fechaFinal,
-            string idColaborador, string costoDesde, string costoHasta, string idCategoria)
+        public static List<MaterialEntrega> GetListaItems(string path, string idUsuario)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -54,95 +54,32 @@ namespace Plataforma.pages
             {
                 return null;//No tiene permisos
             }
-
-
-            string sqlColaborador = "";
-            if (idColaborador != "-1" && idColaborador != "")
-            {
-                sqlColaborador = " AND e.id_empleado = '" + idColaborador + "'";
-            }
-
-            string sqlCategoria = "";
-            if (idCategoria != "-1" && idCategoria != "")
-            {
-                sqlCategoria = " AND m.id_categoria = '" + idCategoria + "'";
-            }
-
-            string sqlCostoDesde = "";
-            if (costoDesde != "0" && costoDesde != "")
-            {
-                sqlCostoDesde = " and m.costo >= '" + costoDesde + "'";
-            }
-
-
-            string sqlCostoHasta = "";
-            if (costoHasta != "0" && costoHasta != "")
-            {
-                sqlCostoHasta = " AND m.costo <= '" + costoHasta + "'";
-            }
         
 
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @"  SELECT m.id_material_entrega, m.material_entregado, m.cantidad, m.costo, FORMAT(m.fecha, 'dd/MM/yyyy') fecha, 
-                                         concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_empleado,
-                                         c.nombre as tipo, e.id_empleado
-                                         FROM material_entrega m
-                                         JOIN empleado e ON (e.id_empleado = m.id_empleado)
-                                         JOIN categoria c ON (c.id = m.id_categoria)
-                                         WHERE 
-                                            e.id_plaza = 
-                                	        (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
-                                		    WHERE u.id_usuario = @id_usuario)
-                                         AND ISNull(m.eliminado, 0) = 0      "
-                                            + @" AND (m.fecha >= '" + fechaInicial + @"' AND m.fecha <= '" + fechaFinal + @"')"
-                                            + sqlColaborador
-                                            + sqlCategoria
-                                            + sqlCostoDesde
-                                            + sqlCostoHasta + @"
-                                         ORDER BY m.id_material_entrega
-                                ";
+                string query = @"SELECT 
+	                m.id_material_entrega IdMaterialEntrega,
+	                m.material_entregado MaterialEntregado,
+	                m.cantidad Cantidad,
+	                m.fecha Fecha,
+	                m.costo Costo,
+	                m.id_empleado IdEmpleado,
+	                m.id_categoria IdCategoria,
+	                c.nombre as NombreCategoria,
+	                concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS Colaborador
+                FROM 
+	                material_entrega m
+                    JOIN empleado e ON (e.id_empleado = m.id_empleado)
+                    JOIN categoria c ON (c.id = m.id_categoria)
+                WHERE 
+	                ISNull(m.eliminado, 0) = 0";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                items = conn.Query<MaterialEntrega>(query).ToList();
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-                adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
-
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        MaterialEntrega item = new MaterialEntrega();
-                        item.Categoria = new Categoria();
-                        item.Empleado = new Empleado();
-
-                        item.IdMaterialEntrega = int.Parse(ds.Tables[0].Rows[i]["id_material_entrega"].ToString());
-                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
-                        item.CostoMx = item.Costo.ToString("C2");
-                        item.MaterialEntregado = ds.Tables[0].Rows[i]["material_entregado"].ToString();
-                        item.Cantidad = float.Parse(ds.Tables[0].Rows[i]["cantidad"].ToString());
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
-                        item.Categoria.Nombre = ds.Tables[0].Rows[i]["tipo"].ToString();
-                        item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
-                        item.Empleado.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-
-                        string botones = "<button  onclick='deliveryMaterial.edit(" + item.IdMaterialEntrega + ")'  class='btn btn-outline-primary btn-sm'> <span class='fa fa-edit mr-1'></span>Editar</button>";
-                        botones += "&nbsp; <button  onclick='deliveryMaterial.delete(" + item.IdMaterialEntrega + ")'   class='btn btn-outline-primary btn-sm'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
-                }
-
 
                 return items;
             }
@@ -171,52 +108,24 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT m.id_material_entrega, m.material_entregado, m.cantidad, m.costo, FORMAT(fecha, 'yyyy-MM-dd') fecha, m.id_empleado, m.id_categoria, 
-                                         concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS nombre_empleado,
-                                         c.nombre as tipo
-                                         FROM material_entrega m
-                                         JOIN empleado e ON (e.id_empleado = m.id_empleado)
-                                         JOIN categoria c ON (c.id = m.id_categoria)
-          
-                                         WHERE 
-                                         m.id_material_entrega = @id ";
+                string query = @"SELECT 
+	                                    m.id_material_entrega IdMaterialEntrega,
+	                                    m.material_entregado MaterialEntregado,
+	                                    m.cantidad Cantidad,
+	                                    m.fecha Fecha,
+	                                    m.costo Costo,
+	                                    m.id_empleado IdEmpleado,
+	                                    m.id_categoria IdCategoria
+                                    FROM 
+	                                    material_entrega m
+                                    WHERE 
+                                    m.id_material_entrega = @id ";
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_comision =  " + id);
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id", id);
-
-                adp.Fill(ds);
-
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        item = new MaterialEntrega();
-
-                        item.Categoria = new Categoria();
-                        item.Empleado = new Empleado();
-
-                        item.IdMaterialEntrega = int.Parse(ds.Tables[0].Rows[i]["id_material_entrega"].ToString());
-                        item.Costo = float.Parse(ds.Tables[0].Rows[i]["costo"].ToString());
-                        item.MaterialEntregado = ds.Tables[0].Rows[i]["material_entregado"].ToString();
-                        item.Cantidad = float.Parse(ds.Tables[0].Rows[i]["cantidad"].ToString());
-                        item.Fecha = ds.Tables[0].Rows[i]["fecha"].ToString();
-                        item.Categoria.Nombre = ds.Tables[0].Rows[i]["tipo"].ToString();
-                        item.Empleado.Nombre = ds.Tables[0].Rows[i]["nombre_empleado"].ToString();
-                        item.Categoria.Id = int.Parse(ds.Tables[0].Rows[i]["id_categoria"].ToString());
-                        item.Empleado.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-
-
-
-
-                    }
-                }
-
+                item = conn.QueryFirstOrDefault<MaterialEntrega>(query, new { id = id });
                 return item;
             }
             catch (Exception ex)
@@ -270,7 +179,8 @@ namespace Plataforma.pages
                               cantidad = @cantidad,
                               costo = @costo,
                               id_empleado = @id_empleado,
-                              id_categoria = @id_categoria
+                              id_categoria = @id_categoria,
+                              fecha = @fecha
                           WHERE 
                               id_material_entrega = @id";
 
@@ -285,7 +195,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@cantidad", item.Cantidad);
                 cmd.Parameters.AddWithValue("@material_entregado", item.MaterialEntregado);
                 cmd.Parameters.AddWithValue("@costo", item.Costo);
-                cmd.Parameters.AddWithValue("@fecha", DateTime.Today);
+                cmd.Parameters.AddWithValue("@fecha", item.Fecha);
 
 
                 cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
@@ -331,13 +241,18 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
+                //string query = @" SELECT em.id_empleado, 
+                //                        concat(em.nombre ,  ' ' , em.primer_apellido , ' ' , em.segundo_apellido) AS nombre_completo
+                //                        FROM empleado em 
+                //                	    WHERE em.id_plaza = 
+                //                	    (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
+                //                		WHERE u.id_usuario = @id) 
+                //                        AND ISNull(eliminado, 0) = 0";
+
                 string query = @" SELECT em.id_empleado, 
                                         concat(em.nombre ,  ' ' , em.primer_apellido , ' ' , em.segundo_apellido) AS nombre_completo
                                         FROM empleado em 
-                                	    WHERE em.id_plaza = 
-                                	    (SELECT id_plaza FROM empleado e JOIN usuario u ON (u.id_empleado = e.id_empleado)
-                                		WHERE u.id_usuario = @id) 
-                                        AND ISNull(eliminado, 0) = 0";
+                                	    WHERE ISNull(eliminado, 0) = 0";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
                 adp.SelectCommand.Parameters.AddWithValue("@id", idUsuario);

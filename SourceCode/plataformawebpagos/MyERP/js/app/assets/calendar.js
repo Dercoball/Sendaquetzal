@@ -14,8 +14,46 @@ const calendar = {
 
         moment.locale('es-mx');
         calendar.setCalendar();
+        calendar.loadComboPlaza();
 
+        $('#cmbPlaza').change(function () {
+            const month = calendar.calendarControl.getDate().getMonth(); // ene = 0
+            const year = calendar.calendarControl.getDate().getFullYear();
+            calendar.getEventsByMonth(month, year);
+        });
+    },
 
+    loadComboPlaza: () => {
+
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Config/Employees.aspx/GetListaItemsPlazas",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                let items = msg.d;
+                let selectEl = document.getElementById('cmbPlaza');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+                selectEl.add(new Option("Todos", 0, true, true));
+
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    const option = new Option(item.Nombre, item.IdPlaza, false, false);
+                    selectEl.add(option);
+                }
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+
+        });
     },
 
 
@@ -60,6 +98,7 @@ const calendar = {
         params.month = month;
         params.year = year;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
+        params.plaza = parseInt(document.getElementById('cmbPlaza').value || 0);
         params = JSON.stringify(params);
 
         $.ajax({

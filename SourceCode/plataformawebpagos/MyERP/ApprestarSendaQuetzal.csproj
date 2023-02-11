@@ -136,6 +136,7 @@
     <Content Include="css\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="flyway\.gitignore" />
     <Content Include="flyway\migrations\V5__InversioneseInversio.sql" />
+    <Content Include="flyway\migrations\V7__AlterTableActivo.sql" />
     <Content Include="flyway\migrations\V6__AlterTableParoeFestivo.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
@@ -1194,6 +1195,7 @@
     <Content Include="vendor\metisMenu\metisMenu.min.css" />
     <Content Include="vendor\metisMenu\metisMenu.min.js" />
     <Content Include="vendor\momentjs\moment-with-locales.min.js" />
+    <Content Include="vendor\momentjs\moment.min.js" />
     <Content Include="vendor\morrisjs\morris.css" />
     <Content Include="vendor\morrisjs\morris.js" />
     <Content Include="vendor\morrisjs\morris.min.js" />

@@ -207,5 +207,103 @@ namespace Plataforma.pages
 
             return items;
         }
+
+        [WebMethod]
+        public static Prestamo GetDataPrestamo(string path, string idPrestamo)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            Prestamo item = new Prestamo();
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+            try
+            {
+                conn.Open();
+
+                item = GetPrestamoById(path, idPrestamo, conn);
+
+                if (item != null)
+                {
+                    item.Cliente = GetItemClient(path, item.IdCliente, conn);
+                    item.Cliente.direccion = GetAddress(path, item.IdCliente, 0, conn);
+                    item.Cliente.direccionAval = GetAddress(path, item.IdCliente, 1, conn);
+                    item.listaRelPrestamoAprobacion = GetRelPrestamoAprobacion(path, item.IdPrestamo, conn);
+                }
+
+                return item;
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        public static Prestamo GetPrestamoById(string path, string idPrestamo, SqlConnection conn)
+        {
+
+            Prestamo prestamoData = null;
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT p.monto, p.id_prestamo, IsNull(p.id_empleado, 0) id_empleado,
+                                         FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud, fecha_solicitud fecha_solicitud_date,
+                                         p.id_status_prestamo, p.id_cliente,
+                                         st.nombre nombre_status_prestamo, st.color
+                                    FROM prestamo p 
+                                    JOIN status_prestamo st ON (st.id_status_prestamo = p.id_status_prestamo) 
+                                    WHERE P.id_prestamo = @id_prestamo
+                                    ";
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
+
+                Utils.Log("\nMétodo-> " +
+                        System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+
+                adp.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        prestamoData = new Prestamo();
+                        prestamoData.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
+                        prestamoData.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        prestamoData.IdCliente = ds.Tables[0].Rows[i]["id_cliente"].ToString();
+                        prestamoData.IdStatusPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_status_prestamo"].ToString());
+                        prestamoData.Color = ds.Tables[0].Rows[i]["color"].ToString();
+                        prestamoData.NombreStatus = "<span class='" + prestamoData.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
+                        prestamoData.FechaSolicitud = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
+                        prestamoData.FechaSolicitudDate = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_solicitud_date"].ToString());
+                        prestamoData.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
+                        prestamoData.MontoFormateadoMx = prestamoData.Monto.ToString("C2");
+
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return prestamoData;
+            }
+
+            return prestamoData;
+
+        }
     }
 }

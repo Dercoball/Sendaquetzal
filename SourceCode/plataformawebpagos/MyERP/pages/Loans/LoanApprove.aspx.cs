@@ -2053,7 +2053,7 @@ namespace Plataforma.pages
                         item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
                         item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
                         item.MontoLimiteInicial = float.Parse(ds.Tables[0].Rows[i]["monto_limite_inicial"].ToString());
-                        item.FechaIngreso = ds.Tables[0].Rows[i]["fecha_ingreso"].ToString();
+                        item.FechaIngreso = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_ingreso"].ToString());
                         item.FechaNacimiento = ds.Tables[0].Rows[i]["fecha_nacimiento"].ToString();
 
                         item.CURPAval = ds.Tables[0].Rows[i]["curp_aval"].ToString();

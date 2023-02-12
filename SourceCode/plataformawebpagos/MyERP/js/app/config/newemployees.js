@@ -12,11 +12,75 @@ const POSICION_PROMOTOR = 5;
 
 const employee = {
     init: () => {
-        employee.idSeleccionado = -1;
+        employee.idSeleccionado = $.isNumeric($("#hfEmpleadoId").val())
+            ? parseInt($("#hfEmpleadoId").val())
+            : -1;
         employee.loadComboPosicion();
         employee.loadComboPlaza();
         employee.loadComboEmployeesByPosicion(POSICION_EJECUTIVO, '#cboEjecutivo');
         employee.loadComboEmployeesByPosicion(POSICION_SUPERVISOR, '#cboSupervisor');
+
+        if (employee.idSeleccionado > 0) {
+            employee.setDatosPersona('UcAval');
+        }
+        else {
+            $("#dtpFechaIngreso").val(moment(Date.now()).format('YYYY-MM-DD'));
+        }
+    },
+    getDocumentos: (control) => {
+        var arrDocumentos = [];
+        var filefotografia = $("#" + control + "_filefotografia");
+        var fileidentificacionfrente = $("#" + control + "_fileidentificacionfrente");
+        var fileidentificacionreverso = $("#" + control + "_fileidentificacionreverso");
+        var filecomprobantedomicilio = $("#" + control + "_filecomprobantedomicilio");
+
+        var imgFotografia = $("#" + control + "_imgDocumento1");
+        var imgFrente = $("#" + control + "_imgDocumento2");
+        var imgReverso = $("#" + control + "_imgDocumento3");
+        var imgDomicilio = $("#" + control + "_imgDocumento4");
+
+        var hfIdDocumento1 = $("#" + control + "_hfIdDocumento1");
+        var hfIdDocumento2 = $("#" + control + "_hfIdDocumento2");
+        var hfIdDocumento3 = $("#" + control + "_hfIdDocumento3");
+        var hfIdDocumento4 = $("#" + control + "_hfIdDocumento4");
+
+        if (filefotografia[0].files.length > 0) {
+            arrDocumentos.push({
+                IdTipoDocumento: 1,
+                IdDocumento: $.isNumeric(hfIdDocumento1.val()) ? parseInt(hfIdDocumento1.val()) : 0,
+                Contenido: imgFotografia.attr('src'),
+                Nombre: filefotografia[0].files[0].name
+            });
+        }
+
+        if (fileidentificacionfrente[0].files.length > 0) {
+            arrDocumentos.push({
+                IdTipoDocumento: 2,
+                IdDocumento: $.isNumeric(hfIdDocumento2.val()) ? parseInt(hfIdDocumento2.val()) : 0,
+                Contenido: imgFrente.attr('src'),
+                Nombre: fileidentificacionfrente[0].files[0].name
+            });
+        }
+
+        if (fileidentificacionreverso[0].files.length > 0) {
+            arrDocumentos.push({
+                IdTipoDocumento: 3,
+                IdDocumento: $.isNumeric(hfIdDocumento3.val()) ? parseInt(hfIdDocumento3.val()) : 0,
+                Contenido: imgReverso.attr('src'),
+                Nombre: fileidentificacionreverso[0].files[0].name
+            });
+        }
+
+        if (filecomprobantedomicilio[0].files.length > 0) {
+            arrDocumentos.push({
+                IdTipoDocumento: 4,
+                IdDocumento: $.isNumeric(hfIdDocumento4.val()) ? parseInt(hfIdDocumento4.val()) : 0,
+                Contenido: imgDomicilio.attr('src'),
+                Nombre: filecomprobantedomicilio[0].files[0].name
+            });
+        }
+
+        return arrDocumentos;
     },
     setDatosPersona: (oDatosPersona, control) => {
         $("#" + control + "_txtCURP").val(oDatosPersona.Curp);
@@ -40,6 +104,9 @@ const employee = {
         var oColaborador = {};
         oColaborador.IdEmpleado = employee.idSeleccionado;
         oColaborador.FechaIngreso = moment($('#dtpFechaIngreso').val()).format('YYYY-MM-DD');
+        oColaborador.fecha_baja = moment($('#dtpFechaBaja').val()).isValid()
+            ? moment($('#dtpFechaBaja').val()).format('YYYY-MM-DD')
+            : null;
         oColaborador.IdPosicion = $('#cboPuesto').val();
         oColaborador.IdSupervisor = $('#cboSupervisor').val();
         oColaborador.IdPlaza = $('#cboPlaza').val();
@@ -61,9 +128,9 @@ const employee = {
         oColaborador.Direccion = employee.getDireccion('UcColaborador');
         oColaborador.limite_venta_ejercicio = $('#txtLimiteVentaPorEjercicio').val();
         oColaborador.limite_incremento_ejercicio = $('#txtLimiteIncrementoPorEjercicio').val();
-        oColaborador.fizcalizable = $('#cboFiscalzable').val() === '1' ? true: false;
-        oColaborador.nota_foto = $('#txtNotaFoto').val();
-        
+        oColaborador.fizcalizable = $('#cboFiscalzable').val() === '1' ? true : false;
+        oColaborador.NotaFoto = $('#txtNotaFoto').val();
+
         return oColaborador;
     },
     getDatosPersona: (control) => {
@@ -234,7 +301,9 @@ const employee = {
             params.oRequest = {
                 Colaborador: employee.getColaborador(),
                 User: employee.getUser(),
-               Aval: employee.getDatosPersona('UcAval')
+                Aval: employee.getDatosPersona('UcAval'),
+                DocumentosAval: employee.getDocumentos('UcDocumentacionAval'),
+                DocumentosColaborador: employee.getDocumentos('UcDocumentacionColaborador')
             };
 
             params = JSON.stringify(params);
@@ -248,7 +317,12 @@ const employee = {
                 async: true,
                 success: function (msg) {
                     var valores = msg.d;
-
+                    if (valores.CodigoError === 1) {
+                        utils.toast(valores.MensajeError, 'error');
+                    }
+                    else {
+                        window.location = '/pages/Config/Employees.aspx';
+                    }
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                     utils.toast(mensajesAlertas.errorGuardar, 'error');
                 }
@@ -324,5 +398,3 @@ window.addEventListener('load', () => {
     employee.init();
     employee.accionesBotones();
 });
-
-

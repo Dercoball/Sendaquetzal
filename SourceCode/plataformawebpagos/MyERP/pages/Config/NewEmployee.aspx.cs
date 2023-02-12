@@ -279,6 +279,7 @@ namespace Plataforma.pages.Config
                 Usuario usuarioExists = GetUsuarioByLogin(path, oRequest.User.Login, conn, strConexion, transaccion);
                 if (usuarioExists != null)
                 {
+                    transaccion.Rollback();
                     salida.MensajeError = "Ya existe un usuario con el Nombre de usuario/Login " + oRequest.User.Login + " por favor verifique e intente de nuevo.";
                     salida.CodigoError = 1;
                     return salida;
@@ -286,6 +287,29 @@ namespace Plataforma.pages.Config
 
                 Utils.Log("\nMétodo-> " +
                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+
+                //Validacion del CURP de colaborador 
+                var sql = $"SELECT COUNT(*) FROM empleado WHERE UPPER(curp) = '{oRequest.Colaborador.CURP}'";
+                var iExisteColaborador = conn.ExecuteScalar<int>(sql, transaction: transaccion);
+
+                if (iExisteColaborador > 0) {
+                    transaccion.Rollback();
+                    salida.MensajeError = "Ya existe un colaborador con el curp " + oRequest.Colaborador.CURP + " por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
+
+                //Validacion del curp del aval
+                sql = $"SELECT COUNT(*) FROM cliente WHERE UPPER(curp) = '{oRequest.Colaborador.CURP}'";
+                var iExisteCliente = conn.ExecuteScalar<int>(sql, transaction: transaccion);
+
+                if (iExisteCliente > 0)
+                {
+                    transaccion.Rollback();
+                    salida.MensajeError = "Ya existe un aval con el curp " + oRequest.Aval.Curp + " por favor verifique e intente de nuevo.";
+                    salida.CodigoError = 1;
+                    return salida;
+                }
 
                 RegistrarEmpleado(oRequest.Colaborador, transaccion, conn);
                 RegistrarUsuario(oRequest.User, transaccion, conn);

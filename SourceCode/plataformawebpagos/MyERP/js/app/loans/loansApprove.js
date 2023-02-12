@@ -2,7 +2,9 @@
 let date = new Date();
 let descargas = "Prestamo_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '13';
-
+let markers = [];
+let map;
+let tabActive = '';
 
 const loansEdit = {
 
@@ -40,13 +42,39 @@ const loansEdit = {
         }
 
 
+        $('#modalMapa').on('show.bs.modal', function (e) {
+            tabActive = $('.nav-tabs .active').text();
+            if (tabActive == 'Cliente' || tabActive == 'Aval') {
+                markers.forEach((marker) => {
+                    marker.setMap(null);
+                });
+                markers = [];
+
+                let inputUbicacion = $('.nav-tabs .active').text() == 'Cliente' ? document.getElementById('txtUbicacion') : document.getElementById('txtUbicacionAval');
+                if (inputUbicacion.value != "") {
+                    var coordenadas = inputUbicacion.value.split(',');
+                    var point = {
+                        lat: parseFloat(coordenadas[0].trim()),
+                        lng: parseFloat(coordenadas[1].trim())
+                    };
+
+                    var position = new google.maps.LatLng(point);
+
+                    const marker = new google.maps.Marker({
+                        position,
+                        map,
+                        animation: google.maps.Animation.DROP,
+                    });
+                    markers.push(marker);
+                    map.setCenter(point, 15);
+                } 
+                
+            }
+        })
+
     },
 
-
-
     nuevo: () => {
-
-
         $('#frm')[0].reset();
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
@@ -61,13 +89,7 @@ const loansEdit = {
         $('.combo-supervisor').hide();
         $('.combo-ejecutivo').hide();
         $('#txtPassword').prop('disabled', false);
-
-
-
-
     },
-
-
 
     getLocation(control) {
 
@@ -107,8 +129,8 @@ const loansEdit = {
 
         $('.form-group').removeClass('has-error');
         $('.help-block').empty();
-        $('#frmCustomer')[0].reset();
-        $('#frmAval')[0].reset();
+        //$('#frmCustomer')[0].reset();
+        //$('#frmAval')[0].reset();
 
         $('#divLoading').show();
         $('#panelForm').hide();
@@ -220,15 +242,26 @@ const loansEdit = {
 
                 panelGuarantee.view(item.IdPrestamo, disabled);
 
+                //Se agrega el evento para descargar las imagenes
+                const imagesLink = document.querySelectorAll("a.img-document");
+
+                imagesLink.forEach(alink => {
+                    alink.addEventListener('click', () => {
+                        let img = document.getElementById("img_" + alink.dataset.tipo);
+                        let imagePath = img.getAttribute('src');
+
+                        var a = document.createElement("a"); //Create <a>
+                        a.href = imagePath; //Image Base64 Goes here
+                        a.download = `archivo${alink.dataset.tipo}.${alink.dataset.extension}`; //File name Here
+                        a.click()
+                    });
+                })
+
                 let time_ = 5000;
                 setTimeout(function () {
-
                     $('#divLoading').hide();
                     $('#panelForm').show();
-
                 }, time_);
-
-
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -358,6 +391,8 @@ const loansEdit = {
                     if (doc.Extension === 'png' || doc.Extension === 'PNG' || doc.Extension === 'jpg' || doc.Extension === 'jpeg'
                         || doc.Extension === 'bmp' || doc.Extension === 'jfif') {
                         $(`${idControl}`).attr('src', `data:image/jpg;base64,${doc.Contenido}`);
+                        $(`#href_${idTipoDocumento}`).attr('href', `data:image/jpg;base64,${doc.Contenido}`);
+                        $(`#href_${idTipoDocumento}`).attr('data-extension', doc.Extension);
                     } else if (doc.Extension === 'pdf') {
                         $(`${idControl}`).attr('src', '../../img/ico_pdf.png');
                     } else {
@@ -376,9 +411,6 @@ const loansEdit = {
         });
 
     },
-
-
-
 
     accionesBotones: () => {
 
@@ -565,6 +597,7 @@ const loansEdit = {
             dataClient.Ocupacion = $('#txtOcupacion').val();
             dataClient.CurpAval = $('#txtCURPAval').val();
             dataClient.NotaCliente = $('#txtNotaSupervisor').val();
+            dataClient.NotaEjecutivoCliente = $('#txtNotaEjecutivo').val();
             dataClient.NotaFotografiaCliente = $('#txtNotaDeFoto').val();
 
             let dataAddressClient = {};
@@ -717,6 +750,7 @@ const loansEdit = {
             dataClient.NombreAval = $('#txtNombreAval').val();
             dataClient.TelefonoAval = $('#txtTelefonoAval').val();
             dataClient.NotaAval = $('#txtNotaSupervisorAval').val();
+            dataClient.NotaEjecutivoAval = $('#txtNotaEjecutivoAval').val();
             dataClient.NotaFotografiaAval = $('#txtNotaDeFotoAval').val();
 
 
@@ -834,23 +868,161 @@ const loansEdit = {
 
 
 
-        $('#btnReloadLocation').on('click', (e) => {
-            e.preventDefault();
+        //$('#btnReloadLocation').on('click', (e) => {
+        //    e.preventDefault();
 
-            loansEdit.getLocation('#txtUbicacion');
+        //    loansEdit.getLocation('#txtUbicacion');
 
-        });
+        //});
 
-        $('#btnReloadLocationAval').on('click', (e) => {
-            e.preventDefault();
+        //$('#btnReloadLocationAval').on('click', (e) => {
+        //    e.preventDefault();
 
-            loansEdit.getLocation('#txtUbicacionAval');
+        //    loansEdit.getLocation('#txtUbicacionAval');
 
-        });
+        //});
 
+    }
+}
+
+function initAutocomplete() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 13,
+        mapTypeControl: false,
+        streetViewControl: false,
+        mapTypeId: "roadmap",
+    });
+
+    // Centramos el la posicion actual
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                map.setCenter(pos, 10);
+            },
+            () => {
+                handleLocationError(true, infoWindow, map.getCenter());
+            }
+        );
+    } else {
+        const posDefault = {
+            lat: 18.26199760533573, lng: -93.22477062866129
+        };
+        map.setCenter(posDefault, 10);
     }
 
 
+    // Create the search box and link it to the UI element.
+    const input = document.getElementById("pac-input");
+    const searchBox = new google.maps.places.SearchBox(input);
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    // Bias the SearchBox results towards current map's viewport.
+    map.addListener("bounds_changed", () => {
+        searchBox.setBounds(map.getBounds());
+    });
+
+    
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+            return;
+        }
+        // Clear out the old markers.
+        markers.forEach((marker) => {
+            marker.setMap(null);
+        });
+        markers = [];
+        //document.getElementById("Latitud").value = null;
+        //document.getElementById("Longitud").value = null;
+
+        // For each place, get the icon, name and location.
+        const bounds = new google.maps.LatLngBounds();
+        places.forEach((place) => {
+            if (!place.geometry || !place.geometry.location) {
+                console.log("Returned place contains no geometry");
+                return;
+            }
+            const icon = {
+                url: place.icon,
+                size: new google.maps.Size(71, 71),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(17, 34),
+                scaledSize: new google.maps.Size(25, 25),
+            };
+
+            console.log(place);
+
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+
+            //addMarker(place.geometry.location);
+
+            if (place.geometry.viewport) {
+                // Only geocodes have viewport.
+                bounds.union(place.geometry.viewport);
+            } else {
+                bounds.extend(place.geometry.location);
+            }
+        });
+        map.fitBounds(bounds);
+    });
+
+    function addMarker(position) {
+        const marker = new google.maps.Marker({
+            position,
+            map,
+            animation: google.maps.Animation.DROP,
+        });
+        deleteMarkers();
+        markers.push(marker);
+        map.setCenter(marker.getPosition(), 10);
+    }
+
+
+    // Sets the map on all markers in the array.
+    function setMapOnAll(map) {
+        for (let i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+    }
+
+    // Removes the markers from the map, but keeps them in the array.
+    function hideMarkers() {
+        setMapOnAll(null);
+    }
+
+    // Shows any markers currently in the array.
+    function showMarkers() {
+        setMapOnAll(map);
+    }
+
+    // Deletes all markers in the array by removing references to them.
+    function deleteMarkers() {
+        hideMarkers();
+        markers = [];
+    }
+
+    map.addListener("click", (mapsMouseEvent) => {
+        addMarker(mapsMouseEvent.latLng);
+        var coordendas = mapsMouseEvent.latLng.toJSON();
+        switch (tabActive) {
+            case 'Cliente':
+                document.getElementById('txtUbicacion').value = `${coordendas.lat},${coordendas.lng}`;
+                break;
+            case 'Aval':
+                document.getElementById('txtUbicacionAval').value = `${coordendas.lat},${coordendas.lng}`;
+                break;
+        }
+        //document.getElementById("Latitud").value = latitudParada;
+        //document.getElementById("Longitud").value = longitudParada;
+
+    });
 }
 
 window.addEventListener('load', () => {
@@ -860,5 +1032,7 @@ window.addEventListener('load', () => {
     loansEdit.accionesBotones();
 
 });
+
+
 
 

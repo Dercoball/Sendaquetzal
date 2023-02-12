@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Plataforma.Clases
 {
@@ -44,7 +45,12 @@ namespace Plataforma.Clases
         { get; set; }
         public string Accion
         { get; set; }
-        
+
+        public List<RelPrestamoAprobacion> listaRelPrestamoAprobacion;
+        public string MontoFormateadoMx;
+        public float Saldo;             //Deuda actual de este prestamo
+        public string SaldoFormateadoMx;
+
         public const int STATUS_PENDIENTE = 1;
         public const int STATUS_PENDIENTE_EJECUTIVO = 2;
         public const int STATUS_RECHAZADO = 3;

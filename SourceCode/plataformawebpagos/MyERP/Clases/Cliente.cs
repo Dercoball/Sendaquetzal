@@ -63,6 +63,8 @@ namespace Plataforma.Clases
         { get; set; }
         public string NotaAval
         { get; set; }
+        public string NotaEjecutivoCliente { get; set; }
+        public string NotaEjecutivoAval { get; set; }
         public string NotaFotografiaCliente
         { get; set; }
         public string NotaFotografiaAval
@@ -79,7 +81,7 @@ namespace Plataforma.Clases
         public String TelefonoAval;
 
 
-
+        public int Mensaje;
         public string Accion;
 
         public const int STATUS_INACTIVO = 1;

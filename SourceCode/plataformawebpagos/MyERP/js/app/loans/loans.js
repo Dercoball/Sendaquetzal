@@ -30,7 +30,7 @@ const loans = {
     },
     obtenerContadores: (IdCliente) => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.IdCliente = IdCliente;
         params = JSON.stringify(params);
 
@@ -66,7 +66,7 @@ const loans = {
     },
     loadTipoClientes: (funcion) => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -96,7 +96,7 @@ const loans = {
     },
     obtenerGarantias: (funcion) => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idPrestamo = loans.idPrestamo;
         params = JSON.stringify(params);
 
@@ -294,7 +294,7 @@ const loans = {
     },
     detail: (idPrestamo) => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.Id = idPrestamo;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
@@ -388,7 +388,7 @@ const loans = {
             NotasGenerales: $("#txtNotaAprobacion").val(),
             UbicacionConfirmada: $("#txtUbicacionReconfirmar").val(),
         };
-        params.path = window.location.hostname;
+        params.path = "connbd";
 
         params = JSON.stringify(params);
 
@@ -425,7 +425,7 @@ const loans = {
             UbicacionConfirmada: $("#txtUbicacionReconfirmar").val(),
         };
         params.fMontoGarantia = 0;
-        params.path = window.location.hostname;
+        params.path = "connbd";
         $.each(loans.arrGarantias, function (index, garantia) {
             params.fMontoGarantia += garantia.costo;
         });
@@ -459,7 +459,7 @@ const loans = {
         var frmAprobacionEjecutivo = $("#frmAprobacionEjecutivo");
         if (frmAprobacionEjecutivo.valid()) {
             var params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.IdPrestamo = loans.idPrestamo;
             params.sNotaEjecutivo = $("#txtNotaAprobacionEjecutivo").val();
             params = JSON.stringify(params);
@@ -497,7 +497,7 @@ const loans = {
         params.Request.DocumentosCliente = loans.getDocumentos('UcDocumentacionCliente');
         params.Request.Cliente = loans.getDatosPersona('UcCliente');
         params.Request.Aval = loans.getDatosPersona('UcAval');
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.Request.Cliente.idCliente = loans.idCliente;
         params.Request.Aval.idCliente = loans.idAval;
@@ -540,7 +540,7 @@ const loans = {
 
         $(document).on('click','.eliminarGarantia', function () {
             var params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.Id = $(this).attr('data-id');
             params = JSON.stringify(params);
 
@@ -574,7 +574,7 @@ const loans = {
 
             if (frmGarantias.valid()) {
                 var params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
                 params.oGarantia = {
                     id_prestamo: loans.idPrestamo,
@@ -612,7 +612,7 @@ const loans = {
 
         $('#cboTipoCliente').change(function () {
             var params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = $(this).val();
             params = JSON.stringify(params);
 
@@ -739,7 +739,7 @@ const loans = {
         $(document).on("change",".curp-persona" ,function () {
             var sControl = $(this).attr('id').substring(0, $(this).attr('id').indexOf('_'));
             var params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.sCURP = $(this).val();
             params = JSON.stringify(params);
 

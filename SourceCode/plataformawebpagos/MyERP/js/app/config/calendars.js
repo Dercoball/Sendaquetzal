@@ -51,7 +51,7 @@ const calendar = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -266,7 +266,7 @@ const calendar = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -349,7 +349,7 @@ const calendar = {
                 item.EsLaboral = Number(document.getElementById('cmbLaboral').value) == 1 ? true : false;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = calendar.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -411,7 +411,7 @@ const calendar = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = calendar.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

@@ -15,7 +15,7 @@ const aboutus = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = sessionStorage.getItem("idusuario");
         params.idTabla = "1";
         params = JSON.stringify(params);

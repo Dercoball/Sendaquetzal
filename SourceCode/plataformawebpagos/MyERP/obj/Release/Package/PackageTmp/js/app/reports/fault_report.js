@@ -111,7 +111,7 @@ const report = {
     loadComboEjecutivosByPlaza: (idPlaza, control) => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idPlaza = idPlaza;
         params = JSON.stringify(params);
 
@@ -147,7 +147,7 @@ const report = {
     loadComboSupervisoresByEjecutivo: (idEjecutivo, control) => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idEjecutivo = idEjecutivo;
         params = JSON.stringify(params);
 
@@ -183,7 +183,7 @@ const report = {
     loadComboPromotoresBySupervisor: (idSupervisor, control) => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idSupervisor = idSupervisor;
         params = JSON.stringify(params);
 
@@ -218,7 +218,7 @@ const report = {
     loadComboPlaza: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -254,7 +254,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.fechaInicial = fechaInicial;
@@ -308,7 +308,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.idStatusPago = idStatusPago;
@@ -358,7 +358,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.fechaInicial = fechaInicial;
@@ -404,7 +404,7 @@ const report = {
     getPromotorWithCommissionData: (id) => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -450,7 +450,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.totalEntregar = totalEntregar;
         params.totalFalla = totalFalla;
         params = JSON.stringify(params);
@@ -487,7 +487,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.idStatus = idStatus;
@@ -552,7 +552,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.idStatus = idStatus;
@@ -613,7 +613,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.idStatus = idStatus;
@@ -673,7 +673,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.fechaInicial = fechaInicial;
@@ -733,7 +733,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.fechaInicial = fechaInicial;
@@ -793,7 +793,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.fechaInicial = fechaInicial;
@@ -845,7 +845,7 @@ const report = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPromotor = idPromotor;
         params.fechaInicial = fechaInicial;
@@ -894,7 +894,7 @@ const report = {
     getTablePrincipalFondos(idSupervisor, fechaInicial, fechaFinal) {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idSupervisor = idSupervisor;
         params.fechaInicial = fechaInicial;
@@ -976,7 +976,7 @@ const report = {
     getTableGastos(idSupervisor, fechaInicial, fechaFinal) {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idSupervisor = idSupervisor;
         params.fechaInicial = fechaInicial;
@@ -1112,7 +1112,7 @@ const report = {
             $('#btnGuardar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.fecha = $('#txtFechaSemana').val();
             params.idTipoReporte = 1;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -1182,7 +1182,7 @@ const report = {
             $('#btnGuardarDeterminacion').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.fecha = $('#txtFechaSemana').val();
             params.idTipoReporte = 2;
             params.idUsuario = document.getElementById('txtIdUsuario').value;

@@ -26,7 +26,7 @@ const calendar = {
     loadComboPlaza: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -94,7 +94,7 @@ const calendar = {
 
     getEventsByMonth: (month, year) => {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.month = month;
         params.year = year;
         params.idUsuario = document.getElementById('txtIdUsuario').value;

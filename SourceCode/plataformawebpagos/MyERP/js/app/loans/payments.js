@@ -140,7 +140,7 @@ const payments = {
         else typeFilter = "plaza";
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.fechaInicial = payments.fechaInicial;
@@ -372,7 +372,7 @@ const payments = {
 
         //  traer datos del pago e historial del préstamo
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPago = idPago;
         params = JSON.stringify(params);
@@ -428,7 +428,7 @@ const payments = {
         console.log(`Historial  idPrestamo ${idPrestamo}`);
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.idPrestamo = idPrestamo;
@@ -494,7 +494,7 @@ const payments = {
 
     loadComboPlaza: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -524,7 +524,7 @@ const payments = {
 
     loadComboEjecutivo: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params = JSON.stringify(params);
 
@@ -555,7 +555,7 @@ const payments = {
 
     loadComboSupervisor: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
         params = JSON.stringify(params);
@@ -587,7 +587,7 @@ const payments = {
 
     loadComboPromotor: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
         params = JSON.stringify(params);
@@ -671,7 +671,7 @@ const payments = {
     updatePayment(idPago, idStatus) {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idPago = idPago;
         params.idStatus = idStatus;
         params = JSON.stringify(params);
@@ -768,7 +768,7 @@ const payments = {
             $('.deshabilitable').prop('disabled', true);
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPago = payments.idPago;

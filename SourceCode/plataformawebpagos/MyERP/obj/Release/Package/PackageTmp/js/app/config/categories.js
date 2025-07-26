@@ -26,7 +26,7 @@ const Category = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -116,7 +116,7 @@ const Category = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -204,7 +204,7 @@ const Category = {
                 item.EsMaterialEntrega = $('#chkEsMaterialEntrega').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = Category.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -266,7 +266,7 @@ const Category = {
         $('#btnEliminarAceptarAssets').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = Category.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

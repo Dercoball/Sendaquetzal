@@ -25,7 +25,7 @@ const period = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -114,7 +114,7 @@ const period = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -200,7 +200,7 @@ const period = {
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = period.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -262,7 +262,7 @@ const period = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = period.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

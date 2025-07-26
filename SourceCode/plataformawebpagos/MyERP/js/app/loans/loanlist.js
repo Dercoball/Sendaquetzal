@@ -38,7 +38,7 @@ const loans = {
     },
     loadStatus: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $('#cboStatus').html('');
@@ -70,7 +70,7 @@ const loans = {
     loadPrestamos: () => {
         let params = {};
         params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.path = window.location.hostname;
+        params.path = "connbd";
 
         $.ajax({
             type: "POST",
@@ -171,7 +171,7 @@ const loans = {
             e.preventDefault();
             let params = {};
             params.Filtro = loans.getFilter();
-            params.path = window.location.hostname;
+            params.path = "connbd";
             $.ajax({
                 type: "POST",
                 url: "/pages/Loans/LoanRequest.aspx/Search",

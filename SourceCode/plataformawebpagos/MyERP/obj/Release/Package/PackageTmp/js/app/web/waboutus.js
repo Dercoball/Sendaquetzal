@@ -19,7 +19,7 @@ const wabout = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idTabla = "1";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
@@ -56,7 +56,7 @@ const wabout = {
             e.preventDefault();
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.contenido = tinymce.get("contenido").getContent();
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idTabla = "1";

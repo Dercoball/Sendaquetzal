@@ -25,7 +25,7 @@ const plaza = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -114,7 +114,7 @@ const plaza = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -201,7 +201,7 @@ const plaza = {
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = plaza.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -265,7 +265,7 @@ const plaza = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = plaza.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

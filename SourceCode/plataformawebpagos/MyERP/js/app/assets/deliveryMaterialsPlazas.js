@@ -57,7 +57,7 @@ const deliveryMaterial = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idColaborador = idColaborador;
         params.idColaborador = document.getElementById('comboFiltroEmpleado').value;
         params.fechaInicial = fechaInicial;
@@ -308,7 +308,7 @@ const deliveryMaterial = {
         $('#frmMaterials')[0].reset();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         console.log(id);
         params = JSON.stringify(params);
@@ -359,7 +359,7 @@ const deliveryMaterial = {
     loadComboEmpleado: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -395,7 +395,7 @@ const deliveryMaterial = {
     loadComboTipo: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
 
         params = JSON.stringify(params);
@@ -650,7 +650,7 @@ const deliveryMaterial = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = deliveryMaterial.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -701,7 +701,7 @@ const deliveryMaterial = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = deliveryMaterial.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

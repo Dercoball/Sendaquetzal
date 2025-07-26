@@ -25,7 +25,7 @@ const comission = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -116,7 +116,7 @@ const comission = {
         $('#frm')[0].reset();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -210,7 +210,7 @@ const comission = {
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = comission.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -272,7 +272,7 @@ const comission = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = comission.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

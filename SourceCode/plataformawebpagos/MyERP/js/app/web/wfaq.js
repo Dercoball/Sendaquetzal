@@ -22,7 +22,7 @@ const faq = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -115,7 +115,7 @@ const faq = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -203,7 +203,7 @@ const faq = {
                 item.Activo = $('#chkActivo').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = faq.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -265,7 +265,7 @@ const faq = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = faq.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

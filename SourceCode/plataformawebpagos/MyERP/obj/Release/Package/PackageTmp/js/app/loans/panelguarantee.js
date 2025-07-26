@@ -33,7 +33,7 @@ const panelGuarantee = {
     cargarItemsCustomer: (idPrestamo, disabled) => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPrestamo = idPrestamo;
         params = JSON.stringify(params);
@@ -127,7 +127,7 @@ const panelGuarantee = {
     getGuaranteePhoto: (idGarantia, idControl) => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idGarantia = idGarantia;
         params = JSON.stringify(params);
 
@@ -159,7 +159,7 @@ const panelGuarantee = {
     cargarItemsAval: (idPrestamo, disabled) => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPrestamo = idPrestamo;
         params = JSON.stringify(params);
@@ -306,7 +306,7 @@ const panelGuarantee = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.id = panelGuarantee.idSeleccionado;
             parametros.idUsuario = document.getElementById('txtIdUsuario').value;
 
@@ -387,7 +387,7 @@ const panelGuarantee = {
             item.Costo = $('#txtCosto').val();
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.item = item;
             parametros.idUsuario = document.getElementById('txtIdUsuario').value;
             parametros.idPrestamo = panelGuarantee.idPrestamo;
@@ -462,7 +462,7 @@ const panelGuarantee = {
             item.Costo = $('#txtCostoAval').val();
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.item = item;
             parametros.idUsuario = document.getElementById('txtIdUsuario').value;
             parametros.idPrestamo = panelGuarantee.idPrestamo;

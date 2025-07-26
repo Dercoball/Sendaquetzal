@@ -14,7 +14,7 @@ const investor = {
     },
     loadContent() {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -91,7 +91,7 @@ const investor = {
     },
     suspender: () => {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = investor.idSeleccionado;
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.status = false; 
@@ -131,7 +131,7 @@ const investor = {
         $("#btnSuspender").show();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         console.log(id);
         params = JSON.stringify(params);
@@ -205,7 +205,7 @@ const investor = {
                 lo_Inversionista.PorcentajeUtilidadSugerida = $('#txtPorcentajeUtilidadSugerida').val();
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = lo_Inversionista;
                 params.accion = investor.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -245,7 +245,7 @@ const investor = {
 
         $('#btnEliminarAceptar').on('click', (e) => {
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = investor.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
@@ -289,7 +289,7 @@ const investor = {
 
             let params = {};
             params.oRequest = oRequest;
-            params.path = window.location.hostname;
+            params.path = "connbd";
             $.ajax({
                 type: "POST",
                 url: "/pages/Investors/Investors.aspx/SearchInvestor",

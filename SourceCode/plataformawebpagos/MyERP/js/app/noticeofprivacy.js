@@ -16,7 +16,7 @@ const noticyofprivacy = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = sessionStorage.getItem("idusuario");
         params.idTabla = "3";
         params = JSON.stringify(params);

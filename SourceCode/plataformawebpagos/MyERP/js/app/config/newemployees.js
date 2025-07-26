@@ -171,7 +171,7 @@ const employee = {
     loadComboEmployeesByPosicion: (idTipoEmpleado, control) => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idTipoEmpleado = idTipoEmpleado;
         params = JSON.stringify(params);
 
@@ -222,7 +222,7 @@ const employee = {
     },
     loadComboPosicion: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -260,7 +260,7 @@ const employee = {
     },
     loadComboPlaza: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -296,7 +296,7 @@ const employee = {
             e.preventDefault();
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.oRequest = {
                 Colaborador: employee.getColaborador(),

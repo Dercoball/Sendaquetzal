@@ -40,7 +40,7 @@ const client = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -143,7 +143,7 @@ const client = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -232,7 +232,7 @@ const client = {
     getDocument(idCliente, idTipoDocumento, idControl) {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idCliente = idCliente;
         params.idTipoDocumento = idTipoDocumento;
         params = JSON.stringify(params);
@@ -310,7 +310,7 @@ const client = {
     loadComboTipoCliente: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -355,7 +355,7 @@ const client = {
             if (client.IdCliente) {
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.idCliente = client.IdCliente;
                 params.idTipoDocumento = idTipoDocumento;
                 params = JSON.stringify(params);
@@ -477,7 +477,7 @@ const client = {
 
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.item = dataClient;
             params.itemAddress = dataAddressClient;
             params.itemAddressAval = dataAddressClientAval;
@@ -610,7 +610,7 @@ const client = {
             e.preventDefault();
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.curp = $('#txtCURP').val();
             params = JSON.stringify(params);
 

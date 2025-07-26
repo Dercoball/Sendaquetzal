@@ -97,7 +97,7 @@ $(document).ready(function () {
 
 
     let params = {};
-    params.path = window.location.hostname;
+    params.path = "connbd";
     params.pagina = pagina;
     params.idUsuario = idUsuario;
     params.idTipoUsuario = idTipoUsuario;
@@ -152,7 +152,7 @@ $(document).ready(function () {
     function cargarNombreTipoUsuario(idUsuario, controlHtml) {
 
         let parametros = {};
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = idUsuario;
         parametros = JSON.stringify(parametros);
 
@@ -183,7 +183,7 @@ $(document).ready(function () {
     function cargarValoresConfiguracionNombreSistema(id) {
 
         let parametros = {};
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = id;
         parametros = JSON.stringify(parametros);
 
@@ -215,7 +215,7 @@ $(document).ready(function () {
 
     function cargarValoresConfiguracionEmpresa(id, controlHtml) {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = id;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -275,7 +275,7 @@ $(document).ready(function () {
 
 const obtenerFechaHoraServidor = (idControl) => {
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros = JSON.stringify(parametros);
     $.ajax({
         type: "POST",
@@ -430,7 +430,7 @@ var utils = {
 
 
         formData.append('pagina', window.location.pathname);//
-        formData.append('path', window.location.hostname);//
+        formData.append('path', "connbd");//
         formData.append('extension', extension);//
         formData.append('descripcion', fileName);//
         formData.append('tipo', tipo);//5
@@ -480,7 +480,7 @@ var utils = {
         // Se asigna cero para que id_empleado sea 0 porque es archivo de cliente
         formData.append('id', 0);//0
         formData.append('pagina', window.location.pathname);//
-        formData.append('path', window.location.hostname);//
+        formData.append('path', "connbd");//
         formData.append('extension', extension);//
         formData.append('descripcion', fileName);//
         formData.append('tipo', tipo);//5

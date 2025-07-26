@@ -36,7 +36,7 @@ const asset = {
     },
     loadContent() {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -158,7 +158,7 @@ const asset = {
     },
     loadComboInvestor: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -185,7 +185,7 @@ const asset = {
     },
     loadComboStatus: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -215,7 +215,7 @@ const asset = {
         var Request = {};
         Request.IdInversionista = asset.idInversionista;
         Request.Estatus = 1;
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.oRequest = Request;
         params = JSON.stringify(params);
@@ -246,7 +246,7 @@ const asset = {
     },
     loadInversionista: (id, funcion) => {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.id = id;
         params = JSON.stringify(params);
@@ -267,7 +267,7 @@ const asset = {
     loadInversion: (id, funcion) =>
     {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -385,7 +385,7 @@ const asset = {
 
         $("#btnEliminarAceptar").click(function () {
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = asset.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
@@ -459,7 +459,7 @@ const asset = {
             e.preventDefault();
             let params = {};
             params.oRequest = asset.getFilter();
-            params.path = window.location.hostname;
+            params.path = "connbd";
             $.ajax({
                 type: "POST",
                 url: "/pages/Investors/Investments.aspx/Search",
@@ -501,7 +501,7 @@ const asset = {
                 lo_Inversion.utilidad_pesos = $("#txtUtilidadPesos").val();
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = lo_Inversion;
                 params.accion = asset.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;

@@ -26,7 +26,7 @@ $(document).ready(function () {
 
     function cargarComboMarcas() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros = JSON.stringify(parametros);
         $.ajax({
             type: "POST",
@@ -63,7 +63,7 @@ $(document).ready(function () {
 
     function cargarItems() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = sessionStorage.getItem("idusuario");
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -128,7 +128,7 @@ $(document).ready(function () {
 
     function cargarItemsEquipos() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = sessionStorage.getItem("idusuario");
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -168,7 +168,7 @@ $(document).ready(function () {
 
                 function cargarComboModelos(idMarca, idModelo) {
                     var parametros = new Object();
-                    parametros.path = window.location.hostname;
+                    parametros.path = "connbd";
                     parametros.idMarca = idMarca;
                     parametros = JSON.stringify(parametros);
                     $.ajax({
@@ -219,7 +219,7 @@ $(document).ready(function () {
 
 
                         var parametros = new Object();
-                        parametros.path = window.location.hostname;
+                        parametros.path = "connbd";
                         parametros.id = idEquipoSeleccionado;
                         parametros = JSON.stringify(parametros);
                         $.ajax({
@@ -276,7 +276,7 @@ $(document).ready(function () {
 
     function cargarItemsProveedores() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = sessionStorage.getItem("idusuario");
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -357,7 +357,7 @@ $(document).ready(function () {
 
     function cargarComboMarcas() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros = JSON.stringify(parametros);
         $.ajax({
             type: "POST",
@@ -393,7 +393,7 @@ $(document).ready(function () {
 
     function cargarComboEstatus() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros = JSON.stringify(parametros);
         $.ajax({
             type: "POST",
@@ -430,7 +430,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = idSeleccionado;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -495,7 +495,7 @@ $(document).ready(function () {
 
     function cargarComboModelos(idMarca, idModelo) {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idMarca = idMarca;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -567,7 +567,7 @@ $(document).ready(function () {
 
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.item = item;
         parametros.accion = accion;
         parametros = JSON.stringify(parametros);
@@ -668,7 +668,7 @@ $(document).ready(function () {
     $('#btnEliminarAceptar').on('click', function () {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = idSeleccionado;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -719,7 +719,7 @@ function eliminar(id) {
 
 function cargarComboModelos_(idMarca, idModelo) {
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros.idMarca = idMarca;
     parametros = JSON.stringify(parametros);
     $.ajax({
@@ -761,7 +761,7 @@ const enviar = (id) => {
 
 
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros.id = id;
     parametros = JSON.stringify(parametros);
     $.ajax({
@@ -812,7 +812,7 @@ const editar = (id) => {
     $('#divDocumentos').empty();
 
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros.id = id;
     parametros = JSON.stringify(parametros);
     $.ajax({
@@ -850,7 +850,7 @@ const editar = (id) => {
             $('.deshabilitable').prop('disabled', false);
 
             let parametros = {
-                path: window.location.hostname,
+                path: "connbd",
                 id_requisicion : item.IdRequisicion,
                 idUsuario : sessionStorage.getItem("idusuario"),
                 id_tipo : 1
@@ -885,7 +885,7 @@ function abrir(id) {
     $('#divDocumentos').empty();
 
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros.id = id;
     parametros = JSON.stringify(parametros);
     $.ajax({
@@ -924,7 +924,7 @@ function abrir(id) {
 
 
             let parametros = {
-                path: window.location.hostname,
+                path: "connbd",
                 id_requisicion: item.IdRequisicion,
                 idUsuario: sessionStorage.getItem("idusuario"),
                 id_tipo: 1

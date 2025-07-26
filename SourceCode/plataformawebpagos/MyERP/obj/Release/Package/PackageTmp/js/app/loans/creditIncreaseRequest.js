@@ -21,7 +21,7 @@ const requests = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.fechaInicial = requests.fechaInicial;
@@ -139,7 +139,7 @@ const requests = {
             e.preventDefault();
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPrestamo = requests.idPrestamo;
             params.idSolicitud = requests.idSolicitud;
@@ -190,7 +190,7 @@ const requests = {
             e.preventDefault();
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPrestamo = requests.idPrestamo;
             params.idSolicitud = requests.idSolicitud;

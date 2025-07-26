@@ -35,7 +35,7 @@ const employee = {
     },
     cargarItems: () => {
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.Filtro = employee.getFilter();
         params = JSON.stringify(params);
@@ -123,7 +123,7 @@ const employee = {
     },
     loadComboPosicion: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -153,7 +153,7 @@ const employee = {
     loadComboPlaza: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -185,7 +185,7 @@ const employee = {
     },
     loadComboComision: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -258,7 +258,7 @@ const employee = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = employee.idSeleccionado;
             params = JSON.stringify(params);
 

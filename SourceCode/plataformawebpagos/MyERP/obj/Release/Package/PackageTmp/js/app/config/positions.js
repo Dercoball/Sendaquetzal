@@ -23,7 +23,7 @@ const tiposUsuario = {
     cargarItems: () => {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = document.getElementById('txtIdUsuario').value;
 
         let url = '../../pages/Config/Positions.aspx/GetListaItems';
@@ -99,7 +99,7 @@ const tiposUsuario = {
         $('.help-block').empty();
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = id;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -185,7 +185,7 @@ const tiposUsuario = {
 
     cargarListaPermisos: (idTipoUsuario) => {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idTipoUsuario = idTipoUsuario;
 
         parametros = JSON.stringify(parametros);
@@ -222,7 +222,7 @@ const tiposUsuario = {
     cargarListaPermisosUsuario: (id) => {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idTipoUsuario = id;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -311,7 +311,7 @@ const tiposUsuario = {
 
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.listaPermisos = listaP;
             parametros.idTipoUsuario = tiposUsuario.idSeleccionado;
 
@@ -385,7 +385,7 @@ const tiposUsuario = {
 
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.item = item;
             parametros.accion = tiposUsuario.accion;
             parametros = JSON.stringify(parametros);
@@ -447,7 +447,7 @@ const tiposUsuario = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.id = tiposUsuario.idSeleccionado;
             parametros = JSON.stringify(parametros);
             $.ajax({

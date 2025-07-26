@@ -27,7 +27,7 @@ const configComissions = {
     loadItems() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -99,7 +99,7 @@ const configComissions = {
         configComissions.nombreComision = nombreComision;
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idComision = idComision;
         params = JSON.stringify(params);
@@ -180,7 +180,7 @@ const configComissions = {
         $('#frm')[0].reset();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -275,7 +275,7 @@ const configComissions = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = configComissions.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -346,7 +346,7 @@ const configComissions = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = configComissions.idReglaSeleccionada;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

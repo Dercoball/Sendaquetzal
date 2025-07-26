@@ -15,7 +15,7 @@ $(document).ready(function () {
     function cargarItems() {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;        
+        parametros.path = "connbd";        
         parametros.idUsuario = document.getElementById('txtIdUsuario').value;
         parametros = JSON.stringify(parametros);
 
@@ -120,7 +120,7 @@ $(document).ready(function () {
             usuario.IdEmpleado = $('#comboEmpleado').val() === '' ? '-1' : $('#comboEmpleado').val();
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.usuario = usuario;
             parametros.accion = accion;
             parametros = JSON.stringify(parametros);
@@ -194,7 +194,7 @@ $(document).ready(function () {
 
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.usuario = usuario;
             parametros.accion = accion;
             parametros = JSON.stringify(parametros);
@@ -255,7 +255,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = idSeleccionado;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -316,7 +316,7 @@ $(document).ready(function () {
 
     function cargarTiposUsuarios() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros = JSON.stringify(parametros);
         $.ajax({
             type: "POST",
@@ -349,7 +349,7 @@ $(document).ready(function () {
     function cargarProveedores() {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;        
+        parametros.path = "connbd";        
         parametros.idUsuario = document.getElementById('txtIdUsuario').value;
         parametros = JSON.stringify(parametros);
 
@@ -382,7 +382,7 @@ $(document).ready(function () {
 
     function cargarEmpleados() {
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = sessionStorage.getItem("idusuario");
         parametros.like = '';
         parametros = JSON.stringify(parametros);
@@ -483,7 +483,7 @@ $(document).ready(function () {
 
         var parametros = new Object();
         parametros.idUsuario = $('#spnIdUsuario').text();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros = JSON.stringify(parametros);
 
 
@@ -525,7 +525,7 @@ $(document).ready(function () {
 
         var parametros = new Object();
 
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
 
 
         parametros = JSON.stringify(parametros);
@@ -584,7 +584,7 @@ $(document).ready(function () {
 
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.listaEquipos = listaEquipos;
         parametros.idUsuario = $('#spnIdUsuario').text();
 
@@ -667,7 +667,7 @@ function editar(id) {
 
     accion = "nuevo";
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros.id = id;
     parametros = JSON.stringify(parametros);
     $.ajax({
@@ -728,7 +728,7 @@ function editarP(id) {
 
     accion = "editar";
     var parametros = new Object();
-    parametros.path = window.location.hostname;
+    parametros.path = "connbd";
     parametros.id = id;
     parametros = JSON.stringify(parametros);
     $.ajax({
@@ -808,7 +808,7 @@ const equiposUsuario = {
     cargarListaEquipos: (idUsuario) => {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = idUsuario;
         parametros = JSON.stringify(parametros);
 
@@ -847,7 +847,7 @@ const equiposUsuario = {
     cargarListaPermisosUsuario: (idUsuario) => {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = idUsuario;
         parametros = JSON.stringify(parametros);
 

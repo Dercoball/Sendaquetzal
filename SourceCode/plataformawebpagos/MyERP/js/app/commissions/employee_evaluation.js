@@ -32,7 +32,7 @@ const employeeEvaluation = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.idPlaza = document.getElementById('comboPlaza').value;
@@ -112,7 +112,7 @@ const employeeEvaluation = {
     loadComboEmployeesByPosicion: (idTipoEmpleado, control) => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idTipoEmpleado = idTipoEmpleado;
         params = JSON.stringify(params);
 
@@ -147,7 +147,7 @@ const employeeEvaluation = {
     loadComboPlaza: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -190,7 +190,7 @@ const employeeEvaluation = {
         employeeEvaluation.calificacionTotal = 0;
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idComision = idComision;
         params.idEmpleado = idEmpleado;
@@ -306,7 +306,7 @@ const employeeEvaluation = {
 
 
             let parametros = {};
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.data = valoresTabla;
             parametros.idComision = employeeEvaluation.idComision;
             parametros.idEmpleado = employeeEvaluation.idEmpleado;

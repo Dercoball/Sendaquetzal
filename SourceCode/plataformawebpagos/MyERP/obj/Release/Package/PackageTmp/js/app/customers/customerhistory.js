@@ -48,7 +48,7 @@ const registroHistorial = {
     loadComboCustomerTypes: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -164,7 +164,7 @@ const registroHistorial = {
             e.preventDefault();
 
             var params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.customerTypeId = $('#comboSemanasPrestamo').val();
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
@@ -252,7 +252,7 @@ const registroHistorial = {
 
 
             let parametros = {};
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.data = valoresTabla;
             parametros.curpCliente = $('#txtCurpCliente').val();
             parametros.curpAval = $('#txtCurpAval').val();

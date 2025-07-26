@@ -26,7 +26,7 @@ const puesto = {
     cargarItems: () => {
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.idUsuario = sessionStorage.getItem("idusuario");
 
         let url = '../pages/Puestos.aspx/GetListaItems';
@@ -103,7 +103,7 @@ const puesto = {
         $('.help-block').empty();
 
         var parametros = new Object();
-        parametros.path = window.location.hostname;
+        parametros.path = "connbd";
         parametros.id = id;
         parametros = JSON.stringify(parametros);
         $.ajax({
@@ -212,7 +212,7 @@ const puesto = {
 
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.item = item;
             parametros.accion = puesto.accion;
             parametros = JSON.stringify(parametros);
@@ -274,7 +274,7 @@ const puesto = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             var parametros = new Object();
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.id = puesto.idSeleccionado;
             parametros = JSON.stringify(parametros);
             $.ajax({

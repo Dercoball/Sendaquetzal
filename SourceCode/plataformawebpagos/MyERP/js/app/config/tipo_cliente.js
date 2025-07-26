@@ -22,7 +22,7 @@ const tipoCliente = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -120,7 +120,7 @@ const tipoCliente = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -237,7 +237,7 @@ const tipoCliente = {
                 item.SemanasExtra = $('#chkSemanaExtra').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = tipoCliente.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -299,7 +299,7 @@ const tipoCliente = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = tipoCliente.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

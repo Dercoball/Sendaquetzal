@@ -41,7 +41,7 @@ const employee = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -154,7 +154,7 @@ const employee = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -267,7 +267,7 @@ const employee = {
     getDocument(idEmpleado, idTipoDocumento, idControl) {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idEmpleado = idEmpleado;
         params.idTipoDocumento = idTipoDocumento;
         params = JSON.stringify(params);
@@ -344,7 +344,7 @@ const employee = {
     loadComboEmployeesByPosicion: (idTipoEmpleado, control) => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idTipoEmpleado = idTipoEmpleado;
         params = JSON.stringify(params);
 
@@ -380,7 +380,7 @@ const employee = {
     loadComboPosicion: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -416,7 +416,7 @@ const employee = {
     loadComboPlaza: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -451,7 +451,7 @@ const employee = {
     loadComboComision: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -494,7 +494,7 @@ const employee = {
             if (employee.accion !== 'nuevo') {
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.idEmpleado = employee.idSeleccionado;
                 params.idTipoDocumento = idTipoDocumento;
                 params = JSON.stringify(params);
@@ -644,7 +644,7 @@ const employee = {
 
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.item = dataEmployee;
             params.itemAddress = dataAddressEmployee;
             params.itemAddressAval = dataAddressAval;
@@ -798,7 +798,7 @@ const employee = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = employee.idSeleccionado;
             params = JSON.stringify(params);
 
@@ -847,7 +847,7 @@ const employee = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.newPassword = $('#txtPassP').val();
                 params.idEmpleado = employee.idSeleccionado;
                 params.login = employee.login;

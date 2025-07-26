@@ -94,7 +94,7 @@ const asset = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         console.log(params.idUsuario = document.getElementById('txtIdUsuario').value);
         
         params = JSON.stringify(params);
@@ -375,7 +375,7 @@ const asset = {
         $('#frm')[0].reset();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         console.log(id);
         params = JSON.stringify(params);
@@ -428,7 +428,7 @@ const asset = {
     loadComboEmpleado: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -463,7 +463,7 @@ const asset = {
     loadComboTipo: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
 
         params = JSON.stringify(params);
@@ -555,7 +555,7 @@ const asset = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = asset.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -606,7 +606,7 @@ const asset = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = asset.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

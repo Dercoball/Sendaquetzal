@@ -136,7 +136,7 @@ const loansEdit = {
         $('#panelForm').hide();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idPrestamo = idPrestamo;
         params = JSON.stringify(params);
 
@@ -371,7 +371,7 @@ const loansEdit = {
     getDocument(idCliente, idTipoDocumento, idControl) {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idCliente = idCliente;
         params.idTipoDocumento = idTipoDocumento;
         params = JSON.stringify(params);
@@ -455,7 +455,7 @@ const loansEdit = {
             $('#btnAprobar').html(`<i class="fa fa-paper-plane mr-1"></i>Guardando...`);
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPrestamo = loansEdit.idPrestamo;
@@ -522,7 +522,7 @@ const loansEdit = {
             $('.deshabilitable').prop('disabled', true);
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPrestamo = loansEdit.idPrestamo;
@@ -617,7 +617,7 @@ const loansEdit = {
 
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.item = dataClient;
             params.itemAddress = dataAddressClient;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -769,7 +769,7 @@ const loansEdit = {
 
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.item = dataClient;
             params.itemAddressAval = dataAddressClientAval;
             params.idUsuario = document.getElementById('txtIdUsuario').value;

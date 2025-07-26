@@ -67,7 +67,7 @@ const customers = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params.idStatus = status;
@@ -291,7 +291,7 @@ const customers = {
     loadComboStatus: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -324,7 +324,7 @@ const customers = {
 
     loadComboPlaza: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -354,7 +354,7 @@ const customers = {
 
     loadComboEjecutivo: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params = JSON.stringify(params);
 
@@ -385,7 +385,7 @@ const customers = {
 
     loadComboSupervisor: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
         params = JSON.stringify(params);
@@ -417,7 +417,7 @@ const customers = {
 
     loadComboPromotor: () => {
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
         params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
         params = JSON.stringify(params);
@@ -476,7 +476,7 @@ const customers = {
             e.preventDefault();
 
             let parametros = {};
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.userId = document.getElementById('txtIdUsuario').value;
             parametros.statusId = utils.cliente.STATUS_CONDONADO;
             parametros.customerId = customers.selectedCustomerId;
@@ -521,7 +521,7 @@ const customers = {
             e.preventDefault();
 
             let parametros = {};
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.userId = document.getElementById('txtIdUsuario').value;
             parametros.statusId = utils.cliente.STATUS_DEMANDA;
             parametros.customerId = customers.selectedCustomerId;
@@ -566,7 +566,7 @@ const customers = {
             e.preventDefault();
 
             let parametros = {};
-            parametros.path = window.location.hostname;
+            parametros.path = "connbd";
             parametros.userId = document.getElementById('txtIdUsuario').value;
             parametros.statusId = utils.cliente.STATUS_INACTIVO;
             parametros.customerId = customers.selectedCustomerId;

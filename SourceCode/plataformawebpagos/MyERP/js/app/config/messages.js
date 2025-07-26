@@ -25,7 +25,7 @@ const messages = {
     loadComboTipoPlantilla: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -60,7 +60,7 @@ const messages = {
     loadComboTipoPlaza: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -97,7 +97,7 @@ const messages = {
     loadComboFrecuenciaEnvio: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({
@@ -133,7 +133,7 @@ const messages = {
     cargarItems: () => {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -225,7 +225,7 @@ const messages = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -315,7 +315,7 @@ const messages = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = messages.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -377,7 +377,7 @@ const messages = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = messages.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);
@@ -422,7 +422,7 @@ const messages = {
             console.log('Enviar sms');
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = messages.idSeleccionado;
             params.msg = tinymce.get("contenido").getContent().replace(/<[^>]*>?/gm, '');
             params = JSON.stringify(params);
@@ -466,7 +466,7 @@ const messages = {
             }
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = messages.idSeleccionado;
             params.celular = numCel;
             params.nombre = "Juan Perez";

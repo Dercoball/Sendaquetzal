@@ -27,7 +27,7 @@ const utility = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idInversionista = document.getElementById('comboInversionista').value;
         params = JSON.stringify(params);
@@ -167,7 +167,7 @@ const utility = {
     loadComboInvestor: () => {
 
         var params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params = JSON.stringify(params);
 
         $.ajax({

@@ -43,7 +43,7 @@ $(document).ready(function () {
         ////debugger;
 
         //var parametros = new Object();
-        //parametros.path = window.location.hostname;
+        //parametros.path = "connbd";
         //parametros.login = $('#txtUsuario').val();
         //parametros.password = r;
         //parametros.valor = navInfo;

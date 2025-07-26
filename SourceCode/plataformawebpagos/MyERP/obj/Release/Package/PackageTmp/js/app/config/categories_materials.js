@@ -26,7 +26,7 @@ const CategoryMaterial = {
     loadContent() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params = JSON.stringify(params);
 
@@ -116,7 +116,7 @@ const CategoryMaterial = {
         $('.help-block').empty();
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         params = JSON.stringify(params);
 
@@ -204,7 +204,7 @@ const CategoryMaterial = {
                 item.EsMaterialEntrega = $('#chkEsMaterialEntregaMaterials').prop('checked') ? 1 : 0;
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = CategoryMaterial.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -266,7 +266,7 @@ const CategoryMaterial = {
         $('#btnEliminarAceptarMaterials').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = CategoryMaterial.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

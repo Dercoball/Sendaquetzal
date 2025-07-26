@@ -47,7 +47,7 @@ const retirement = {
 
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.id = id;
         console.log(id);
         params = JSON.stringify(params);
@@ -115,7 +115,7 @@ const retirement = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = retirement.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -191,7 +191,7 @@ const retirement = {
         $('#btnEliminarAceptar').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = retirement.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

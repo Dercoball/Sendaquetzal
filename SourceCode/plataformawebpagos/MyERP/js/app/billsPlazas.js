@@ -39,7 +39,7 @@ const billsRegister = {
     loadItems() {
 
         let params = {};
-        params.path = window.location.hostname;
+        params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idTipoUsuario = document.getElementById('txtIdTipoUsuario').value;
         params = JSON.stringify(params);
@@ -159,7 +159,7 @@ const billsRegister = {
 
 
                 let params = {};
-                params.path = window.location.hostname;
+                params.path = "connbd";
                 params.item = item;
                 params.accion = billsRegister.accion;
                 params.idUsuario = document.getElementById('txtIdUsuario').value;
@@ -217,7 +217,7 @@ const billsRegister = {
         $('#btnEliminarAceptarBills').on('click', (e) => {
 
             let params = {};
-            params.path = window.location.hostname;
+            params.path = "connbd";
             params.id = plaza.idSeleccionado;
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params = JSON.stringify(params);

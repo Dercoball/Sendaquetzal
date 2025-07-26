@@ -2,6 +2,9 @@
 let date = new Date();
 let descargas = "Pagos_" + date.getFullYear() + "_" + date.getMonth() + "_" + date.getUTCDay() + "_" + date.getMilliseconds();
 let pagina = '15';
+let totalPrestamo = 0;
+let totalFallas;
+let dataTable;
 
 
 const payments = {
@@ -25,16 +28,116 @@ const payments = {
 
         payments.fechasHoy();
 
+        payments.loadComboPlaza();
         payments.cargarItems();
 
+        //Filtros personalizados en datatable
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#semmin').val(), 10);
+            var max = parseInt($('#semmax').val(), 10);
+            var semana = parseFloat(data[0]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && semana <= max) ||
+                (min <= semana && isNaN(max)) ||
+                (min <= semana && semana <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
 
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#pmin').val(), 10);
+            var max = parseInt($('#pmax').val(), 10);
+            var prestamo = parseFloat(data[2]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#fmin').val(), 10);
+            var max = parseInt($('#fmax').val(), 10);
+            var prestamo = parseFloat(data[5]) || 0;
+            if (
+                (isNaN(min) && isNaN(max)) ||
+                (isNaN(min) && prestamo <= max) ||
+                (min <= prestamo && isNaN(max)) ||
+                (min <= prestamo && prestamo <= max)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#fpmin').val();
+                var max = $('#fpmax').val();
+                var createdAt = data[3] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $('#uppmin').val();
+                var max = $('#uppmax').val();
+                var createdAt = data[4] || 0; // Our date column in the table
+
+                if (min != "" && max == "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                }
+                else if (min != "" && max != "") {
+                    min = moment(min, 'YYY-MM-DD');
+                    max = moment(max, 'YYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                }
+                else if (min == "" && max != "") {
+                    max = moment(max, 'YYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                }
+                else
+                    return true;
+            }
+        );
     },
 
     cargarItems: () => {
 
-        let status = document.querySelector('input[name="filtroPagos"]:checked').value
+        let status = null;//document.querySelector('input[name="filtroPagos"]:checked').value
 
-        status = status == null ? "-1" : status;
+        status = status == null ? "0" : status;
+
+        //Se define el tipo de filtro
+        var typeFilter = "";
+        if (parseInt(document.getElementById("cmbPromotor").value) > 0) typeFilter = "promotor";
+        else if (parseInt(document.getElementById("cmbSupervisor").value) > 0) typeFilter = "supervisor";
+        else if (parseInt(document.getElementById("cmbEjecutivo").value) > 0) typeFilter = "ejecutivo";
+        else typeFilter = "plaza";
 
         let params = {};
         params.path = window.location.hostname;
@@ -43,6 +146,11 @@ const payments = {
         params.fechaInicial = payments.fechaInicial;
         params.fechaFinal = payments.fechaFinal;
         params.idStatus = status;
+        params.typeFilter = typeFilter;
+        params.idPlaza = parseInt(document.getElementById("cmbPlaza").value);
+        params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
+        params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
+        params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
 
         $.ajax({
@@ -61,51 +169,185 @@ const payments = {
                     window.location = "../../pages/Index.aspx";
                 }
 
-                let table = $('#table').DataTable({
+                dataTable = $('#table').DataTable({
                     "destroy": true,
                     "processing": true,
-                    "order": [],
+                    ordering: false,
+                    paging: false,
+                    scrollY: '400px',
+                    scrollX: true,
                     data: data,
                     columns: [
-                        { data: 'IdPago' },
+                        //{ data: 'IdPago' },
                         { data: 'NumeroSemana' },
                         { data: 'NombreCliente' },
-                        { data: 'MontoFormateadoMx' },
-                        { data: 'FechaStr' },
-                        { data: 'TotalFallaFormateadoMx' },
+                        {
+                            data: 'MontoPrestamo',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
+                        {
+                            data: 'Fecha',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {
+                            data: 'FechaUltimoPago',
+                            type: 'date',
+                            render: function (data, type, full, meta) {
+                                var dateparse = moment(data);
+                                if (dateparse.isValid())
+                                    return dateparse.format('DD/MM/YYYY');
+                                else
+                                    return null;
+                            }
+                        },
+                        {
+                            data: 'TotalFalla',
+                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                        },
                         { data: 'SemanasFalla' },
+                        //{
+                        //    data: 'Mensaje',
+                        //    type: 'unknownType',
+                        //    className: 'dt-body-center',
+                        //    render: function (data, type, full, meta) {
+                        //        if (data == 1) {
+                        //            return '<input type="checkbox" name="mensaje[]" value="1" checked="checked" disabled="disabled">';
+                        //        } else {
+                        //            return '<input type="checkbox" name="mensaje[]" value="0" disabled="disabled">';
+                        //        }
+                        //    }
+                        //},
+                        {
+                            data: null,
+                            searchable: false,
+                            orderable: false,
+                            className: 'dt-body-center',
+                            render: function (data, type, full, meta) {
+                                return '<input type="checkbox" name="id[]" value="true" checked="checked">';
+                            }
+                        },
                         { data: 'Status' },
                         { data: 'Accion' }
-
-
                     ],
                     "language": textosEsp,
-                    "columnDefs": [
-                        {
-                            "targets": [-1],
-                            "orderable": false
-                        }
-                    ],
-                    dom: 'fBrtipl',
+                    columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 7
+                    }],
+                    dom: "rt<'row'<'col text-right mt-4'B>>ip",
                     buttons: [
-                        {
-                            extend: 'csvHtml5',
-                            title: descargas,
-                            text: '&nbsp;Csv', className: 'csvbtn'
-                        },
                         {
                             extend: 'excelHtml5',
                             title: descargas,
-                            text: 'Xls', className: 'excelbtn'
+                            text: '&nbsp; Descargar Excel', className: 'csvbtn',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8],
+                                rows: function (idx, data, node) {
+                                    var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
+                                    return checkbox.checked;
+                                },
+                                modifier: {
+                                    selected: true
+                                }
+                            }
                         },
                         {
                             extend: 'pdfHtml5',
+                            text: 'Descargar PDF',
                             title: descargas,
-                            text: 'Pdf', className: 'pdfbtn'
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            className: 'csvbtn ml-2',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6, 8],
+                                rows: function (idx, data, node) {
+                                    var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
+                                    return checkbox.checked;
+                                },
+                                modifier: {
+                                    selected: true
+                                }
+                            }
                         }
-                    ]
+                    ],
+                    footerCallback: function (row, data, start, end, display) {
+                        var api = this.api();
+
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) {
+                            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                        };
 
 
+                        // Total over all pages
+                        totalPrestamo = api
+                            .column(2, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+
+                        totalFallas = api
+                            .column(5, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        ;
+                        // Update footer
+                        $(api.column(2).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalPrestamo));
+                        $(api.column(5).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
+                    },
+                    initComplete: function () {
+                        let columnsSettings = this.api().settings().init().columns;
+
+                        this.api()
+                            .columns()
+                            .every(function (idx) {
+                                var column = this;
+                                let dataHeader = columnsSettings[idx].data;
+
+                                switch (dataHeader) {
+                                    case 'NumeroSemana':
+                                    case 'MontoPrestamo':
+                                    case 'TotalFalla':
+                                        $('input', column.header()).on('keyup', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'NombreCliente':
+                                        $('input', column.header()).on('keyup change clear', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Fecha':
+                                    case 'FechaUltimoPago':
+                                        $('input', column.header()).on('change', function () {
+                                            column.draw();
+                                        });
+                                        break;
+                                    case 'Status':
+                                        $('select', column.header()).on('change', function () {
+                                            if (column.search() !== this.value) {
+                                                column.search(this.value).draw();
+                                            }
+                                        });
+                                        break;
+                                    case 'Mensaje':
+                                        $('select', column.header()).on('change', function () {
+                                            column.search(this.value).draw();
+                                        });
+                                        break;
+                                }
+                            });
+                    }
                 });
 
 
@@ -117,11 +359,10 @@ const payments = {
 
         });
 
+        
+
 
     },
-
-
-
 
     view(idPago) {
 
@@ -152,8 +393,9 @@ const payments = {
                 $('#txtCliente').attr('data-idcliente', data.IdCliente);
                 $('#txtCliente').attr('data-idprestamo', data.IdPrestamo);
 
-                $('#txtSaldo').val(data.MontoFormateadoMx);
-                $('#txtAbono').val(data.Monto);
+                $('#txtMontoPrestamo').val(data.MontoPrestamoFormateadoMx);
+                $('#txtSaldo').val(data.SaldoFormateadoMx);
+                $('#txtAbono').val(data.Saldo);
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -164,11 +406,11 @@ const payments = {
 
                 payments.historial(data.IdPrestamo, data.NumeroSemana);
 
-                if (Number(data.IdStatusPago) === 1) {
-                    $('#btnCapturar').show();
-                } else {
-                    $('#btnCapturar').hide();
-                }
+                //if (Number(data.IdStatusPago) === 1) {
+                //    //$('#btnCapturar').show();
+                //} else {
+                //    $('#btnCapturar').hide();
+                //}
 
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -213,21 +455,12 @@ const payments = {
                 for (var i = 0; i < data.length; i++) {
                     headers += `<th scope="col text-center">${(i + 1)}</th>`;
                     let pago = data[i];
-                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="background-color: ${pago.Color}">
-                                ${pago.SaldoFormateadoMx}
-                                ${pago.Accion}
-                            </th>`;
+                    rows += `<th scope="col" data-idpago="${pago.IdPago}" style="background-color: ${pago.Color}">${pago.SaldoFormateadoMx}${pago.Accion}</th>`;
 
                 }
 
-                const htmlTable = `
-                
-                Semana actual: ${numeroSemanaActual}
-                <br/><br/>
-                Historial
-
-                <div class="table-responsive">                
-                    <table class="table table-bordered table-hover table-striped text-center"
+                const htmlTable = `           
+                    <table class="table table-bordered table-sm text-center" style="width:auto;"
                         id="tableSolicitudes">
 
                         <thead class="thead-light">
@@ -241,9 +474,7 @@ const payments = {
                             </tr>
                         
                         </tbody>
-                    </table>
-              </div>
-        `;
+                    </table>`;
 
 
                 $('#table_').html(htmlTable);
@@ -261,6 +492,130 @@ const payments = {
 
     },
 
+    loadComboPlaza: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbPlaza');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(item.Nombre, item.IdPlaza, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+
+    loadComboEjecutivo: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaEjecutivo",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbEjecutivo');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbEjecutivo"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(`${item.Nombre} ${item.PrimerApellido} ${item.SegundoApellido}`, item.IdEmpleado, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+
+    loadComboSupervisor: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
+        params.idejecutivo = parseInt(document.getElementById('cmbEjecutivo').value);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaSupervisor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbSupervisor');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbSupervisor"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(`${item.Nombre} ${item.PrimerApellido} ${item.SegundoApellido}`, item.IdEmpleado, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
+
+    loadComboPromotor: () => {
+        var params = {};
+        params.path = window.location.hostname;
+        params.idplaza = parseInt(document.getElementById('cmbPlaza').value);
+        params.idsupervisor = parseInt(document.getElementById('cmbSupervisor').value);
+        params = JSON.stringify(params);
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/GetListaPromotor",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+
+                let selectEl = document.getElementById('cmbPromotor');
+                //remueve las opciones del combo
+                document.querySelectorAll('select[name="cmbPromotor"] option').forEach(option => option.remove());
+
+                selectEl.add(new Option("Todos", "0", true, true));
+                msg.d.forEach(item => {
+                    const option = new Option(`${item.Nombre} ${item.PrimerApellido} ${item.SegundoApellido}`, item.IdEmpleado, false, false);
+                    selectEl.add(option);
+                });
+
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+            }
+        });
+    },
 
     fecha() {
         let today = new Date();
@@ -367,8 +722,6 @@ const payments = {
         payments.updatePayment(idPago, utils.STATUS_PAGO_PAGADO);
     },
 
-
-
     accionesBotones: () => {
 
         $('#btnFiltrar').on('click', (e) => {
@@ -378,20 +731,16 @@ const payments = {
 
         });
 
-
-
         $('#btnAceptarPanelMensajeControlado').on('click', (e) => {
             e.preventDefault();
 
             $('#panelMensajeControlado').modal('hide');
 
-            $('#panelTabla').show();
             $('#panelForm').hide();
+            $('#panelTabla').show();
 
-
-
+            payments.cargarItems();
         });
-
 
         $('#btnCancelar').on('click', (e) => {
             e.preventDefault();
@@ -423,8 +772,8 @@ const payments = {
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPago = payments.idPago;
-            params.abono = $('#txtAbono').val();
-            params.recuperado = $('#txtRecuperado').val() === '' ? 0 : $('#txtRecuperado').val();
+            params.abono = Number($('#txtAbono').val());
+            params.recuperado = $('#txtRecuperado').val() === '' ? 0 : Number($('#txtRecuperado').val());
             params = JSON.stringify(params);
 
 
@@ -445,8 +794,6 @@ const payments = {
                         $('#spnMensajeControlado').html(mensajesAlertas.pagoRegistradoExito);
                         $('#panelMensajeControlado').modal('show');
 
-                        payments.cargarItems();
-
                     } else {
                         $('#spnMensajes').html(valores.MensajeError);
                         $('#panelMensajes').modal('show');
@@ -463,6 +810,39 @@ const payments = {
             });
 
 
+        });
+
+        $('#cmbPlaza').change(function () {
+            payments.loadComboEjecutivo();
+        });
+
+        $('#cmbEjecutivo').change(function () {
+            payments.loadComboSupervisor();
+        });
+
+        $('#cmbSupervisor').change(function () {
+            payments.loadComboPromotor();
+        });
+
+        // Handle click on "Select all" control
+        $('#checked-select-all').on('click', function () {
+            // Get all rows with search applied
+            var rows = dataTable.rows({ 'search': 'applied' }).nodes();
+            // Check/uncheck checkboxes for all rows in the table
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+        $('#table tbody').on('change', 'input[type="checkbox"]', function () {
+            // If checkbox is not checked
+            if (!this.checked) {
+                var el = $('#checked-select-all').get(0);
+                // If "Select all" control is checked and has 'indeterminate' property
+                if (el && el.checked && ('indeterminate' in el)) {
+                    // Set visual state of "Select all" control
+                    // as 'indeterminate'
+                    el.indeterminate = true;
+                }
+            }
         });
 
     }

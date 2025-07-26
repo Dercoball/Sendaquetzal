@@ -1,5 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoanApprove.aspx.cs" Inherits="Plataforma.pages.LoanApprove" %>
-
+﻿
 <%@ Register Src="~/pages/Controles/UcCliente.ascx" TagPrefix="uc1" TagName="UcCliente" %>
 <%@ Register Src="~/pages/Controles/UcDocumentacion.ascx" TagPrefix="uc1" TagName="UcDocumentacion" %>
 

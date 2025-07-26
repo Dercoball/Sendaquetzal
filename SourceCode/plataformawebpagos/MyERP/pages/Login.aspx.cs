@@ -39,7 +39,7 @@ namespace Plataforma.pages
 
             var login = inputEmail.Text;
             var password = inputPassword.Text;
-            var path = txtPath.Value;
+            var path = "connbd";
 
             panelError.Visible = false;
             panelCamposVacios.Visible = false;

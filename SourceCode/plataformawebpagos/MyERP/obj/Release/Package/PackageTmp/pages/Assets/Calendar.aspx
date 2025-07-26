@@ -125,8 +125,17 @@
                         </div>
 
                         <%--SECCION LISTADO DE FECHAS--%>
-                        <div id="container-eventos" class="col-md-4 col-lg-5">
+                        <div class="col-md-4 col-lg-5">
                             
+
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Plazas</label>
+                                <select id="cmbPlaza" name="cmbPlaza" class="form-control mb-4" style="width:200px;">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+
+                            <div id="container-eventos"></div>
                         </div>
                     </div>
                 </div>

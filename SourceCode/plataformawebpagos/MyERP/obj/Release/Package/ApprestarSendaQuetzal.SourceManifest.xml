@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <sitemanifest>
-  <IisApp path="C:\GitRepos\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\Package\PackageTmp" managedRuntimeVersion="v4.0" />
-  <setAcl path="C:\GitRepos\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\Package\PackageTmp" setAclResourceType="Directory" />
-  <setAcl path="C:\GitRepos\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
+  <IisApp path="C:\Users\derco\Downloads\OneDrive_2_22-7-2025\SendaQuetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\Package\PackageTmp" managedRuntimeVersion="v4.0" />
+  <setAcl path="C:\Users\derco\Downloads\OneDrive_2_22-7-2025\SendaQuetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\Package\PackageTmp" setAclResourceType="Directory" />
+  <setAcl path="C:\Users\derco\Downloads\OneDrive_2_22-7-2025\SendaQuetzal\SendaQuetzal\SourceCode\plataformawebpagos\MyERP\obj\Release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
 </sitemanifest>

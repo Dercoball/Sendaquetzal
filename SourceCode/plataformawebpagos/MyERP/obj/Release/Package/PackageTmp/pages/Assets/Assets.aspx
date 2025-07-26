@@ -103,144 +103,182 @@
                 </header>
 
                 <div id="panelTabla">
-                    <div class="table-responsive">
-
-                        <table style="width: 100%!important;" class="table table-striped table-bordered table-hover " id="table">
-
-
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Descripción</th>
-                                    <th>No. Serie</th>
-                                    <th>Costo</th>
-                                    <th>Comentarios</th>
-                                    <th>Empleado Asignado</th>
-
-                                    <th>
-                                        <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Nuevo</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-
-
-
-
-                <div id="panelForm">
-
-                    <div class="modal-body form">
-                        <form role="form" id="frm" name="frm">
-
-                            <div class="form-body">
-                                <h3 class="text-left">
-                                    <span id="spnTituloForm"></span>
-                                </h3>
-                                <hr />
-
-
-
-
-
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <label for="comboCategoria">
-                                            Tipo
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboCategoria" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="comboEmpleado">
-                                            Empleado asignado
-                                        </label>
-                                        <select class="form-control campo-combo" id="comboEmpleado" required="required" data-required-error='Requerido'>
-                                        </select>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtDescripcion">
-                                            Descripción
-                                        </label>
-                                        <input type="text" class="form-control" id="txtDescripcion" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtNumeroSerie">
-                                            Numero de serie
-                                        </label>
-                                        <input type="text" class="form-control" id="txtNumeroSerie" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtCosto">
-                                            Costo  
-                                        </label>
-                                        <input type="number" step="any" class="form-control" id="txtCosto" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="txtComentarios">
-                                            Comentarios
-                                        </label>
-                                        <input type="text" class="form-control" id="txtComentarios" required="required" data-required-error='Requerido' />
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                </div>
-
-
-                               
+                    <div class="card">
+                        <div class="card-body">
+                            <button class="btn btn-outline btn-primary" id="btnNuevo"><i class="fa fa-file mr-1"></i>Agregar</button>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm w-100" id="table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Categoría<br /><input placeholder="Categoría" /></th>
+                                            <th>Descripción<br /><input placeholder="Descripción" /></th>
+                                            <th>No. Serie<br /><input placeholder="No. Serie" /></th>
+                                            <th>
+                                                Costo<br />
+                                                <input id="cmax" type="number" placeholder="MAX" /><br />
+                                                <input id="cmin" type="number" placeholder="MIN" />
+                                            </th>
+                                            <th>Asignación<br /><input placeholder="ASignación" /></th>
+                                            <th>
+                                                Ingreso<br />
+                                                <input id="finicial" type="date" /><br />
+                                                <input id="ffinal" type="date" />
+                                            </th>
+                                            <th>
+                                                Estatus<br />
+                                                <select>
+                                                    <option value="">Todos</option>
+                                                    <option value="Activo">Activo</option>
+                                                    <option value="Inactivo">Inactivo</option>
+                                                </select>
+                                            </th>
+                                            <th>
+                                                Baja<br />
+                                                 <input id="ffinalb" type="date" /><br />
+                                                <input id="finicialb" type="date" />
+                                            </th>
+                                            <th class="text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot class="thead-light">
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
-                                
-                        </form>
-                    </div>
-
-
-
-                    <div class="row mt-3 mb-3">
-
-                        <div class=" col-md-6 text-left">
-                            <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Volver</button>
                         </div>
-
-                        <div class=" col-md-6 text-right">
-                            <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
-                        </div>
-
                     </div>
-
                 </div>
 
-                
+                <div id="panelForm" style="display:none;">
+                    <form role="form" id="frm" name="frm">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="comboCategoria">
+                                                Categoría
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboCategoria" required="required" data-required-error='Requerido'>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtDescripcion">
+                                                Descripción
+                                            </label>
+                                            <input type="text" class="form-control" id="txtDescripcion" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtNumeroSerie">
+                                                Numero de serie
+                                            </label>
+                                            <input type="text" class="form-control" id="txtNumeroSerie" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtCosto">
+                                                Costo  
+                                            </label>
+                                            <input type="number" step="any" class="form-control" id="txtCosto" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="txtComentarios">
+                                                Observaciones
+                                            </label>
+                                            <input type="text" class="form-control" id="txtComentarios" required="required" data-required-error='Requerido' />
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="comboEmpleado">
+                                                Asignación
+                                            </label>
+                                            <select class="form-control campo-combo" id="comboEmpleado" required="required" data-required-error='Requerido'>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="txtFechaIngreso">
+                                                        Fecha Ingreso
+                                                    </label>
+                                                    <input type="date" class="form-control campo-date" id="txtFechaIngreso"
+                                                        required="required" data-required-error='Requerido' />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="txtFechaBaja">
+                                                        Fecha Baja
+                                                    </label>
+                                                    <input type="date" class="form-control campo-date" id="txtFechaBaja" />
+                                                    <div class="help-block with-errors"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-5">
+                                    <div class="col-12 col-md-6 col-lg-4 text-right">
+                                        <button id="btnCancelar" class="btn btn-secondary"><i class="fa fa-arrow-circle-left mr-1"></i>Cancelar</button>
+                                        <button id="btnGuardar" class="btn btn-primary deshabilitable"><i class="fa fa-save mr-1"></i>Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>   
+                    </form>
+                </div>
 
             </div>
 
         </section>
-
-
 
         <footer class="main-footer">
             <div class="container-fluid">
@@ -328,21 +366,25 @@
  <!-- JavaScript files-->
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="../../vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="../../vendor/momentjs/moment.min.js"></script>
 
     <!-- DataTables JavaScript -->
-    <script src="../../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../../vendor/datatables/js/dataTables.bootstrap4.js"></script>
+    <%--<script src="../../vendor/datatables-responsive/dataTables.responsive.js"></script>--%>
+    <script src="../../vendor/datatables/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/jszip.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/pdfmake.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/vfs_fonts.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.html5.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.print.min.js"></script>
+    <script src="../../vendor/datatables/1.13.1/js/buttons.colVis.min.js"></script>
 
-    <link href="../../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/jquery.dataTables.css" rel="stylesheet" />
-    <link href="../../vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
-    <link href="../../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
-
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-    <script src="../../vendor/datatables-plugins/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <!-- DataTables StyleSheet -->
+    <link href="../../vendor/datatables/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="../../vendor/datatables/1.13.1/css/buttons.bootstrap4.min.css" rel="stylesheet" />
 
 
     <%--<script src="../../js/front.js"></script>--%>

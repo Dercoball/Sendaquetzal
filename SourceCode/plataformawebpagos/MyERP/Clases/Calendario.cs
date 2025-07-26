@@ -28,5 +28,6 @@ namespace Plataforma.Clases
 
         public string Accion;
 
+
     }
 }

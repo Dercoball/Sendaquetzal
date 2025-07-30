@@ -307,7 +307,8 @@ namespace Plataforma.pages
 
         #region Metodos 
         [WebMethod]
-        public static object ObtenrContadoresCliente(string path, int IdCliente) {
+        public static object ObtenrContadoresCliente(string path, int IdCliente)
+        {
             var strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             var oConexion = new SqlConnection(strConexion);
 
@@ -341,7 +342,7 @@ namespace Plataforma.pages
                             FROM cliente
                             WHERE curp = '{sCURP}'";
 
-                oCliente =  oConexion.Query<Cliente>(sql)
+                oCliente = oConexion.Query<Cliente>(sql)
                         .FirstOrDefault() ?? new Cliente();
 
                 if (oCliente.IdCliente > 0)
@@ -1050,9 +1051,9 @@ namespace Plataforma.pages
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
-                    
+
                     //  -1 para montoConInteres porque no queremos actualizar ese valor aún
-                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1,  Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
+                    int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1, Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
 
@@ -1065,16 +1066,16 @@ namespace Plataforma.pages
                     {
                         //  Nuevo monto
                         prestamo.Monto = prestamo.Monto - deudaActual.Saldo;
-                        
+
                         //  Efectuar los pagos para cada Pago semanal pendiente
                         int rowsPago = UpdatePagos(currentLoan.IdPrestamo.ToString(), idPrestamo, conn, transaction);
                         Utils.Log("\nrowsPago affected " + rowsPago);
 
 
                         //  Pasar a status pagado el prestamo anterior
-                        string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. " ;
-                        
-                        int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);                        
+                        string notaPagoPrestamoAnterior = "Se da por pagado el prestamo anterior No. " + currentLoan.IdPrestamo + ". El saldo se cubre con el nuevo prestamo. ";
+
+                        int rowsAffectedStatusPrestamoAnterior = UpdateStatusPrestamoPagado(currentLoan.IdPrestamo.ToString(), idUsuario, notaPagoPrestamoAnterior, Prestamo.STATUS_PAGADO, conn, transaction);
 
                         Utils.Log("\nrowsPago rowsAffectedStatusPrestamoAnterior " + rowsAffectedStatusPrestamoAnterior);
 
@@ -1087,7 +1088,7 @@ namespace Plataforma.pages
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_EJECUTIVO " + rowsAffectedStatusPrestamo);
 
                     //  Pago semanal incluyendo interes
-                    float pagoAmmount = pagoAmmountWithInteres  / customerType.SemanasAPrestar;
+                    float pagoAmmount = pagoAmmountWithInteres / customerType.SemanasAPrestar;
 
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
@@ -1435,7 +1436,7 @@ namespace Plataforma.pages
 
         }
 
-        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus, 
+        public static int UpdateStatusPrestamoPagado(string idPrestamo, string idUsuario, string nota, int idStatus,
         SqlConnection conn, SqlTransaction transaction)
         {
 
@@ -2537,7 +2538,7 @@ namespace Plataforma.pages
         /// <returns></returns>
         [WebMethod]
         public static DatosSalida UpdateRelacionPrestamoAprobacion(string path, string idPosicion,
-                string notaCliente, string notaAval,string notasEjecutivoCliente, string notasEjecutivoAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction,
+                string notaCliente, string notaAval, string notasEjecutivoCliente, string notasEjecutivoAval, string idUsuario, string idPrestamo, SqlConnection conn, SqlTransaction transaction,
                 int tipo)
         {
             //tipo 1 cliente, 2 aval

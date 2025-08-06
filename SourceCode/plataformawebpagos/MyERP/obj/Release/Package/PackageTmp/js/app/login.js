@@ -3,7 +3,6 @@
 
 $(document).ready(function () {
 
-    document.getElementById('txtPath').value = "connbd";
     var path = "connbd";
 
     if (sessionStorage.getItem("idusuario") !== undefined && sessionStorage.getItem("idusuario") !== null) {

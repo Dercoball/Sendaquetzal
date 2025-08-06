@@ -392,7 +392,10 @@ namespace Plataforma.pages
             string htmlItems = "";
             foreach (var permiso in listaPermisos)
             {
-
+                if (permiso.IdPermiso == 8)
+                {
+                    string a = "";
+                }
                 if (permiso.TipoPermiso == tipoPermiso)
                 {
                     permiso.NombreInterno = HttpContext.Current.Server.UrlPathEncode("/pages/") + permiso.NombreInterno;

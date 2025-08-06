@@ -137,9 +137,47 @@ namespace Plataforma.pages
             }
             else
             {
-                sql = @" INSERT INTO prestamo 
-                            OUTPUT INSERTED.id_prestamo
-                    VALUES (@fecha_solicitud, @monto, 1, @id_cliente, @id_usuario,NULL,NULL,1,NULL,NULL,@id_tipo_cliente,@id_aval,@monto_por_renovacion,null ,null) ";
+                sql = @" INSERT INTO prestamo (
+                fecha_solicitud,
+                monto,
+                id_status_prestamo,
+                id_cliente,
+                id_usuario,
+                notas_generales,
+                id_empleado,
+                activo,
+                fecha_aprobacion,
+                monto_con_interes,
+                id_tipo_cliente,
+                id_aval,
+                monto_por_renovacion,
+                nota_ejecutivo,
+                ubicacion_confirmada,
+                ubicacion_confirmada_aval,
+                id_prestamo_origen,
+                id_comision
+            )
+            OUTPUT INSERTED.id_prestamo
+            VALUES (
+                @fecha_solicitud,
+                @monto,
+                1, -- valor para id_status_prestamo
+                @id_cliente,
+                @id_usuario,
+                NULL, -- valor para notas_generales
+                @id_empleado,
+                1, -- valor para activo
+                NULL, -- valor para fecha_aprobacion
+                NULL, -- valor para monto_con_interes
+                @id_tipo_cliente,
+                @id_aval,
+                @monto_por_renovacion,
+                NULL, -- valor para nota_ejecutivo
+                NULL, -- valor para ubicacion_confirmada
+                NULL, -- valor para ubicacion_confirmada_aval
+                0, -- valor para id_prestamo_origen
+                14 -- valor para id_comision
+            )";
                 Utils.Log("INSERTAR PRESTAMO " + sql);
             }
 
@@ -153,6 +191,8 @@ namespace Plataforma.pages
             cmd.Parameters.AddWithValue("@id_tipo_cliente", oPrestamo.IdTipoCliente);
             cmd.Parameters.AddWithValue("@id_aval", oPrestamo.IdAval);
             cmd.Parameters.AddWithValue("@monto_por_renovacion", oPrestamo.MontoPorRenovacion);
+            cmd.Parameters.AddWithValue("@Id_empleado", oPrestamo.idUsuario);
+            
 
             if (oPrestamo.IdPrestamo > 0)
             {
@@ -600,9 +640,29 @@ namespace Plataforma.pages
             }
             else
             {
-                sql = @" INSERT INTO garantia_prestamo 
-                      OUTPUT INSERTED.id_garantia_prestamo
-                    VALUES (@id_prestamo, @nombre,@numero_serie,@costo,NULL, GETDATE(), 0,@id_usuario);";
+                sql = @" INSERT INTO garantia_prestamo (
+            id_prestamo,
+            nombre,
+            numero_serie,
+            costo,
+            fotografia,
+            fecha_registro,
+            eliminado,
+            id_usuario,
+            garante
+        )
+        OUTPUT INSERTED.id_garantia_prestamo
+        VALUES (
+            @id_prestamo,
+            @nombre,
+            @numero_serie,
+            @costo,
+            @fotografia, -- Use a parameter here if you have one, or keep NULL
+            GETDATE(),
+            0,
+            @id_usuario,
+            @garante -- You need to add this parameter
+        );";
                 Utils.Log("INSERTAR Documento " + sql);
             }
             try

@@ -633,7 +633,7 @@ namespace Plataforma.pages
 	                                prestamo pre 
 	                                INNER JOIN cliente c ON (c.id_cliente = pre.id_cliente) 
 	                                JOIN status_prestamo st ON (st.id_status_prestamo = pre.id_status_prestamo)
-	                                INNER JOIN pago p ON (p.id_prestamo = pre.id_prestamo AND p.fecha >= CAST('2022-06-16' as DATE) AND p.fecha <= CAST('2022-06-22' as DATE)
+	                                INNER JOIN pago p ON (p.id_prestamo = pre.id_prestamo AND p.fecha >= CAST('2022-06-16' as DATE) AND p.fecha <= getdate()
 	                                )
                                 WHERE
 	                                pre.id_status_prestamo = 4" + sqlPlaza;    

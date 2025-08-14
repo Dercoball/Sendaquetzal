@@ -657,11 +657,11 @@ namespace Plataforma.pages
             @nombre,
             @numero_serie,
             @costo,
-            @fotografia, -- Use a parameter here if you have one, or keep NULL
+            null,
             GETDATE(),
             0,
             @id_usuario,
-            @garante -- You need to add this parameter
+            null
         );";
                 Utils.Log("INSERTAR Documento " + sql);
             }

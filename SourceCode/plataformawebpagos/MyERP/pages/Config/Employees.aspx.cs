@@ -327,5 +327,317 @@ namespace Plataforma.pages
                 conn.Close();
             }
         }
+        [WebMethod]
+        public static Empleado GetDataEmployee(string path, string id)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            Empleado item = new Empleado();
+            SqlConnection conn = new SqlConnection(strConexion);
+
+
+            try
+            {
+                conn.Open();
+
+
+                item = GetItemEmployee(path, id, conn, strConexion);
+                item.Direccion = GetAddress(path, id, 0, conn, strConexion);
+                item.DireccionAval = GetAddress(path, id, 1, conn, strConexion);
+                item.usuario = GetUser(path, id, conn, strConexion);
+
+                return item;
+
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+        [WebMethod]
+        public static Empleado GetItemEmployee(string path, string id, SqlConnection conn, string strconexion)
+        {
+
+            Empleado item = new Empleado();
+
+            try
+            {
+
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_empleado, id_tipo_usuario, id_comision_inicial, id_posicion, id_plaza, curp, email, 
+                                    nombre, primer_apellido, segundo_apellido, telefono, eliminado, 
+                                    activo, IsNull(id_supervisor, 0) id_supervisor, IsNull(id_ejecutivo, 0) id_ejecutivo, 
+                                    IsNull(id_coordinador, 0) id_coordinador, FORMAT(fecha_ingreso, 'yyyy-MM-dd') fecha_ingreso, 
+                                    FORMAT(fecha_nacimiento, 'yyyy-MM-dd') fecha_nacimiento,
+                                    monto_limite_inicial,
+                                    nombre_aval, primer_apellido_aval, segundo_apellido_aval, curp_aval, telefono_aval,
+                                    concat(nombre ,  ' ' , primer_apellido , ' ' , segundo_apellido) AS nombre_completo,
+                                    concat(nombre_aval ,  ' ' , primer_apellido_aval , ' ' , segundo_apellido_aval) AS nombre_completo_aval
+                                FROM empleado
+                                WHERE id_empleado =  @id_empleado 
+                                ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("id_empleado =  " + id);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_empleado", id);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item = new Empleado();
+
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
+                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
+                        item.IdComisionInicial = int.Parse(ds.Tables[0].Rows[i]["id_comision_inicial"].ToString());
+
+                        item.IdSupervisor = int.Parse(ds.Tables[0].Rows[i]["id_supervisor"].ToString());
+                        item.IdEjecutivo = int.Parse(ds.Tables[0].Rows[i]["id_ejecutivo"].ToString());
+                        item.IdCoordinador = int.Parse(ds.Tables[0].Rows[i]["id_coordinador"].ToString());
+
+                        item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
+
+                        item.CURP = ds.Tables[0].Rows[i]["curp"].ToString();
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
+                        item.PrimerApellido = ds.Tables[0].Rows[i]["primer_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        item.SegundoApellido = ds.Tables[0].Rows[i]["segundo_apellido"].ToString();
+                        item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
+                        item.MontoLimiteInicial = float.Parse(ds.Tables[0].Rows[i]["monto_limite_inicial"].ToString());
+                        item.FechaIngreso = DateTime.TryParse(ds.Tables[0].Rows[i]["fecha_ingreso"].ToString(), out DateTime fechaIngreso) ? fechaIngreso : default(DateTime);
+                        item.FechaNacimiento = ds.Tables[0].Rows[i]["fecha_nacimiento"].ToString();
+                        item.CURPAval = ds.Tables[0].Rows[i]["curp_aval"].ToString();
+                        item.NombreAval = ds.Tables[0].Rows[i]["nombre_aval"].ToString();
+                        item.NombreCompletoAval = ds.Tables[0].Rows[i]["nombre_completo_aval"].ToString();
+                        item.PrimerApellidoAval = ds.Tables[0].Rows[i]["primer_apellido_aval"].ToString();
+                        item.SegundoApellidoAval = ds.Tables[0].Rows[i]["segundo_apellido_aval"].ToString();
+                        item.TelefonoAval = ds.Tables[0].Rows[i]["telefono_aval"].ToString();
+
+
+
+                        //item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
+                        //item.NombrePlaza = ds.Tables[0].Rows[i]["nombre_plaza"].ToString();
+
+
+
+                    }
+                }
+
+
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
+        [WebMethod]
+        public static Direccion GetAddress(string path, string idEmpleado, int aval, SqlConnection conn, string strconexion)
+        {
+
+            Direccion item = new Direccion();
+
+            try
+            {
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_direccion, id_empleado, id_aval, calleyno, colonia, municipio, estado, 
+                                    codigo_postal, id_municipio, id_estado, activo, ISNULL(aval, 0) aval
+                                    FROM direccion
+                                    WHERE id_empleado =  @id_empleado AND aval = @aval
+                                ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("id_empleado =  " + idEmpleado);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id_empleado", idEmpleado);
+                adp.SelectCommand.Parameters.AddWithValue("@aval", aval);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item = new Direccion();
+
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Aval = int.Parse(ds.Tables[0].Rows[i]["aval"].ToString());
+                        item.Calle = ds.Tables[0].Rows[i]["calleyno"].ToString();
+                        item.Colonia = ds.Tables[0].Rows[i]["colonia"].ToString();
+                        item.Municipio = ds.Tables[0].Rows[i]["municipio"].ToString();
+                        item.Estado = ds.Tables[0].Rows[i]["estado"].ToString();
+                        item.CodigoPostal = ds.Tables[0].Rows[i]["codigo_postal"].ToString();
+
+
+
+
+                    }
+                }
+
+
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+            // Reemplaza la asignación de FechaIngreso en el método GetItemEmployee por un parseo seguro a DateTime
+        }
+        [WebMethod]
+        public static Usuario GetUser(string path, string id, SqlConnection conn, string strconexion)
+        {
+
+            Usuario item = new Usuario();
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_usuario, id_tipo_usuario,
+                                IsNull(id_empleado, 0) id_empleado, nombre, login, password, email, telefono 
+                                FROM usuario 
+                                WHERE id_empleado = @id ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("Id =  " + id);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", id);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
+                        item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
+
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.Login = ds.Tables[0].Rows[i]["login"].ToString();
+                        item.Password = ds.Tables[0].Rows[i]["password"].ToString();
+                        item.Email = ds.Tables[0].Rows[i]["email"].ToString();
+
+
+
+
+                    }
+                }
+
+
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+        [WebMethod]
+        public static Documento GetDocument(string path, string idEmpleado, string idTipoDocumento)
+        {
+
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            Documento item = new Documento();
+
+            SqlConnection conn = new SqlConnection(strConexion);
+
+            try
+            {
+                conn.Open();
+                DataSet ds = new DataSet();
+                string query = @" SELECT id_documento_colaborador, contenido, extension, nombre 
+                                  FROM documento    
+                                  WHERE id_empleado = @id AND id_tipo_documento = @id_tipo_documento ";
+
+                Utils.Log("\nMétodo-> " +
+                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                Utils.Log("idEmpleado =  " + idEmpleado);
+                Utils.Log("idTipoDocumento =  " + idTipoDocumento);
+
+                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                adp.SelectCommand.Parameters.AddWithValue("@id", idEmpleado);
+                adp.SelectCommand.Parameters.AddWithValue("@id_tipo_documento", idTipoDocumento);
+
+                adp.Fill(ds);
+
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    item.IdDocumento = int.Parse(ds.Tables[0].Rows[0]["id_documento_colaborador"].ToString());
+                    item.Contenido = ds.Tables[0].Rows[0]["contenido"].ToString();
+                    item.Extension = ds.Tables[0].Rows[0]["extension"].ToString();
+                    item.Nombre = ds.Tables[0].Rows[0]["nombre"].ToString();
+                }
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+                return item;
+            }
+
+            finally
+            {
+                conn.Close();
+            }
+
+        }
     }
 }

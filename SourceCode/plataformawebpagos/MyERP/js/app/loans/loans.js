@@ -20,13 +20,17 @@ const loans = {
         $("#btnAprobar").hide();
         $("#dvBotonAgregarGarantia").hide();
 
-        $("#lblFechaSolicitud").html(moment(Date.now()).format('YYYY-MM-DD'))
+        const today = moment().format('YYYY-MM-DD');
+        $("#txtFechaSolicitud").val(today);
         loans.loadTipoClientes(function (result) {
             loans.cargaComboClientes(result); 
             if (loans.idPrestamo > 0) {
                 loans.detail(loans.idPrestamo);
             }
         });
+    },
+    getFechaSolicitud: () => {
+        return $("#txtFechaSolicitud").val();
     },
     obtenerContadores: (IdCliente) => {
         var params = {};

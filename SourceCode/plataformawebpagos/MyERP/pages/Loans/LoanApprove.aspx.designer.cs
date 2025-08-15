@@ -58,5 +58,59 @@ namespace Plataforma.pages
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfIdPrestamo;
+
+        /// <summary>
+        /// Control UcCliente.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::Plataforma.pages.Controles.UcCliente UcCliente;
+
+        /// <summary>
+        /// Control UcDocumentacionCliente.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::Plataforma.pages.Controles.UcDocumentacion UcDocumentacionCliente;
+
+        /// <summary>
+        /// Control UcAval.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::Plataforma.pages.Controles.UcCliente UcAval;
+
+        /// <summary>
+        /// Control UcDocumentacionAval.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::Plataforma.pages.Controles.UcDocumentacion UcDocumentacionAval;
+
+        /// <summary>
+        /// Control txtUbicacionReconfirmar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtUbicacionReconfirmar;
+
+        /// <summary>
+        /// Control btnConfirmarUbicacion.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor btnConfirmarUbicacion;
     }
 }

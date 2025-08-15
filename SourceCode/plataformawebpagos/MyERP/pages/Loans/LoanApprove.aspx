@@ -125,7 +125,7 @@
                         <div class="row mb-2">
                             <div class="col-lg-3">
                                 <label class="form-label">Fecha solicitud</label>
-                                <label class="form-control" id="lblFechaSolicitud"></label>
+                                <input type="date" class="form-control" id="txtFechaSolicitud" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label">Tipo de cliente</label>

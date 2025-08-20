@@ -66,6 +66,8 @@
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtPath" runat="server" />
+    <asp:HiddenField ID="txtIdEmpleado" runat="server" />
     </form>
 
     <!-- Side Navbar -->

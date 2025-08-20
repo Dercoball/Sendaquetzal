@@ -513,199 +513,225 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Pago> GetListaItems(string path, string idUsuario, string idTipoUsuario, string idStatus,
-                string fechaInicial, string fechaFinal, int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
+        public static List<Pago> GetListaItems(
+    string path, string idUsuario, string idTipoUsuario, string idStatus,
+    string fechaInicial, string fechaFinal, int idPlaza, int idEjecutivo,
+    int idSupervisor, int idPromotor, string typeFilter)
         {
-
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-
-            // verificar que tenga permisos para usar esta pagina
+            // Permisos
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
-            if (!tienePermiso)
+            if (!tienePermiso) return null;
+
+            var items = new List<Pago>();
+            using (var conn = new SqlConnection(strConexion))
             {
-                return null;//No tiene permisos
-            }
-
-
-            //  Lista de datos a devolver
-            List<Pago> items = new List<Pago>();
-
-
-            SqlConnection conn = new SqlConnection(strConexion);
-
-            try
-            {
-
-                conn.Open();
-
-                //  Traer datos del usuario para saber su id_empleado
-                Usuario user = Usuarios.GetUsuario(path, idUsuario);
-
-                string sqlUser = "";
-
-                if (idTipoUsuario != Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString())    //superuser
+                try
                 {
-                    sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
-                }
+                    conn.Open();
 
-				//  Filtro status 
-				var sqlPlaza = "";
-				if (idPlaza > 0)
-				{
-					var sqlEmpleado = "";
-					var empleados = conn.Query<Empleado>("SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado WHERE id_plaza = " + idPlaza).ToList();
-					List<Empleado> empleadosFiltrados = new List<Empleado>();
-
-					switch (typeFilter)
-					{
-						case "promotor":
-							empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor).ToList();
-							break;
-						case "supervisor":
-							//obtenemos el supervisor
-							var supervisor = empleados.Where(w => w.IdEmpleado == idSupervisor && w.IdPosicion == 4).ToList();
-
-							//obtenemos los promotores asignados al supervisor
-							var promotores = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5).ToList();
-
-							//empleadosFiltrados.AddRange(supervisor);
-							empleadosFiltrados.AddRange(promotores);
-							break;
-						case "ejecutivo":
-							//obtenemos el ejecutivo
-							var ejecutivo = empleados.Where(w => w.IdEmpleado == idEjecutivo && w.IdPosicion == 3).ToList();
-
-							//obtenemos los supervisores
-							var supervisores = empleados.Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4).ToList();
-							var supervisoresIDs = supervisores.Select(s => s.IdEmpleado).ToList();
-
-							//obtenemos los promotores
-							var promotoresEjecutivo = empleados.Where(w => supervisoresIDs.Contains(w.IdSupervisor) && w.IdPosicion == 5).ToList();
-
-							//empleadosFiltrados.AddRange(ejecutivo);
-							//empleadosFiltrados.AddRange(supervisores);
-							empleadosFiltrados.AddRange(promotoresEjecutivo);
-
-							break;
-					}
-					if (empleadosFiltrados.Count > 0)
-					{
-						sqlEmpleado = string.Join<int>(",", empleadosFiltrados.Select(s => s.IdEmpleado).ToList());
-					}
-					else
-					{
-						sqlEmpleado = string.Join<int>(",", empleados.Select(s => s.IdEmpleado).ToList());
-					}
-
-					sqlPlaza = " AND p.id_empleado IN (" + sqlEmpleado + ") ";
-				}
-
-
-				int idStatusPagoFalla = Pago.STATUS_PAGO_FALLA;    // PARA EL subquery de totalizado de fallas
-
-
-                DataSet ds = new DataSet();
-                string query = @"SELECT 
-	                                pre.id_prestamo,
-	                                concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
-	                                c.id_cliente,
-                                    ISNULL(c.mensaje, 1) mensaje,
-	                                pre.monto,
-	                                pre.fecha_solicitud,
-	                                pre.fecha_aprobacion,
-	                                pre.id_status_prestamo,
-	                                st.color,
-	                                st.nombre nombre_status_prestamo,
-	                                (SELECT SUBSTRING( 
-				                                (
-				                                SELECT ', ' + CAST(p2.numero_semana AS VARCHAR(5)) AS 'data()'
-				                                FROM pago p2 WHERE p2.id_prestamo = pre.id_prestamo
-				                                AND  p2.id_status_pago = 2 AND p2.saldo > 0
-				                                FOR XML PATH('') 
-				                                ), 2 , 9999)) As semanas_falla,
-	                                IsNull( (SELECT SUM(f.saldo) FROM pago f WHERE f.id_prestamo = pre.id_prestamo AND  f.id_status_pago = 2 ) , 0)  total_falla,
-	                                (Select MAX(p3.fecha_registro_pago) FROM pago p3 WHERE p3.id_prestamo = pre.id_prestamo ) AS fecha_ultimo_pago,
-	                                p.id_pago,
-	                                p.numero_semana,
-                                    p.monto montopago
-                                FROM 
-	                                prestamo pre 
-	                                INNER JOIN cliente c ON (c.id_cliente = pre.id_cliente) 
-	                                JOIN status_prestamo st ON (st.id_status_prestamo = pre.id_status_prestamo)
-	                                INNER JOIN pago p ON (p.id_prestamo = pre.id_prestamo AND p.fecha >= CAST('2022-06-16' as DATE) AND p.fecha <= getdate()
-	                                )
-                                WHERE
-	                                pre.id_status_prestamo = 4" + sqlPlaza;    
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    // Datos del usuario
+                    Usuario user = Usuarios.GetUsuario(path, idUsuario);
+                    string sqlUser = "";
+                    if (idTipoUsuario != Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString() && idTipoUsuario != Usuario.TIPO_USUARIO_DIRECTOR.ToString())
                     {
-                        Pago item = new Pago();
-                        item.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
-                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
-                        item.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
-                        item.NumeroSemana = int.Parse(ds.Tables[0].Rows[i]["numero_semana"].ToString());
-                        item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-                        item.MontoPrestamo = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
-						item.Monto = float.Parse(ds.Tables[0].Rows[i]["montopago"].ToString());
-                        item.MontoFormateadoMx = item.Monto.ToString("C2"); //moneda Mx -> $ 2,233.00
-
-                        item.TotalFalla = float.Parse(ds.Tables[0].Rows[i]["total_falla"].ToString());
-                        item.TotalFallaFormateadoMx = item.TotalFalla.ToString("C2");
-                        item.Fecha = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_solicitud"].ToString());
-						item.FechaStr = ds.Tables[0].Rows[i]["fecha_solicitud"].ToString();
-
-                        item.Mensaje = int.Parse(ds.Tables[0].Rows[i]["mensaje"].ToString());
-						item.SemanasFalla = ds.Tables[0].Rows[i]["semanas_falla"].ToString();
-                        string fechaultimopago = ds.Tables[0].Rows[i]["fecha_ultimo_pago"].ToString();
-
-						if (!string.IsNullOrEmpty(fechaultimopago))
-                        {
-                            item.FechaUltimoPago = DateTime.Parse(ds.Tables[0].Rows[i]["fecha_ultimo_pago"].ToString());
-                        }else
-                            item.FechaUltimoPago = null;
-
-                        item.Color = ds.Tables[0].Rows[i]["color"].ToString();
-                        item.Status = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_prestamo"].ToString() + "</span>";
-
-
-                        string botones = "";
-
-                        botones += "<button data-idcliente = " + item.IdCliente + "  data-idprestamo = " + item.IdPrestamo + " onclick='payments.view(" + item.IdPago + ")'  class='btn btn-outline-primary'> <span class='fa fa-folder-open mr-1'></span>Abrir</button>";
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
+                        // Si necesitas restringir por el empleado dueño del préstamo, ajusta aquí.
+                        // Ojo: esta condición aplica sobre el préstamo, no sobre el pago.
+                        sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
                     }
+
+                    // ---- Filtro por Plaza / Árbol de empleados (para aplicar sobre los pagos en el APPLY) ----
+                    string sqlPlazaApply = "";
+                    if (idPlaza > 0)
+                    {
+                        var empleados = conn.Query<Empleado>(
+                            "SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo " +
+                            "FROM empleado WHERE id_plaza = @plz",
+                            new { plz = idPlaza }).ToList();
+
+                        List<Empleado> empleadosFiltrados = new List<Empleado>();
+                        switch ((typeFilter ?? "").ToLowerInvariant())
+                        {
+                            case "promotor":
+                                empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor).ToList();
+                                break;
+                            case "supervisor":
+                                var promotores = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5).ToList();
+                                empleadosFiltrados.AddRange(promotores);
+                                break;
+                            case "ejecutivo":
+                                var supervisores = empleados.Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4).ToList();
+                                var supIds = supervisores.Select(s => s.IdEmpleado).ToList();
+                                var promotoresEjecutivo = empleados.Where(w => supIds.Contains(w.IdSupervisor) && w.IdPosicion == 5).ToList();
+                                empleadosFiltrados.AddRange(promotoresEjecutivo);
+                                break;
+                        }
+
+                        List<int> lista = (empleadosFiltrados.Count > 0 ? empleadosFiltrados : empleados)
+                                          .Select(s => s.IdEmpleado).Distinct().ToList();
+
+                        if (lista.Count > 0)
+                        {
+                            sqlPlazaApply = " AND p.id_empleado IN (" + string.Join(",", lista) + ") ";
+                        }
+                    }
+
+                    // ---- Rango de fechas (parametrizado) ----
+                    DateTime desde;
+                    DateTime hasta;
+                    if (!DateTime.TryParse(fechaInicial, out desde)) desde = new DateTime(2022, 06, 16);
+                    if (!DateTime.TryParse(fechaFinal, out hasta)) hasta = DateTime.Today;
+
+                    // ===== Query sin duplicados =====
+                    string query = @"
+                        SELECT
+                            pre.id_prestamo,
+                            CONCAT(c.nombre , ' ', c.primer_apellido , ' ', c.segundo_apellido) AS nombre_completo,
+                            c.id_cliente,
+                            ISNULL(c.mensaje, 1) AS mensaje,
+                            pre.monto,
+                            pre.fecha_solicitud,
+                            pre.fecha_aprobacion,
+                            pre.id_status_prestamo,
+                            st.color,
+                            st.nombre AS nombre_status_prestamo,
+
+                            -- Semanas en falla (concat)
+                            sem.semanas_falla,
+
+                            -- Total en falla
+                            ISNULL(falla.total_falla, 0) AS total_falla,
+
+                            -- Último pago registrado (cualquier fecha)
+                            up.fecha_ultimo_pago,
+
+                            -- Pago representativo en rango: último por fecha
+                            pago_ult.id_pago,
+                            pago_ult.numero_semana,
+                            pago_ult.montopago
+                        FROM prestamo pre
+                        INNER JOIN cliente c           ON c.id_cliente = pre.id_cliente
+                        INNER JOIN status_prestamo st  ON st.id_status_prestamo = pre.id_status_prestamo
+
+                        -- ÚLTIMO PAGO EN RANGO (elimina duplicados)
+                        OUTER APPLY (
+                            SELECT TOP (1)
+                                p.id_pago,
+                                p.numero_semana,
+                                p.monto AS montopago
+                            FROM pago p
+                            WHERE p.id_prestamo = pre.id_prestamo
+                              AND p.fecha >= @desde
+                              AND p.fecha <  DATEADD(DAY, 1, @hasta)
+                              /*** filtro por plaza/arbol (si aplica) ***/
+                              " + sqlPlazaApply + @"
+                            ORDER BY p.fecha DESC, p.id_pago DESC
+                        ) AS pago_ult
+
+                        -- FECHA DEL ÚLTIMO PAGO REGISTRADO (global al préstamo)
+                        OUTER APPLY (
+                            SELECT MAX(p3.fecha_registro_pago) AS fecha_ultimo_pago
+                            FROM pago p3
+                            WHERE p3.id_prestamo = pre.id_prestamo
+                        ) AS up
+
+                        -- TOTAL EN FALLA
+                        OUTER APPLY (
+                            SELECT SUM(CASE WHEN f.id_status_pago = 2 THEN f.saldo ELSE 0 END) AS total_falla
+                            FROM pago f
+                            WHERE f.id_prestamo = pre.id_prestamo
+                        ) AS falla
+
+                        -- LISTA DE SEMANAS EN FALLA
+                        OUTER APPLY (
+                            SELECT
+                                STUFF((
+                                    SELECT ', ' + CAST(p2.numero_semana AS VARCHAR(5))
+                                    FROM pago p2
+                                    WHERE p2.id_prestamo = pre.id_prestamo
+                                      AND p2.id_status_pago = 2
+                                      AND p2.saldo > 0
+                                    FOR XML PATH(''), TYPE
+                                ).value('.','nvarchar(max)'), 1, 2, '') AS semanas_falla
+                        ) AS sem
+
+                        WHERE pre.id_status_prestamo = 4
+                        " + sqlUser + @"
+                        ";
+
+                    var adp = new SqlDataAdapter(query, conn);
+                    adp.SelectCommand.Parameters.AddWithValue("@desde", desde);
+                    adp.SelectCommand.Parameters.AddWithValue("@hasta", hasta);
+
+                    DataSet ds = new DataSet();
+
+                    Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name +
+                              $"\nQuery:\n{query}\n@desde={desde:yyyy-MM-dd} @hasta={hasta:yyyy-MM-dd}\n");
+
+                    adp.Fill(ds);
+
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        var t = ds.Tables[0];
+                        foreach (DataRow r in t.Rows)
+                        {
+                            var item = new Pago();
+
+                            item.IdPrestamo = Convert.ToInt32(r["id_prestamo"]);
+                            item.IdCliente = Convert.ToInt32(r["id_cliente"]);
+                            item.NombreCliente = Convert.ToString(r["nombre_completo"]);
+                            item.Mensaje = Convert.ToInt32(r["mensaje"]);
+
+                            item.MontoPrestamo = Convert.ToSingle(r["monto"]);
+                            item.Fecha = Convert.ToDateTime(r["fecha_solicitud"]);
+                            item.FechaStr = Convert.ToString(r["fecha_solicitud"]);
+
+                            // Pago representativo (puede venir null)
+                            item.IdPago = r["id_pago"] == DBNull.Value ? 0 : Convert.ToInt32(r["id_pago"]);
+                            item.NumeroSemana = r["numero_semana"] == DBNull.Value ? 0 : Convert.ToInt32(r["numero_semana"]);
+                            item.Monto = r["montopago"] == DBNull.Value ? 0f : Convert.ToSingle(r["montopago"]);
+                            item.MontoFormateadoMx = item.Monto.ToString("C2");
+
+                            // Falla
+                            item.TotalFalla = r["total_falla"] == DBNull.Value ? 0f : Convert.ToSingle(r["total_falla"]);
+                            item.TotalFallaFormateadoMx = item.TotalFalla.ToString("C2");
+                            item.SemanasFalla = Convert.ToString(r["semanas_falla"]);
+
+                            // Último pago registrado (puede venir null)
+                            if (r["fecha_ultimo_pago"] == DBNull.Value)
+                                item.FechaUltimoPago = null;
+                            else
+                                item.FechaUltimoPago = Convert.ToDateTime(r["fecha_ultimo_pago"]);
+
+                            // Status / color   
+                            item.Color = Convert.ToString(r["color"]);
+                            item.Status = "<span class='" + item.Color + "'>" +
+                                          Convert.ToString(r["nombre_status_prestamo"]) + "</span>";
+
+                            // Botón
+                            string botones = "<button data-idcliente='" + item.IdCliente + "' " +
+                                             "data-idprestamo='" + item.IdPrestamo + "' " +
+                                             "onclick='payments.view(" + item.IdPago + ")' " +
+                                             "class='btn btn-outline-primary'>" +
+                                             "<span class='fa fa-folder-open mr-1'></span>Abrir</button>";
+                            item.Accion = botones;
+
+                            items.Add(item);
+                        }
+                    }
+
+                    return items;
                 }
-
-
-                return items;
+                catch (Exception ex)
+                {
+                    Utils.Log("Error ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    return items;
+                }
             }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
         }
+
 
 
 

@@ -26,7 +26,8 @@ namespace Plataforma.Clases
         public float Factor;
 
         public const int TIPO_USUARIO_SUPER_ADMIN = 6;
-        
+        public const int TIPO_USUARIO_DIRECTOR = 1;
+
 
     }
 

@@ -46,181 +46,178 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Cliente> GetItems(string path, string idUsuario, string idTipoUsuario, string idStatus, int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
+        public static List<Cliente> GetItems(
+    string path, string idUsuario, string idTipoUsuario, string idStatus,
+    int idPlaza, int idEjecutivo, int idSupervisor, int idPromotor, string typeFilter)
         {
-
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-
-            // verificar que tenga permisos para usar esta pagina
+            // Permisos
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
-            if (!tienePermiso)
+            if (!tienePermiso) return null;
+
+            var items = new List<Cliente>();
+
+            using (var conn = new SqlConnection(strConexion))
             {
-                return null;//No tiene permisos
-            }
-
-
-            List<Cliente> items = new List<Cliente>();
-            SqlConnection conn = new SqlConnection(strConexion);
-
-            try
-            {
-
-                conn.Open();
-
-
-                //  Filtro status 
-                var sqlPlaza = "";
-                if (idPlaza > 0)
+                try
                 {
-                    var sqlEmpleado = "";
-                    var empleados = conn.Query<Empleado>("SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado WHERE id_plaza = " + idPlaza).ToList();
-                    List<Empleado> empleadosFiltrados = new List<Empleado>();
+                    conn.Open();
 
-                    switch (typeFilter)
+                    // 1) Trae empleados SOLO de plazas ACTIVAS (y opcional: empleados activos)
+                    //    Si idPlaza > 0 se acota a esa plaza; si no, trae de todas las activas
+                    var empleados = conn.Query<Empleado>(@"
+                SELECT e.id_empleado   AS IdEmpleado,
+                       e.id_plaza      AS IdPlaza,
+                       e.id_posicion   AS IdPosicion,
+                       e.id_supervisor AS IdSupervisor,
+                       e.id_ejecutivo  AS IdEjecutivo
+                FROM empleado e
+                INNER JOIN plaza pl   ON pl.id_plaza = e.id_plaza
+                WHERE pl.activo = 1 and pl.eliminado <> 1
+                  /* Descomenta si tienes columna de empleado activo:
+                  AND e.activo = 1 and e.eliminado <> 1
+                  */
+                  AND (@idPlaza = 0 OR e.id_plaza = @idPlaza);
+            ", new { idPlaza }).ToList();
+
+                    // 2) Aplica tu typeFilter sobre esa lista depurada
+                    IEnumerable<Empleado> empleadosFiltrados = empleados;
+                    switch (typeFilter?.ToLowerInvariant())
                     {
                         case "promotor":
-                            empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor).ToList();
+                            empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor);
                             break;
+
                         case "supervisor":
-                            //obtenemos el supervisor
-                            var supervisor = empleados.Where(w=>w.IdEmpleado == idSupervisor && w.IdPosicion == 4).ToList();
-
-							//obtenemos los promotores asignados al supervisor
-							var promotores = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5).ToList();
-
-							//empleadosFiltrados.AddRange(supervisor);
-							empleadosFiltrados.AddRange(promotores);
+                            // promotores del supervisor
+                            empleadosFiltrados = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5);
                             break;
+
                         case "ejecutivo":
-                            //obtenemos el ejecutivo
-                            var ejecutivo = empleados.Where(w => w.IdEmpleado == idEjecutivo && w.IdPosicion == 3).ToList();
+                            // supervisores del ejecutivo
+                            var supervisoresIDs = empleados
+                                .Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4)
+                                .Select(s => s.IdEmpleado)
+                                .ToHashSet();
 
-							//obtenemos los supervisores
-							var supervisores = empleados.Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4).ToList();
-                            var supervisoresIDs = supervisores.Select(s=>s.IdEmpleado).ToList();
-
-                            //obtenemos los promotores
-                            var promotoresEjecutivo = empleados.Where(w => supervisoresIDs.Contains(w.IdSupervisor) && w.IdPosicion == 5).ToList();
-
-							//empleadosFiltrados.AddRange(ejecutivo);
-							//empleadosFiltrados.AddRange(supervisores);
-							empleadosFiltrados.AddRange(promotoresEjecutivo);
-
+                            // promotores de esos supervisores
+                            empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5 && supervisoresIDs.Contains(w.IdSupervisor));
                             break;
-					}
-                    if(empleadosFiltrados.Count > 0)
-                    {
-                        sqlEmpleado = string.Join<int>(",", empleadosFiltrados.Select(s => s.IdEmpleado).ToList());
                     }
-                    else
+
+                    // 3) Construye el filtro IN de forma segura:
+                    var idsEmpleados = empleadosFiltrados.Select(e => e.IdEmpleado).Distinct().ToList();
+
+                    // Si no hay empleados válidos en plazas activas, no traigas nada
+                    string filtroEmpleadosSql = (idsEmpleados.Count == 0)
+                        ? " AND 1 = 0 "
+                        : " AND p.id_empleado IN (" + string.Join(",", idsEmpleados) + ") ";
+
+                    // 4) Query: último préstamo por cliente + plaza activa SIEMPRE
+                    string query = @"
+                WITH ult AS (
+                    SELECT
+                        p.id_prestamo,
+                        p.id_cliente,
+                        p.id_empleado,
+                        p.monto,
+                        ROW_NUMBER() OVER (PARTITION BY p.id_cliente ORDER BY p.id_prestamo DESC) AS rn
+                    FROM prestamo p
+                    INNER JOIN empleado e ON e.id_empleado = p.id_empleado
+                    INNER JOIN plaza   pl ON pl.id_plaza   = e.id_plaza AND pl.activo = 1
+                    /* Si hay estatus de préstamo a excluir (cancelado, etc.), filtra aquí:
+                       AND p.id_status_prestamo NOT IN (/* ids a excluir */)
+                    */
+                    WHERE 1 = 1
+                    " + filtroEmpleadosSql + @"
+                )
+                SELECT
+                    c.id_cliente,
+                    CONCAT(c.nombre, ' ', c.primer_apellido, ' ', c.segundo_apellido) AS nombre_completo,
+                    c.telefono, c.curp, c.ocupacion,
+                    ISNULL(c.id_status_cliente, 2) AS id_status_cliente,
+                    ISNULL(c.mensaje, 1) AS mensaje,
+                    st.nombre AS nombre_status_cliente, st.color,
+                    u.id_prestamo, u.monto,
+                    d.calleyno, d.colonia, d.municipio, d.estado
+                FROM ult u
+                INNER JOIN cliente c       ON c.id_cliente = u.id_cliente
+                INNER JOIN status_cliente st ON st.id_status_cliente = c.id_status_cliente
+                LEFT JOIN direccion d      ON (d.id_cliente = c.id_cliente AND d.aval = 0)
+                WHERE u.rn = 1
+                ORDER BY c.id_cliente;";
+
+                    var ds = new DataSet();
+                    using (var adp = new SqlDataAdapter(query, conn))
                     {
-						sqlEmpleado = string.Join<int>(",", empleados.Select(s => s.IdEmpleado).ToList());
-					}
+                        Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
+                        adp.Fill(ds);
+                    }
 
-					sqlPlaza = " AND p.id_empleado IN (" + sqlEmpleado  + ") ";
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        foreach (DataRow r in ds.Tables[0].Rows)
+                        {
+                            var item = new Cliente
+                            {
+                                IdCliente = Convert.ToInt32(r["id_cliente"]),
+                                IdStatusCliente = Convert.ToInt32(r["id_status_cliente"]),
+                                IdPrestamo = Convert.ToInt32(r["id_prestamo"]),
+                                Curp = r["curp"]?.ToString(),
+                                NombreCompleto = r["nombre_completo"]?.ToString(),
+                                NombreStatus = r["nombre_status_cliente"]?.ToString(),
+                                Telefono = r["telefono"]?.ToString(),
+                                Monto = float.TryParse(r["monto"]?.ToString(), out var m) ? m : 0f,
+                                direccion = new Direccion
+                                {
+                                    Calle = r["calleyno"]?.ToString(),
+                                    Colonia = r["colonia"]?.ToString(),
+                                    Municipio = r["municipio"]?.ToString(),
+                                    Estado = r["estado"]?.ToString()
+                                },
+                                Color = r["color"]?.ToString(),
+                                Mensaje = Convert.ToInt32(r["mensaje"])
+                            };
+
+                            // pinta status con color
+                            item.NombreStatus = $"<span class='{item.Color}'>{item.NombreStatus}</span>";
+
+                            // Botones
+                            string botones = "";
+                            botones += $"<button onclick='customers.view({item.IdPrestamo})' class='btn btn-outline-primary'><span class='fa fa-eye mr-1'></span>Visualizar</button>";
+
+                            if (item.IdStatusCliente == Cliente.STATUS_ACTIVO ||
+                                item.IdStatusCliente == Cliente.STATUS_INACTIVO ||
+                                item.IdStatusCliente == Cliente.STATUS_VENCIDO)
+                            {
+                                botones += $"<button onclick='customers.condonate({item.IdCliente})' class='btn btn-outline-primary'><span class='fa fa-ban mr-1'></span>Condonar</button>";
+                            }
+                            if (item.IdStatusCliente == Cliente.STATUS_VENCIDO)
+                            {
+                                botones += $"<button onclick='customers.claim({item.IdCliente})' class='btn btn-outline-primary'><span class='fa fa-legal mr-1'></span>Demanda</button>";
+                            }
+                            if (item.IdStatusCliente == Cliente.STATUS_CONDONADO)
+                            {
+                                botones += $"<button onclick='customers.reactivate({item.IdCliente})' class='btn btn-outline-primary'><span class='fa fa-check-circle mr-1'></span>Reactivar</button>";
+                            }
+
+                            item.Accion = botones;
+                            items.Add(item);
+                        }
+                    }
+
+                    return items;
                 }
-
-
-                DataSet ds = new DataSet();
-                string query = @" SELECT c.id_cliente,
-                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
-                     c.telefono , c.curp, c.ocupacion,
-                     IsNull(c.id_status_cliente, 2) id_status_cliente,
-                     ISNULL(c.mensaje, 1) mensaje,
-                     st.nombre nombre_status_cliente, st.color, p.id_prestamo, p.monto, d.calleyno, d.colonia, d.municipio, d.estado
-                     FROM cliente c 
-                     JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
-                     JOIN status_cliente st ON (st.id_status_cliente = c.id_status_cliente)   
-                     LEFT JOIN direccion d ON (d.id_cliente = c.id_cliente AND d.aval = 0)
-                    WHERE 1=1 
-                    "
-					+ sqlPlaza 
-                    + @" AND p.id_prestamo =   
-                      (SELECT TOP 1 pp.id_prestamo FROM prestamo pp WHERE pp.id_cliente = c.id_cliente 
-                            ORDER BY pp.id_prestamo desc) 
-                      ORDER BY c.id_cliente ";
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
+                catch (Exception ex)
                 {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-
-                        Cliente item = new Cliente();
-
-                        item.IdCliente = int.Parse(ds.Tables[0].Rows[i]["id_cliente"].ToString());
-                        item.IdStatusCliente = int.Parse(ds.Tables[0].Rows[i]["id_status_cliente"].ToString());
-                        item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
-                        item.Curp = ds.Tables[0].Rows[i]["curp"].ToString();
-
-                        item.NombreCompleto = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-                        item.NombreStatus = ds.Tables[0].Rows[i]["nombre_status_cliente"].ToString();
-                        item.Telefono = ds.Tables[0].Rows[i]["telefono"].ToString();
-                        item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
-                        item.direccion = new Direccion
-                        {
-                            Calle = ds.Tables[0].Rows[i]["calleyno"].ToString(),
-                            Colonia = ds.Tables[0].Rows[i]["colonia"].ToString(),
-                            Municipio = ds.Tables[0].Rows[i]["municipio"].ToString(),
-                            Estado = ds.Tables[0].Rows[i]["estado"].ToString()
-                        };
-
-                        item.Color = ds.Tables[0].Rows[i]["color"].ToString();
-                        item.NombreStatus = "<span class='" + item.Color + "'>" + ds.Tables[0].Rows[i]["nombre_status_cliente"].ToString() + "</span>";
-						item.Mensaje = int.Parse(ds.Tables[0].Rows[i]["mensaje"].ToString());
-						string botones = "";
-
-                        //  visualizar
-                        botones += "<button onclick='customers.view(" + item.IdPrestamo  + ")'  class='btn btn-outline-primary'> <span class='fa fa-eye mr-1'></span>Visualizar</button>";
-
-                        //  condonar
-                        if (item.IdStatusCliente == Cliente.STATUS_ACTIVO || item.IdStatusCliente == Cliente.STATUS_INACTIVO || item.IdStatusCliente == Cliente.STATUS_VENCIDO)
-                        {
-                            botones += "<button onclick='customers.condonate(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-ban mr-1'></span>Condonar</button>";
-                        }
-
-                        //  demanda
-                        if (item.IdStatusCliente == Cliente.STATUS_VENCIDO)
-                        {
-                            botones += "<button onclick='customers.claim(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-legal mr-1'></span>Demanda</button>";
-                        }
-
-                        if (item.IdStatusCliente == Cliente.STATUS_CONDONADO)
-                        {
-                            botones += "<button onclick='customers.reactivate(" + item.IdCliente + ")'  class='btn btn-outline-primary'> <span class='fa fa-check-circle mr-1'></span>Reactivar</button>";
-                        }
-
-                        item.Accion = botones;
-
-                        items.Add(item);
-
-
-                    }
+                    Utils.Log("Error ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    return items;
                 }
-
-
-                return items;
             }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
         }
+
 
 
         [WebMethod]
@@ -441,7 +438,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE activo = 1";
+                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE activo = 1 and eliminado <> 1";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 

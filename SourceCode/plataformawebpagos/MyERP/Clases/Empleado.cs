@@ -68,5 +68,7 @@ namespace Plataforma.Clases
         public Direccion DireccionAval;
         public Usuario usuario;
         public Comision nivelNomision;// comision o modulo
+        public DateTime? FechaBaja { get; set; }
+
     }
 }

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web.Services;
 using System.Web.UI.WebControls;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Plataforma.pages.Config
 {
@@ -25,7 +24,6 @@ namespace Plataforma.pages.Config
         public const int POSICION_PROMOTOR = 5;
         public const int SUPERUSUARIO = 6;
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
             string usuario = (string)Session["usuario"];
@@ -33,425 +31,743 @@ namespace Plataforma.pages.Config
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
 
-            txtUsuario.Value = usuario;
-            txtIdTipoUsuario.Value = idTipoUsuario;
-            txtIdUsuario.Value = idUsuario;
+            txtUsuario.Value = usuario ?? string.Empty;
+            txtIdTipoUsuario.Value = idTipoUsuario ?? string.Empty;
+            txtIdUsuario.Value = idUsuario ?? string.Empty;
+            txtPath.Value = path ?? string.Empty;
 
             //  si no esta logueado
-            if (usuario == string.Empty)
+            if (string.IsNullOrEmpty(usuario))
             {
-                Response.Redirect("Login.aspx");
+                Response.Redirect(ResolveUrl("~/pages/Login.aspx"), false);
+                return;
+            }
+
+            if (!IsPostBack)
+            {
+                var idEdit = Request.QueryString["id"];
+                txtIdEmpleado.Value = string.IsNullOrEmpty(idEdit) ? "0" : idEdit;
             }
         }
 
-        static Usuario GetUsuarioByLogin(string path, string login, SqlConnection conn, string strConexion, SqlTransaction transaction)
+        #region Helpers consulta/validación
+
+        static Usuario GetUsuarioByLogin(string login, SqlConnection conn, SqlTransaction transaction)
         {
-            Usuario item = null;
+            const string query = @" SELECT TOP 1 id_usuario, id_empleado, id_tipo_usuario, nombre, login, password, email, telefono 
+                                    FROM usuario 
+                                    WHERE login = @login AND ISNULL(eliminado,0)=0 ";
 
-            try
+            return conn.QueryFirstOrDefault<Usuario>(query, new { login }, transaction);
+        }
+
+        static int CountEmpleadoByCurp(string curp, SqlConnection conn, SqlTransaction tx, int? excludeIdEmpleado = null)
+        {
+            const string sql = @"SELECT COUNT(*) FROM empleado 
+                                 WHERE UPPER(curp) = UPPER(@curp) 
+                                 AND ISNULL(eliminado,0)=0
+                                 AND (@exclude IS NULL OR id_empleado <> @exclude)";
+            return conn.ExecuteScalar<int>(sql, new { curp, exclude = excludeIdEmpleado }, tx);
+        }
+
+        static int CountClienteByCurp(string curp, SqlConnection conn, SqlTransaction tx, int? excludeIdCliente = null)
+        {
+            const string sql = @"SELECT COUNT(*) FROM cliente 
+                                 WHERE UPPER(curp) = UPPER(@curp) 
+                                 AND ISNULL(eliminado,0)=0
+                                 AND (@exclude IS NULL OR id_cliente <> @exclude)";
+            return conn.ExecuteScalar<int>(sql, new { curp, exclude = excludeIdCliente }, tx);
+        }
+
+        static int CountUsuarioLoginUsadoPorOtro(string login, int idEmpleadoActual, SqlConnection conn, SqlTransaction tx)
+        {
+            const string sql = @"SELECT COUNT(*) FROM usuario 
+                                 WHERE UPPER(login) = UPPER(@login)
+                                 AND ISNULL(eliminado,0)=0
+                                 AND ISNULL(id_empleado,0) <> @idEmpleado";
+            return conn.ExecuteScalar<int>(sql, new { login, idEmpleado = idEmpleadoActual }, tx);
+        }
+
+        #endregion
+
+        #region Registrar (INSERT)
+
+        static void RegistrarUsuario(Usuario usuario, SqlTransaction transaccion, SqlConnection conn)
+        {
+            const string sql = @"
+                INSERT INTO usuario (id_empleado, login, password, id_tipo_usuario, eliminado)
+                OUTPUT INSERTED.id_usuario
+                VALUES (@id_empleado, @login, @password, @id_tipo_usuario, 0);";
+
+            string hash = null;
+            if (!string.IsNullOrWhiteSpace(usuario.Password))
             {
-                DataSet ds = new DataSet();
-                string query = @" SELECT TOP 1 id_usuario, id_tipo_usuario,  nombre, login, password, email, telefono 
-                                FROM usuario 
-                                WHERE login = @login ";
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                Utils.Log("login =  " + login);
-
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@login", login);
-                adp.SelectCommand.Transaction = transaction;
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
+                using (var md5Hash = MD5.Create())
                 {
-                    item = new Usuario();
-                    item.Login = ds.Tables[0].Rows[0]["login"].ToString();
+                    hash = Usuarios.GetMd5Hash(md5Hash, usuario.Password);
                 }
-
-                return item;
             }
-            catch (Exception ex)
+            var id = conn.ExecuteScalar<int>(sql, new
             {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return item;
-            }
+                id_empleado = usuario.IdEmpleado,
+                login = usuario.Login,
+                password = hash,
+                id_tipo_usuario = usuario.IdTipoUsuario
+            }, transaccion);
+
+            usuario.IdUsuario = id;
         }
 
-        static void RegistrarUsuario(Usuario usuario, 
-            SqlTransaction transaccion,
-            SqlConnection conn)
+        static void RegistrarEmpleado(Empleado oEmpleado, SqlTransaction transaccion, SqlConnection conn)
         {
+            const string sql = @"
+                INSERT INTO empleado (
+                    id_tipo_usuario, id_comision_inicial, id_posicion, id_plaza, curp, email, nombre,
+                    primer_apellido, segundo_apellido, telefono, eliminado, fecha_nacimiento, activo,
+                    id_supervisor, id_ejecutivo, fecha_ingreso, nombre_aval, primer_apellido_aval,
+                    segundo_apellido_aval, curp_aval, telefono_aval, monto_limite_inicial, id_coordinador,
+                    limite_venta_ejercicio, limite_incremento_ejercicio, fizcalizable, ocupacion, nota_foto, fecha_baja
+                )
+                VALUES (
+                    @id_tipo_usuario, 0, @id_posicion, @id_plaza, @curp, NULL, @nombre,
+                    @primer_apellido, @segundo_apellido, @telefono, 0, NULL, 1,
+                    @id_supervisor, @id_ejecutivo, @fecha_ingreso, NULL, NULL,
+                    NULL, NULL, NULL, NULL, NULL,
+                    @limite_venta_ejercicio, @limite_incremento_ejercicio, @fizcalizable, @ocupacion, @nota_foto, @fecha_baja
+                );
+                SELECT SCOPE_IDENTITY();";
 
-            //  Guardar usuario
-            var sql = @"  INSERT INTO usuario
-                            (id_empleado, login, password, id_tipo_usuario, eliminado)
-                            VALUES
-                            (@id_empleado, @login, @password, @id_tipo_usuario, 0);
-                        ";
-
-
-            SqlCommand cmdInsertUsuario = new SqlCommand(sql, conn);
-            cmdInsertUsuario.CommandType = CommandType.Text;
-
-            MD5 md5Hash = MD5.Create();
-            string hash = Usuarios.GetMd5Hash(md5Hash, usuario.Password);
-
-            cmdInsertUsuario.Parameters.AddWithValue("@id_empleado", usuario.IdEmpleado);
-            cmdInsertUsuario.Parameters.AddWithValue("@id_tipo_usuario", usuario.IdTipoUsuario);
-            cmdInsertUsuario.Parameters.AddWithValue("@login", usuario.Login);
-            cmdInsertUsuario.Parameters.AddWithValue("@password", hash);
-            cmdInsertUsuario.Transaction = transaccion;
-            usuario .IdUsuario = cmdInsertUsuario.ExecuteNonQuery();
-        }
-        public static class DebugUtils
-        {
-            public static string ReplaceParametersInQuery(SqlCommand command)
+            var idEmpleado = Convert.ToInt32(conn.ExecuteScalar(sql, new
             {
-                string query = command.CommandText;
-                foreach (SqlParameter p in command.Parameters)
-                {
-                    string parameterValue = "NULL";
-                    if (p.Value != null && p.Value != DBNull.Value)
-                    {
-                        // Manejar diferentes tipos de datos para la visualización
-                        if (p.SqlDbType == SqlDbType.NVarChar || p.SqlDbType == SqlDbType.VarChar || p.SqlDbType == SqlDbType.Text)
-                        {
-                            parameterValue = $"'{p.Value.ToString().Replace("'", "''")}'"; // Escapar comillas simples
-                        }
-                        else if (p.SqlDbType == SqlDbType.DateTime || p.SqlDbType == SqlDbType.Date)
-                        {
-                            parameterValue = $"'{((DateTime)p.Value).ToString("yyyy-MM-dd HH:mm:ss.fff")}'";
-                        }
-                        else
-                        {
-                            parameterValue = p.Value.ToString();
-                        }
-                    }
-                    query = query.Replace(p.ParameterName, parameterValue);
-                }
-                return query;
+                id_tipo_usuario = oEmpleado.IdPosicion, // si tu modelo usa IdTipoUsuario cámbialo aquí
+                id_posicion = oEmpleado.IdPosicion,
+                id_plaza = oEmpleado.IdPlaza,
+                curp = (object)oEmpleado.CURP ?? DBNull.Value,
+                nombre = (object)oEmpleado.Nombre ?? DBNull.Value,
+                primer_apellido = (object)oEmpleado.PrimerApellido ?? DBNull.Value,
+                segundo_apellido = (object)oEmpleado.SegundoApellido ?? DBNull.Value,
+                telefono = (object)oEmpleado.Telefono ?? DBNull.Value,
+                fecha_ingreso = (object)oEmpleado.FechaIngreso ?? DBNull.Value,
+                limite_venta_ejercicio = (object)oEmpleado.limite_venta_ejercicio ?? DBNull.Value,
+                limite_incremento_ejercicio = (object)oEmpleado.limite_incremento_ejercicio ?? DBNull.Value,
+                fizcalizable = (object)oEmpleado.fizcalizable ?? DBNull.Value,
+                ocupacion = (object)oEmpleado.Ocupacion ?? DBNull.Value,
+                nota_foto = (object)oEmpleado.NotaFoto ?? DBNull.Value,
+                id_supervisor = (object)oEmpleado.IdSupervisor ?? DBNull.Value,
+                id_ejecutivo = (object)oEmpleado.IdEjecutivo ?? DBNull.Value,
+                fecha_baja = (object)oEmpleado.FechaBaja ?? DBNull.Value
+            }, transaccion));
+
+            oEmpleado.IdEmpleado = idEmpleado;
+
+            // Dirección del empleado
+            if (oEmpleado.Direccion != null)
+            {
+                oEmpleado.Direccion.IdCliente = null;                 // <-- clave
+                oEmpleado.Direccion.IdEmpleado = oEmpleado.IdEmpleado;
+                RegistrarDireccion(oEmpleado.Direccion, transaccion, conn);
             }
-        }
-        static void RegistrarEmpleado(Empleado oEmpleado, 
-            SqlTransaction transaccion, 
-            SqlConnection conn)
-        {
-            string sql = @"INSERT INTO empleado (
-            [id_tipo_usuario], [id_comision_inicial], [id_posicion], [id_plaza], [curp], [email], [nombre],
-            [primer_apellido], [segundo_apellido], [telefono], [eliminado], [fecha_nacimiento], [activo],
-            [id_supervisor], [id_ejecutivo], [fecha_ingreso], [nombre_aval], [primer_apellido_aval],
-            [segundo_apellido_aval], [curp_aval], [telefono_aval], [monto_limite_inicial], [id_coordinador],
-            [limite_venta_ejercicio], [limite_incremento_ejercicio], [fizcalizable], [ocupacion], [nota_foto]
-        )
-        VALUES (
-            @id_tipo_usuario, 0, @id_posicion, @id_plaza, @curp, NULL, @nombre,
-            @primer_apellido, @segundo_apellido, @telefono, 0, NULL, 1,
-            @id_supervisor, @id_ejecutivo, @fecha_ingreso, NULL, NULL,
-            NULL, NULL, NULL, NULL, NULL,
-            @limite_venta_ejercicio, @limite_incremento_ejercicio, @fizcalizable, @ocupacion, @nota_foto
-        );
-        SELECT SCOPE_IDENTITY();";
-
-            Utils.Log("insert employee" + sql);
-
-            SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.CommandType = CommandType.Text;
-
-            // --- Asignación de parámetros usando el método Add para mayor control ---
-            // Asegúrate de usar el tipo de dato y el tamaño correctos según tu esquema de base de datos.
-            cmd.Parameters.Add("@id_tipo_usuario", SqlDbType.Int).Value = oEmpleado.IdPosicion;
-            cmd.Parameters.Add("@id_posicion", SqlDbType.Int).Value = oEmpleado.IdPosicion;
-            cmd.Parameters.Add("@id_plaza", SqlDbType.Int).Value = oEmpleado.IdPlaza;
-            cmd.Parameters.Add("@id_supervisor", SqlDbType.Int).Value = oEmpleado.IdSupervisor;
-            cmd.Parameters.Add("@id_ejecutivo", SqlDbType.Int).Value = oEmpleado.IdEjecutivo;
-            cmd.Parameters.Add("@curp", SqlDbType.NVarChar, 18).Value = (object)oEmpleado.CURP ?? DBNull.Value;
-            cmd.Parameters.Add("@nombre", SqlDbType.NVarChar, 50).Value = (object)oEmpleado.Nombre ?? DBNull.Value;
-            cmd.Parameters.Add("@primer_apellido", SqlDbType.NVarChar, 50).Value = (object)oEmpleado.PrimerApellido ?? DBNull.Value;
-            cmd.Parameters.Add("@segundo_apellido", SqlDbType.NVarChar, 50).Value = (object)oEmpleado.SegundoApellido ?? DBNull.Value;
-            cmd.Parameters.Add("@telefono", SqlDbType.NVarChar, 15).Value = (object)oEmpleado.Telefono ?? DBNull.Value;
-            cmd.Parameters.Add("@fecha_ingreso", SqlDbType.DateTime).Value = (object)oEmpleado.FechaIngreso ?? DBNull.Value;
-            cmd.Parameters.Add("@limite_venta_ejercicio", SqlDbType.Decimal).Value = (object)oEmpleado.limite_venta_ejercicio ?? DBNull.Value;
-            cmd.Parameters.Add("@limite_incremento_ejercicio", SqlDbType.Decimal).Value = (object)oEmpleado.limite_incremento_ejercicio ?? DBNull.Value;
-            cmd.Parameters.Add("@fizcalizable", SqlDbType.Bit).Value = (object)oEmpleado.fizcalizable ?? DBNull.Value;
-            cmd.Parameters.Add("@ocupacion", SqlDbType.NVarChar, 50).Value = (object)oEmpleado.Ocupacion ?? DBNull.Value;
-            cmd.Parameters.Add("@nota_foto", SqlDbType.NVarChar, 255).Value = (object)oEmpleado.NotaFoto ?? DBNull.Value;
-
-            cmd.Transaction = transaccion;
-
-            oEmpleado.IdEmpleado = Convert.ToInt32(cmd.ExecuteScalar());
-            oEmpleado.Direccion.IdCliente = oEmpleado.IdEmpleado;
-            oEmpleado.Direccion.IdEmpleado = oEmpleado.IdEmpleado;
-            RegistrarDireccion(oEmpleado.Direccion, transaccion, conn);
         }
 
         static void RegistraClienteAval(Cliente oCliente, SqlTransaction transaccion, SqlConnection conn)
         {
-            string sql = "";
+            string sql;
 
             if (oCliente.IdCliente > 0)
             {
                 sql = @"UPDATE cliente
-                                SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
-                                segundo_apellido = @segundo_apellido,
-                                ocupacion = @ocupacion, telefono = @telefono 
-                          WHERE
-                                id_cliente = @id_cliente ";
-                Utils.Log("ACTUALIZAR CLIENTE " + sql);
+                        SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
+                            segundo_apellido = @segundo_apellido, ocupacion = @ocupacion, telefono = @telefono 
+                        WHERE id_cliente = @id_cliente ";
+                conn.Execute(sql, new
+                {
+                    curp = oCliente.Curp,
+                    nombre = oCliente.Nombre,
+                    primer_apellido = oCliente.PrimerApellido,
+                    segundo_apellido = oCliente.SegundoApellido,
+                    ocupacion = oCliente.Ocupacion,
+                    telefono = oCliente.Telefono,
+                    id_cliente = oCliente.IdCliente
+                }, transaccion);
             }
             else
             {
-                sql = @" INSERT INTO cliente 
-                            OUTPUT INSERTED.id_cliente
-                    VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,2,NULL,NULL, NULL) ";
-                Utils.Log("INSERTAR CLIENTE " + sql);
+                sql = @"INSERT INTO cliente 
+                        (curp, nombre, primer_apellido, segundo_apellido, ocupacion, telefono,
+                         /* campos omitidos -> */ email, rfc, fecha_nacimiento, genero, estado_civil, escolaridad,
+                         ingreso_mensual, activo, eliminado, id_tipo_cliente, fecha_alta, fecha_baja, nota)
+                        OUTPUT INSERTED.id_cliente
+                        VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,
+                                NULL,NULL,NULL,NULL,NULL,NULL,
+                                NULL,1,0,2,GETDATE(),NULL,NULL) ";
+
+                oCliente.IdCliente = conn.ExecuteScalar<string>(sql, new
+                {
+                    curp = oCliente.Curp,
+                    nombre = oCliente.Nombre,
+                    primer_apellido = oCliente.PrimerApellido,
+                    segundo_apellido = oCliente.SegundoApellido,
+                    ocupacion = oCliente.Ocupacion,
+                    telefono = oCliente.Telefono
+                }, transaccion).ParseStringToInt();
             }
 
-            var cmd = new SqlCommand(sql, conn);
-            cmd.Transaction = transaccion;
-            cmd.CommandType = CommandType.Text;
-            cmd.Parameters.AddWithValue("@curp", oCliente.Curp);
-            cmd.Parameters.AddWithValue("@nombre", oCliente.Nombre);
-            cmd.Parameters.AddWithValue("@primer_apellido", oCliente.PrimerApellido);
-            cmd.Parameters.AddWithValue("@segundo_apellido", oCliente.SegundoApellido);
-            cmd.Parameters.AddWithValue("@ocupacion", oCliente.Ocupacion);
-            cmd.Parameters.AddWithValue("@telefono", oCliente.Telefono);
-
-            if (oCliente.IdCliente > 0)
+            if (oCliente.direccion != null)
             {
-                cmd.Parameters.AddWithValue("@id_cliente",
-                    oCliente.IdCliente);
-                var rows = cmd.ExecuteNonQuery();
+                oCliente.direccion.IdCliente = oCliente.IdCliente; // siempre
+                                                                   // oCliente.direccion.IdEmpleado viene seteado desde Save para alta
+                RegistrarDireccion(oCliente.direccion, transaccion, conn);
             }
-            else
-            {
-                oCliente.IdCliente = cmd.ExecuteScalar().ToString().ParseStringToInt();
-            }
-
-            oCliente.direccion.IdCliente = oCliente.IdCliente;
-
-
-            RegistrarDireccion(oCliente.direccion, transaccion, conn);
         }
 
         static void RegistrarDireccion(Direccion oDireccion, SqlTransaction transaccion, SqlConnection conn)
         {
-            string sql;
-            string sqlCheck = $"SELECT COUNT(*) FROM direccion WHERE id_cliente = @id_cliente";
+            // coherencia: si hay IdEmpleado usamos IdEmpleado; si no, IdCliente
+            // Preferir CLIENTE si viene; si no, EMPLEADO
+            bool usarCliente = oDireccion.IdCliente.HasValue && oDireccion.IdCliente.Value > 0;
+            bool usarEmpleado = !usarCliente && oDireccion.IdEmpleado.HasValue && oDireccion.IdEmpleado.Value > 0;
 
-            var cmdCheck = new SqlCommand(sqlCheck, conn);
-            cmdCheck.Transaction = transaccion;
-            cmdCheck.Parameters.Add("@id_cliente", SqlDbType.Int).Value = oDireccion.IdCliente;
+            string sqlCheck = usarCliente
+                ? "SELECT COUNT(*) FROM direccion WHERE id_cliente = @id"
+                : "SELECT COUNT(*) FROM direccion WHERE id_empleado = @id";
 
-            var iExisteDireccion = Convert.ToInt32(cmdCheck.ExecuteScalar());
+            int existe = conn.ExecuteScalar<int>(sqlCheck, new { id = usarCliente ? (object)oDireccion.IdCliente : (object)oDireccion.IdEmpleado }, transaccion /*o tx*/);
 
-            if (iExisteDireccion > 0)
+            if (existe > 0)
             {
-                sql = @"
-            UPDATE direccion
-            SET calleyno = @calleyno,
-                colonia = @colonia,
-                municipio = @municipio,
-                estado = @estado,
-                codigo_postal = @codigo_postal,
-                direccion_trabajo = @direccion_trabajo,
-                ubicacion = @ubicacion
-            WHERE id_empleado = @id_empleado";
+                string sqlUpdate = usarCliente
+                    ? @"UPDATE direccion
+            SET calleyno=@calleyno, colonia=@colonia, municipio=@municipio, estado=@estado,
+                codigo_postal=@codigo_postal, direccion_trabajo=@direccion_trabajo, ubicacion=@ubicacion
+          WHERE id_cliente=@idCliente"
+                    : @"UPDATE direccion
+            SET calleyno=@calleyno, colonia=@colonia, municipio=@municipio, estado=@estado,
+                codigo_postal=@codigo_postal, direccion_trabajo=@direccion_trabajo, ubicacion=@ubicacion
+          WHERE id_empleado=@idEmpleado";
 
-                Utils.Log("ACTUALIZAR DIRECCIÓN " + sql);
-
+                conn.Execute(sqlUpdate, new
+                {
+                    calleyno = (object)oDireccion.Calle ?? DBNull.Value,
+                    colonia = (object)oDireccion.Colonia ?? DBNull.Value,
+                    municipio = (object)oDireccion.Municipio ?? DBNull.Value,
+                    estado = (object)oDireccion.Estado ?? DBNull.Value,
+                    codigo_postal = (object)oDireccion.CodigoPostal ?? DBNull.Value,
+                    direccion_trabajo = (object)oDireccion.DireccionTrabajo ?? DBNull.Value,
+                    ubicacion = (object)oDireccion.Ubicacion ?? DBNull.Value,
+                    idEmpleado = oDireccion.IdEmpleado,
+                    idCliente = oDireccion.IdCliente
+                }, transaccion /*o tx*/);
             }
             else
             {
-                // Corrección: Especifica las columnas a insertar
-                sql = @"
-            INSERT INTO direccion (
-                id_empleado, id_aval, calleyno, colonia, municipio, estado,
-                telefono, codigo_postal, id_municipio, id_estado, activo, aval,
-                direccion_trabajo, id_cliente, ubicacion
-            )
-            OUTPUT INSERTED.id_direccion
-            VALUES (
-                @id_empleado, NULL, @calleyno, @colonia, @municipio, @estado,
-                NULL, @codigo_postal, NULL, NULL, 1, NULL,
-                @direccion_trabajo, NULL, @ubicacion
-            );";
+                const string sqlInsert = @"
+        INSERT INTO direccion (
+            id_empleado, id_aval, calleyno, colonia, municipio, estado,
+            telefono, codigo_postal, id_municipio, id_estado, activo, aval,
+            direccion_trabajo, id_cliente, ubicacion
+        )
+        OUTPUT INSERTED.id_direccion
+        VALUES (
+            @id_empleado, NULL, @calleyno, @colonia, @municipio, @estado,
+            NULL, @codigo_postal, NULL, NULL, 1, NULL,
+            @direccion_trabajo, @id_cliente, @ubicacion
+        );";
 
-                Utils.Log("INSERTAR id_direccion " + sql);
+                oDireccion.idDireccion = conn.ExecuteScalar<int>(sqlInsert, new
+                {
+                    id_empleado = (object)oDireccion.IdEmpleado ?? DBNull.Value,
+                    id_cliente = (object)oDireccion.IdCliente ?? DBNull.Value,
+                    calleyno = (object)oDireccion.Calle ?? DBNull.Value,
+                    colonia = (object)oDireccion.Colonia ?? DBNull.Value,
+                    municipio = (object)oDireccion.Municipio ?? DBNull.Value,
+                    estado = (object)oDireccion.Estado ?? DBNull.Value,
+                    codigo_postal = (object)oDireccion.CodigoPostal ?? DBNull.Value,
+                    direccion_trabajo = (object)oDireccion.DireccionTrabajo ?? DBNull.Value,
+                    ubicacion = (object)oDireccion.Ubicacion ?? DBNull.Value
+                }, transaccion /*o tx*/);
             }
 
-            var cmd = new SqlCommand(sql, conn);
-            cmd.Transaction = transaccion;
-            cmd.CommandType = CommandType.Text;
+        }
 
-            // --- Asignación de parámetros ---
-            // Usar el operador de coalescencia para manejar valores nulos.
-            cmd.Parameters.Add("@calleyno", SqlDbType.NVarChar).Value = (object)oDireccion.Calle ?? DBNull.Value;
-            cmd.Parameters.Add("@colonia", SqlDbType.NVarChar).Value = (object)oDireccion.Colonia ?? DBNull.Value;
-            cmd.Parameters.Add("@municipio", SqlDbType.NVarChar).Value = (object)oDireccion.Municipio ?? DBNull.Value;
-            cmd.Parameters.Add("@estado", SqlDbType.NVarChar).Value = (object)oDireccion.Estado ?? DBNull.Value;
-            cmd.Parameters.Add("@codigo_postal", SqlDbType.NVarChar).Value = (object)oDireccion.CodigoPostal ?? DBNull.Value;
-            cmd.Parameters.Add("@direccion_trabajo", SqlDbType.NVarChar).Value = (object)oDireccion.DireccionTrabajo ?? DBNull.Value;
-            cmd.Parameters.Add("@ubicacion", SqlDbType.NVarChar).Value = (object)oDireccion.Ubicacion ?? DBNull.Value;
-            cmd.Parameters.Add("@id_empleado", SqlDbType.Int).Value = (object)oDireccion.IdEmpleado ?? DBNull.Value;
+        #endregion
 
-            if (iExisteDireccion > 0)
+        #region Actualizar (UPDATE)
+
+        static void ActualizarEmpleado(Empleado oEmpleado, SqlTransaction tx, SqlConnection conn)
+        {
+            const string sql = @"
+                UPDATE empleado SET
+                    id_tipo_usuario = @id_tipo_usuario,
+                    id_posicion = @id_posicion,
+                    id_plaza = @id_plaza,
+                    curp = @curp,
+                    nombre = @nombre,
+                    primer_apellido = @primer_apellido,
+                    segundo_apellido = @segundo_apellido,
+                    telefono = @telefono,
+                    id_supervisor = @id_supervisor,
+                    id_ejecutivo = @id_ejecutivo,
+                    fecha_ingreso = @fecha_ingreso,
+                    limite_venta_ejercicio = @limite_venta_ejercicio,
+                    limite_incremento_ejercicio = @limite_incremento_ejercicio,
+                    fizcalizable = @fizcalizable,
+                    ocupacion = @ocupacion,
+                    nota_foto = @nota_foto,
+                    fecha_baja = @fecha_baja
+                WHERE id_empleado = @id_empleado";
+
+            conn.Execute(sql, new
             {
-                var rows = cmd.ExecuteNonQuery();
+                id_tipo_usuario = oEmpleado.IdPosicion, // ajusta si corresponde
+                id_posicion = oEmpleado.IdPosicion,
+                id_plaza = oEmpleado.IdPlaza,
+                curp = oEmpleado.CURP,
+                nombre = oEmpleado.Nombre,
+                primer_apellido = oEmpleado.PrimerApellido,
+                segundo_apellido = oEmpleado.SegundoApellido,
+                telefono = oEmpleado.Telefono,
+                id_supervisor = oEmpleado.IdSupervisor,
+                id_ejecutivo = oEmpleado.IdEjecutivo,
+                fecha_ingreso = (object)oEmpleado.FechaIngreso ?? DBNull.Value,
+                limite_venta_ejercicio = (object)oEmpleado.limite_venta_ejercicio ?? DBNull.Value,
+                limite_incremento_ejercicio = (object)oEmpleado.limite_incremento_ejercicio ?? DBNull.Value,
+                fizcalizable = (object)oEmpleado.fizcalizable ?? DBNull.Value,
+                ocupacion = oEmpleado.Ocupacion,
+                nota_foto = oEmpleado.NotaFoto,
+                fecha_baja = (object)oEmpleado.FechaBaja ?? DBNull.Value,
+                id_empleado = oEmpleado.IdEmpleado
+            }, tx);
+
+            if (oEmpleado.Direccion != null)
+            {
+                oEmpleado.Direccion.IdEmpleado = oEmpleado.IdEmpleado;
+                ActualizarDireccion(oEmpleado.Direccion, tx, conn);
+            }
+        }
+
+        static void ActualizarUsuario(Usuario usuario, SqlTransaction tx, SqlConnection conn)
+        {
+            // Si viene Password vacío, no lo tocamos
+            string hash = null;
+            if (!string.IsNullOrWhiteSpace(usuario.Password))
+            {
+                using (var md5Hash = MD5.Create())
+                {
+                    hash = Usuarios.GetMd5Hash(md5Hash, usuario.Password);
+                }
+            }
+
+            // ¿Existe usuario ligado a este empleado?
+            const string sqlExists = "SELECT COUNT(*) FROM usuario WHERE id_empleado = @id AND ISNULL(eliminado,0)=0";
+            int existe = conn.ExecuteScalar<int>(sqlExists, new { id = usuario.IdEmpleado }, tx);
+
+            if (existe > 0)
+            {
+                string sqlUpdate = @"
+                    UPDATE usuario
+                    SET login = @login,
+                        id_tipo_usuario = @id_tipo_usuario
+                        /**password**/
+                    WHERE id_empleado = @id_empleado";
+
+                if (!string.IsNullOrWhiteSpace(hash))
+                {
+                    sqlUpdate = sqlUpdate.Replace("/**password**/", ", password = @password");
+                }
+                else
+                {
+                    sqlUpdate = sqlUpdate.Replace("/**password**/", "");
+                }
+
+                conn.Execute(sqlUpdate, new
+                {
+                    login = usuario.Login,
+                    id_tipo_usuario = usuario.IdTipoUsuario,
+                    password = hash,
+                    id_empleado = usuario.IdEmpleado
+                }, tx);
             }
             else
             {
-                oDireccion.idDireccion = Convert.ToInt32(cmd.ExecuteScalar());
+                // Si no existe, lo creamos (caso de alta retroactiva)
+                RegistrarUsuario(usuario, tx, conn);
+            }
+        }
+
+        static void ActualizarClienteAval(Cliente oCliente, SqlTransaction tx, SqlConnection conn)
+        {
+            if (oCliente == null) return;
+
+            // Si no existe IdCliente intentamos encontrarlo por JOIN con direccion del empleado
+            if (oCliente.IdCliente <= 0)
+            {
+                const string find = @"
+                    SELECT TOP 1 c.id_cliente
+                    FROM cliente c
+                    INNER JOIN direccion d ON d.id_cliente = c.id_cliente
+                    WHERE d.id_empleado = @idEmpleado
+                    ORDER BY c.id_cliente DESC";
+                int idCli = conn.ExecuteScalar<int?>(find, new { idEmpleado = oCliente.direccion?.IdEmpleado }, tx) ?? 0;
+                oCliente.IdCliente = idCli;
+            }
+
+            if (oCliente.IdCliente > 0)
+            {
+                const string up = @"UPDATE cliente
+                                    SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
+                                        segundo_apellido = @segundo_apellido, ocupacion = @ocupacion, telefono = @telefono
+                                    WHERE id_cliente = @id_cliente";
+                conn.Execute(up, new
+                {
+                    curp = oCliente.Curp,
+                    nombre = oCliente.Nombre,
+                    primer_apellido = oCliente.PrimerApellido,
+                    segundo_apellido = oCliente.SegundoApellido,
+                    ocupacion = oCliente.Ocupacion,
+                    telefono = oCliente.Telefono,
+                    id_cliente = oCliente.IdCliente
+                }, tx);
+            }
+            else
+            {
+                // Crear si no existía
+                RegistraClienteAval(oCliente, tx, conn);
+            }
+
+            if (oCliente.direccion != null)
+            {
+                oCliente.direccion.IdCliente = oCliente.IdCliente;
+                ActualizarDireccion(oCliente.direccion, tx, conn);
+            }
+        }
+
+        static void ActualizarDireccion(Direccion oDireccion, SqlTransaction tx, SqlConnection conn)
+        {
+            // Igual que en registrar, usamos la clave disponible
+            bool esDireccionEmpleado = oDireccion.IdEmpleado.HasValue && oDireccion.IdEmpleado.Value > 0;
+
+            string sqlCheck = esDireccionEmpleado
+                ? "SELECT COUNT(*) FROM direccion WHERE id_empleado = @id"
+                : "SELECT COUNT(*) FROM direccion WHERE id_cliente = @id";
+
+            int existe = conn.ExecuteScalar<int>(sqlCheck, new { id = esDireccionEmpleado ? oDireccion.IdEmpleado : oDireccion.IdCliente }, tx);
+
+            if (existe > 0)
+            {
+                string sqlUpdate = esDireccionEmpleado
+                    ? @"UPDATE direccion
+                       SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
+                           codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo, ubicacion = @ubicacion
+                       WHERE id_empleado = @idEmpleado"
+                    : @"UPDATE direccion
+                       SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
+                           codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo, ubicacion = @ubicacion
+                       WHERE id_cliente = @idCliente";
+
+                conn.Execute(sqlUpdate, new
+                {
+                    calleyno = (object)oDireccion.Calle ?? DBNull.Value,
+                    colonia = (object)oDireccion.Colonia ?? DBNull.Value,
+                    municipio = (object)oDireccion.Municipio ?? DBNull.Value,
+                    estado = (object)oDireccion.Estado ?? DBNull.Value,
+                    codigo_postal = (object)oDireccion.CodigoPostal ?? DBNull.Value,
+                    direccion_trabajo = (object)oDireccion.DireccionTrabajo ?? DBNull.Value,
+                    ubicacion = (object)oDireccion.Ubicacion ?? DBNull.Value,
+                    idEmpleado = oDireccion.IdEmpleado,
+                    idCliente = oDireccion.IdCliente
+                }, tx);
+            }
+            else
+            {
+                RegistrarDireccion(oDireccion, tx, conn);
+            }
+        }
+
+        #endregion
+
+        #region WebMethods (Guardar / Cargar / Listas)
+
+        [WebMethod]
+        public static EmpleadoRequest GetEmpleadoById(string path, int idEmpleado)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+            using (var conn = new SqlConnection(strConexion))
+            {
+                conn.Open();
+
+                var emp = conn.QueryFirstOrDefault<Empleado>(@"
+                    SELECT e.id_empleado AS IdEmpleado, e.id_posicion AS IdPosicion, e.id_plaza AS IdPlaza,
+                           e.curp AS CURP, e.nombre AS Nombre, e.primer_apellido AS PrimerApellido,
+                           e.segundo_apellido AS SegundoApellido, e.telefono AS Telefono,
+                           e.id_supervisor AS IdSupervisor, e.id_ejecutivo AS IdEjecutivo,
+                           e.fecha_ingreso AS FechaIngreso,
+                           e.limite_venta_ejercicio, e.limite_incremento_ejercicio,
+                           e.fizcalizable, e.ocupacion AS Ocupacion, e.nota_foto AS NotaFoto,
+                           e.fecha_baja,
+                           id_posicion as IdTipoUsuario,
+id_posicion as IdPuesto
+                    FROM empleado e
+                    WHERE e.id_empleado = @id AND ISNULL(e.eliminado,0)=0", new { id = idEmpleado });
+
+                if (emp == null) return null;
+
+                // Dirección del empleado
+                var dir = conn.QueryFirstOrDefault<Direccion>(@"
+                    SELECT TOP 1 id_direccion as idDireccion, id_empleado as IdEmpleado, id_cliente as IdCliente,
+                           calleyno as Calle, colonia as Colonia, municipio as Municipio, estado as Estado,
+                           codigo_postal as CodigoPostal, direccion_trabajo as DireccionTrabajo, ubicacion as Ubicacion
+                    FROM direccion
+                    WHERE id_empleado = @id
+                    ORDER BY id_direccion DESC", new { id = idEmpleado }) ?? new Direccion { IdEmpleado = idEmpleado };
+
+                emp.Direccion = dir;
+
+                // Usuario
+                var user = conn.QueryFirstOrDefault<Usuario>(@"
+                    SELECT TOP 1 id_usuario as IdUsuario, id_empleado as IdEmpleado,
+                           login as Login, id_tipo_usuario as IdTipoUsuario
+                    FROM usuario
+                    WHERE id_empleado = @id AND ISNULL(eliminado,0)=0", new { id = idEmpleado }) ?? new Usuario { IdEmpleado = idEmpleado };
+
+                // Aval (asociado vía direccion.id_cliente)
+                var aval = conn.QueryFirstOrDefault<Cliente>(@"
+                    SELECT TOP 1 c.id_cliente as IdCliente, c.curp as Curp, c.nombre as Nombre,
+                           c.primer_apellido as PrimerApellido, c.segundo_apellido as SegundoApellido,
+                           c.ocupacion as Ocupacion, c.telefono as Telefono
+                    FROM cliente c
+                    INNER JOIN direccion d ON d.id_cliente = c.id_cliente
+                    WHERE d.id_empleado = @id
+                    ORDER BY c.id_cliente DESC", new { id = idEmpleado });
+
+                if (aval != null)
+                {
+                    aval.direccion = conn.QueryFirstOrDefault<Direccion>(@"
+                        SELECT TOP 1 id_direccion as idDireccion, id_empleado as IdEmpleado, id_cliente as IdCliente,
+                               calleyno as Calle, colonia as Colonia, municipio as Municipio, estado as Estado,
+                               codigo_postal as CodigoPostal, direccion_trabajo as DireccionTrabajo, ubicacion as Ubicacion
+                        FROM direccion
+                        WHERE id_cliente = @idCliente
+                        ORDER BY id_direccion DESC", new { idCliente = aval.IdCliente }) ?? new Direccion { IdCliente = aval.IdCliente };
+                }
+                else
+                {
+                    aval = new Cliente { direccion = new Direccion { IdEmpleado = idEmpleado } };
+                }
+
+                return new EmpleadoRequest
+                {
+                    Colaborador = emp,
+                    Aval = aval,
+                    User = user
+                };
             }
         }
 
         [WebMethod]
-        public static DatosSalida Save(string path, 
-            string idUsuario,
-            EmpleadoRequest oRequest)
+        public static DatosSalida Save(string path, string idUsuario, EmpleadoRequest oRequest)
         {
-
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            SqlConnection conn = new SqlConnection(strConexion);
 
-            // verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
-            if (!tienePermiso)
-            {
-                return null;//No tiene permisos
-            }
-
-            DatosSalida salida = new DatosSalida();
-            SqlTransaction transaccion = null;
-
-            int r = 0;
-            try
+            var salida = new DatosSalida();
+            using (var conn = new SqlConnection(strConexion))
             {
                 conn.Open();
-                transaccion = conn.BeginTransaction();
-                //  Validar que no exista un nombre de usuario-login 
-                Usuario usuarioExists = GetUsuarioByLogin(path, oRequest.User.Login, conn, strConexion, transaccion);
-                if (usuarioExists != null)
+                using (var tx = conn.BeginTransaction())
                 {
-                    transaccion.Rollback();
-                    salida.MensajeError = "Ya existe un usuario con el Nombre de usuario/Login " + oRequest.User.Login + " por favor verifique e intente de nuevo.";
-                    salida.CodigoError = 1;
-                    return salida;
+                    try
+                    {
+                        // ----- Permisos -----
+                        bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+                        if (!tienePermiso)
+                        {
+                            tx.Rollback();
+                            return new DatosSalida { CodigoError = 1, MensajeError = "No tiene permisos para realizar esta operación." };
+                        }
+
+                        // ----- Null guards -----
+                        if (oRequest == null)
+                            oRequest = new EmpleadoRequest();
+
+                        if (oRequest.Colaborador == null)
+                            oRequest.Colaborador = new Empleado();
+
+                        if (oRequest.User == null)
+                            oRequest.User = new Usuario();
+
+                        if (oRequest.Aval == null)
+                            oRequest.Aval = new Cliente();
+
+
+                        var isEdit = oRequest.Colaborador.IdEmpleado > 0;
+                        int? idEmpleado = isEdit ? (int?)oRequest.Colaborador.IdEmpleado : null;
+
+                        // Normaliza inputs
+                        string curpNuevo = (oRequest.Colaborador.CURP ?? "").Trim();
+                        string loginNuevo = (oRequest.User.Login ?? "").Trim();
+                        string curpAvalNueva = (oRequest.Aval.Curp ?? "").Trim();
+
+                        // ==========================
+                        // VALIDACIONES (tolerantes en edición)
+                        // ==========================
+
+                        // 1) CURP Colaborador
+                        if (!string.IsNullOrWhiteSpace(curpNuevo))
+                        {
+                            bool deboValidarCurpEmpleado = true;
+
+                            if (isEdit)
+                            {
+                                // Sólo valida si CAMBIÓ la CURP
+                                const string qCurp = "SELECT TOP 1 curp FROM empleado WHERE id_empleado=@id AND ISNULL(eliminado,0)=0";
+                                string curpActual = conn.ExecuteScalar<string>(qCurp, new { id = idEmpleado }, tx);
+                                deboValidarCurpEmpleado = !string.Equals(curpNuevo, curpActual ?? "", StringComparison.OrdinalIgnoreCase);
+                            }
+
+                            if (deboValidarCurpEmpleado &&
+                                CountEmpleadoByCurp(curpNuevo, conn, tx, isEdit ? idEmpleado : null) > 0)
+                            {
+                                tx.Rollback();
+                                return new DatosSalida { CodigoError = 1, MensajeError = "Ya existe un colaborador con el CURP especificado." };
+                            }
+                        }
+
+                        // 2) CURP Aval (si viene)
+                        if (!string.IsNullOrWhiteSpace(curpAvalNueva))
+                        {
+                            int? excludeCliente = (oRequest.Aval.IdCliente > 0) ? oRequest.Aval.IdCliente : (int?)null;
+
+                            if (isEdit && excludeCliente == null)
+                            {
+                                // Si no viene IdCliente en la edición, intenta resolver el cliente del aval ligado al empleado
+                                const string qCli =
+                                    @"SELECT TOP 1 c.id_cliente
+                              FROM cliente c
+                              INNER JOIN direccion d ON d.id_cliente = c.id_cliente
+                              WHERE d.id_empleado = @idEmpleado
+                              ORDER BY c.id_cliente DESC";
+                                excludeCliente = conn.ExecuteScalar<int?>(qCli, new { idEmpleado }, tx);
+                                oRequest.Aval.IdCliente = excludeCliente ?? 0;
+                            }
+
+                            // Sólo valida si la CURP CAMBIÓ
+                            bool deboValidarCurpAval = true;
+                            if (isEdit && excludeCliente.HasValue)
+                            {
+                                const string qCurpAval = "SELECT TOP 1 curp FROM cliente WHERE id_cliente=@id";
+                                string curpAvalActual = conn.ExecuteScalar<string>(qCurpAval, new { id = excludeCliente.Value }, tx);
+                                deboValidarCurpAval = !string.Equals(curpAvalNueva, curpAvalActual ?? "", StringComparison.OrdinalIgnoreCase);
+                            }
+
+                            if (deboValidarCurpAval &&
+                                CountClienteByCurp(curpAvalNueva, conn, tx, excludeCliente) > 0)
+                            {
+                                tx.Rollback();
+                                return new DatosSalida { CodigoError = 1, MensajeError = "Ya existe un aval (cliente) con el CURP especificado." };
+                            }
+                        }
+
+                        // 3) LOGIN usuario (si viene)
+                        if (!string.IsNullOrWhiteSpace(loginNuevo))
+                        {
+                            if (isEdit)
+                            {
+                                // Verifica conflicto SÓLO si el login CAMBIÓ
+                                const string qLogin = "SELECT TOP 1 login FROM usuario WHERE id_empleado=@id AND ISNULL(eliminado,0)=0";
+                                string loginActual = conn.ExecuteScalar<string>(qLogin, new { id = idEmpleado }, tx);
+
+                                bool loginCambio = !string.Equals(loginNuevo, loginActual ?? "", StringComparison.OrdinalIgnoreCase);
+                                if (loginCambio &&
+                                    CountUsuarioLoginUsadoPorOtro(loginNuevo, oRequest.Colaborador.IdEmpleado, conn, tx) > 0)
+                                {
+                                    tx.Rollback();
+                                    return new DatosSalida { CodigoError = 1, MensajeError = "Ya existe un usuario con ese Login asignado a otro colaborador." };
+                                }
+                            }
+                            else
+                            {
+                                var usuarioExists = GetUsuarioByLogin(loginNuevo, conn, tx);
+                                if (usuarioExists != null)
+                                {
+                                    tx.Rollback();
+                                    return new DatosSalida { CodigoError = 1, MensajeError = "Ya existe un usuario con ese Login. Verifique e intente de nuevo." };
+                                }
+                            }
+                        }
+
+                        // ==========================
+                        // INSERT / UPDATE
+                        // ==========================
+                        if (!isEdit)
+                        {
+                            // INSERT EMPLEADO
+                            RegistrarEmpleado(oRequest.Colaborador, tx, conn);
+
+                            // Usuario
+                            oRequest.User.IdEmpleado = oRequest.Colaborador.IdEmpleado;
+                            oRequest.User.IdTipoUsuario = oRequest.Colaborador.IdPosicion;
+                            RegistrarUsuario(oRequest.User, tx, conn);
+
+                            // Aval
+                            if (!string.IsNullOrEmpty(oRequest.Aval.Nombre))
+                            {
+                                RegistraClienteAval(oRequest.Aval, tx, conn);
+                            }
+                        }
+                        else
+                        {
+                            // UPDATE EMPLEADO
+                            ActualizarEmpleado(oRequest.Colaborador, tx, conn);
+
+                            // Usuario (login, rol y password opcional)
+                            oRequest.User.IdEmpleado = oRequest.Colaborador.IdEmpleado;
+                            oRequest.User.IdTipoUsuario = oRequest.Colaborador.IdPosicion;
+                            ActualizarUsuario(oRequest.User, tx, conn);
+
+                            // Aval
+                            if (oRequest.Aval.NombreAval != null)
+                            {
+                                // IMPORTANTÍSIMO: dirección del AVAL debe actualizarse por CLIENTE
+                                if (oRequest.Aval != null && oRequest.Aval.direccion != null)
+                                {
+                                    // Vincula esta dirección del aval con el empleado recién creado
+                                    oRequest.Aval.direccion.IdEmpleado = oRequest.Colaborador.IdEmpleado;
+                                }
+                                RegistraClienteAval(oRequest.Aval, tx, conn);
+                            }
+                        }
+
+                        tx.Commit();
+
+                        return new DatosSalida
+                        {
+                            CodigoError = 0,
+                            MensajeError = "Guardado correctamente",
+                            IdItem = oRequest.Colaborador.IdEmpleado.ToString()
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        try { tx.Rollback(); } catch { }
+                        Utils.Log("Error ... " + ex.Message);
+                        Utils.Log(ex.StackTrace);
+                        return new DatosSalida { CodigoError = 1, MensajeError = "Se ha generado un error <br/>" + ex.Message };
+                    }
                 }
-
-                Utils.Log("\nMétodo-> " +
-               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
-
-                //Validacion del CURP de colaborador 
-                var sql = $"SELECT COUNT(*) FROM empleado WHERE UPPER(curp) = '{oRequest.Colaborador.CURP}'";
-                var iExisteColaborador = conn.ExecuteScalar<int>(sql, transaction: transaccion);
-
-                if (iExisteColaborador > 0) {
-                    transaccion.Rollback();
-                    salida.MensajeError = "Ya existe un colaborador con el curp " + oRequest.Colaborador.CURP + " por favor verifique e intente de nuevo.";
-                    salida.CodigoError = 1;
-                    return salida;
-                }
-
-                //Validacion del curp del aval
-                sql = $"SELECT COUNT(*) FROM cliente WHERE UPPER(curp) = '{oRequest.Colaborador.CURP}'";
-                var iExisteCliente = conn.ExecuteScalar<int>(sql, transaction: transaccion);
-
-                if (iExisteCliente > 0)
-                {
-                    transaccion.Rollback();
-                    salida.MensajeError = "Ya existe un aval con el curp " + oRequest.Aval.Curp + " por favor verifique e intente de nuevo.";
-                    salida.CodigoError = 1;
-                    return salida;
-                }
-
-                RegistrarEmpleado(oRequest.Colaborador, transaccion, conn);
-                oRequest.User.IdEmpleado = oRequest.Colaborador.IdEmpleado;
-                oRequest.User.IdTipoUsuario = oRequest.Colaborador.IdPosicion;
-                RegistrarUsuario(oRequest.User, transaccion, conn);
-                RegistraClienteAval(oRequest.Aval, transaccion, conn);
-
-                transaccion.Commit();
-                salida.MensajeError = "Guardado correctamente";
-                salida.CodigoError = 0;
-                salida.IdItem = oRequest.Colaborador.IdEmpleado.ToString();
             }
-            catch (Exception ex)
-            {
-                try
-                {
-                    transaccion.Rollback();
-                }
-                catch (Exception exep)
-                {
-                    Utils.Log("Error ... " + exep.Message);
-                    Utils.Log(exep.StackTrace);
-                }
-
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                r = -1;
-                salida.MensajeError = "Se ha generado un error <br/>" + ex.Message + " ... " + ex.StackTrace.ToString();
-                salida.CodigoError = 1;
-            }
-
-            finally
-            {
-                conn.Close();
-            }
-
-            return salida;
         }
 
 
         [WebMethod]
         public static List<Posicion> GetListaItemsPosiciones(string path)
         {
-
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Posicion> items = new List<Posicion>();
-
-            try
+            using (var conn = new SqlConnection(strConexion))
             {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_posicion, nombre FROM  posicion WHERE ISNull(eliminado, 0) = 0 AND id_posicion <> 6  ";
+                var query = @" SELECT id_posicion as IdPosicion, nombre as Nombre
+                               FROM posicion 
+                               WHERE ISNull(eliminado, 0) = 0 AND id_posicion <> 6 ";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Posicion item = new Posicion();
-                        item.IdPosicion = int.Parse(ds.Tables[0].Rows[i]["id_posicion"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        items.Add(item);
-                    }
-                }
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
+                return conn.Query<Posicion>(query).ToList();
             }
         }
 
@@ -459,46 +775,13 @@ namespace Plataforma.pages.Config
         public static List<Plaza> GetListaItemsPlazas(string path)
         {
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Plaza> items = new List<Plaza>();
-
-            try
+            using (var conn = new SqlConnection(strConexion))
             {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE IsNull(activo, 1) = 1  AND ISNull(eliminado, 0) = 0   ";
+                var query = @" SELECT id_plaza as IdPlaza, nombre as Nombre
+                               FROM  plaza 
+                               WHERE IsNull(activo, 1) = 1 AND ISNull(eliminado, 0) = 0";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Plaza item = new Plaza();
-                        item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
-                        items.Add(item);
-                    }
-                }
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-
-            finally
-            {
-                conn.Close();
+                return conn.Query<Plaza>(query).ToList();
             }
         }
 
@@ -506,52 +789,20 @@ namespace Plataforma.pages.Config
         public static List<Empleado> GetListaItemsEmpleadoByPosicion(string path, string idTipoEmpleado)
         {
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-            SqlConnection conn = new SqlConnection(strConexion);
-            List<Empleado> items = new List<Empleado>();
-
-            try
+            using (var conn = new SqlConnection(strConexion))
             {
-                conn.Open();
-                DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado,
-                                    concat( nombre ,  ' ' , primer_apellido , ' ' ,  segundo_apellido) AS nombre_completo
-                                    FROM empleado WHERE ISNull(activo, 1) = 1  
-                                    AND ISNull(eliminado, 0) = 0
-                                    AND id_posicion = @id_posicion ";
+                var query = @"
+                    SELECT id_empleado AS IdEmpleado,
+                           concat(nombre, ' ', primer_apellido, ' ', segundo_apellido) AS Nombre
+                    FROM empleado 
+                    WHERE ISNull(activo, 1) = 1  
+                      AND ISNull(eliminado, 0) = 0
+                      AND id_posicion = @id_posicion ";
 
-                SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("@id_posicion", idTipoEmpleado);
-
-
-                Utils.Log("\nMétodo-> " +
-                System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-
-                adp.Fill(ds);
-
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                    {
-                        Empleado item = new Empleado();
-                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
-
-                        items.Add(item);
-                    }
-                }
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Utils.Log("Error ... " + ex.Message);
-                Utils.Log(ex.StackTrace);
-                return items;
-            }
-            finally
-            {
-                conn.Close();
+                return conn.Query<Empleado>(query, new { id_posicion = idTipoEmpleado }).ToList();
             }
         }
 
+        #endregion
     }
 }

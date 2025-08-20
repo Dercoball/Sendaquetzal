@@ -51,6 +51,24 @@ namespace Plataforma.pages.Config
         protected global::System.Web.UI.WebControls.HiddenField txtIdUsuario;
 
         /// <summary>
+        /// Control txtPath.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField txtPath;
+
+        /// <summary>
+        /// Control txtIdEmpleado.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField txtIdEmpleado;
+
+        /// <summary>
         /// Control UcColaborador.
         /// </summary>
         /// <remarks>

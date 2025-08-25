@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Web;
 using System.Web.Services;
@@ -538,7 +539,7 @@ namespace Plataforma.pages
                     {
                         // Si necesitas restringir por el empleado dueño del préstamo, ajusta aquí.
                         // Ojo: esta condición aplica sobre el préstamo, no sobre el pago.
-                        sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
+                        sqlUser = "  AND pre.id_empleado = " + user.IdUsuario + "  ";
                     }
 
                     // ---- Filtro por Plaza / Árbol de empleados (para aplicar sobre los pagos en el APPLY) ----
@@ -546,10 +547,9 @@ namespace Plataforma.pages
                     if (idPlaza > 0)
                     {
                         var empleados = conn.Query<Empleado>(
-                            "SELECT id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo " +
-                            "FROM empleado WHERE id_plaza = @plz",
+                            "SELECT u.id_usuario IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado e inner join usuario u on u.id_empleado = e.id_empleado WHERE id_plaza = @plz",
                             new { plz = idPlaza }).ToList();
-
+                        sqlUser = "";
                         List<Empleado> empleadosFiltrados = new List<Empleado>();
                         switch ((typeFilter ?? "").ToLowerInvariant())
                         {
@@ -573,7 +573,7 @@ namespace Plataforma.pages
 
                         if (lista.Count > 0)
                         {
-                            sqlPlazaApply = " AND p.id_empleado IN (" + string.Join(",", lista) + ") ";
+                            sqlPlazaApply = " AND p.id_usuario IN (" + string.Join(",", lista) + ") ";
                         }
                     }
 

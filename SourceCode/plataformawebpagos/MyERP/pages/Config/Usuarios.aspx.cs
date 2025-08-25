@@ -582,7 +582,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @"  SELECT p.nombre, p.id_permiso, p.nombre_recurso, p.nombre_interno, p.tipo_permiso 
+                string query = @"  SELECT p.nombre, p.id_permiso, p.nombre_recurso, p.nombre_interno, p.tipo_permiso , tipo_permiso IdPermiso2 
                                      from permisos_tipo_usuario rel_ptu 
                                      join permisos p on (p.id_permiso = rel_ptu .id_permiso) 
                                         where rel_ptu.id_tipo_usuario  = @id_tipo_usuario 
@@ -612,9 +612,7 @@ namespace Plataforma.pages
                         item.NombreInterno = ds.Tables[0].Rows[i]["nombre_interno"].ToString();
                         item.NombreRecurso = ds.Tables[0].Rows[i]["nombre_recurso"].ToString();
                         item.TipoPermiso = ds.Tables[0].Rows[i]["tipo_permiso"].ToString();
-
-
-
+                        item.IdPermiso2 = (int)ds.Tables[0].Rows[i]["IdPermiso2"];
                         items.Add(item);
 
 

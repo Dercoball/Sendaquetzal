@@ -14,7 +14,7 @@ namespace Plataforma.Clases
         public string TipoPermiso;
         public string IdUsuario;
         public string IdTipoUsuario;
-
+        public int IdPermiso2;
         public string Accion;
 
         public const string TIPO_PERMISO_WEB = "4";

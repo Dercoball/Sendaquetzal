@@ -58,6 +58,7 @@ namespace Plataforma.pages
             Usuario usuario = Usuarios.GetUsuario(path, idUsuario);
 
             List<PermisoUsuario> listaPermisos = Usuarios.ObtenerListaPermisosPorTipoUsuario(path, usuario.IdTipoUsuario.ToString());
+            PermisoUsuario permisoPaginaActual = null;
 
             if (pagina != "0")
             {
@@ -71,8 +72,16 @@ namespace Plataforma.pages
                     Utils.Log("Error " + ex.Message);
 
                 }
-                PermisoUsuario permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso == idPermiso);
+                if (idPermiso == 7 && (usuario.IdTipoUsuario == 5 || usuario.IdTipoUsuario == 3 || usuario.IdTipoUsuario == 4))
+                {
+                    permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso2 == idPermiso);
 
+                }
+                else
+                {
+                    permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso == idPermiso);
+
+                }
                 return (permisoPaginaActual != null);
 
             }

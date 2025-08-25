@@ -112,7 +112,7 @@ namespace Plataforma.pages
                     // Si no hay empleados válidos en plazas activas, no traigas nada
                     string filtroEmpleadosSql = (idsEmpleados.Count == 0)
                         ? " AND 1 = 0 "
-                        : " AND p.id_empleado IN (" + string.Join(",", idsEmpleados) + ") ";
+                        : " AND e.id_empleado IN (" + string.Join(",", idsEmpleados) + ") ";
 
                     // 4) Query: último préstamo por cliente + plaza activa SIEMPRE
                     string query = @"
@@ -124,11 +124,9 @@ namespace Plataforma.pages
                         p.monto,
                         ROW_NUMBER() OVER (PARTITION BY p.id_cliente ORDER BY p.id_prestamo DESC) AS rn
                     FROM prestamo p
-                    INNER JOIN empleado e ON e.id_empleado = p.id_empleado
-                    INNER JOIN plaza   pl ON pl.id_plaza   = e.id_plaza AND pl.activo = 1
-                    /* Si hay estatus de préstamo a excluir (cancelado, etc.), filtra aquí:
-                       AND p.id_status_prestamo NOT IN (/* ids a excluir */)
-                    */
+                    inner join usuario u on u.id_usuario = p.id_empleado
+                    inner JOIN empleado e ON e.id_empleado = u.id_empleado
+                    inner JOIN plaza   pl ON pl.id_plaza   = e.id_plaza AND pl.activo = 1
                     WHERE 1 = 1
                     " + filtroEmpleadosSql + @"
                 )

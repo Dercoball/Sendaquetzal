@@ -9,6 +9,7 @@ namespace Plataforma.Clases
     {
         public List<Documento> DocumentosAval 
         { get; set; }
+        public List<Documento> DocumentosAval2 { get; set; }
         public List<Documento> DocumentosCliente
         { get; set; }
         public Prestamo Prestamo
@@ -16,6 +17,8 @@ namespace Plataforma.Clases
         public Cliente Cliente
         { get; set; }
         public Cliente Aval
+        { get; set; }
+        public Cliente Aval2
         { get; set; }
     }
 }

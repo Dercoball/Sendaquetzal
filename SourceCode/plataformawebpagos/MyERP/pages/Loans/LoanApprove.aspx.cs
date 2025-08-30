@@ -112,6 +112,7 @@ namespace Plataforma.pages
             ,notas_generales  {nameof(Prestamo.NotasGenerales)}
             ,id_tipo_cliente {nameof(Prestamo.IdTipoCliente)}
             ,id_aval {nameof(Prestamo.IdAval)}
+,id_aval2 as IdAval22
             ,monto_por_renovacion {nameof(Prestamo.MontoPorRenovacion)}
             ,ubicacion_confirmada {nameof(Prestamo.UbicacionConfirmada)}
             ,nota_ejecutivo  {nameof(Prestamo.NotasEjecutivo)}
@@ -150,6 +151,7 @@ namespace Plataforma.pages
                 monto_con_interes,
                 id_tipo_cliente,
                 id_aval,
+                id_aval2,
                 monto_por_renovacion,
                 nota_ejecutivo,
                 ubicacion_confirmada,
@@ -170,7 +172,7 @@ namespace Plataforma.pages
                 NULL, -- valor para fecha_aprobacion
                 NULL, -- valor para monto_con_interes
                 @id_tipo_cliente,
-                @id_aval,
+                @id_aval,@id_aval2,
                 @monto_por_renovacion,
                 NULL, -- valor para nota_ejecutivo
                 NULL, -- valor para ubicacion_confirmada
@@ -192,7 +194,8 @@ namespace Plataforma.pages
             cmd.Parameters.AddWithValue("@id_aval", oPrestamo.IdAval);
             cmd.Parameters.AddWithValue("@monto_por_renovacion", oPrestamo.MontoPorRenovacion);
             cmd.Parameters.AddWithValue("@Id_empleado", oPrestamo.idUsuario);
-            
+            cmd.Parameters.AddWithValue("@id_aval2", oPrestamo.IdAval22); // <<< NUEVO
+
 
             if (oPrestamo.IdPrestamo > 0)
             {
@@ -354,7 +357,9 @@ namespace Plataforma.pages
 
             return new
             {
-                iContadorVecesAval = oConexion.Query<int>($"SELECT COUNT(*) FROM prestamo WHERE id_aval = {IdCliente}").FirstOrDefault(),
+                iContadorVecesAval = oConexion.Query<int>($@"
+            SELECT COUNT(*) FROM prestamo
+            WHERE id_aval = {IdCliente} OR id_aval2 = {IdCliente}").FirstOrDefault(),  // <<< ajuste
                 iContadorCompletados = oConexion.Query<int>($"SELECT COUNT(*) FROM prestamo WHERE id_cliente = {IdCliente} AND id_status_prestamo = 4").FirstOrDefault(),
                 iContadorRechazados = oConexion.Query<int>($"SELECT COUNT(*) FROM prestamo WHERE id_cliente = {IdCliente} AND id_status_prestamo = 3").FirstOrDefault()
             };
@@ -558,18 +563,23 @@ namespace Plataforma.pages
             try
             {
                 oResponsePrestamo.Prestamo = ObtenerDetallePrestamo(Id, conn);
-                oResponsePrestamo.Cliente = ObtenerDetalleCliente
-                    (oResponsePrestamo.Prestamo.IdCliente.ParseStringToInt(), conn);
-                oResponsePrestamo.Aval = ObtenerDetalleCliente
-                    (oResponsePrestamo.Prestamo.IdAval, conn);
-                oResponsePrestamo.Cliente.direccion = ObtenerDetalleDireccion(oResponsePrestamo.Prestamo.IdCliente.ParseStringToInt(),
-                    conn);
-                oResponsePrestamo.Aval.direccion = ObtenerDetalleDireccion(oResponsePrestamo.Aval.IdCliente,
-                    conn);
-                oResponsePrestamo.DocumentosAval = ObtenerDocumentos(oResponsePrestamo.Prestamo.IdCliente.ParseStringToInt(),
-                    conn);
-                oResponsePrestamo.DocumentosCliente = ObtenerDocumentos(oResponsePrestamo.Aval.IdCliente,
-                    conn);
+
+                // Cliente y avales
+                oResponsePrestamo.Cliente = ObtenerDetalleCliente(oResponsePrestamo.Prestamo.IdCliente.ParseStringToInt(), conn);
+                oResponsePrestamo.Aval = ObtenerDetalleCliente(oResponsePrestamo.Prestamo.IdAval, conn);
+                oResponsePrestamo.Aval2 = ObtenerDetalleCliente(oResponsePrestamo.Prestamo.IdAval22, conn);  // <<< NUEVO
+
+                // Direcciones
+                oResponsePrestamo.Cliente.direccion = ObtenerDetalleDireccion(oResponsePrestamo.Cliente.IdCliente, conn);
+                oResponsePrestamo.Aval.direccion = ObtenerDetalleDireccion(oResponsePrestamo.Aval.IdCliente, conn);
+                oResponsePrestamo.Aval2.direccion = ObtenerDetalleDireccion(oResponsePrestamo.Aval2.IdCliente, conn); // <<< NUEVO
+
+                // Documentos (estaban cruzados)
+                oResponsePrestamo.DocumentosCliente = ObtenerDocumentos(oResponsePrestamo.Cliente.IdCliente, conn);
+                oResponsePrestamo.DocumentosAval = ObtenerDocumentos(oResponsePrestamo.Aval.IdCliente, conn);
+
+                // Si tu DTO tiene colección para Aval2, rellénala:
+                oResponsePrestamo.DocumentosAval2 = ObtenerDocumentos(oResponsePrestamo.Aval2.IdCliente, conn); // <<< NUEVO (requiere propiedad en PrestamoRequest)
             }
             catch (Exception ex)
             {
@@ -819,9 +829,14 @@ namespace Plataforma.pages
 
                 RegistraClienteAval(Request.Cliente, transaccion, conn);
                 RegistraClienteAval(Request.Aval, transaccion, conn);
+                if (Request.Aval2 != null)
+                {
+                    RegistraClienteAval(Request.Aval2, transaccion, conn);  // Solo si Aval 2 tiene datos
+                }
                 Request.Prestamo.idUsuario = idUsuario.ParseStringToInt();
                 Request.Prestamo.IdCliente = Request.Cliente.IdCliente.ToString();
                 Request.Prestamo.IdAval = Request.Aval.IdCliente;
+                Request.Prestamo.IdAval22 = Request.Aval2.IdCliente;
 
                 RegistrarPrestamo(Request.Prestamo, transaccion, conn);
 
@@ -845,6 +860,15 @@ namespace Plataforma.pages
                             f.IdCliente = Request.Aval.IdCliente;
                             RegistrarDocumento(f, Request.Prestamo.IdPrestamo, "Aval", transaccion, conn);
                         });
+                }
+                if (Request.Aval2.IdCliente > 0)
+                {
+                    Request.DocumentosAval2.ForEach(f =>
+                    {
+                        f.Extension = System.IO.Path.GetExtension(f.Nombre);
+                        f.IdCliente = Request.Aval2.IdCliente;
+                        RegistrarDocumento(f, Request.Prestamo.IdPrestamo, "Aval2", transaccion, conn); // carpeta/etiqueta "Aval2"
+                    });
                 }
 
                 Utils.Log("Guardado -> OK ");

@@ -11,6 +11,8 @@ namespace Plataforma.Clases
         { get; set; }
         public int IdAval
         { get; set; }
+        public int IdAval22
+        { get; set; }
         public string IdCliente
         { get; set; }
         public int? IdEmpleado

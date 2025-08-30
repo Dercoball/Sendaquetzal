@@ -587,7 +587,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idsupervisor + " AND id_posicion = 5 AND id_plaza = " + idplaza;
+                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_supervisor = " + idsupervisor + " AND id_posicion = 5 AND id_plaza = " + idplaza;
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 

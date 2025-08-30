@@ -96,6 +96,24 @@ namespace Plataforma.pages
         protected global::Plataforma.pages.Controles.UcDocumentacion UcDocumentacionAval;
 
         /// <summary>
+        /// Control UcAval2.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::Plataforma.pages.Controles.UcCliente UcAval2;
+
+        /// <summary>
+        /// Control UcDocumentacionAval2.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::Plataforma.pages.Controles.UcDocumentacion UcDocumentacionAval2;
+
+        /// <summary>
         /// Control txtUbicacionReconfirmar.
         /// </summary>
         /// <remarks>

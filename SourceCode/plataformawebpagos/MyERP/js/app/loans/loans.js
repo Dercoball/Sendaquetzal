@@ -334,12 +334,15 @@ const loans = {
             success: function (msg) {
                 var lo_Prestamo = msg.d;
 
+                // Asegúrate de que los datos de Aval2 estén correctamente asignados
                 loans.idAval = lo_Prestamo.Prestamo.IdAval;
                 loans.idCliente = lo_Prestamo.Prestamo.IdCliente;
 
                 loans.obtenerContadores(loans.idCliente);
                 loans.setDatosPersona(lo_Prestamo.Cliente, 'UcCliente');
                 loans.setDatosPersona(lo_Prestamo.Aval, 'UcAval');
+                loans.setDatosPersona(lo_Prestamo.Aval2, 'UcAval2'); // Asegúrate de que Aval2 también esté siendo seteado aquí
+
                 loans.setPrestamo(lo_Prestamo.Prestamo);
 
                 loans.obtenerGarantias(function (msg) {
@@ -347,9 +350,11 @@ const loans = {
                     loans.loadTableGarantias(loans.arrGarantias);
 
                     /* ===== Rutea documentos por IdCliente/IdAval ===== */
-                    var docsAll = []
-                        .concat(lo_Prestamo.DocumentosCliente || [])
-                        .concat(lo_Prestamo.DocumentosAval || []);
+                    var docsCliente = lo_Prestamo.DocumentosCliente || [];
+                    var docsAval = lo_Prestamo.DocumentosAval || [];
+                    var docsAval2 = lo_Prestamo.DocumentosAval2 || []; // Asegúrate de que Aval2 esté aquí
+
+                    var docsAll = docsCliente.concat(docsAval, docsAval2); // Concatenamos los documentos
 
                     var idCliente = loans.idCliente;
                     var idAval = loans.idAval;
@@ -375,6 +380,8 @@ const loans = {
 
                     docsCliente.forEach(d => putDoc('UcDocumentacionCliente', d));
                     docsAval.forEach(d => putDoc('UcDocumentacionAval', d));
+                    // Asegúrate de agregar documentos de Aval2 aquí
+                    docsAval2.forEach(d => putDoc('UcDocumentacionAval2', d));  // Esta es la corrección que falta
 
                     /* ===== Fin ruteo documentos ===== */
 
@@ -539,9 +546,12 @@ const loans = {
         var params = { Request: {} };
         params.Request.Prestamo = loans.getPrestamo();
         params.Request.DocumentosAval = loans.getDocumentos('UcDocumentacionAval');
+        params.Request.DocumentosAval2 = loans.getDocumentos('UcDocumentacionAval2')
         params.Request.DocumentosCliente = loans.getDocumentos('UcDocumentacionCliente');
         params.Request.Cliente = loans.getDatosPersona('UcCliente');
         params.Request.Aval = loans.getDatosPersona('UcAval');
+        // Incluir los datos de Aval 2
+        params.Request.Aval2 = loans.getDatosPersona('UcAval2');  // <-- Aquí se incluye Aval 2
         params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.Request.Cliente.idCliente = loans.idCliente;
@@ -557,7 +567,7 @@ const loans = {
             success: function (msg) {
                 var oResponse = msg.d;
                 if (oResponse.CodigoError <= 0) {
-                    utils.toast('Los datos del prestamo fue actualizado correctamente', 'ok');
+                    utils.toast('Los datos del préstamo fueron actualizados correctamente', 'ok');
                     setTimeout(function () {
                         window.location = '/pages/Loans/LoanRequest.aspx';
                     }, 500);
@@ -722,6 +732,26 @@ const loans = {
         $("#UcDocumentacionAval_filecomprobantedomicilio").change(function () {
             loans.loadPreviewImg(this, function (e) {
                 $('#UcDocumentacionAval_imgDocumento4').attr('src', e.target.result);
+            });
+        });
+        $("#UcDocumentacionAval2_filefotografia").change(function () {
+            loans.loadPreviewImg(this, function (e) {
+                $('#UcDocumentacionAval2_imgDocumento1').attr('src', e.target.result);  // Asegúrate que este id sea el correcto
+            });
+        });
+        $("#UcDocumentacionAval2_fileidentificacionfrente").change(function () {
+            loans.loadPreviewImg(this, function (e) {
+                $('#UcDocumentacionAval2_imgDocumento2').attr('src', e.target.result);  // Asegúrate que este id sea el correcto
+            });
+        });
+        $("#UcDocumentacionAval2_fileidentificacionreverso").change(function () {
+            loans.loadPreviewImg(this, function (e) {
+                $('#UcDocumentacionAval2_imgDocumento3').attr('src', e.target.result);  // Asegúrate que este id sea el correcto
+            });
+        });
+        $("#UcDocumentacionAval2_filecomprobantedomicilio").change(function () {
+            loans.loadPreviewImg(this, function (e) {
+                $('#UcDocumentacionAval2_imgDocumento4').attr('src', e.target.result);  // Asegúrate que este id sea el correcto
             });
         });
 

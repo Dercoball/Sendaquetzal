@@ -29,7 +29,7 @@
 
 
 
-    <title>Senda Quetzal</title>
+    <title>Finaer</title>
 </head>
 <body>
 
@@ -77,13 +77,14 @@
                     <span class="icon-bar"></span>
                 </button>
 
-               <a href="Home.aspx"><img src="../img/sq2.png" 
-                        class="img-responsive"
-                        style="padding-right:50px"
-                        <%--style="border-radius: 50%;--%> 
-                        width: 70px; height: 70px;" 
-                        />
-                  </a>
+               <a href="Home.aspx">
+    <img src="../img/sq2.png"
+         class="img-responsive"
+         style="padding-right:50px;"
+         width="70"
+         height="50" />
+</a>
+
                
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">

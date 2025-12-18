@@ -52,7 +52,8 @@ namespace Plataforma.Clases
         public int IdSupervisor;
         public int IdEjecutivo;
         public int IdCoordinador;
-        public int IdComisionInicial;   //modulo
+        public int IdComisionInicial;
+        public int IdUsuario;//modulo
         public string SalarioMensual;
         public float MontoLimiteInicial;
         public float PorcentajeComision;

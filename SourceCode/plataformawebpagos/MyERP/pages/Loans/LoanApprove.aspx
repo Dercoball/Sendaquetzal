@@ -339,10 +339,12 @@
                                     <i class="fa fa-arrow-circle-left mr-1"></i>REGRESAR</a>
                                 <button type="button" class="btn btn-primary rounded" id="btnGuardarCliente">
                                     <i class="fa fa-save mr-1"></i>GUARDAR</button>
-                                <a id="btnRechazar" class="text-white btn btn-danger rounded">
-                                    <i class="fa fa-times mr-1"></i>RECHAZAR</a>
-                                <a id="btnAprobar" class="text-white btn btn-success rounded">
-                                    <i class="fa fa-save mr-1"></i>APROBAR</a>
+                              <a id="btnRechazar" runat="server" class="text-white btn btn-danger rounded">
+                                  <i class="fa fa-times mr-1"></i>RECHAZAR
+                                </a>
+                                <a id="btnAprobar" runat="server" class="text-white btn btn-success rounded">
+                                  <i class="fa fa-save mr-1"></i>APROBAR
+                                </a>
                             </div>
                         </div>
                     </div>

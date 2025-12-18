@@ -50,7 +50,12 @@ const loansEdit = {
                 });
                 markers = [];
 
-                let inputUbicacion = $('.nav-tabs .active').text() == 'Cliente' ? document.getElementById('txtUbicacion') : document.getElementById('txtUbicacionAval');
+                let inputUbicacion =
+                    (tabActive == 'Cliente')
+                        ? document.getElementById('txtUbicacion')
+                        : (tabActive == 'Aval')
+                            ? document.getElementById('txtUbicacionAval')
+                            : document.getElementById('txtUbicacionAval2'); // <-- NUEVO
                 if (inputUbicacion.value != "") {
                     var coordenadas = inputUbicacion.value.split(',');
                     var point = {
@@ -194,6 +199,23 @@ const loansEdit = {
                 $('#txtDireccionTrabajoAval').val(itemCliente.direccionAval.DireccionTrabajo);
                 $('#txtUbicacionAval').val(itemCliente.direccionAval.Ubicacion);
 
+                $('#txtNombreAval2').val(itemCliente.NombreAval2);
+                $('#txtPrimerApellidoAval2').val(itemCliente.PrimerApellidoAval2);
+                $('#txtSegundoApellidoAval2').val(itemCliente.SegundoApellidoAval2);
+                $('#txtCURPAval2').val(itemCliente.CurpAval2);
+                $('#txtTelefonoAval2').val(itemCliente.TelefonoAval2);
+                $('#txtOcupacionAval2').val(itemCliente.OcupacionAval2);
+                $('#txtNotaDeFotoAval2').val(itemCliente.NotaFotografiaAval2);
+
+                // dirección aval 2
+                if (itemCliente.direccionAval2) {
+                    $('#txtCalleAval2').val(itemCliente.direccionAval2.Calle);
+                    $('#txtColoniaAval2').val(itemCliente.direccionAval2.Colonia);
+                    $('#txtMunicipioAval2').val(itemCliente.direccionAval2.Municipio);
+                    $('#txtEstadoAval2').val(itemCliente.direccionAval2.Estado);
+                    $('#txtCodigoPostalAval2').val(itemCliente.direccionAval2.CodigoPostal);
+                    $('#txtDireccionTrabajoAval2').val(itemCliente.direccionAval2.DireccionTrabajo);
+                    $('#txtUbicacionAval2').val(itemCliente.direccionAval2.Ubicacion);
                 //loansEdit.getLocation('#txtUbicacion');
                 //loansEdit.getLocation('#txtUbicacionAval');
 
@@ -384,9 +406,9 @@ const loansEdit = {
             dataType: "json",
             async: true,
             success: function (foto) {
-
                 let doc = foto.d;
 
+                // Aquí aseguramos que los documentos de Aval 2 también se carguen
                 if (doc.IdDocumento) {
                     if (doc.Extension === 'png' || doc.Extension === 'PNG' || doc.Extension === 'jpg' || doc.Extension === 'jpeg'
                         || doc.Extension === 'bmp' || doc.Extension === 'jfif') {
@@ -398,16 +420,14 @@ const loansEdit = {
                     } else {
                         $(`${idControl}`).attr('src', '../../img/ico_doc.png');
                     }
-
                     $(`#href_${idTipoDocumento}`).css('cursor', 'pointer');
                 } else {
                     $(`#href_${idTipoDocumento}`).css('cursor', 'default');
                 }
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
-
         });
 
     },
@@ -1017,6 +1037,9 @@ function initAutocomplete() {
                 break;
             case 'Aval':
                 document.getElementById('txtUbicacionAval').value = `${coordendas.lat},${coordendas.lng}`;
+                break;
+            case 'Aval 2': // <-- NUEVO
+                document.getElementById('txtUbicacionAval2').value = `${coordendas.lat},${coordendas.lng}`;
                 break;
         }
         //document.getElementById("Latitud").value = latitudParada;

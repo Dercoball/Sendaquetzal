@@ -14,6 +14,8 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Security.Cryptography;
+using System.Web.UI.HtmlControls; // <--- nuevo
+
 
 namespace Plataforma.pages
 {
@@ -31,7 +33,13 @@ namespace Plataforma.pages
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
-
+            if (idTipoUsuario == "4" || idTipoUsuario == "5")
+            {
+                var btnAprobarSrv = FindControl("btnAprobar") as HtmlAnchor;
+                var btnRechazarSrv = FindControl("btnRechazar") as HtmlAnchor;
+                if (btnAprobarSrv != null) btnAprobarSrv.Visible = false;
+                if (btnRechazarSrv != null) btnRechazarSrv.Visible = false;
+            }
             //  si no esta logueado
             if (usuario == string.Empty)
             {

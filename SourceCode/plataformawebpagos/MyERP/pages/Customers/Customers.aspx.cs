@@ -67,52 +67,55 @@ namespace Plataforma.pages
                     // 1) Trae empleados SOLO de plazas ACTIVAS (y opcional: empleados activos)
                     //    Si idPlaza > 0 se acota a esa plaza; si no, trae de todas las activas
                     var empleados = conn.Query<Empleado>(@"
-                SELECT e.id_empleado   AS IdEmpleado,
+                    SELECT u.id_usuario   AS IdEmpleado,
                        e.id_plaza      AS IdPlaza,
                        e.id_posicion   AS IdPosicion,
                        e.id_supervisor AS IdSupervisor,
-                       e.id_ejecutivo  AS IdEjecutivo
+                       e.id_ejecutivo  AS IdEjecutivo,
+                       u.id_usuario As IdUsuario
                 FROM empleado e
                 INNER JOIN plaza pl   ON pl.id_plaza = e.id_plaza
+                inner join usuario u on u.id_empleado = e.id_empleado
                 WHERE pl.activo = 1 and pl.eliminado <> 1
-                  /* Descomenta si tienes columna de empleado activo:
-                  AND e.activo = 1 and e.eliminado <> 1
-                  */
-                  AND (@idPlaza = 0 OR e.id_plaza = @idPlaza);
-            ", new { idPlaza }).ToList();
+                      /* Descomenta si tienes columna de empleado activo:
+                      AND e.activo = 1 and e.eliminado <> 1
+                      */
+                      AND (@idPlaza = 0 OR e.id_plaza = @idPlaza);
+                    ", new { idPlaza }).ToList();
 
                     // 2) Aplica tu typeFilter sobre esa lista depurada
                     IEnumerable<Empleado> empleadosFiltrados = empleados;
-                    switch (typeFilter?.ToLowerInvariant())
+                    switch(typeFilter?.ToLowerInvariant())
                     {
-                        case "promotor":
-                            empleadosFiltrados = empleados.Where(w => w.IdEmpleado == idPromotor);
+                    case "promotor":
+                            // Solo ese promotor
+                            empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5);
                             break;
 
-                        case "supervisor":
-                            // promotores del supervisor
-                            empleadosFiltrados = empleados.Where(w => w.IdSupervisor == idSupervisor && w.IdPosicion == 5);
-                            break;
+                    case "supervisor":
+                        // Promotores del supervisor actual
+                        empleadosFiltrados = empleados.Where(w =>
+                            w.IdPosicion == 4   // 5 = Promotor
+                        );
+                        break;
 
-                        case "ejecutivo":
-                            // supervisores del ejecutivo
-                            var supervisoresIDs = empleados
-                                .Where(w => w.IdEjecutivo == idEjecutivo && w.IdPosicion == 4)
-                                .Select(s => s.IdEmpleado)
-                                .ToHashSet();
-
-                            // promotores de esos supervisores
-                            empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5 && supervisoresIDs.Contains(w.IdSupervisor));
-                            break;
+                    case "ejecutivo":
+                        // Supervisores del ejecutivo actual
+                        empleadosFiltrados = empleados.Where(w =>
+                             // jefe = 106, por ejemplo
+                            w.IdPosicion == 3              // 4 = Supervisor
+                        );
+                        break;
                     }
 
-                    // 3) Construye el filtro IN de forma segura:
+
+                        // 3) Construye el filtro IN de forma segura:
                     var idsEmpleados = empleadosFiltrados.Select(e => e.IdEmpleado).Distinct().ToList();
 
                     // Si no hay empleados válidos en plazas activas, no traigas nada
                     string filtroEmpleadosSql = (idsEmpleados.Count == 0)
                         ? " AND 1 = 0 "
-                        : " AND e.id_empleado IN (" + string.Join(",", idsEmpleados) + ") ";
+                        : " AND u.id_usuario IN (" + string.Join(",", idsEmpleados) + ") ";
 
                     // 4) Query: último préstamo por cliente + plaza activa SIEMPRE
                     string query = @"

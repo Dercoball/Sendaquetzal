@@ -174,11 +174,11 @@
                         <div class="row">
                             <div class="col-lg-4">
                                 <label class="form-label">Limite de venta por ejercicio</label>
-                                <input class="form-control" id="txtLimiteVentaPorEjercicio" type="number" />
+                                <input class="form-control" id="txtLimiteVentaPorEjercicio" type="number" value="1000" />
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label">Limite de incremento por ejercicio</label>
-                                <input class="form-control" id="txtLimiteIncrementoPorEjercicio" type="number" />
+                                <input class="form-control" id="txtLimiteIncrementoPorEjercicio" type="number" value ="1000" />
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label">Fiscalizable</label>

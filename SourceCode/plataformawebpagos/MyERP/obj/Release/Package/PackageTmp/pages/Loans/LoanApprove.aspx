@@ -156,21 +156,29 @@
 
                     <div id="panelForm" class="mt-4">
                         <nav>
-                            <div class="nav nav-tabs text-center" id="nav-tab-prestamos" role="tablist">
-                                <a class="nav-item nav-link active" style="width:133px;" id="nav-client-tab"
-                                   data-toggle="tab" data-id="1" href="#nav-client" role="tab"
-                                   aria-controls="nav-client" aria-selected="true">Cliente</a>
-                                <a class="nav-item nav-link" style="width:133px;" id="nav-aval-tab"
-                                   data-toggle="tab" data-id="2" href="#nav-aval" role="tab"
-                                   aria-controls="nav-aval" aria-selected="false">Aval</a>
-                                <a class="nav-item nav-link" id="nav-aprobacion-supervisor-tab"
-                                   data-toggle="tab" data-id="3" href="#nav-aprobacion-supervisor" role="tab"
-                                   aria-controls="nav-aprovacion" aria-selected="false">Aprobación supervisor</a>
-                                <a class="nav-item nav-link" id="nav-aprobacion-ejecutivo-tab"
-                                   data-toggle="tab" data-id="4" href="#nav-aprobacion-ejecutivo" role="tab"
-                                   aria-controls="nav-aprovacion" aria-selected="false">Aprobación ejecutivo</a>
-                            </div>
+                          <div class="nav nav-tabs text-center" id="nav-tab-prestamos" role="tablist">
+                            <a class="nav-item nav-link active" style="width:133px;" id="nav-client-tab"
+                               data-toggle="tab" data-id="1" href="#nav-client" role="tab"
+                               aria-controls="nav-client" aria-selected="true">Cliente</a>
+
+                            <a class="nav-item nav-link" style="width:133px;" id="nav-aval-tab"
+                               data-toggle="tab" data-id="2" href="#nav-aval" role="tab"
+                               aria-controls="nav-aval" aria-selected="false">Aval</a>
+
+                            <!-- NUEVO TAB AVAL 2 -->
+                            <a class="nav-item nav-link" style="width:133px;" id="nav-aval2-tab"
+                               data-toggle="tab" data-id="5" href="#nav-aval2" role="tab"
+                               aria-controls="nav-aval2" aria-selected="false">Aval 2</a>
+
+                            <a class="nav-item nav-link" id="nav-aprobacion-supervisor-tab"
+                               data-toggle="tab" data-id="3" href="#nav-aprobacion-supervisor" role="tab"
+                               aria-controls="nav-aprovacion" aria-selected="false">Aprobación supervisor</a>
+                            <a class="nav-item nav-link" id="nav-aprobacion-ejecutivo-tab"
+                               data-toggle="tab" data-id="4" href="#nav-aprobacion-ejecutivo" role="tab"
+                               aria-controls="nav-aprovacion" aria-selected="false">Aprobación ejecutivo</a>
+                          </div>
                         </nav>
+
 
                         <div class="tab-content" id="nav-tabContent">
                             <!-- Cliente -->
@@ -216,6 +224,30 @@
                                     </div>
                                 </form>
                             </div>
+
+                            <!-- Aval 2 -->
+<div class="tab-pane fade" id="nav-aval2" role="tabpanel" aria-labelledby="nav-aval2-tab">
+  <form role="form" id="frmAval2" name="frmAval2" data-toggle="validator">
+    <div class="row">
+      <div class="col-7">
+        <div class="card p-3">
+          <div class="card-body">
+            <!-- Reutilizamos el control del cliente, nueva instancia para Aval 2 -->
+            <uc1:UcCliente runat="server" id="UcAval2" />
+          </div>
+        </div>
+      </div>
+      <div class="col-5 text-center">
+        <div class="card p-3">
+          <div class="card-body p-3">
+            <!-- Y su documentación -->
+            <uc1:UcDocumentacion runat="server" id="UcDocumentacionAval2" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 
                             <!-- Aprobación supervisor -->
                             <div class="tab-pane fade" id="nav-aprobacion-supervisor" role="tabpanel" aria-labelledby="nav-aprobacion-supervisor-tab">
@@ -307,10 +339,12 @@
                                     <i class="fa fa-arrow-circle-left mr-1"></i>REGRESAR</a>
                                 <button type="button" class="btn btn-primary rounded" id="btnGuardarCliente">
                                     <i class="fa fa-save mr-1"></i>GUARDAR</button>
-                                <a id="btnRechazar" class="text-white btn btn-danger rounded">
-                                    <i class="fa fa-times mr-1"></i>RECHAZAR</a>
-                                <a id="btnAprobar" class="text-white btn btn-success rounded">
-                                    <i class="fa fa-save mr-1"></i>APROBAR</a>
+                              <a id="btnRechazar" runat="server" class="text-white btn btn-danger rounded">
+                                  <i class="fa fa-times mr-1"></i>RECHAZAR
+                                </a>
+                                <a id="btnAprobar" runat="server" class="text-white btn btn-success rounded">
+                                  <i class="fa fa-save mr-1"></i>APROBAR
+                                </a>
                             </div>
                         </div>
                     </div>

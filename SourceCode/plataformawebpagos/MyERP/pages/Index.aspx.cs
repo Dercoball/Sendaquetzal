@@ -72,7 +72,7 @@ namespace Plataforma.pages
                     Utils.Log("Error " + ex.Message);
 
                 }
-                if (idPermiso == 7 && (usuario.IdTipoUsuario == 5 || usuario.IdTipoUsuario == 3 || usuario.IdTipoUsuario == 4))
+                if (idPermiso == 7 && (usuario.IdTipoUsuario == 5 || usuario.IdTipoUsuario == 3 || usuario.IdTipoUsuario == 4 || usuario.IdTipoUsuario == 9))
                 {
                     permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso2 == idPermiso);
 

@@ -322,6 +322,38 @@ const customers = {
         });
     },
 
+    deleteCustomer: (idCliente) => {
+        if (!confirm('¿Desea eliminar al cliente y sus préstamos asociados?')) return;
+
+        var params = {
+            path: "connbd",
+            idCliente: idCliente,
+            idUsuario: document.getElementById('txtIdUsuario').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "../../pages/Customers/Customers.aspx/DeleteCliente",
+            data: JSON.stringify(params),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                var oResponse = msg.d;
+                if (oResponse && parseInt(oResponse.CodigoError) === 0) {
+                    utils.toast('Cliente eliminado correctamente', 'ok');
+                    // Si necesitas refrescar manual, hazlo desde la UI; evitamos recargar para poder ver mensajes/errores
+                } else {
+                    utils.toast(oResponse ? oResponse.MensajeError : 'Error al eliminar', 'error');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                utils.toast('Error al eliminar cliente', 'error');
+            }
+        });
+    },
+
     loadComboPlaza: () => {
         var params = {};
         params.path = "connbd";
@@ -611,6 +643,9 @@ const customers = {
 
 
 }
+
+// Expone customers globalmente para onclick inline
+window.customers = customers;
 
 window.addEventListener('load', () => {
 

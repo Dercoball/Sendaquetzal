@@ -27,5 +27,7 @@ namespace Plataforma.Clases
         { get; set; }
         public string ColorStatus
         { get; set; }
+        public int IdCliente
+        { get; set; }
     }
 }

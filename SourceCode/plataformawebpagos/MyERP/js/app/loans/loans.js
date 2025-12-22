@@ -230,12 +230,13 @@ const loans = {
     },
 
     getPrestamo: () => {
+        const idTipoCliente = parseInt($("#cboTipoCliente").val(), 10);
         return {
             IdPrestamo: loans.idPrestamo,
             FechaSolicitud: moment($("#lblFechaSolicitud").html()).format('YYYY-MM-DD'),
-            IdTipoCliente: $("#cboTipoCliente").val(),
-            Monto: $("#txtCantidadPrestamo").val(),
-            MontoPorRenovacion: $("#txMaximoPorRenovacion").val()
+            IdTipoCliente: isNaN(idTipoCliente) ? 0 : idTipoCliente,
+            Monto: parseFloat($("#txtCantidadPrestamo").val() || 0),
+            MontoPorRenovacion: parseFloat($("#txMaximoPorRenovacion").val() || 0)
         };
     },
 
@@ -250,7 +251,17 @@ const loans = {
     },
 
     getDatosPersona: (control) => {
-        return {
+        // Nota de foto por persona (si el control existe en DOM)
+        let notaFoto = '';
+        if (control === 'UcCliente' && $('#txtNotaDeFoto').length) {
+            notaFoto = $('#txtNotaDeFoto').val();
+        } else if (control === 'UcAval' && $('#txtNotaDeFotoAval').length) {
+            notaFoto = $('#txtNotaDeFotoAval').val();
+        } else if (control === 'UcAval2' && $('#txtNotaDeFotoAval2').length) {
+            notaFoto = $('#txtNotaDeFotoAval2').val();
+        }
+
+        const data = {
             Curp: $("#" + control + "_txtCURP").val(),
             Nombre: $("#" + control + "_txtNombre").val(),
             PrimerApellido: $("#" + control + "_txtPrimerApellido").val(),
@@ -259,6 +270,18 @@ const loans = {
             Ocupacion: $("#" + control + "_txtOcupacion").val(),
             direccion: loans.getDireccion(control)
         };
+
+        // Para el cliente principal enviamos id_tipo_cliente y la nota de foto
+        if (control === 'UcCliente') {
+            const idTipoCliente = parseInt($("#cboTipoCliente").val(), 10);
+            data.IdTipoCliente = isNaN(idTipoCliente) ? 0 : idTipoCliente;
+            data.NotaFotografiaCliente = notaFoto;
+        } else {
+            // Para avales, enviamos nota_fotografia_aval
+            data.NotaFotografiaAval = notaFoto;
+        }
+
+        return data;
     },
 
     getDocumentos: (control) => {
@@ -513,24 +536,28 @@ const loans = {
         if (frmAprobacionEjecutivo.valid()) {
             var params = {
                 path: "connbd",
-                IdPrestamo: loans.idPrestamo,
-                sNotaEjecutivo: $("#txtNotaAprobacionEjecutivo").val()
+                idPrestamo: loans.idPrestamo,
+                idUsuario: document.getElementById('txtIdUsuario').value,
+                idPosicion: document.getElementById('txtIdTipoUsuario').value,
+                nota: $("#txtNotaAprobacionEjecutivo").val()
             };
 
             $.ajax({
                 type: "POST",
-                url: "/pages/Loans/LoanApprove.aspx/AprobacionEjecutivo",
+                url: "/pages/Loans/LoanApprove.aspx/Approve",
                 data: JSON.stringify(params),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
                 success: function (msg) {
                     var oResponse = msg.d;
-                    if (oResponse.CodigoError <= 0) {
+                    if (parseInt(oResponse.CodigoError) === 0) {
                         utils.toast('El prestamo fue aprobado por el ejecutivo', 'ok');
                         setTimeout(function () {
                             window.location = '/pages/Loans/LoanRequest.aspx';
                         }, 500);
+                    } else if (parseInt(oResponse.CodigoError) === 2) {
+                        utils.toast(oResponse.MensajeError, 'error');
                     } else {
                         utils.toast(oResponse.MensajeError, 'error');
                     }

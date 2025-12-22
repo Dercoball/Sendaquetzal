@@ -130,6 +130,41 @@ namespace Plataforma.pages
             return oConexion.Query<Prestamo>(sql)
                     .FirstOrDefault() ?? new Prestamo();
         }
+
+        // Actualiza en el cliente principal los datos del Aval1 (curp/nombre/etc. y nota de foto aval)
+        static void ActualizarAvalEnCliente(Cliente clientePrincipal, Cliente aval, SqlTransaction transaccion, SqlConnection conn)
+        {
+            if (clientePrincipal == null || aval == null || clientePrincipal.IdCliente <= 0 || aval.IdCliente <= 0)
+            {
+                return;
+            }
+
+            var sql = @"UPDATE cliente
+                        SET curp_aval = @curp_aval,
+                            nombre_aval = @nombre_aval,
+                            primer_apellido_aval = @primer_apellido_aval,
+                            segundo_apellido_aval = @segundo_apellido_aval,
+                            ocupacion_aval = @ocupacion_aval,
+                            telefono_aval = @telefono_aval,
+                            nota_fotografia_aval = @nota_fotografia_aval
+                        WHERE id_cliente = @id_cliente";
+
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Transaction = transaccion;
+                cmd.Parameters.AddWithValue("@curp_aval", aval.Curp ?? aval.CurpAval ?? string.Empty);
+                cmd.Parameters.AddWithValue("@nombre_aval", aval.Nombre ?? aval.NombreAval ?? string.Empty);
+                cmd.Parameters.AddWithValue("@primer_apellido_aval", aval.PrimerApellido ?? aval.PrimerApellidoAval ?? string.Empty);
+                cmd.Parameters.AddWithValue("@segundo_apellido_aval", aval.SegundoApellido ?? aval.SegundoApellidoAval ?? string.Empty);
+                cmd.Parameters.AddWithValue("@ocupacion_aval", aval.Ocupacion ?? aval.OcupacionAval ?? string.Empty);
+                cmd.Parameters.AddWithValue("@telefono_aval", aval.Telefono ?? aval.TelefonoAval ?? string.Empty);
+                cmd.Parameters.AddWithValue("@nota_fotografia_aval", string.IsNullOrEmpty(aval.NotaFotografiaAval) ? (object)DBNull.Value : aval.NotaFotografiaAval);
+                cmd.Parameters.AddWithValue("@id_cliente", clientePrincipal.IdCliente);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         static void RegistrarPrestamo(Prestamo oPrestamo, SqlTransaction transaccion, SqlConnection conn)
         {
             string sql = "";
@@ -201,7 +236,7 @@ namespace Plataforma.pages
             cmd.Parameters.AddWithValue("@id_tipo_cliente", oPrestamo.IdTipoCliente);
             cmd.Parameters.AddWithValue("@id_aval", oPrestamo.IdAval);
             cmd.Parameters.AddWithValue("@monto_por_renovacion", oPrestamo.MontoPorRenovacion);
-            cmd.Parameters.AddWithValue("@Id_empleado", oPrestamo.idUsuario);
+            cmd.Parameters.AddWithValue("@Id_empleado", oPrestamo.IdEmpleado.HasValue ? (object)oPrestamo.IdEmpleado.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@id_aval2", oPrestamo.IdAval22); // <<< NUEVO
 
 
@@ -226,7 +261,8 @@ namespace Plataforma.pages
                 sql = @"UPDATE cliente
                                 SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
                                 segundo_apellido = @segundo_apellido,
-                                ocupacion = @ocupacion, telefono = @telefono 
+                                ocupacion = @ocupacion, telefono = @telefono, id_tipo_cliente = @id_tipo_cliente,
+                                nota_fotografia = @nota_fotografia
                           WHERE
                                 id_cliente = @id_cliente ";
                 Utils.Log("ACTUALIZAR CLIENTE " + sql);
@@ -236,7 +272,8 @@ namespace Plataforma.pages
                 sql = @" INSERT INTO cliente (curp,nombre,primer_apellido,segundo_apellido,ocupacion,telefono,id_tipo_cliente,curp_aval,nombre_aval,primer_apellido_aval
                     ,segundo_apellido_aval,ocupacion_aval,telefono_aval,activo,eliminado,id_status_cliente,nota_fotografia,nota_fotografia_aval,mensaje)
                             OUTPUT INSERTED.id_cliente
-                    VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,2,NULL,NULL, NULL) ";
+                    VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono,@id_tipo_cliente,
+                            NULL,NULL,NULL,NULL,NULL,NULL,1,0,2,@nota_fotografia,NULL, NULL) ";
                 Utils.Log("INSERTAR CLIENTE " + sql);
             }
 
@@ -249,6 +286,8 @@ namespace Plataforma.pages
             cmd.Parameters.AddWithValue("@segundo_apellido", oCliente.SegundoApellido);
             cmd.Parameters.AddWithValue("@ocupacion", oCliente.Ocupacion);
             cmd.Parameters.AddWithValue("@telefono", oCliente.Telefono);
+            cmd.Parameters.AddWithValue("@id_tipo_cliente", oCliente.IdTipoCliente == 0 ? (object)DBNull.Value : oCliente.IdTipoCliente);
+            cmd.Parameters.AddWithValue("@nota_fotografia", string.IsNullOrEmpty(oCliente.NotaFotografiaCliente) ? (object)DBNull.Value : oCliente.NotaFotografiaCliente);
 
             if (oCliente.IdCliente > 0)
             {
@@ -835,9 +874,12 @@ namespace Plataforma.pages
                 conn.Open();
                 transaccion = conn.BeginTransaction();
 
+                // Obtener el id_empleado del usuario actual para asignarlo al préstamo
+                var empleadoActual = GetItemEmployee(idUsuario, conn, transaccion);
+
                 RegistraClienteAval(Request.Cliente, transaccion, conn);
                 RegistraClienteAval(Request.Aval, transaccion, conn);
-                if (Request.Aval2 != null)
+                if (Request.Aval2 != null && Request.Aval2.Celular != null)
                 {
                     RegistraClienteAval(Request.Aval2, transaccion, conn);  // Solo si Aval 2 tiene datos
                 }
@@ -845,6 +887,10 @@ namespace Plataforma.pages
                 Request.Prestamo.IdCliente = Request.Cliente.IdCliente.ToString();
                 Request.Prestamo.IdAval = Request.Aval.IdCliente;
                 Request.Prestamo.IdAval22 = Request.Aval2.IdCliente;
+                Request.Prestamo.IdEmpleado = empleadoActual?.IdEmpleado;
+
+                // Reflejar datos del Aval1 en columnas del cliente principal (curp_aval, nombre_aval, etc. y nota_fotografia_aval)
+                ActualizarAvalEnCliente(Request.Cliente, Request.Aval, transaccion, conn);
 
                 RegistrarPrestamo(Request.Prestamo, transaccion, conn);
 
@@ -965,13 +1011,6 @@ namespace Plataforma.pages
                 {
                     missingsDocs.Add("<li>" + item.Nombre + "</li>");
                 }
-
-                if (allDocumentTypes.Count > 0)
-                {
-                    response.MensajeError = "<p>Se necesita todos los documentos solicitados. </p><ul>" + string.Join(", ", missingsDocs.ToArray()) + "</ul>";
-                    response.CodigoError = 1;
-                    return response;
-                }
                 //  -------
 
                 //  Tipo de cliente
@@ -993,17 +1032,17 @@ namespace Plataforma.pages
                 {
                     guaranteeAmmountSumCustomer += item.Costo;
                 }
-                if (guaranteeAmmountSumCustomer < guaranteeAmmount)
-                {
-                    response.MensajeError = "El total de las garantías del cliente no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
-                        customerType.GarantiasPorMonto + "<br/><br/>" +
-                        "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
-                        "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
-                        "La suma de costos de las garantías es: " + guaranteeAmmountSumCustomer.ToString("C2");
+                //if (guaranteeAmmountSumCustomer < guaranteeAmmount)
+                //{
+                //    response.MensajeError = "El total de las garantías del cliente no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
+                //        customerType.GarantiasPorMonto + "<br/><br/>" +
+                //        "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                //        "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
+                //        "La suma de costos de las garantías es: " + guaranteeAmmountSumCustomer.ToString("C2");
 
-                    response.CodigoError = 1;
-                    return response;
-                }
+                //    response.CodigoError = 1;
+                //    return response;
+                //}
 
                 // 4) Validar que la suma de los costos de los articulos en garantia del aval,
                 //  sean mas o igual al monto del prestamo mas el porcentaje configurado
@@ -1013,22 +1052,22 @@ namespace Plataforma.pages
                 {
                     guaranteeAmmountSumAval += item.Costo;
                 }
-                if (guaranteeAmmountSumAval < guaranteeAmmount)
-                {
-                    response.MensajeError = "El total de las garantías del aval no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
-                        customerType.GarantiasPorMonto + "<br/><br/>" +
-                       "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
-                       "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
-                       "La suma de costos de las garantías es: " + guaranteeAmmountSumAval.ToString("C2");
+                //if (guaranteeAmmountSumAval < guaranteeAmmount)
+                //{
+                //    response.MensajeError = "El total de las garantías del aval no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
+                //        customerType.GarantiasPorMonto + "<br/><br/>" +
+                //       "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                //       "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
+                //       "La suma de costos de las garantías es: " + guaranteeAmmountSumAval.ToString("C2");
 
-                    response.CodigoError = 1;
-                    return response;
-                }
+                //    response.CodigoError = 1;
+                //    return response;
+                //}
 
 
                 //  5) Validar el monto máximo al ser un préstamo inicial
                 List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaction);
-                if (prestamosAnteriores.Count > 0)
+                if (prestamosAnteriores.Count > 1)
                 {
                     if (prestamo.Monto > customerType.PrestamoInicialMaximo)
                     {
@@ -1046,7 +1085,7 @@ namespace Plataforma.pages
 
 
                 // 6) Validar que el promotor no exceda el límite de crédito que puede otorgar y creación de alerta de límite de crédito
-                if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
+                if (1 == 1)
                 {
 
                     //  Traer datos del empleado promotor
@@ -1152,6 +1191,16 @@ namespace Plataforma.pages
                 }
                 else if (idPosicion == Employees.POSICION_EJECUTIVO.ToString())
                 {
+                    // Guardar nota del ejecutivo para mantener el mismo comportamiento que AprobacionEjecutivo
+                    var sqlNotaEjecutivo = @"UPDATE prestamo SET nota_ejecutivo = @nota_ejecutivo WHERE id_prestamo = @id_prestamo";
+                    using (var cmdNota = new SqlCommand(sqlNotaEjecutivo, conn))
+                    {
+                        cmdNota.CommandType = CommandType.Text;
+                        cmdNota.Parameters.AddWithValue("@nota_ejecutivo", nota ?? string.Empty);
+                        cmdNota.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                        cmdNota.Transaction = transaction;
+                        cmdNota.ExecuteNonQuery();
+                    }
 
                     //  Si se esta cubriendo deuda restante anterior de un prestamo con el nuevo que se esta aprobando
                     if (currentLoan != null && deudaActual != null)
@@ -1184,8 +1233,8 @@ namespace Plataforma.pages
 
 
                     //  Generar semanas para pagos, Generar calendario de pagos de acuerdo al num. de semanas del tipo de cliente
-                    //DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
-                    DateTime startDate = new DateTime(2022, 4, 1);    //TODO: CAMBIAR ESTE TEST
+                    DateTime startDate = DateTime.Now;   //Tomar fecha de aprobacion para semanas de pago
+
 
 
                     //  Se agrega la semana extra por si le aplica
@@ -1905,10 +1954,6 @@ namespace Plataforma.pages
             {
                 errsList.Add("Ocupación cliente");
             }
-            if (string.IsNullOrEmpty(prestamo.NotaFotografiaCliente))
-            {
-                errsList.Add("Nota fotografía cliente");
-            }
 
 
 
@@ -1966,10 +2011,6 @@ namespace Plataforma.pages
             if (string.IsNullOrEmpty(prestamo.OcupacionAval))
             {
                 errsList.Add("Ocupación aval");
-            }
-            if (string.IsNullOrEmpty(prestamo.NotaFotografiaAval))
-            {
-                errsList.Add("Nota fotografía aval");
             }
 
 
@@ -2863,19 +2904,19 @@ namespace Plataforma.pages
             {
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT 
-                                    id_empleado, id_tipo_usuario, id_comision_inicial, 
-                                    id_posicion, id_plaza, curp, email, 
-                                    nombre, primer_apellido, segundo_apellido, telefono, eliminado, 
+                string query = @"  SELECT 
+                                    a.id_empleado, a.id_tipo_usuario, id_comision_inicial, 
+                                    id_posicion, id_plaza, curp, a.email, 
+                                    a.nombre, primer_apellido, segundo_apellido, a.telefono, a.eliminado, 
                                     activo, IsNull(id_supervisor, 0) id_supervisor, IsNull(id_ejecutivo, 0) id_ejecutivo, 
                                     IsNull(id_coordinador, 0) id_coordinador, FORMAT(fecha_ingreso, 'yyyy-MM-dd') fecha_ingreso, 
                                     FORMAT(fecha_nacimiento, 'yyyy-MM-dd') fecha_nacimiento,
                                     monto_limite_inicial,
                                     nombre_aval, primer_apellido_aval, segundo_apellido_aval, curp_aval, telefono_aval,
-                                    concat(nombre ,  ' ' , primer_apellido , ' ' , segundo_apellido) AS nombre_completo,
+                                    concat(a.nombre ,  ' ' , primer_apellido , ' ' , segundo_apellido) AS nombre_completo,
                                     concat(nombre_aval ,  ' ' , primer_apellido_aval , ' ' , segundo_apellido_aval) AS nombre_completo_aval
-                                FROM empleado
-                                WHERE id_empleado =  @id_empleado 
+                                FROM empleado a
+                                WHERE a.id_empleado =  @id_empleado 
                                 ";
 
                 Utils.Log("\nMétodo-> " +

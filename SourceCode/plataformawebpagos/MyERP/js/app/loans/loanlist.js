@@ -68,13 +68,15 @@ const loans = {
         });
     },
     loadPrestamos: () => {
-        let params = {};
-        params.idUsuario = document.getElementById('txtIdUsuario').value;
-        params.path = "connbd";
+        // Usa Search con filtros vacíos para respetar borrado lógico (activo/eliminado)
+        let params = {
+            Filtro: {},
+            path: "connbd"
+        };
 
         $.ajax({
             type: "POST",
-            url: "/pages/Loans/LoanRequest.aspx/GridPrestamos",
+            url: "/pages/Loans/LoanRequest.aspx/Search",
             data: JSON.stringify(params),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -84,6 +86,7 @@ const loans = {
                 if (data == null) {
                     window.location = "/pages/Index.aspx";
                 }
+                console.log('GridPrestamos data:', data);
                 loans.createTableLoans(data);
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
@@ -136,7 +139,9 @@ const loans = {
                 },
                 {
                     data: '', className: 'text-center', render: function (datum, type, row) {
-                        return "<a  class='btn btn-success rounded' href='/pages/Loans/LoanApprove.aspx?id=" + row.id_prestamo + "'><i class='fa fa-edit'></i></a>";
+                        const idCliente = row.IdCliente || row.id_cliente || row.idCliente;
+                        return "<a  class='btn btn-success rounded mr-2' href='/pages/Loans/LoanApprove.aspx?id=" + row.id_prestamo + "'><i class='fa fa-edit'></i></a>" +
+                            "<button type='button' class='btn btn-danger rounded' onclick='loans.deleteCliente(" + idCliente + "); return false;'><i class='fa fa-trash'></i></button>";
                     }
                 }
             ],
@@ -160,6 +165,41 @@ const loans = {
                     text: 'Pdf', className: 'pdfbtn'
                 }
             ]
+        });
+    },
+    deleteCliente: (idCliente) => {
+        if (!idCliente) {
+            utils.toast('No se pudo identificar al cliente para eliminar', 'error');
+            return;
+        }
+        if (!confirm('¿Desea eliminar al cliente y sus préstamos asociados?')) return;
+
+        var params = {
+            path: "connbd",
+            idCliente: idCliente,
+            idUsuario: document.getElementById('txtIdUsuario').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/pages/Customers/Customers.aspx/DeleteCliente",
+            data: JSON.stringify(params),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                var oResponse = msg.d;
+                if (oResponse && parseInt(oResponse.CodigoError) === 0) {
+                    utils.toast('Cliente eliminado correctamente', 'ok');
+                    loans.loadPrestamos();
+                } else {
+                    utils.toast(oResponse ? oResponse.MensajeError : 'Error al eliminar', 'error');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                utils.toast('Error al eliminar cliente', 'error');
+            }
         });
     },
     accionesBotones: () => {
@@ -192,6 +232,9 @@ const loans = {
         });
     }
 }
+
+// Expone loans globalmente para onclick inline (botón eliminar)
+window.loans = loans;
 
 window.addEventListener('load', () => {
     loans.init();

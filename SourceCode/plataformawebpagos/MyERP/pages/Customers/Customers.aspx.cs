@@ -41,6 +41,51 @@ namespace Plataforma.pages
 
         }
 
+        [WebMethod]
+        public static DatosSalida DeleteCliente(string path, int idCliente, string idUsuario)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            // Permisos
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso) return null;
+
+            var salida = new DatosSalida();
+            using (var conn = new SqlConnection(strConexion))
+            {
+                conn.Open();
+                var tx = conn.BeginTransaction();
+                try
+                {
+                    // Prestamos del cliente -> inactivos/rechazados
+                    var sqlPrestamo = @"UPDATE prestamo
+                                        SET activo = 0, id_status_prestamo = @status
+                                        WHERE id_cliente = @id_cliente";
+                    conn.Execute(sqlPrestamo, new { id_cliente = idCliente, status = Prestamo.STATUS_RECHAZADO }, tx);
+
+                    // Cliente inactivo/eliminado
+                    var sqlCliente = @"UPDATE cliente
+                                       SET activo = 0, eliminado = 1, id_status_cliente = @status
+                                       WHERE id_cliente = @id_cliente";
+                    conn.Execute(sqlCliente, new { id_cliente = idCliente, status = Cliente.STATUS_INACTIVO }, tx);
+
+                    tx.Commit();
+                    salida.CodigoError = 0;
+                    salida.MensajeError = "Cliente eliminado lógicamente";
+                }
+                catch (Exception ex)
+                {
+                    tx.Rollback();
+                    Utils.Log("Error DeleteCliente ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    salida.CodigoError = 1;
+                    salida.MensajeError = "No se pudo eliminar el cliente";
+                }
+            }
+
+            return salida;
+        }
+
 
 
 
@@ -127,7 +172,7 @@ namespace Plataforma.pages
                         p.monto,
                         ROW_NUMBER() OVER (PARTITION BY p.id_cliente ORDER BY p.id_prestamo DESC) AS rn
                     FROM prestamo p
-                    inner join usuario u on u.id_usuario = p.id_empleado
+                    inner join usuario u on u.id_empleado = p.id_empleado
                     inner JOIN empleado e ON e.id_empleado = u.id_empleado
                     inner JOIN plaza   pl ON pl.id_plaza   = e.id_plaza AND pl.activo = 1
                     WHERE 1 = 1
@@ -147,6 +192,8 @@ namespace Plataforma.pages
                 INNER JOIN status_cliente st ON st.id_status_cliente = c.id_status_cliente
                 LEFT JOIN direccion d      ON (d.id_cliente = c.id_cliente AND d.aval = 0)
                 WHERE u.rn = 1
+                  AND ISNULL(c.eliminado, 0) = 0
+                  AND ISNULL(c.activo, 1) = 1
                 ORDER BY c.id_cliente;";
 
                     var ds = new DataSet();
@@ -202,6 +249,8 @@ namespace Plataforma.pages
                             {
                                 botones += $"<button onclick='customers.reactivate({item.IdCliente})' class='btn btn-outline-primary'><span class='fa fa-check-circle mr-1'></span>Reactivar</button>";
                             }
+
+                            botones += $"<button type='button' onclick='customers.deleteCustomer({item.IdCliente}); return false;' class='btn btn-outline-danger ml-2'><span class='fa fa-trash mr-1'></span>Eliminar</button>";
 
                             item.Accion = botones;
                             items.Add(item);

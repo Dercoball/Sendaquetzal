@@ -1,4 +1,4 @@
-ï»¿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Home.aspx.cs" Inherits="Plataforma.pages.Home" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Home.aspx.cs" Inherits="Plataforma.pages.Home" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -17,8 +17,36 @@
 
     <link rel="stylesheet" href="../css/custom.css" />
 
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body.layout-home form#frm {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.layout-home main {
+            flex: 1;
+        }
+
+         $args[0].Value + $insert 
+    
+        .apprestar {
+            display: flex;
+            align-items: center;
+            min-height: 420px;
+        }
+
+        .apprestar .container {
+            width: 100%;
+        }
+    </style>
+
     </head>
-<body>
+<body class="layout-home">
     <form id="frm" runat="server">
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
@@ -38,7 +66,7 @@
                         <li><a href="../pages/Aboutus.aspx" style="font-size:150%"><strong>Nosotros</strong></a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="../pages/Login.aspx" style="font-size:150%"><strong>Iniciar sesiÃ³n</strong></a></li>
+                        <li><a href="../pages/Login.aspx" style="font-size:150%"><strong>Iniciar sesión</strong></a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#"><img src="../img/facebook-logo-button.png" class="img-social" /></a></li>
@@ -66,11 +94,11 @@
                         </div>
                         <div class="col-md-4">
                             <img src="../img/aprobacion.png" width="50px" />
-                            <h3>AprobaciÃ³n</h3>
+                            <h3>Aprobación</h3>
                         </div>
                         <div class="col-md-4">
                             <img src="../img/listo.png" width="50px" />
-                            <h3>Â¡Listo!</h3>
+                            <h3>¡Listo!</h3>
                         </div>
                     </div>
                 </div>
@@ -79,13 +107,13 @@
             <section class="apprestar" style="padding: 40px 0; background-color: #f7f7f7;">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-8 col-md-offset-2" style="background-color:#fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <h2 class="text-center" style="margin-bottom: 30px;"><strong>Solicita un prÃ©stamo ahora</strong></h2>
+                        <div class="col-md-6 col-md-offset-3" style="background-color:#fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h2 class="text-center" style="margin-bottom: 30px;"><strong>Solicita un préstamo ahora</strong></h2>
                             <div class="form-group">
                                 <input type="text" class="form-control" runat="server" id="txtNombre" placeholder="Nombre completo" required="required" />
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" runat="server" id="txtDireccionEmail" placeholder="Correo electrÃ³nico" required="required" />
+                                <input type="text" class="form-control" runat="server" id="txtDireccionEmail" placeholder="Correo electrónico" required="required" />
                             </div>
                             <div class="form-group">
                                 <textarea rows="5" id="txtContenidoEmail" runat="server" placeholder="Comentario" class="form-control" required="required"></textarea>
@@ -104,7 +132,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">InformaciÃ³n</h4>
+                        <h4 class="modal-title">Información</h4>
                     </div>
                     <div class="modal-body">
                         <p id="lblMensajeInfo"></p>
@@ -116,22 +144,20 @@
             </div>
         </div>
 
-        <footer style="padding: 20px 0;">
+                <footer>
             <div class="container">
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-2 text-center">
-                        <ul class="list-unstyled">
-                            <li><a href="../pages/AboutUs.aspx">Acerca de nosotros</a></li>
-                            <li><a href="../pages/TermsAndConditions.aspx">TÃ©rminos y condiciones</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <ul class="list-unstyled">
-                            <li><a href="../pages/NoticeOfPrivacy.aspx">Aviso de privacidad</a></li>
-                            <li><a href="../pages/FAQS.aspx">Preguntas frecuentes</a></li>
-                            <li><a href="../pages/Tutorials.aspx">Tutoriales</a></li>
-                        </ul>
-                    </div>
+                <div class="col-md-3 col-md-offset-3 text-center">
+                    <ul>
+                        <li><a href="../pages/AboutUs.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Acerca de nosotros</a></li>
+                        <li><a href="../pages/TermsAndConditions.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>TSminos y condiciones</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 text-center">
+                    <ul>
+                        <li><a href="../pages/NoticeOfPrivacy.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Aviso de privacidad</a></li>
+                        <li><a href="../pages/FAQS.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Preguntas frecuentes</a></li>
+                        <li><a href="../pages/Tutorials.aspx"><span class="glyphicon glyphicon-play-circle margen-derecho" aria-hidden="true"></span>Tutoriales</a></li>
+                    </ul>
                 </div>
             </div>
         </footer>
@@ -143,3 +169,12 @@
     </form>
 </body>
 </html>
+
+
+
+
+
+
+
+
+

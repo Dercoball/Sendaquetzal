@@ -46,8 +46,7 @@
                         class="img-responsive"
                         style="padding-right:50px"
                         <%--style="border-radius: 50%;--%> 
-                        width: 70px; height: 70px;" 
-                        />
+                        width="70" height="70" />
                   </a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">

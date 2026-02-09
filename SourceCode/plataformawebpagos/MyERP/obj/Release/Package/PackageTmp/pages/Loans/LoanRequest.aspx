@@ -143,10 +143,11 @@
                                                     <input id="txtAvalPrestamoMaximaBusqueda" type="number" class="form-control w-100" placeholder="Aval max." />
                                                     <input id="txtAvalPrestamoMinimoBusqueda" type="number" class="form-control w-100 mt-2" placeholder="Aval min." />
                                                 </td>
-                                              <td>
+                                            <td>
                                                 <select class="form-control w-100" id="cboStatus">
                                                 </select>
                                             </td>
+                                            <td></td>
                                             </tr>
                                             <tr>
                                                 <th>Folio</th>
@@ -158,7 +159,7 @@
                                                 <th>Rechazo</th>
                                                 <th>Aval</th>
                                                 <th>Status</th>
-                                                <th></th>
+                                                <th>Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>

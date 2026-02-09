@@ -19,9 +19,14 @@ const customers = {
         customers.idTipoUsuario = "-1";
         customers.accion = "";
 
-        customers.loadComboPlaza();
-        customers.selectedCustomerId = '';
-        customers.cargarItems();
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        const isPromotor = userType === utils.POSICION_PROMOTOR;
+        const isSupervisor = userType === utils.POSICION_SUPERVISOR;
+
+        customers.loadComboPlaza().then(() => {
+            customers.selectedCustomerId = '';
+            customers.cargarItems();
+        });
 
         $('#cmbPlaza').change(function () {
             customers.loadComboEjecutivo();
@@ -34,6 +39,26 @@ const customers = {
         $('#cmbSupervisor').change(function () {
             customers.loadComboPromotor();
         });
+
+        // Bloquear filtros para promotor (visual y forzar valor)
+        if (isPromotor) {
+            $('#cmbPlaza').val(0).prop('disabled', true);
+            $('#cmbEjecutivo').val(0).prop('disabled', true);
+            $('#cmbSupervisor').val(0).prop('disabled', true);
+            $('#cmbPromotor').val(0).prop('disabled', true);
+            $('#btnFiltrar').prop('disabled', true);
+        }
+
+        // Bloquear solo plaza para supervisor (se fija a su plaza actual)
+        if (isSupervisor) {
+            const hiddenPlazaEl = document.getElementById('txtIdPlaza');
+            const plazaActual = hiddenPlazaEl ? parseInt(hiddenPlazaEl.value || '0') : 0;
+            if (plazaActual > 0) {
+                $('#cmbPlaza').val(plazaActual).prop('disabled', true).trigger('change');
+            } else {
+                $('#cmbPlaza').prop('disabled', true); // se fijará tras cargar combo
+            }
+        }
 
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
             var min = parseInt($('#pmin').val(), 10);
@@ -65,6 +90,13 @@ const customers = {
         else if (parseInt(document.getElementById("cmbEjecutivo").value) > 0) typeFilter = "ejecutivo";
         else typeFilter = "plaza";
 
+        // Forzar filtro promotor si es promotor logueado
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        const isPromotor = userType === utils.POSICION_PROMOTOR;
+        if (isPromotor) {
+            typeFilter = "promotor";
+        }
+
 
         let params = {};
         params.path = "connbd";
@@ -76,6 +108,13 @@ const customers = {
         params.idEjecutivo = parseInt(document.getElementById("cmbEjecutivo").value);
         params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
         params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
+
+        if (isPromotor) {
+            params.idPromotor = parseInt(document.getElementById('txtIdEmpleado').value || '0');
+            params.idPlaza = 0;
+            params.idEjecutivo = 0;
+            params.idSupervisor = 0;
+        }
         params = JSON.stringify(params);
 
         $.ajax({
@@ -322,33 +361,93 @@ const customers = {
         });
     },
 
-    loadComboPlaza: () => {
-        var params = {};
-        params.path = "connbd";
-        params = JSON.stringify(params);
+    deleteCustomer: (idCliente) => {
+        if (!confirm('¿Desea eliminar al cliente y sus préstamos asociados?')) return;
+
+        var params = {
+            path: "connbd",
+            idCliente: idCliente,
+            idUsuario: document.getElementById('txtIdUsuario').value
+        };
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
-            data: params,
+            url: "../../pages/Customers/Customers.aspx/DeleteCliente",
+            data: JSON.stringify(params),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
-
-                let selectEl = document.getElementById('cmbPlaza');
-                //remueve las opciones del combo
-                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
-
-                selectEl.add(new Option("Todos", "0", true, true));
-                msg.d.forEach(item => {
-                    const option = new Option(item.Nombre, item.IdPlaza, false, false);
-                    selectEl.add(option);
-                });
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var oResponse = msg.d;
+                if (oResponse && parseInt(oResponse.CodigoError) === 0) {
+                    utils.toast('Cliente eliminado correctamente', 'ok');
+                    // Si necesitas refrescar manual, hazlo desde la UI; evitamos recargar para poder ver mensajes/errores
+                } else {
+                    utils.toast(oResponse ? oResponse.MensajeError : 'Error al eliminar', 'error');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                utils.toast('Error al eliminar cliente', 'error');
             }
+        });
+    },
+
+    loadComboPlaza: () => {
+        return new Promise((resolve) => {
+            var params = {};
+            params.path = "connbd";
+            params = JSON.stringify(params);
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+
+                    let selectEl = document.getElementById('cmbPlaza');
+                    //remueve las opciones del combo
+                    document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+
+                    selectEl.add(new Option("Todos", "0", true, true));
+                    msg.d.forEach(item => {
+                        const option = new Option(item.Nombre, item.IdPlaza, false, false);
+                        selectEl.add(option);
+                    });
+
+                    // Si es supervisor, seleccionar y bloquear su plaza actual
+                    const idTipoUsuario = parseInt(document.getElementById('txtIdTipoUsuario').value);
+                    if (idTipoUsuario === utils.POSICION_SUPERVISOR) {
+                        const hiddenPlazaEl = document.getElementById('txtIdPlaza');
+                        const plazaSes = hiddenPlazaEl ? parseInt(hiddenPlazaEl.value || '0') : 0;
+                        const aplicarPlaza = (plazaFija) => {
+                            if (plazaFija > 0) {
+                                selectEl.value = plazaFija.toString();
+                                $('#cmbPlaza').trigger('change');
+                            }
+                            $('#cmbPlaza').prop('disabled', true);
+                            resolve();
+                        };
+
+                        if (plazaSes > 0) {
+                            aplicarPlaza(plazaSes);
+                        } else {
+                            customers.getPlazaActual().then(plazaActual => {
+                                aplicarPlaza(plazaActual);
+                            });
+                        }
+                    } else {
+                        resolve();
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    resolve();
+                }
+            });
         });
     },
 
@@ -444,6 +543,32 @@ const customers = {
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
+        });
+    },
+
+    getPlazaActual: () => {
+        return new Promise((resolve) => {
+            const params = {
+                path: "connbd",
+                idUsuario: document.getElementById('txtIdUsuario').value
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Customers/Customers.aspx/GetPlazaActual",
+                data: JSON.stringify(params),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
+                    const data = msg.d;
+                    const plaza = data && data.IdPlaza ? parseInt(data.IdPlaza) : 0;
+                    resolve(isNaN(plaza) ? 0 : plaza);
+                },
+                error: function () {
+                    resolve(0);
+                }
+            });
         });
     },
 
@@ -611,6 +736,9 @@ const customers = {
 
 
 }
+
+// Expone customers globalmente para onclick inline
+window.customers = customers;
 
 window.addEventListener('load', () => {
 

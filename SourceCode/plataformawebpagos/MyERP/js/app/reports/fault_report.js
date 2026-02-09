@@ -36,9 +36,13 @@ const report = {
 
         $('#txtFechaSemana').val(report.fechaHoy());
 
-        report.loadComboPlaza();
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        const isSupervisor = userType === utils.POSICION_SUPERVISOR;
 
-        report.loadComboEjecutivosByPlaza("-1", '#comboEjecutivo');
+        report.loadComboPlaza(isSupervisor).then(() => {
+            const plazaSeleccionada = document.getElementById('comboPlaza').value || "-1";
+            report.loadComboEjecutivosByPlaza(plazaSeleccionada, '#comboEjecutivo');
+        });
 
         $('.secciones').hide();
         $('.reporteFalla').hide();
@@ -215,37 +219,52 @@ const report = {
         });
     },
 
-    loadComboPlaza: () => {
+    loadComboPlaza: (isSupervisor) => {
 
-        var params = {};
-        params.path = "connbd";
-        params = JSON.stringify(params);
+        return new Promise((resolve) => {
+            var params = {};
+            params.path = "connbd";
+            params = JSON.stringify(params);
 
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Config/Employees.aspx/GetListaItemsPlazas",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Config/Employees.aspx/GetListaItemsPlazas",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
 
-                let items = msg.d;
-                let opcion = '<option value="-1">Todos</option>';
+                    let items = msg.d;
+                    let opcion = '<option value="-1">Todos</option>';
 
-                for (let i = 0; i < items.length; i++) {
-                    let item = items[i];
+                    for (let i = 0; i < items.length; i++) {
+                        let item = items[i];
 
-                    opcion += `<option value = '${item.IdPlaza}' > ${item.Nombre}</option > `;
+                        opcion += `<option value = '${item.IdPlaza}' > ${item.Nombre}</option > `;
 
+                    }
+
+                    $('#comboPlaza').html(opcion);
+
+                    // Si es supervisor, fijar y bloquear su plaza actual
+                    if (isSupervisor) {
+                        const plazaHiddenEl = document.getElementById('txtIdPlaza');
+                        const plazaHidden = plazaHiddenEl ? plazaHiddenEl.value : "";
+                        if (plazaHidden && plazaHidden !== "-1" && plazaHidden !== "0") {
+                            $('#comboPlaza').val(plazaHidden.toString()).prop('disabled', true).trigger('change');
+                        } else {
+                            $('#comboPlaza').prop('disabled', true);
+                        }
+                    }
+
+                    resolve();
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    resolve();
                 }
 
-                $('#comboPlaza').html(opcion);
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
-
+            });
         });
     },
 

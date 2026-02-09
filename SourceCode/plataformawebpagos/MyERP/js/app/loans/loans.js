@@ -28,6 +28,7 @@ const loans = {
         loans.idPrestamo = parseInt($("#hfIdPrestamo").val());
         loans.idPrestamo = isNaN(loans.idPrestamo) ? 0 : loans.idPrestamo;
         loans.idAval = -1;
+        loans.idAval2 = -1;
         loans.idCliente = -1;
         loans.arrDocumentosCliente = {};
         loans.arrDocumentosAval = {};
@@ -276,9 +277,12 @@ const loans = {
             const idTipoCliente = parseInt($("#cboTipoCliente").val(), 10);
             data.IdTipoCliente = isNaN(idTipoCliente) ? 0 : idTipoCliente;
             data.NotaFotografiaCliente = notaFoto;
+            data.IdCliente = loans.idCliente;
         } else {
             // Para avales, enviamos nota_fotografia_aval
             data.NotaFotografiaAval = notaFoto;
+            if (control === 'UcAval') data.IdCliente = loans.idAval;
+            if (control === 'UcAval2') data.IdCliente = loans.idAval2;
         }
 
         return data;
@@ -408,21 +412,27 @@ const loans = {
 
                     /* ===== Fin ruteo documentos ===== */
 
+                    const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+
                     if (lo_Prestamo.Prestamo.IdStatusPrestamo === 1) {
                         $("#frmAval input").prop("disabled", true);
                         $("#frmCustomer input").prop("disabled", true);
-                        $("#nav-aprobacion-supervisor-tab").show();
-                        $("#dvBotonAgregarGarantia").show();
-                        $("#btnRechazar").show();
-                        $("#btnAprobar").show();
+                        if (userType === utils.POSICION_SUPERVISOR) {
+                            $("#nav-aprobacion-supervisor-tab").show();
+                            $("#dvBotonAgregarGarantia").show();
+                            $("#btnRechazar").show();
+                            $("#btnAprobar").show();
+                        }
                     }
                     else if (lo_Prestamo.Prestamo.IdStatusPrestamo === 2) {
                         $("#frmAval input").prop("disabled", true);
                         $("#frmCustomer input").prop("disabled", true);
-                        $("#nav-aprobacion-ejecutivo-tab").show();
-                        $("#btnRechazar").show();
-                        $("#btnAprobar").show();
-                        $("#tableGarantias tbody tr a").prop("style", "display:none");
+                        if (userType === utils.POSICION_EJECUTIVO) {
+                            $("#nav-aprobacion-ejecutivo-tab").show();
+                            $("#btnRechazar").show();
+                            $("#btnAprobar").show();
+                            $("#tableGarantias tbody tr a").prop("style", "display:none");
+                        }
                     }
                     else {
                         $("#frmAval input").prop("disabled", true);
@@ -435,6 +445,14 @@ const loans = {
                         $("#nav-aprobacion-supervisor-tab").show();
                         $("#nav-aprobacion-ejecutivo-tab").show();
                         $("#tableGarantias tbody tr a").prop("style", "display:none");
+                    }
+
+                    // Fuerza ocultar para promotor (o roles no autorizados)
+                    if (userType === utils.POSICION_PROMOTOR) {
+                        $("#nav-aprobacion-supervisor-tab").hide();
+                        $("#nav-aprobacion-ejecutivo-tab").hide();
+                        $("#btnRechazar").hide();
+                        $("#btnAprobar").hide();
                     }
                 });
             },
@@ -822,15 +840,16 @@ const loans = {
                 dataType: "json",
                 async: true,
                 success: function (msg) {
-                    var oCliente = msg.d;
-                    if (oCliente.IdCliente > 0) {
-                        if (sControl === 'UcCliente') { loans.idCliente = oCliente.IdCliente; }
-                        if (sControl === 'UcAval') { loans.idAval = oCliente.IdCliente; }
-                        if (loans.idCliente > 0) {
-                            loans.obtenerContadores(loans.idCliente);
-                        }
-                        utils.toast('El CURP fue encontrado', 'ok');
-                        loans.setDatosPersona(oCliente, sControl);
+            var oCliente = msg.d;
+            if (oCliente.IdCliente > 0) {
+                if (sControl === 'UcCliente') { loans.idCliente = oCliente.IdCliente; }
+                if (sControl === 'UcAval') { loans.idAval = oCliente.IdCliente; }
+                if (sControl === 'UcAval2') { loans.idAval2 = oCliente.IdCliente; }
+                if (loans.idCliente > 0) {
+                    loans.obtenerContadores(loans.idCliente);
+                }
+                utils.toast('El CURP fue encontrado', 'ok');
+                loans.setDatosPersona(oCliente, sControl);
                     }
                 },
                 error: function (XMLHttpRequest, textStatus) {

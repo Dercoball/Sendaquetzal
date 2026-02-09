@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Configuration;
 
 namespace Plataforma.pages
 {
@@ -24,12 +25,88 @@ namespace Plataforma.pages
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
+            string idEmpleado = (string)Session["id_empleado"] ?? "";
+            string idPlaza = "";
+
+            // Asegura nombre de conexión
+            if (string.IsNullOrWhiteSpace(path))
+                path = "connbd";
 
 
 
             txtUsuario.Value = usuario;//"promotor.colorado
             txtIdTipoUsuario.Value = idTipoUsuario;//5
             txtIdUsuario.Value = idUsuario;//69
+
+            // Obtener plaza del supervisor para fijarla en el filtro
+            if (idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString())
+            {
+                // Si la sesión no trae id_empleado, obténlo del usuario
+                if (string.IsNullOrWhiteSpace(idEmpleado) && !string.IsNullOrWhiteSpace(idUsuario))
+                {
+                    var usuarioObj = Usuarios.GetUsuario(path, idUsuario);
+                    if (usuarioObj != null && usuarioObj.IdEmpleado > 0)
+                        idEmpleado = usuarioObj.IdEmpleado.ToString();
+                }
+
+                if (int.TryParse(idEmpleado, out var idEmpInt))
+                {
+                    try
+                    {
+                        string strConexion = ConfigurationManager.ConnectionStrings[path].ConnectionString;
+                        using (var conn = new SqlConnection(strConexion))
+                        {
+                            conn.Open();
+                            using (var cmd = new SqlCommand("SELECT ISNULL(id_plaza,0) FROM empleado WHERE id_empleado = @id", conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", idEmpInt);
+                                var plaza = cmd.ExecuteScalar();
+                                if (plaza != null)
+                                    idPlaza = plaza.ToString();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Utils.Log("Error al obtener plaza del supervisor: " + ex.Message);
+                    }
+                }
+
+                // Fallback: si no se obtuvo plaza con id_empleado, probar por id_usuario
+                if (string.IsNullOrEmpty(idPlaza) && int.TryParse(idUsuario, out var idUserInt))
+                {
+                    try
+                    {
+                        string strConexion = ConfigurationManager.ConnectionStrings[path].ConnectionString;
+                        using (var conn = new SqlConnection(strConexion))
+                        {
+                            conn.Open();
+                            using (var cmd = new SqlCommand(@"SELECT ISNULL(e.id_plaza,0)
+                                                              FROM usuario u
+                                                              INNER JOIN empleado e ON e.id_empleado = u.id_empleado
+                                                              WHERE u.id_usuario = @id", conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", idUserInt);
+                                var plaza = cmd.ExecuteScalar();
+                                if (plaza != null)
+                                    idPlaza = plaza.ToString();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Utils.Log("Error fallback plaza supervisor: " + ex.Message);
+                    }
+                }
+            }
+
+            // Asegurar hidden de plaza y asignar valor (aunque sea vacío)
+            if (txtIdPlaza == null)
+            {
+                txtIdPlaza = new HiddenField { ID = "txtIdPlaza" };
+                form1.Controls.Add(txtIdPlaza);
+            }
+            txtIdPlaza.Value = idPlaza;
 
             //  si no esta logueado
             if (usuario == string.Empty)

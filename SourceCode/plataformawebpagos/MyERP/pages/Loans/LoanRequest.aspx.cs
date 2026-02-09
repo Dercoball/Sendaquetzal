@@ -144,7 +144,378 @@ namespace Plataforma.pages
 
             return llst_Prestamos;
         }
-        
+
+        // =============================================================================
+        //  ALTA / ACTUALIZACIÓN DE PRÉSTAMOS
+        //  Estas operaciones guardan id_empleado correctamente (tomado del usuario logueado).
+        // =============================================================================
+
+        [WebMethod]
+        public static List<Cliente> GetListaItems(string path, string idUsuario)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso) return null;
+
+            using (var conn = new SqlConnection(strConexion))
+            {
+                conn.Open();
+                var ds = new DataSet();
+                const string query = @"
+                     SELECT c.id_cliente , c.nombre, c.primer_apellido, c.segundo_apellido, 
+                            concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
+                            c.telefono , c.curp, c.ocupacion, c.activo, tc.id_tipo_cliente, tc.tipo_cliente,
+                            p.id_prestamo, p.monto, FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud
+                     FROM cliente c 
+                     JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) 
+                     JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
+                     WHERE isnull(c.eliminado, 0) != 1 
+                     ORDER BY id_cliente";
+
+                var adp = new SqlDataAdapter(query, conn);
+                adp.Fill(ds);
+
+                var items = new List<Cliente>();
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow r in ds.Tables[0].Rows)
+                    {
+                        var item = new Cliente
+                        {
+                            IdCliente = Convert.ToInt32(r["id_cliente"]),
+                            IdPrestamo = Convert.ToInt32(r["id_prestamo"]),
+                            PrimerApellido = r["primer_apellido"].ToString(),
+                            Telefono = r["telefono"].ToString(),
+                            Curp = r["curp"].ToString(),
+                            Ocupacion = r["ocupacion"].ToString(),
+                            IdTipoCliente = Convert.ToInt32(r["id_tipo_cliente"]),
+                            TipoCliente = r["tipo_cliente"].ToString(),
+                            NombreCompleto = r["nombre_completo"].ToString(),
+                            SegundoApellido = r["segundo_apellido"].ToString(),
+                            Monto = float.Parse(r["monto"].ToString()),
+                            FechaSolicitud = r["fecha_solicitud"].ToString(),
+                            Activo = Convert.ToInt32(r["activo"])
+                        };
+
+                        var botones = "<button  onclick='client.edit(" + item.IdCliente + ")'  class='btn btn-outline-primary'><span class='fa fa-edit mr-1'></span>Editar</button>";
+                        botones += "&nbsp; <button  onclick='client.delete(" + item.IdCliente + ")'   class='btn btn-outline-primary'><span class='fa fa-remove mr-1'></span>Eliminar</button>";
+                        item.Accion = botones;
+
+                        items.Add(item);
+                    }
+                }
+
+                return items;
+            }
+        }
+
+        [WebMethod]
+        public static DatosSalida Save(string path, Cliente item, Direccion itemAddress, Direccion itemAddressAval, string accion, string idUsuario)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            // verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso) return null;
+
+            var user = Usuarios.GetUsuario(path, idUsuario);
+            var validations = new LoanValidation();
+            var salida = new DatosSalida();
+
+            using (var conn = new SqlConnection(strConexion))
+            {
+                conn.Open();
+                var tx = conn.BeginTransaction();
+                try
+                {
+                    // Validaciones principales (CURP, aval, historial, etc.)
+                    if (validations.GetClienteByCURP(path, item.Curp, conn, strConexion, tx) != null)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "Ya existe el cliente con CURP " + item.Curp };
+
+                    if (item.Curp == item.CurpAval)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "La CURP del cliente y del aval no debe ser la misma." };
+
+                    if (validations.GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, tx) != null)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El cliente se encuentra como aval de otro préstamo." };
+
+                    if (validations.GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, tx) > 2)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El aval ya está registrado más de 2 veces en otros préstamos." };
+
+                    if (validations.GetPrestamoByCURP(path, item.Curp, conn, strConexion, tx) != null)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El cliente ya cuenta con un préstamo en proceso." };
+
+                    if (validations.GetHistorialFallaOAbonadoByCustomerCurp(path, item.Curp, conn, strConexion, tx))
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El cliente tiene historial de falla o abonado." };
+
+                    // Cliente
+                    // Cliente nuevo
+                    const string sqlCliente = @"
+                        INSERT INTO cliente
+                            (curp, nombre, primer_apellido, segundo_apellido, ocupacion, telefono, id_tipo_cliente, 
+                             curp_aval, nombre_aval, primer_apellido_aval, segundo_apellido_aval, ocupacion_aval, telefono_aval, 
+                             activo, eliminado)
+                        OUTPUT INSERTED.id_cliente
+                        VALUES (@curp, @nombre, @primer_apellido, @segundo_apellido, @ocupacion, @telefono, @id_tipo_cliente,
+                                @curp_aval, @nombre_aval, @primer_apellido_aval, @segundo_apellido_aval, @ocupacion_aval, @telefono_aval,
+                                1, 0)";
+
+                    var cmdCliente = new SqlCommand(sqlCliente, conn, tx);
+                    cmdCliente.CommandType = CommandType.Text;
+                    cmdCliente.Parameters.AddWithValue("@id_tipo_cliente", item.IdTipoCliente);
+                    cmdCliente.Parameters.AddWithValue("@curp", item.Curp);
+                    cmdCliente.Parameters.AddWithValue("@nombre", item.Nombre);
+                    cmdCliente.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
+                    cmdCliente.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
+                    cmdCliente.Parameters.AddWithValue("@ocupacion", item.Ocupacion);
+                    cmdCliente.Parameters.AddWithValue("@telefono", item.Telefono);
+                    cmdCliente.Parameters.AddWithValue("@curp_aval", item.CurpAval);
+                    cmdCliente.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
+                    cmdCliente.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
+                    cmdCliente.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
+                    cmdCliente.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
+                    cmdCliente.Parameters.AddWithValue("@ocupacion_aval", item.OcupacionAval);
+                    var idCliente = (int)cmdCliente.ExecuteScalar();
+
+                    // Dirección cliente
+                    const string sqlDirCliente = @"
+                        INSERT INTO direccion (calleyno, colonia, municipio, estado, codigo_postal, activo, aval, direccion_trabajo, id_cliente)
+                        VALUES (@calleyno, @colonia, @municipio, @estado, @codigo_postal, 1, 0, @direccion_trabajo, @id_cliente);";
+
+                    var cmdDir = new SqlCommand(sqlDirCliente, conn, tx);
+                    cmdDir.CommandType = CommandType.Text;
+                    cmdDir.Parameters.AddWithValue("@id_cliente", idCliente);
+                    cmdDir.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
+                    cmdDir.Parameters.AddWithValue("@colonia", itemAddress.Colonia);
+                    cmdDir.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
+                    cmdDir.Parameters.AddWithValue("@estado", itemAddress.Estado);
+                    cmdDir.Parameters.AddWithValue("@codigo_postal", itemAddress.CodigoPostal);
+                    cmdDir.Parameters.AddWithValue("@direccion_trabajo", itemAddress.DireccionTrabajo);
+                    cmdDir.ExecuteNonQuery();
+
+                    // Dirección aval
+                    const string sqlDirAval = @"
+                        INSERT INTO direccion (calleyno, colonia, municipio, estado, codigo_postal, activo, aval, direccion_trabajo, id_cliente)
+                        VALUES (@calleyno, @colonia, @municipio, @estado, @codigo_postal, 1, 1, @direccion_trabajo, @id_cliente);";
+
+                    var cmdDirAval = new SqlCommand(sqlDirAval, conn, tx);
+                    cmdDirAval.CommandType = CommandType.Text;
+                    cmdDirAval.Parameters.AddWithValue("@id_cliente", idCliente);
+                    cmdDirAval.Parameters.AddWithValue("@calleyno", itemAddressAval.Calle);
+                    cmdDirAval.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
+                    cmdDirAval.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
+                    cmdDirAval.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
+                    cmdDirAval.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CodigoPostal);
+                    cmdDirAval.Parameters.AddWithValue("@direccion_trabajo", itemAddressAval.DireccionTrabajo);
+                    cmdDirAval.ExecuteNonQuery();
+
+                    // Préstamo: guardar id_empleado asociado al usuario
+                    const string sqlPrestamo = @"
+                        INSERT INTO prestamo (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo, id_empleado)
+                        OUTPUT INSERTED.id_prestamo
+                        VALUES (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo, @id_empleado);";
+
+                    var cmdPrestamo = new SqlCommand(sqlPrestamo, conn, tx);
+                    cmdPrestamo.CommandType = CommandType.Text;
+                    cmdPrestamo.Parameters.AddWithValue("@id_cliente", idCliente);
+                    cmdPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
+                    cmdPrestamo.Parameters.AddWithValue("@monto", item.Monto);
+                    cmdPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdPrestamo.Parameters.AddWithValue("@id_empleado", user.IdEmpleado);
+                    cmdPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);
+                    var idPrestamo = (int)cmdPrestamo.ExecuteScalar();
+
+                    // Rastro de aprobación (supervisor y ejecutivo)
+                    const string sqlRel = @"
+                        INSERT INTO relacion_prestamo_aprobacion (id_prestamo, id_posicion, id_usuario)
+                        VALUES (@id_prestamo, @id_posicion, @id_usuario);";
+
+                    var cmdRelSup = new SqlCommand(sqlRel, conn, tx);
+                    cmdRelSup.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                    cmdRelSup.Parameters.AddWithValue("@id_posicion", Employees.POSICION_SUPERVISOR);
+                    cmdRelSup.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdRelSup.ExecuteNonQuery();
+
+                    var cmdRelEje = new SqlCommand(sqlRel, conn, tx);
+                    cmdRelEje.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                    cmdRelEje.Parameters.AddWithValue("@id_posicion", Employees.POSICION_EJECUTIVO);
+                    cmdRelEje.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdRelEje.ExecuteNonQuery();
+
+                    tx.Commit();
+                    salida.CodigoError = 0;
+                    salida.MensajeError = "Guardado correctamente";
+                    salida.IdItem = idCliente.ToString();
+                }
+                catch (Exception ex)
+                {
+                    tx?.Rollback();
+                    Utils.Log("Error Save prestamo ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    salida.CodigoError = 1;
+                    salida.MensajeError = "Error al guardar el préstamo.";
+                }
+            }
+
+            return salida;
+        }
+
+        [WebMethod]
+        public static DatosSalida SaveLoanUpdateCustomer(string path, Cliente item, Direccion itemAddress, Direccion itemAddressAval, string accion, string idUsuario)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            //verificar que tenga permisos para usar esta pagina
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso) return null;
+
+            var user = Usuarios.GetUsuario(path, idUsuario);
+            var salida = new DatosSalida();
+            var validations = new LoanValidation();
+
+            using (var conn = new SqlConnection(strConexion))
+            {
+                conn.Open();
+                var tx = conn.BeginTransaction();
+                try
+                {
+                    // Validaciones principales
+                    var customer = validations.GetClienteByCURP(path, item.Curp, conn, strConexion, tx);
+                    if (customer != null && (customer.IdStatusCliente == Cliente.STATUS_CONDONADO || customer.IdStatusCliente == Cliente.STATUS_VENCIDO))
+                        return new DatosSalida { CodigoError = 1, MensajeError = "Cliente con status vencido/condonado, no es posible continuar." };
+
+                    var avalCurp = validations.GetClienteByCURP(path, item.CurpAval, conn, strConexion, tx);
+                    if (avalCurp != null && (avalCurp.IdStatusCliente == Cliente.STATUS_CONDONADO || avalCurp.IdStatusCliente == Cliente.STATUS_VENCIDO))
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El aval pertenece a un cliente vencido/condonado." };
+
+                    if (validations.GetClienteByCURPAvalCliente(path, item.Curp, conn, strConexion, tx) != null)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El cliente se encuentra como aval de otro préstamo." };
+
+                    if (item.Curp == item.CurpAval)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "La CURP del cliente y del aval no debe ser la misma." };
+
+                    if (validations.GetClienteByCURPAvalCliente3Veces(path, item.CurpAval, conn, strConexion, tx) > 2)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El aval ya está registrado más de 2 veces en otros préstamos." };
+
+                    if (validations.GetPrestamoByCURP(path, item.Curp, conn, strConexion, tx) != null)
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El cliente ya cuenta con un préstamo en proceso." };
+
+                    if (validations.GetHistorialFallaOAbonadoByCustomerId(path, item.IdCliente.ToString(), conn, strConexion, tx))
+                        return new DatosSalida { CodigoError = 1, MensajeError = "El cliente tiene historial de falla o abonado." };
+
+                    // Update cliente
+                    const string sqlCliente = @"
+                        UPDATE cliente
+                        SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
+                            segundo_apellido = @segundo_apellido, ocupacion = @ocupacion, telefono = @telefono,
+                            id_tipo_cliente = @id_tipo_cliente, curp_aval = @curp_aval, nombre_aval = @nombre_aval,
+                            primer_apellido_aval = @primer_apellido_aval, segundo_apellido_aval = @segundo_apellido_aval,
+                            ocupacion_aval = @ocupacion_aval, telefono_aval = @telefono_aval
+                        WHERE id_cliente = @id_cliente";
+
+                    var cmdCliente = new SqlCommand(sqlCliente, conn, tx);
+                    cmdCliente.Parameters.AddWithValue("@id_tipo_cliente", item.IdTipoCliente);
+                    cmdCliente.Parameters.AddWithValue("@curp", item.Curp);
+                    cmdCliente.Parameters.AddWithValue("@nombre", item.Nombre);
+                    cmdCliente.Parameters.AddWithValue("@primer_apellido", item.PrimerApellido);
+                    cmdCliente.Parameters.AddWithValue("@segundo_apellido", item.SegundoApellido);
+                    cmdCliente.Parameters.AddWithValue("@ocupacion", item.Ocupacion);
+                    cmdCliente.Parameters.AddWithValue("@telefono", item.Telefono);
+                    cmdCliente.Parameters.AddWithValue("@curp_aval", item.CurpAval);
+                    cmdCliente.Parameters.AddWithValue("@nombre_aval", item.NombreAval);
+                    cmdCliente.Parameters.AddWithValue("@primer_apellido_aval", item.PrimerApellidoAval);
+                    cmdCliente.Parameters.AddWithValue("@segundo_apellido_aval", item.SegundoApellidoAval);
+                    cmdCliente.Parameters.AddWithValue("@ocupacion_aval", item.OcupacionAval);
+                    cmdCliente.Parameters.AddWithValue("@telefono_aval", item.TelefonoAval);
+                    cmdCliente.Parameters.AddWithValue("@id_cliente", item.IdCliente);
+                    cmdCliente.ExecuteNonQuery();
+
+                    // Update dirección cliente
+                    const string sqlDirCliente = @"
+                        UPDATE direccion
+                        SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
+                            codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
+                        WHERE id_cliente = @id_cliente AND ISNULL(aval,0)=0";
+
+                    var cmdDirCli = new SqlCommand(sqlDirCliente, conn, tx);
+                    cmdDirCli.Parameters.AddWithValue("@id_cliente", item.IdCliente);
+                    cmdDirCli.Parameters.AddWithValue("@calleyno", itemAddress.Calle);
+                    cmdDirCli.Parameters.AddWithValue("@colonia", itemAddress.Colonia);
+                    cmdDirCli.Parameters.AddWithValue("@municipio", itemAddress.Municipio);
+                    cmdDirCli.Parameters.AddWithValue("@estado", itemAddress.Estado);
+                    cmdDirCli.Parameters.AddWithValue("@codigo_postal", itemAddress.CodigoPostal);
+                    cmdDirCli.Parameters.AddWithValue("@direccion_trabajo", itemAddress.DireccionTrabajo);
+                    cmdDirCli.ExecuteNonQuery();
+
+                    // Update dirección aval
+                    const string sqlDirAval = @"
+                        UPDATE direccion
+                        SET calleyno = @calleyno, colonia = @colonia, municipio = @municipio, estado = @estado,
+                            codigo_postal = @codigo_postal, direccion_trabajo = @direccion_trabajo
+                        WHERE id_cliente = @id_cliente AND ISNULL(aval,0)=1";
+
+                    var cmdDirAv = new SqlCommand(sqlDirAval, conn, tx);
+                    cmdDirAv.Parameters.AddWithValue("@id_cliente", item.IdCliente);
+                    cmdDirAv.Parameters.AddWithValue("@calleyno", itemAddressAval.Calle);
+                    cmdDirAv.Parameters.AddWithValue("@colonia", itemAddressAval.Colonia);
+                    cmdDirAv.Parameters.AddWithValue("@municipio", itemAddressAval.Municipio);
+                    cmdDirAv.Parameters.AddWithValue("@estado", itemAddressAval.Estado);
+                    cmdDirAv.Parameters.AddWithValue("@codigo_postal", itemAddressAval.CodigoPostal);
+                    cmdDirAv.Parameters.AddWithValue("@direccion_trabajo", itemAddressAval.DireccionTrabajo);
+                    cmdDirAv.ExecuteNonQuery();
+
+                    // Nuevo préstamo (con id_empleado)
+                    const string sqlPrestamo = @"
+                        INSERT INTO prestamo (fecha_solicitud, monto, id_cliente, id_usuario, id_status_prestamo, id_empleado)
+                        OUTPUT INSERTED.id_prestamo
+                        VALUES (@fecha_solicitud, @monto, @id_cliente, @id_usuario, @id_status_prestamo, @id_empleado);";
+
+                    var cmdPrestamo = new SqlCommand(sqlPrestamo, conn, tx);
+                    cmdPrestamo.CommandType = CommandType.Text;
+                    cmdPrestamo.Parameters.AddWithValue("@id_cliente", item.IdCliente);
+                    cmdPrestamo.Parameters.AddWithValue("@fecha_solicitud", item.FechaSolicitud);
+                    cmdPrestamo.Parameters.AddWithValue("@monto", item.Monto);
+                    cmdPrestamo.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdPrestamo.Parameters.AddWithValue("@id_empleado", user.IdEmpleado);
+                    cmdPrestamo.Parameters.AddWithValue("@id_status_prestamo", Prestamo.STATUS_PENDIENTE);
+                    var idPrestamo = (int)cmdPrestamo.ExecuteScalar();
+
+                    // Rastro de aprobación
+                    const string sqlRel = @"
+                        INSERT INTO relacion_prestamo_aprobacion (id_prestamo, id_posicion, id_usuario)
+                        VALUES (@id_prestamo, @id_posicion, @id_usuario);";
+
+                    var cmdRelSup = new SqlCommand(sqlRel, conn, tx);
+                    cmdRelSup.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                    cmdRelSup.Parameters.AddWithValue("@id_posicion", Employees.POSICION_SUPERVISOR);
+                    cmdRelSup.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdRelSup.ExecuteNonQuery();
+
+                    var cmdRelEje = new SqlCommand(sqlRel, conn, tx);
+                    cmdRelEje.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+                    cmdRelEje.Parameters.AddWithValue("@id_posicion", Employees.POSICION_EJECUTIVO);
+                    cmdRelEje.Parameters.AddWithValue("@id_usuario", idUsuario);
+                    cmdRelEje.ExecuteNonQuery();
+
+                    tx.Commit();
+                    salida.CodigoError = 0;
+                    salida.MensajeError = "Guardado correctamente";
+                    salida.IdItem = item.IdCliente.ToString();
+                }
+                catch (Exception ex)
+                {
+                    tx?.Rollback();
+                    Utils.Log("Error SaveLoanUpdateCustomer ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    salida.CodigoError = 1;
+                    salida.MensajeError = "Error al guardar el préstamo.";
+                }
+            }
+
+            return salida;
+        }
+
         [WebMethod]
         public static object GetStatus(string path)
         {

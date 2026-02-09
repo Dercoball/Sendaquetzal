@@ -132,7 +132,7 @@ namespace Plataforma.pages.Config
                     @id_tipo_usuario, 0, @id_posicion, @id_plaza, @curp, NULL, @nombre,
                     @primer_apellido, @segundo_apellido, @telefono, 0, NULL, 1,
                     @id_supervisor, @id_ejecutivo, @fecha_ingreso, NULL, NULL,
-                    NULL, NULL, NULL, NULL, NULL,
+                    NULL, NULL, @monto_limite_inicial, NULL, NULL,
                     @limite_venta_ejercicio, @limite_incremento_ejercicio, @fizcalizable, @ocupacion, @nota_foto, @fecha_baja
                 );
                 SELECT SCOPE_IDENTITY();";
@@ -155,7 +155,8 @@ namespace Plataforma.pages.Config
                 nota_foto = (object)oEmpleado.NotaFoto ?? DBNull.Value,
                 id_supervisor = (object)oEmpleado.IdSupervisor ?? DBNull.Value,
                 id_ejecutivo = (object)oEmpleado.IdEjecutivo ?? DBNull.Value,
-                fecha_baja = (object)oEmpleado.FechaBaja ?? DBNull.Value
+                fecha_baja = (object)oEmpleado.FechaBaja ?? DBNull.Value,
+                monto_limite_inicial = (object)oEmpleado.MontoLimiteInicial ?? DBNull.Value
             }, transaccion));
 
             oEmpleado.IdEmpleado = idEmpleado;

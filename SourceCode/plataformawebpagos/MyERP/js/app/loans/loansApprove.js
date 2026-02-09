@@ -15,6 +15,19 @@ const loansEdit = {
         loansEdit.idTipoUsuario = "-1";
         loansEdit.accion = "";
         loansEdit.idPrestamo = "-1";
+        loans.idAval2 = -1; // asegurar inicialización compartida
+
+        // Ocultar pestaña "Aprobación supervisor" para usuarios que no sean supervisores
+        const currentUserType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        if (currentUserType !== utils.POSICION_SUPERVISOR) {
+            $('#nav-aprobacion-supervisor-tab').hide();
+            $('#nav-aprobacion-supervisor').hide();
+        }
+        // Ocultar botones de aprobación/rechazo para promotores
+        if (currentUserType === utils.POSICION_PROMOTOR) {
+            $('#btnAprobar').hide();
+            $('#btnRechazar').hide();
+        }
 
         //  Cargar el id del cliente via GET
         let urlParams = utils.parseURLParams(window.location.href);
@@ -199,23 +212,26 @@ const loansEdit = {
                 $('#txtDireccionTrabajoAval').val(itemCliente.direccionAval.DireccionTrabajo);
                 $('#txtUbicacionAval').val(itemCliente.direccionAval.Ubicacion);
 
-                $('#txtNombreAval2').val(itemCliente.NombreAval2);
-                $('#txtPrimerApellidoAval2').val(itemCliente.PrimerApellidoAval2);
-                $('#txtSegundoApellidoAval2').val(itemCliente.SegundoApellidoAval2);
-                $('#txtCURPAval2').val(itemCliente.CurpAval2);
-                $('#txtTelefonoAval2').val(itemCliente.TelefonoAval2);
-                $('#txtOcupacionAval2').val(itemCliente.OcupacionAval2);
-                $('#txtNotaDeFotoAval2').val(itemCliente.NotaFotografiaAval2);
+                // Aval 2: usa objeto Aval2 que viene en la respuesta
+                if (item.Aval2) {
+                    $('#txtNombreAval2').val(item.Aval2.Nombre);
+                    $('#txtPrimerApellidoAval2').val(item.Aval2.PrimerApellido);
+                    $('#txtSegundoApellidoAval2').val(item.Aval2.SegundoApellido);
+                    $('#txtCURPAval2').val(item.Aval2.Curp);
+                    $('#txtTelefonoAval2').val(item.Aval2.Telefono);
+                    $('#txtOcupacionAval2').val(item.Aval2.Ocupacion);
+                    $('#txtNotaDeFotoAval2').val(item.Aval2.NotaFotografiaAval);
+                    loans.idAval2 = item.Aval2.IdCliente || loans.idAval2;
 
-                // dirección aval 2
-                if (itemCliente.direccionAval2) {
-                    $('#txtCalleAval2').val(itemCliente.direccionAval2.Calle);
-                    $('#txtColoniaAval2').val(itemCliente.direccionAval2.Colonia);
-                    $('#txtMunicipioAval2').val(itemCliente.direccionAval2.Municipio);
-                    $('#txtEstadoAval2').val(itemCliente.direccionAval2.Estado);
-                    $('#txtCodigoPostalAval2').val(itemCliente.direccionAval2.CodigoPostal);
-                    $('#txtDireccionTrabajoAval2').val(itemCliente.direccionAval2.DireccionTrabajo);
-                    $('#txtUbicacionAval2').val(itemCliente.direccionAval2.Ubicacion);
+                    if (item.Aval2.direccion) {
+                        $('#txtCalleAval2').val(item.Aval2.direccion.Calle);
+                        $('#txtColoniaAval2').val(item.Aval2.direccion.Colonia);
+                        $('#txtMunicipioAval2').val(item.Aval2.direccion.Municipio);
+                        $('#txtEstadoAval2').val(item.Aval2.direccion.Estado);
+                        $('#txtCodigoPostalAval2').val(item.Aval2.direccion.CodigoPostal);
+                        $('#txtDireccionTrabajoAval2').val(item.Aval2.direccion.DireccionTrabajo);
+                        $('#txtUbicacionAval2').val(item.Aval2.direccion.Ubicacion);
+                    }
                 //loansEdit.getLocation('#txtUbicacion');
                 //loansEdit.getLocation('#txtUbicacionAval');
 

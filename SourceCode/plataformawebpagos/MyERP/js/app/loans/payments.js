@@ -28,8 +28,23 @@ const payments = {
 
         payments.fechasHoy();
 
-        payments.loadComboPlaza();
-        payments.cargarItems();
+        // Forzar y bloquear filtros si es promotor
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        payments.loadComboPlaza()
+            .then(() => {
+                if (userType === utils.POSICION_PROMOTOR) {
+                    $('#cmbPlaza').val(0).prop('disabled', true);
+                    $('#cmbEjecutivo').val(0).prop('disabled', true);
+                    $('#cmbSupervisor').val(0).prop('disabled', true);
+                    $('#cmbPromotor').val(0).prop('disabled', true);
+                    $('#btnFiltrar').prop('disabled', true);
+                }
+                payments.cargarItems();
+            })
+            .catch(() => {
+                // Si la carga de combos falla, aún así intentamos cargar la tabla
+                payments.cargarItems();
+            });
 
         //Filtros personalizados en datatable
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
@@ -152,6 +167,19 @@ const payments = {
         params.idSupervisor = parseInt(document.getElementById("cmbSupervisor").value);
         params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
+
+        // Forzar filtro por promotor logueado
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        if (userType === utils.POSICION_PROMOTOR) {
+            const idEmpleado = document.getElementById('txtIdEmpleado') ? parseInt(document.getElementById('txtIdEmpleado').value || '0') : 0;
+            params = JSON.parse(params);
+            params.typeFilter = "promotor";
+            params.idPromotor = idEmpleado;
+            params.idPlaza = 0;
+            params.idEjecutivo = 0;
+            params.idSupervisor = 0;
+            params = JSON.stringify(params);
+        }
 
         $.ajax({
             type: "POST",
@@ -493,32 +521,35 @@ const payments = {
     },
 
     loadComboPlaza: () => {
-        var params = {};
-        params.path = "connbd";
-        params = JSON.stringify(params);
+        return new Promise((resolve, reject) => {
+            var params = {};
+            params.path = "connbd";
+            params = JSON.stringify(params);
 
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
 
-                let selectEl = document.getElementById('cmbPlaza');
-                //remueve las opciones del combo
-                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+                    let selectEl = document.getElementById('cmbPlaza');
+                    //remueve las opciones del combo
+                    document.querySelectorAll('select[name=\"cmbPlaza\"] option').forEach(option => option.remove());
 
-                selectEl.add(new Option("Todos", "0", true, true));
-                msg.d.forEach(item => {
-                    const option = new Option(item.Nombre, item.IdPlaza, false, false);
-                    selectEl.add(option);
-                });
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
+                    selectEl.add(new Option("Todos", "0", true, true));
+                    msg.d.forEach(item => {
+                        const option = new Option(item.Nombre, item.IdPlaza, false, false);
+                        selectEl.add(option);
+                    });
+                    resolve();
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    reject(errorThrown || textStatus);
+                }
+            });
         });
     },
 

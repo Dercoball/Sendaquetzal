@@ -38,6 +38,7 @@
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdPlaza" runat="server"></asp:HiddenField>
 
 
     </form>

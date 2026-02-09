@@ -43,6 +43,8 @@ namespace Plataforma.Clases
         { get; set; }
         public string UbicacionConfirmada
         { get; set; }
+        public string UbicacionConfirmadaAval
+        { get; set; }
         public int? idUsuario
         { get; set; }
         public string Accion

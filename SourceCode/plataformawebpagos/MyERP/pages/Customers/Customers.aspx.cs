@@ -10,12 +10,23 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Configuration;
 
 namespace Plataforma.pages
 {
     public partial class Customers : System.Web.UI.Page
     {
         const string pagina = "21";
+
+        // Información mínima del empleado para contextualizar filtros por usuario.
+        public class EmpleadoLigero
+        {
+            public int IdEmpleado { get; set; }
+            public int IdPlaza { get; set; }
+            public int IdPosicion { get; set; }
+            public int IdSupervisor { get; set; }
+            public int IdEjecutivo { get; set; }
+        }
 
 
 
@@ -25,12 +36,46 @@ namespace Plataforma.pages
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
+            string idEmpleado = (string)Session["id_empleado"] ?? "";
+            string idPlaza = "";
 
 
 
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
+            txtIdEmpleado.Value = idEmpleado;
+
+            // Plaza del supervisor (para bloquear combo de plaza con su plaza actual)
+            if (!string.IsNullOrEmpty(idEmpleado) && idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString())
+            {
+                if (int.TryParse(idEmpleado, out var idEmpInt))
+                {
+                    try
+                    {
+                        string strConexion = ConfigurationManager.ConnectionStrings[path].ConnectionString;
+                        using (var conn = new SqlConnection(strConexion))
+                        {
+                            conn.Open();
+                            var plazaQuery = conn.QueryFirstOrDefault<int>(
+                                "SELECT ISNULL(id_plaza,0) FROM empleado WHERE id_empleado = @id",
+                                new { id = idEmpInt });
+                            idPlaza = plazaQuery.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Utils.Log("Error al obtener plaza del supervisor: " + ex.Message);
+                    }
+                }
+            }
+            // Asegurar el hidden de plaza siempre exista y asigne valor (puede ser vacío)
+            if (txtIdPlaza == null)
+            {
+                txtIdPlaza = new HiddenField { ID = "txtIdPlaza" };
+                form1.Controls.Add(txtIdPlaza);
+            }
+            txtIdPlaza.Value = idPlaza;
 
             //  si no esta logueado
             if (usuario == string.Empty)
@@ -112,12 +157,12 @@ namespace Plataforma.pages
                     // 1) Trae empleados SOLO de plazas ACTIVAS (y opcional: empleados activos)
                     //    Si idPlaza > 0 se acota a esa plaza; si no, trae de todas las activas
                     var empleados = conn.Query<Empleado>(@"
-                    SELECT u.id_usuario   AS IdEmpleado,
+                    SELECT e.id_empleado AS IdEmpleado,
                        e.id_plaza      AS IdPlaza,
                        e.id_posicion   AS IdPosicion,
                        e.id_supervisor AS IdSupervisor,
                        e.id_ejecutivo  AS IdEjecutivo,
-                       u.id_usuario As IdUsuario
+                       u.id_usuario    AS IdUsuario
                 FROM empleado e
                 INNER JOIN plaza pl   ON pl.id_plaza = e.id_plaza
                 inner join usuario u on u.id_empleado = e.id_empleado
@@ -134,7 +179,10 @@ namespace Plataforma.pages
                     {
                     case "promotor":
                             // Solo ese promotor
-                            empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5);
+                            if (idPromotor > 0)
+                                empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5 && w.IdEmpleado == idPromotor);
+                            else
+                                empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5);
                             break;
 
                     case "supervisor":
@@ -160,7 +208,7 @@ namespace Plataforma.pages
                     // Si no hay empleados válidos en plazas activas, no traigas nada
                     string filtroEmpleadosSql = (idsEmpleados.Count == 0)
                         ? " AND 1 = 0 "
-                        : " AND u.id_usuario IN (" + string.Join(",", idsEmpleados) + ") ";
+                        : " AND e.id_empleado IN (" + string.Join(",", idsEmpleados) + ") ";
 
                     // 4) Query: último préstamo por cliente + plaza activa SIEMPRE
                     string query = @"
@@ -675,6 +723,41 @@ namespace Plataforma.pages
                 conn.Close();
             }
 
+        }
+
+        [WebMethod]
+        public static EmpleadoLigero GetPlazaActual(string path, string idUsuario)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            // Permisos
+            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            if (!tienePermiso) return null;
+
+            using (var conn = new SqlConnection(strConexion))
+            {
+                try
+                {
+                    const string query = @"
+                        SELECT TOP 1
+                            e.id_empleado   AS IdEmpleado,
+                            e.id_plaza      AS IdPlaza,
+                            e.id_posicion   AS IdPosicion,
+                            e.id_supervisor AS IdSupervisor,
+                            e.id_ejecutivo  AS IdEjecutivo
+                        FROM usuario u
+                        INNER JOIN empleado e ON e.id_empleado = u.id_empleado
+                        WHERE u.id_usuario = @idUsuario;";
+
+                    return conn.Query<EmpleadoLigero>(query, new { idUsuario }).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Utils.Log("Error ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    return null;
+                }
+            }
         }
 
 

@@ -26,12 +26,21 @@ namespace Plataforma.pages
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
+            string idEmpleado = (string)Session["id_empleado"] ?? "";
 
 
 
             txtUsuario.Value = usuario;//"promotor.colorado
             txtIdTipoUsuario.Value = idTipoUsuario;//5
             txtIdUsuario.Value = idUsuario;//69
+
+            // Asegurar que el campo oculto exista antes de asignar
+            if (txtIdEmpleado == null)
+            {
+                txtIdEmpleado = new HiddenField { ID = "txtIdEmpleado" };
+                form1.Controls.Add(txtIdEmpleado);
+            }
+            txtIdEmpleado.Value = idEmpleado;
 
 
             //  FASE DE PRUEBAS, QUITAR AL FINAL
@@ -535,11 +544,16 @@ namespace Plataforma.pages
                     // Datos del usuario
                     Usuario user = Usuarios.GetUsuario(path, idUsuario);
                     string sqlUser = "";
-                    if (idTipoUsuario != Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString() && idTipoUsuario != Usuario.TIPO_USUARIO_DIRECTOR.ToString())
+
+                    //  Filtrado base por empleado (solo para roles operativos)
+                    if (idTipoUsuario != Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString() &&
+                        idTipoUsuario != Usuario.TIPO_USUARIO_DIRECTOR.ToString())
                     {
-                        // Si necesitas restringir por el empleado dueño del préstamo, ajusta aquí.
-                        // Ojo: esta condición aplica sobre el préstamo, no sobre el pago.
-                        sqlUser = "  AND pre.id_empleado = " + user.IdUsuario + "  ";
+                        //  Para promotor limitamos a sus propios préstamos
+                        if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString())
+                        {
+                            sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
+                        }
                     }
 
                     // ---- Filtro por Plaza / Árbol de empleados (para aplicar sobre los pagos en el APPLY) ----
@@ -547,7 +561,7 @@ namespace Plataforma.pages
                     if (idPlaza > 0)
                     {
                         var empleados = conn.Query<Empleado>(
-                            "SELECT u.id_usuario IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado e inner join usuario u on u.id_empleado = e.id_empleado WHERE id_plaza = @plz",
+                            "SELECT e.id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado e inner join usuario u on u.id_empleado = e.id_empleado WHERE id_plaza = @plz",
                             new { plz = idPlaza }).ToList();
                         sqlUser = "";
                         List<Empleado> empleadosFiltrados = new List<Empleado>();

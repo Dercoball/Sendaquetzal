@@ -33,12 +33,11 @@ namespace Plataforma.pages
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
+            // Oculta botones de aprobación/rechazo para supervisor (4) y promotor (5)
             if (idTipoUsuario == "4" || idTipoUsuario == "5")
             {
-                var btnAprobarSrv = FindControl("btnAprobar") as HtmlAnchor;
-                var btnRechazarSrv = FindControl("btnRechazar") as HtmlAnchor;
-                if (btnAprobarSrv != null) btnAprobarSrv.Visible = false;
-                if (btnRechazarSrv != null) btnRechazarSrv.Visible = false;
+                if (btnAprobar != null) btnAprobar.Visible = false;
+                if (btnRechazar != null) btnRechazar.Visible = false;
             }
             //  si no esta logueado
             if (usuario == string.Empty)
@@ -123,6 +122,7 @@ namespace Plataforma.pages
 ,id_aval2 as IdAval22
             ,monto_por_renovacion {nameof(Prestamo.MontoPorRenovacion)}
             ,ubicacion_confirmada {nameof(Prestamo.UbicacionConfirmada)}
+            ,ubicacion_confirmada_aval {nameof(Prestamo.UbicacionConfirmadaAval)}
             ,nota_ejecutivo  {nameof(Prestamo.NotasEjecutivo)}
             FROM prestamo
             WHERE id_prestamo = {idPrestamo}";
@@ -174,7 +174,9 @@ namespace Plataforma.pages
                 sql = @"UPDATE prestamo
                                 SET fecha_solicitud = @fecha_solicitud,
                                       monto = @monto,
-                                      monto_por_renovacion =@monto_por_renovacion
+                                      monto_por_renovacion = @monto_por_renovacion,
+                                      ubicacion_confirmada = @ubicacion_confirmada,
+                                      ubicacion_confirmada_aval = @ubicacion_confirmada_aval
                           WHERE
                                 id_prestamo = @id_prestamo ";
                 Utils.Log("ACTUALIZAR PRESTAMO " + sql);
@@ -218,8 +220,8 @@ namespace Plataforma.pages
                 @id_aval,@id_aval2,
                 @monto_por_renovacion,
                 NULL, -- valor para nota_ejecutivo
-                NULL, -- valor para ubicacion_confirmada
-                NULL, -- valor para ubicacion_confirmada_aval
+                @ubicacion_confirmada,
+                @ubicacion_confirmada_aval,
                 0, -- valor para id_prestamo_origen
                 14 -- valor para id_comision
             )";
@@ -238,6 +240,8 @@ namespace Plataforma.pages
             cmd.Parameters.AddWithValue("@monto_por_renovacion", oPrestamo.MontoPorRenovacion);
             cmd.Parameters.AddWithValue("@Id_empleado", oPrestamo.IdEmpleado.HasValue ? (object)oPrestamo.IdEmpleado.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@id_aval2", oPrestamo.IdAval22); // <<< NUEVO
+            cmd.Parameters.AddWithValue("@ubicacion_confirmada", string.IsNullOrWhiteSpace(oPrestamo.UbicacionConfirmada) ? (object)DBNull.Value : oPrestamo.UbicacionConfirmada);
+            cmd.Parameters.AddWithValue("@ubicacion_confirmada_aval", string.IsNullOrWhiteSpace(oPrestamo.UbicacionConfirmadaAval) ? (object)DBNull.Value : oPrestamo.UbicacionConfirmadaAval);
 
 
             if (oPrestamo.IdPrestamo > 0)
@@ -262,7 +266,8 @@ namespace Plataforma.pages
                                 SET curp = @curp, nombre = @nombre, primer_apellido = @primer_apellido,
                                 segundo_apellido = @segundo_apellido,
                                 ocupacion = @ocupacion, telefono = @telefono, id_tipo_cliente = @id_tipo_cliente,
-                                nota_fotografia = @nota_fotografia
+                                nota_fotografia = @nota_fotografia,
+                                activo = 1, eliminado = 0
                           WHERE
                                 id_cliente = @id_cliente ";
                 Utils.Log("ACTUALIZAR CLIENTE " + sql);
@@ -875,19 +880,24 @@ namespace Plataforma.pages
                 transaccion = conn.BeginTransaction();
 
                 // Obtener el id_empleado del usuario actual para asignarlo al préstamo
-                var empleadoActual = GetItemEmployee(idUsuario, conn, transaccion);
+                var usuarioActual = Usuarios.GetUsuario(path, idUsuario);
+                int? idEmpleadoActual = (usuarioActual != null && usuarioActual.IdEmpleado > 0)
+                    ? (int?)usuarioActual.IdEmpleado
+                    : (int?)null;
 
                 RegistraClienteAval(Request.Cliente, transaccion, conn);
                 RegistraClienteAval(Request.Aval, transaccion, conn);
-                if (Request.Aval2 != null && Request.Aval2.Celular != null)
+                if (Request.Aval2 != null)
                 {
-                    RegistraClienteAval(Request.Aval2, transaccion, conn);  // Solo si Aval 2 tiene datos
+                    RegistraClienteAval(Request.Aval2, transaccion, conn);  // Registrar siempre que exista Aval2
                 }
                 Request.Prestamo.idUsuario = idUsuario.ParseStringToInt();
                 Request.Prestamo.IdCliente = Request.Cliente.IdCliente.ToString();
                 Request.Prestamo.IdAval = Request.Aval.IdCliente;
-                Request.Prestamo.IdAval22 = Request.Aval2.IdCliente;
-                Request.Prestamo.IdEmpleado = empleadoActual?.IdEmpleado;
+                Request.Prestamo.IdAval22 = Request.Aval2 != null ? Request.Aval2.IdCliente : 0;
+                Request.Prestamo.IdEmpleado = idEmpleadoActual;
+                Request.Prestamo.UbicacionConfirmada = Request.Cliente?.direccion?.Ubicacion;
+                Request.Prestamo.UbicacionConfirmadaAval = Request.Aval?.direccion?.Ubicacion;
 
                 // Reflejar datos del Aval1 en columnas del cliente principal (curp_aval, nombre_aval, etc. y nota_fotografia_aval)
                 ActualizarAvalEnCliente(Request.Cliente, Request.Aval, transaccion, conn);

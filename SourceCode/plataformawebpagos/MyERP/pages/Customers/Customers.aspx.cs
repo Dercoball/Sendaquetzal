@@ -154,6 +154,31 @@ namespace Plataforma.pages
                 {
                     conn.Open();
 
+                    // Enforce scope based on the logged-in user to avoid cross-supervisor leakage
+                    var usuarioActual = Usuarios.GetUsuario(path, idUsuario);
+                    var tipoActual = int.TryParse(idTipoUsuario, out var t) ? t : 0;
+                    var idEmpleadoActual = usuarioActual?.IdEmpleado ?? 0;
+
+                    if (tipoActual == Employees.POSICION_PROMOTOR)
+                    {
+                        // Un promotor solo ve sus clientes
+                        idPromotor = idEmpleadoActual;
+                        typeFilter = "promotor";
+                    }
+                    else if (tipoActual == Employees.POSICION_SUPERVISOR)
+                    {
+                        // Un supervisor solo ve los clientes de sus promotores
+                        idSupervisor = idEmpleadoActual;
+                        typeFilter = "supervisor";
+                    }
+                    else if (tipoActual == Employees.POSICION_EJECUTIVO)
+                    {
+                        // Un ejecutivo solo ve los supervisores bajo él
+                        if (idEjecutivo <= 0) idEjecutivo = idEmpleadoActual;
+                        if (string.IsNullOrWhiteSpace(typeFilter) || typeFilter == "plaza")
+                            typeFilter = "ejecutivo";
+                    }
+
                     // 1) Trae empleados SOLO de plazas ACTIVAS (y opcional: empleados activos)
                     //    Si idPlaza > 0 se acota a esa plaza; si no, trae de todas las activas
                     var empleados = conn.Query<Empleado>(@"
@@ -186,18 +211,15 @@ namespace Plataforma.pages
                             break;
 
                     case "supervisor":
-                        // Promotores del supervisor actual
+                        // Promotores directamente asignados a ese supervisor
                         empleadosFiltrados = empleados.Where(w =>
-                            w.IdPosicion == 4   // 5 = Promotor
-                        );
+                            w.IdPosicion == 5 && w.IdSupervisor == idSupervisor);
                         break;
 
                     case "ejecutivo":
-                        // Supervisores del ejecutivo actual
+                        // Supervisores asignados a ese ejecutivo
                         empleadosFiltrados = empleados.Where(w =>
-                             // jefe = 106, por ejemplo
-                            w.IdPosicion == 3              // 4 = Supervisor
-                        );
+                            w.IdPosicion == 4 && w.IdEjecutivo == idEjecutivo);
                         break;
                     }
 

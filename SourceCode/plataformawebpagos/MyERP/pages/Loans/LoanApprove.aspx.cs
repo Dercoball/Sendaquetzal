@@ -981,6 +981,10 @@ namespace Plataforma.pages
 
             SqlTransaction transaction = null;
 
+            // Capturista (id 9) debe comportarse como supervisor en esta aprobación
+            if (idPosicion == "9")
+                idPosicion = Employees.POSICION_SUPERVISOR.ToString();
+
             int r = 0;
             try
             {

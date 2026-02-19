@@ -238,12 +238,14 @@
                                             <thead>
                                                 <tr>
                                                     <th>Promotor</th>
+                                                    <th>Supervisor</th>
                                                     <th>Comisión</th>
                                                     <th>Debe entregar</th>
                                                     <th>Falla</th>
                                                     <th>Efectivo</th>
                                                     <th>Recuperado</th>
                                                     <th>Abono entrante</th>
+                                                    <th>Semana extra</th>
                                                     <%--<th>Total 1</th>--%>
                                                     <th>Abono saliente</th>
                                                     <th>Total</th>

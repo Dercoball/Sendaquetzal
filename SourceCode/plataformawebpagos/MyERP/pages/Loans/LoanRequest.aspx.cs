@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Web;
 using System.Web.Services;
 using System.Web.UI.WebControls;
 
@@ -41,6 +42,55 @@ namespace Plataforma.pages
 
             try
             {
+                // Determinar alcance según rol
+                var idUsuario = Convert.ToString(HttpContext.Current?.Session["id_usuario"] ?? "0");
+                var idTipoUsuario = Convert.ToString(HttpContext.Current?.Session["id_tipo_usuario"] ?? "0");
+
+                var usuarioActual = Usuarios.GetUsuario(path, idUsuario);
+                var tipoActual = int.TryParse(idTipoUsuario, out var t) ? t : 0;
+                var idEmpleadoActual = usuarioActual?.IdEmpleado ?? 0;
+
+                // Empleados activos por plaza
+                var empleados = conn.Query<Empleado>(@"
+                    SELECT e.id_empleado   AS IdEmpleado,
+                           e.id_posicion   AS IdPosicion,
+                           e.id_supervisor AS IdSupervisor,
+                           e.id_ejecutivo  AS IdEjecutivo,
+                           e.id_plaza      AS IdPlaza
+                    FROM empleado e
+                    INNER JOIN plaza pl ON pl.id_plaza = e.id_plaza
+                    WHERE pl.activo = 1 AND ISNULL(pl.eliminado,0) = 0
+                          AND ISNULL(e.eliminado,0) = 0
+                          AND ISNULL(e.activo,1) = 1
+                ").ToList();
+
+                IEnumerable<Empleado> promotoresAutorizados = empleados.Where(e => e.IdPosicion == Employees.POSICION_PROMOTOR);
+
+                if (tipoActual == Employees.POSICION_PROMOTOR)
+                {
+                    promotoresAutorizados = promotoresAutorizados.Where(p => p.IdEmpleado == idEmpleadoActual);
+                }
+                else if (tipoActual == Employees.POSICION_SUPERVISOR)
+                {
+                    promotoresAutorizados = promotoresAutorizados.Where(p => p.IdSupervisor == idEmpleadoActual);
+                }
+                else if (tipoActual == Employees.POSICION_EJECUTIVO)
+                {
+                    var supervisores = empleados.Where(s => s.IdPosicion == Employees.POSICION_SUPERVISOR &&
+                                                            s.IdEjecutivo == idEmpleadoActual)
+                                                .Select(s => s.IdEmpleado)
+                                                .ToHashSet();
+
+                    promotoresAutorizados = promotoresAutorizados.Where(p =>
+                        p.IdEjecutivo == idEmpleadoActual || supervisores.Contains(p.IdSupervisor));
+                }
+                // Otros roles (director/superadmin) ven todo por defecto
+
+                var promotoresIds = promotoresAutorizados.Select(p => p.IdEmpleado).Distinct().ToList();
+                var filtroPromotoresSql = promotoresIds.Count == 0
+                    ? " AND 1 = 0 "
+                    : " AND p.id_empleado IN (" + string.Join(",", promotoresIds) + ") ";
+
                 var sql = @"SELECT *  FROM (SELECT p.id_prestamo , 
                             c.id_cliente AS IdCliente,
                             c.nombre nombreCliente,
@@ -60,6 +110,7 @@ namespace Plataforma.pages
 	                    INNER JOIN status_prestamo sp on sp.id_status_prestamo = p.id_status_prestamo 
                         WHERE ISNULL(c.eliminado,0) = 0 AND ISNULL(c.activo,1) = 1 AND ISNULL(p.activo,1) = 1
                           AND EXISTS (SELECT 1 FROM cliente cx WHERE cx.id_cliente = p.id_cliente AND ISNULL(cx.eliminado,0)=0 AND ISNULL(cx.activo,1)=1)
+                          " + filtroPromotoresSql + @"
                         ) gp
                         WHERE gp.activo = 1
                         ";

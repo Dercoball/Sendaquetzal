@@ -126,6 +126,7 @@ namespace Plataforma.pages
         public class LineaDeterminacion
         {
             public string Promotor;
+            public string Supervisor;
             public float Comision;
             public string ComisionFormateado;
             public float DebeEntregar;
@@ -133,6 +134,7 @@ namespace Plataforma.pages
             public float Efectivo;
             public float Recuperado;
             public float AbonoEntrante;
+            public float SemanaExtra;
             public float Total;
             public float AbonoSaliente;
             public float Total2;
@@ -143,6 +145,7 @@ namespace Plataforma.pages
             public string EfectivoFormateadoMx;
             public string RecuperadoFormateadoMx;
             public string AbonoEntranteFormateadoMx;
+            public string SemanaExtraFormateadoMx;
             public string TotalFormateadoMx;
             public string AbonoSalienteFormateadoMx;
             public string Total2FormateadoMx;
@@ -1430,6 +1433,8 @@ namespace Plataforma.pages
                 //debe entregar
                 string query = @" 
                     SELECT concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS promotor,
+                        (SELECT TOP 1 concat(s.nombre,' ',s.primer_apellido,' ',s.segundo_apellido)
+                         FROM empleado s WHERE s.id_empleado = e.id_supervisor) AS supervisor,
  						c.porcentaje comision,                     
 
                          (SELECT IsNull(SUM(pp.monto) , 0)  total
@@ -1474,6 +1479,15 @@ namespace Plataforma.pages
                                         AND preEntrante.id_empleado = e.id_empleado
                                         AND IsNull(pagoEntrante.pagado_con_adelanto, 0) = 1
                          				AND pagoEntrante.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_abono_entrante,
+                                        
+                         (SELECT IsNull(SUM(p4.monto) , 0)  total
+                                    FROM pago p4
+                                    JOIN prestamo pre4 ON (p4.id_prestamo = pre4.id_prestamo)                                                                                       
+                                    WHERE 
+                                        (p4.fecha >= '" + fechaInicial + @"' AND p4.fecha <= '" + fechaFinal + @"')
+                                        AND pre4.id_empleado = e.id_empleado
+                                        AND IsNull(p4.semana_extra, 0) = 1
+                         				AND p4.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_semana_extra,
                                                                                 
                          (SELECT IsNull(SUM(pagoSaliente.monto) , 0)  total
                                     FROM pago pagoSaliente
@@ -1507,6 +1521,7 @@ namespace Plataforma.pages
 
                             LineaDeterminacion item = new LineaDeterminacion();
                             item.Promotor = ds.Tables[0].Rows[i]["promotor"].ToString();
+                            item.Supervisor = ds.Tables[0].Rows[i]["supervisor"].ToString();
 
                             item.Comision = float.Parse(ds.Tables[0].Rows[i]["comision"].ToString());
                             item.ComisionFormateado = item.Comision + "%";
@@ -1526,6 +1541,8 @@ namespace Plataforma.pages
                             item.AbonoEntrante = float.Parse(ds.Tables[0].Rows[i]["total_abono_entrante"].ToString());
                             item.AbonoEntranteFormateadoMx = item.AbonoEntrante.ToString("C2");
 
+                            item.SemanaExtra = float.Parse(ds.Tables[0].Rows[i]["total_semana_extra"].ToString());
+                            item.SemanaExtraFormateadoMx = item.SemanaExtra.ToString("C2");
 
                             item.AbonoSaliente = float.Parse(ds.Tables[0].Rows[i]["total_abono_saliente"].ToString());
                             item.AbonoSalienteFormateadoMx = item.AbonoSaliente.ToString("C2");

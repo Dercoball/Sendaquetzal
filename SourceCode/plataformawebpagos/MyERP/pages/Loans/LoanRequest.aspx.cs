@@ -225,12 +225,17 @@ namespace Plataforma.pages
                      SELECT c.id_cliente , c.nombre, c.primer_apellido, c.segundo_apellido, 
                             concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                             c.telefono , c.curp, c.ocupacion, c.activo, tc.id_tipo_cliente, tc.tipo_cliente,
-                            p.id_prestamo, p.monto, FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud
+                            p1.id_prestamo, p1.monto, FORMAT(p1.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud
                      FROM cliente c 
                      JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) 
-                     JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
+                     CROSS APPLY (
+                        SELECT TOP 1 p.id_prestamo, p.monto, p.fecha_solicitud
+                        FROM prestamo p
+                        WHERE p.id_cliente = c.id_cliente
+                        ORDER BY p.fecha_solicitud DESC, p.id_prestamo DESC
+                     ) p1
                      WHERE isnull(c.eliminado, 0) != 1 
-                     ORDER BY id_cliente";
+                     ORDER BY c.id_cliente";
 
                 var adp = new SqlDataAdapter(query, conn);
                 adp.Fill(ds);

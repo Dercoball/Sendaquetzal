@@ -77,7 +77,7 @@ namespace Plataforma.pages
                     LEFT JOIN empleado eje ON (eje.id_empleado  = e.id_ejecutivo)
                     ";
 
-                    query += "WHERE isnull(e.eliminado, 0) != 1 ";
+                    query += "WHERE ISNULL(e.eliminado, 1) = 1 ";
                     if (!Filtro.Activo.HasValue)
                         query += " AND ISNULL(e.activo,1) = 1 ";
 

@@ -60,7 +60,7 @@ namespace Plataforma.pages
                     FROM empleado e
                     INNER JOIN plaza pl ON pl.id_plaza = e.id_plaza
                     WHERE pl.activo = 1 AND ISNULL(pl.eliminado,0) = 0
-                          AND ISNULL(e.eliminado,0) = 0
+                          AND ISNULL(e.eliminado,1) = 1
                           AND ISNULL(e.activo,1) = 1
                 ").ToList();
 

@@ -279,6 +279,14 @@ namespace Plataforma.pages
             if (!tienePermiso) return null;
 
             var user = Usuarios.GetUsuario(path, idUsuario);
+            if (user == null || user.IdEmpleado <= 0)
+            {
+                return new DatosSalida
+                {
+                    CodigoError = 1,
+                    MensajeError = "El usuario no tiene un empleado vinculado. No se puede registrar el préstamo."
+                };
+            }
             var validations = new LoanValidation();
             var salida = new DatosSalida();
 

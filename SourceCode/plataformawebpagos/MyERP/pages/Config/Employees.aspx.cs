@@ -78,6 +78,8 @@ namespace Plataforma.pages
                     ";
 
                     query += "WHERE isnull(e.eliminado, 0) != 1 ";
+                    if (!Filtro.Activo.HasValue)
+                        query += " AND ISNULL(e.activo,1) = 1 ";
 
                     if (!string.IsNullOrWhiteSpace(Filtro.NombreCompleto))
                         query += $@" AND  concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) like '%{Filtro.NombreCompleto}%'";
@@ -105,6 +107,8 @@ namespace Plataforma.pages
 
                     if (Filtro.FechaIngreso.HasValue)
                         query += $@" AND   Convert(Date,e.fecha_ingreso) = '{Filtro.FechaIngreso.Value:yyyy/MM/dd}'";
+
+                    query += " ORDER BY e.fecha_ingreso DESC, e.id_empleado DESC ";
 
                     items = conn.Query<RequestGridEmpleados>(query).ToList() ?? new List<RequestGridEmpleados>();
                     return items;

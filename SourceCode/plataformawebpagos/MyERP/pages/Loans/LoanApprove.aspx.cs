@@ -1,4 +1,4 @@
-ï»¿using Dapper;
+using Dapper;
 using Plataforma.Clases;
 using Plataforma.Extensions;
 using Plataforma.pages.Controles;
@@ -33,7 +33,7 @@ namespace Plataforma.pages
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
-            // Oculta botones de aprobaciÃ³n/rechazo para supervisor (4) y promotor (5)
+            // Oculta botones de aprobación/rechazo para supervisor (4) y promotor (5)
             if (idTipoUsuario == "4" || idTipoUsuario == "5")
             {
                 if (btnAprobar != null) btnAprobar.Visible = false;
@@ -330,7 +330,7 @@ namespace Plataforma.pages
                             WHERE id_cliente = @IdCliente
                         ";
 
-                Utils.Log("ACTUALIZAR DIRECCIÃ“N " + sql);
+                Utils.Log("ACTUALIZAR DIRECCIÓN " + sql);
             }
             else
             {
@@ -518,7 +518,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_prestamo", IdPrestamo);
                 var rows = cmd.ExecuteNonQuery();
 
-                Utils.Log("AprobaciÃ³n Supervisor -> OK ");
+                Utils.Log("Aprobación Supervisor -> OK ");
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
                 salida.IdItem = String.Empty;
@@ -552,7 +552,7 @@ namespace Plataforma.pages
 
                 if (fMontoGarantia < oTipoCliente.GarantiasPorMonto)
                 {
-                    salida.MensajeError = $"El monto de garantia mÃ­nimo es de {oTipoCliente.GarantiasPorMonto.ToString("C2")}";
+                    salida.MensajeError = $"El monto de garantia mínimo es de {oTipoCliente.GarantiasPorMonto.ToString("C2")}";
                     salida.CodigoError = 2;
 
                     return salida;
@@ -571,7 +571,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_prestamo", oPrestamo.IdPrestamo);
                 var rows = cmd.ExecuteNonQuery();
 
-                Utils.Log("AprobaciÃ³n Supervisor -> OK ");
+                Utils.Log("Aprobación Supervisor -> OK ");
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
                 salida.IdItem = String.Empty;
@@ -600,7 +600,7 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             var conn = new SqlConnection(strConexion);
 
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
             //verificar que tenga permisos para usar esta pagina
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
@@ -610,7 +610,7 @@ namespace Plataforma.pages
             }
 
             var oResponsePrestamo = new PrestamoRequest();
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
             try
             {
@@ -630,7 +630,7 @@ namespace Plataforma.pages
                 oResponsePrestamo.DocumentosCliente = ObtenerDocumentos(oResponsePrestamo.Cliente.IdCliente, conn);
                 oResponsePrestamo.DocumentosAval = ObtenerDocumentos(oResponsePrestamo.Aval.IdCliente, conn);
 
-                // Si tu DTO tiene colecciÃ³n para Aval2, rellÃ©nala:
+                // Si tu DTO tiene colección para Aval2, rellénala:
                 oResponsePrestamo.DocumentosAval2 = ObtenerDocumentos(oResponsePrestamo.Aval2.IdCliente, conn); // <<< NUEVO (requiere propiedad en PrestamoRequest)
             }
             catch (Exception ex)
@@ -677,7 +677,7 @@ namespace Plataforma.pages
             var strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             var conn = new SqlConnection(strConexion);
 
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
             //verificar que tenga permisos para usar esta pagina
             var tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
@@ -862,7 +862,7 @@ namespace Plataforma.pages
             var strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             var conn = new SqlConnection(strConexion);
 
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
             //verificar que tenga permisos para usar esta pagina
             var tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
@@ -879,7 +879,7 @@ namespace Plataforma.pages
                 conn.Open();
                 transaccion = conn.BeginTransaction();
 
-                // Obtener el id_empleado del usuario actual para asignarlo al prÃ©stamo
+                // Obtener el id_empleado del usuario actual para asignarlo al préstamo
                 var usuarioActual = Usuarios.GetUsuario(path, idUsuario);
                 int? idEmpleadoActual = (usuarioActual != null && usuarioActual.IdEmpleado > 0)
                     ? (int?)usuarioActual.IdEmpleado
@@ -959,7 +959,7 @@ namespace Plataforma.pages
         }
         #endregion
         /// <summary>
-        /// AprobaciÃ³n de un prÃ©stamo por un supervisor o por un ejecutivo.
+        /// Aprobación de un préstamo por un supervisor o por un ejecutivo.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="idPrestamo"></param>
@@ -977,11 +977,11 @@ namespace Plataforma.pages
             List<StatusPrestamo> items = new List<StatusPrestamo>();
             DatosSalida response = new DatosSalida();
 
-            Utils.Log("\n\n******************Inicia la aprobaciÃ³n del prÃ©stamo ");
+            Utils.Log("\n\n******************Inicia la aprobación del préstamo ");
 
             SqlTransaction transaction = null;
 
-            // Capturista (id 9) debe comportarse como supervisor en esta aprobaciÃ³n
+            // Capturista (id 9) debe comportarse como supervisor en esta aprobación
             if (idPosicion == "9")
                 idPosicion = Employees.POSICION_SUPERVISOR.ToString();
 
@@ -993,11 +993,11 @@ namespace Plataforma.pages
                 transaction = conn.BeginTransaction();
 
 
-                //  Traer los datos del prÃ©stamo y cliente
+                //  Traer los datos del préstamo y cliente
                 Prestamo prestamo = LoanRequest.GetDataPrestamo(path, idPrestamo);
 
                 //  VALIDACIONES
-                // 1) Validar campos vacÃ­os
+                // 1) Validar campos vacíos
                 var dataStringsValidations = ValidateCustomerData(prestamo.Cliente);
                 if (dataStringsValidations.Count > 0)
                 {
@@ -1009,7 +1009,7 @@ namespace Plataforma.pages
 
 
                 //  -------Validar que las fotos esten subidas para cliente y aval
-                // 2) Traer los documentos actuales del pr+Ã©stamo
+                // 2) Traer los documentos actuales del pr+éstamo
                 List<Documento> documentsInLoan = GetDocumentsByCustomerId(path, prestamo.IdCliente, conn, transaction);
 
 
@@ -1031,7 +1031,7 @@ namespace Plataforma.pages
                 TipoCliente customerType = GetCustomerTypeById(path, prestamo.Cliente.IdTipoCliente.ToString(), conn, transaction);
 
 
-                Utils.Log("NÃºm de semanas  " + customerType.SemanasAPrestar);
+                Utils.Log("Núm de semanas  " + customerType.SemanasAPrestar);
                 Utils.Log("GarantiasPorMonto " + customerType.GarantiasPorMonto);
                 Utils.Log("prestamo.Monto " + prestamo.Monto);
 
@@ -1048,11 +1048,11 @@ namespace Plataforma.pages
                 }
                 //if (guaranteeAmmountSumCustomer < guaranteeAmmount)
                 //{
-                //    response.MensajeError = "El total de las garantÃ­as del cliente no es suficiente para cubrir el monto del prÃ©stamo mas el porcentaje configurado de " +
+                //    response.MensajeError = "El total de las garantías del cliente no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
                 //        customerType.GarantiasPorMonto + "<br/><br/>" +
-                //        "El monto del prÃ©stamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                //        "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
                 //        "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
-                //        "La suma de costos de las garantÃ­as es: " + guaranteeAmmountSumCustomer.ToString("C2");
+                //        "La suma de costos de las garantías es: " + guaranteeAmmountSumCustomer.ToString("C2");
 
                 //    response.CodigoError = 1;
                 //    return response;
@@ -1068,26 +1068,26 @@ namespace Plataforma.pages
                 }
                 //if (guaranteeAmmountSumAval < guaranteeAmmount)
                 //{
-                //    response.MensajeError = "El total de las garantÃ­as del aval no es suficiente para cubrir el monto del prÃ©stamo mas el porcentaje configurado de " +
+                //    response.MensajeError = "El total de las garantías del aval no es suficiente para cubrir el monto del préstamo mas el porcentaje configurado de " +
                 //        customerType.GarantiasPorMonto + "<br/><br/>" +
-                //       "El monto del prÃ©stamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                //       "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
                 //       "El monto a cubrir es: " + guaranteeAmmount.ToString("C2") + "<br/>" +
-                //       "La suma de costos de las garantÃ­as es: " + guaranteeAmmountSumAval.ToString("C2");
+                //       "La suma de costos de las garantías es: " + guaranteeAmmountSumAval.ToString("C2");
 
                 //    response.CodigoError = 1;
                 //    return response;
                 //}
 
 
-                //  5) Validar el monto mÃ¡ximo al ser un prÃ©stamo inicial
+                //  5) Validar el monto máximo al ser un préstamo inicial
                 List<Prestamo> prestamosAnteriores = GetLoansByCustomerId(path, prestamo.IdCliente, conn, transaction);
                 if (prestamosAnteriores.Count > 1)
                 {
                     if (prestamo.Monto > customerType.PrestamoInicialMaximo)
                     {
-                        response.MensajeError = "El monto para un prÃ©stamo inicial sobrepasa el monto configurado para este tipo de cliente (" + customerType.NombreTipoCliente?.Trim() + ").<br/><br/>" +
-                      "El monto del prÃ©stamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
-                      "El prÃ©stamo inicial mÃ¡ximo: " + customerType.PrestamoInicialMaximo.ToString("C2") + "<br/>";
+                        response.MensajeError = "El monto para un préstamo inicial sobrepasa el monto configurado para este tipo de cliente (" + customerType.NombreTipoCliente?.Trim() + ").<br/><br/>" +
+                      "El monto del préstamo es: " + prestamo.Monto.ToString("C2") + "<br/>" +
+                      "El préstamo inicial máximo: " + customerType.PrestamoInicialMaximo.ToString("C2") + "<br/>";
 
                         response.CodigoError = 1;
                         return response;
@@ -1098,7 +1098,7 @@ namespace Plataforma.pages
 
 
 
-                // 6) Validar que el promotor no exceda el lÃ­mite de crÃ©dito que puede otorgar y creaciÃ³n de alerta de lÃ­mite de crÃ©dito
+                // 6) Validar que el promotor no exceda el límite de crédito que puede otorgar y creación de alerta de límite de crédito
                 if (1 == 1)
                 {
 
@@ -1114,12 +1114,12 @@ namespace Plataforma.pages
 
                         transaction.Commit();
 
-                        Utils.Log("\n\n******************Fin de la aprobaciÃ³n del prÃ©stamo debido a que el supervisor necesita aumento de crÃ©dito. ");
+                        Utils.Log("\n\n******************Fin de la aprobación del préstamo debido a que el supervisor necesita aumento de crédito. ");
 
-                        response.MensajeError = "El monto lÃ­mite de crÃ©dito con el que cuenta no es suficiente para aprobar el prÃ©stamo. " +
-                            "<br/>Monto lÃ­mite del promotor: " + empleado.MontoLimiteInicial.ToString("C2") +
+                        response.MensajeError = "El monto límite de crédito con el que cuenta no es suficiente para aprobar el préstamo. " +
+                            "<br/>Monto límite del promotor: " + empleado.MontoLimiteInicial.ToString("C2") +
                             "<br/>Monto a solicitar: " + prestamo.Monto.ToString("C2") +
-                            "<br/>Se ha generado una solicitud de aumento de crÃ©dito que debera ser aprobada.";
+                            "<br/>Se ha generado una solicitud de aumento de crédito que debera ser aprobada.";
                         response.CodigoError = 2;
                         return response;
 
@@ -1128,7 +1128,7 @@ namespace Plataforma.pages
 
                 }
 
-                //  Para recalcular el monto a prestar restandole el monto pendiente de un anterior prÃ©stamo si es que tuviese uno
+                //  Para recalcular el monto a prestar restandole el monto pendiente de un anterior préstamo si es que tuviese uno
                 //float newMonto = prestamo.Monto;
 
                 // Traer al prestamo actual(anterior, no este nuevo que estamos aprobando)
@@ -1147,12 +1147,12 @@ namespace Plataforma.pages
                     // Traer pagos sin importar el status
                     List<Pago> paymentsByCurrentLoan = GetPaymentsByIdPrestamoAndDate(false, currentLoan.IdPrestamo.ToString(), currentWeek.fechaFinal, conn, transaction);
 
-                    //  7) Validar que prÃ©stamo anterior se encuentre en la semana>=10, 
+                    //  7) Validar que préstamo anterior se encuentre en la semana>=10, 
                     if (paymentsByCurrentLoan.Count < 10)
                     {
-                        response.MensajeError = "El cliente cuenta con un prÃ©stamo activo en la semana nÃºmero " + paymentsByCurrentLoan.Count + ".<br/>" +
+                        response.MensajeError = "El cliente cuenta con un préstamo activo en la semana número " + paymentsByCurrentLoan.Count + ".<br/>" +
                        "Para poder ser aprobado debe estar en la semana 10 o posterior.<br/><br/>" +
-                       "Por lo tanto no es posible aprobar este nuevo prÃ©stamo.<br/>";
+                       "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
 
                         response.CodigoError = 1;
                         return response;
@@ -1163,8 +1163,8 @@ namespace Plataforma.pages
                     var paymentsInFail = paymentsByCurrentLoan.Find(x => x.IdStatusPago == Pago.STATUS_PAGO_ABONADO || x.IdStatusPago == Pago.STATUS_PAGO_FALLA);
                     if (paymentsInFail != null)
                     {
-                        response.MensajeError = "El cliente cuenta con un prÃ©stamo activo y este tiene pagos con status de falla o abonado.<br/><br/>" +
-                       "Por lo tanto no es posible aprobar este nuevo prÃ©stamo.<br/>";
+                        response.MensajeError = "El cliente cuenta con un préstamo activo y este tiene pagos con status de falla o abonado.<br/><br/>" +
+                       "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
 
                         response.CodigoError = 1;
                         return response;
@@ -1178,9 +1178,9 @@ namespace Plataforma.pages
                     //  Validar que el monto de la deuda actual sea menor al monto del prestamo nuevo solicitado
                     if (prestamo.Monto < deudaActual.Saldo)
                     {
-                        response.MensajeError = "El cliente cuenta con un prÃ©stamo activo con un saldo total por pagar de " + deudaActual.Saldo.ToString("C2") + " .<br/><br/>" +
-                        "El nuevo prÃ©stamo es por la cantidad de " + prestamo.Monto.ToString("C2") + ", no alcanza a cubrir la deuda actual.<br/><br/>" +
-                        "Por lo tanto no es posible aprobar este nuevo prÃ©stamo.<br/>";
+                        response.MensajeError = "El cliente cuenta con un préstamo activo con un saldo total por pagar de " + deudaActual.Saldo.ToString("C2") + " .<br/><br/>" +
+                        "El nuevo préstamo es por la cantidad de " + prestamo.Monto.ToString("C2") + ", no alcanza a cubrir la deuda actual.<br/><br/>" +
+                        "Por lo tanto no es posible aprobar este nuevo préstamo.<br/>";
 
                         response.CodigoError = 1;
                         return response;
@@ -1192,12 +1192,12 @@ namespace Plataforma.pages
 
                 }
 
-                //  Actualizar status y monto del prÃ©stamo
+                //  Actualizar status y monto del préstamo
 
                 if (idPosicion == Employees.POSICION_SUPERVISOR.ToString())
                 {
 
-                    //  -1 para montoConInteres porque no queremos actualizar ese valor aÃºn
+                    //  -1 para montoConInteres porque no queremos actualizar ese valor aún
                     int rowsAffectedStatusPrestamo = UpdateStatusPrestamo(idPrestamo, idUsuario, nota, -1, Prestamo.STATUS_PENDIENTE_EJECUTIVO, prestamo.Monto, conn, transaction);
 
                     Utils.Log("rowsAffected UpdateStatusPrestamo POSICION_SUPERVISOR " + rowsAffectedStatusPrestamo);
@@ -1297,7 +1297,7 @@ namespace Plataforma.pages
                 transaction.Commit();
 
 
-                Utils.Log("\n\n******************Fin de la aprobaciÃ³n del prÃ©stamo ");
+                Utils.Log("\n\n******************Fin de la aprobación del préstamo ");
 
 
                 return response;
@@ -1310,7 +1310,7 @@ namespace Plataforma.pages
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
                 r = -1;
-                response.MensajeError = "Se ha generado un error inesperado. No se pudo completar la operaciÃ³n. Por favor intente mas tarde.";
+                response.MensajeError = "Se ha generado un error inesperado. No se pudo completar la operación. Por favor intente mas tarde.";
                 response.CodigoError = 1;
             }
 
@@ -1368,7 +1368,7 @@ namespace Plataforma.pages
         }
 
         /// <summary>
-        /// Traer los pagos de un prÃ©stamo con fecha <= a este fin de semana actual 
+        /// Traer los pagos de un préstamo con fecha <= a este fin de semana actual 
         /// </summary>
         /// <param name="byStatus"></param>
         /// <param name="fechaInicial"></param>
@@ -1406,7 +1406,7 @@ namespace Plataforma.pages
                 adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
                 adp.SelectCommand.Transaction = transaction;
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
@@ -1441,7 +1441,7 @@ namespace Plataforma.pages
         }
 
         /// <summary>
-        /// Traer saldo o deuda actual de un prÃ©stamo 
+        /// Traer saldo o deuda actual de un préstamo 
         /// </summary>
         /// <param name="byStatus"></param>
         /// <param name="idPrestamo"></param>
@@ -1467,7 +1467,7 @@ namespace Plataforma.pages
                 adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idPrestamo);
                 adp.SelectCommand.Transaction = transaction;
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
@@ -1506,7 +1506,7 @@ namespace Plataforma.pages
                                 FROM prestamo p JOIN cliente c ON (c.id_cliente = p.id_cliente)
                                 WHERE p.id_cliente = @id_cliente AND p.id_status_prestamo IN (4) ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("idCliente =  " + idCliente);
 
@@ -1546,15 +1546,23 @@ namespace Plataforma.pages
             int r = 0;
             try
             {
+                if (!int.TryParse(idPosicion, out var posInt))
+                {
+                    throw new ArgumentException("idPosicion inválido");
+                }
 
-                string sqlActualizaPosicion = idPosicion == Employees.POSICION_SUPERVISOR.ToString() ? ", id_supervisor = @id_supervisor " : ", id_ejecutivo = @id_ejecutivo ";
+                string sqlActualizaPosicion = string.Empty;
+                if (posInt == Employees.POSICION_SUPERVISOR)
+                    sqlActualizaPosicion = ", id_supervisor = @id_supervisor ";
+                else if (posInt == Employees.POSICION_EJECUTIVO)
+                    sqlActualizaPosicion = ", id_ejecutivo = @id_ejecutivo ";
 
 
                 string sql = @"  UPDATE relacion_prestamo_aprobacion
                                 SET fecha = @fecha, notas_generales = @notas_generales, status_aprobacion = @status_aprobacion  "
                                 + sqlActualizaPosicion
                                 + @"WHERE id_prestamo = @id_prestamo AND
-                                id_posicion = " + idPosicion + " ";
+                                id_posicion = @id_posicion ";
 
 
                 Utils.Log("ACTUALIZAR RelacionPrestamoAprobacion " + sql);
@@ -1565,8 +1573,11 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
                 cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
                 cmd.Parameters.AddWithValue("@notas_generales", nota);
-                cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
-                cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
+                cmd.Parameters.AddWithValue("@id_posicion", posInt);
+                if (posInt == Employees.POSICION_SUPERVISOR)
+                    cmd.Parameters.AddWithValue("@id_supervisor", idUsuario);
+                if (posInt == Employees.POSICION_EJECUTIVO)
+                    cmd.Parameters.AddWithValue("@id_ejecutivo", idUsuario);
                 cmd.Parameters.AddWithValue("@status_aprobacion", "Aprobado");
                 cmd.Transaction = transaction;
 
@@ -1582,12 +1593,10 @@ namespace Plataforma.pages
 
                 throw ex;
 
-
             }
 
 
             return r;
-
 
         }
 
@@ -1605,7 +1614,7 @@ namespace Plataforma.pages
                             WHERE
                             id_prestamo = @id_prestamo ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
                 SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
@@ -1660,7 +1669,7 @@ namespace Plataforma.pages
                             WHERE
                             id_prestamo = @id_prestamo ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
               System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
                 SqlCommand cmdUpdatePrestamo = new SqlCommand(sql, conn);
@@ -1709,7 +1718,7 @@ namespace Plataforma.pages
                                     id_prestamo_adelanto = @id_prestamo_adelanto
                                     WHERE pagado < monto OR saldo > 0 AND id_prestamo = @id_prestamo AND IsNull(semana_extra, 0) = 0  ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -1752,7 +1761,7 @@ namespace Plataforma.pages
 
 
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -1801,7 +1810,7 @@ namespace Plataforma.pages
 
 
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -1853,7 +1862,7 @@ namespace Plataforma.pages
                                   FROM documento    
                                   WHERE id_cliente = @id ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("idCliente =  " + idCliente);
 
@@ -1904,7 +1913,7 @@ namespace Plataforma.pages
                 string query = @" SELECT id_tipo_documento, nombre
                                   FROM tipo_documento WHERE id_tipo_documento <> 5 ";   //todos excepto antecedentes penales porque es para empleado
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
 
@@ -1962,11 +1971,11 @@ namespace Plataforma.pages
 
             if (string.IsNullOrEmpty(prestamo.Telefono))
             {
-                errsList.Add("TelÃ©fono cliente");
+                errsList.Add("Teléfono cliente");
             }
             if (string.IsNullOrEmpty(prestamo.Ocupacion))
             {
-                errsList.Add("OcupaciÃ³n cliente");
+                errsList.Add("Ocupación cliente");
             }
 
 
@@ -1991,7 +2000,7 @@ namespace Plataforma.pages
             }
             if (string.IsNullOrEmpty(prestamo.direccion.CodigoPostal))
             {
-                errsList.Add("CÃ³digo postal cliente");
+                errsList.Add("Código postal cliente");
             }
 
             if (string.IsNullOrEmpty(prestamo.direccion.DireccionTrabajo))
@@ -2020,11 +2029,11 @@ namespace Plataforma.pages
 
             if (string.IsNullOrEmpty(prestamo.TelefonoAval))
             {
-                errsList.Add("TelÃ©fono aval");
+                errsList.Add("Teléfono aval");
             }
             if (string.IsNullOrEmpty(prestamo.OcupacionAval))
             {
-                errsList.Add("OcupaciÃ³n aval");
+                errsList.Add("Ocupación aval");
             }
 
 
@@ -2047,7 +2056,7 @@ namespace Plataforma.pages
             }
             if (string.IsNullOrEmpty(prestamo.direccionAval.CodigoPostal))
             {
-                errsList.Add("CÃ³digo postal aval");
+                errsList.Add("Código postal aval");
             }
 
             if (string.IsNullOrEmpty(prestamo.direccionAval.DireccionTrabajo))
@@ -2056,7 +2065,7 @@ namespace Plataforma.pages
             }
             if (string.IsNullOrEmpty(prestamo.direccionAval.Ubicacion))
             {
-                errsList.Add("UbicaciÃ³n aval");
+                errsList.Add("Ubicación aval");
             }
 
 
@@ -2067,7 +2076,7 @@ namespace Plataforma.pages
         }
 
         /// <summary>
-        /// Rechazo de un prÃ©stamo
+        /// Rechazo de un préstamo
         /// </summary>
         /// <param name="path"></param>
         /// <param name="idPrestamo"></param>
@@ -2098,7 +2107,7 @@ namespace Plataforma.pages
 
 
 
-                //  Actualizar status del prÃ©stamo
+                //  Actualizar status del préstamo
                 string sql = @"  UPDATE prestamo
                             SET id_status_prestamo = @id_status_prestamo, notas_generales = @notas_generales
                             WHERE
@@ -2189,7 +2198,7 @@ namespace Plataforma.pages
                                 FROM tipo_cliente
                                 WHERE id_tipo_cliente =  @id ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id=  " + id);
 
@@ -2259,7 +2268,7 @@ namespace Plataforma.pages
                 adp.SelectCommand.Parameters.AddWithValue("id_prestamo", idCliente);
                 adp.SelectCommand.Transaction = transaction;
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                         System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
@@ -2314,7 +2323,7 @@ namespace Plataforma.pages
                                 WHERE c.id_cliente = @id
                                 ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_empleado =  " + idCliente);
 
@@ -2443,7 +2452,7 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
 
             //verificar que tenga permisos para usar esta pagina
@@ -2562,7 +2571,7 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
 
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
 
             //verificar que tenga permisos para usar esta pagina
@@ -2690,7 +2699,7 @@ namespace Plataforma.pages
         {
             //tipo 1 cliente, 2 aval
 
-            Utils.Log("\nMÃ©todo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
+            Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
             DatosSalida salida = new DatosSalida();
 
@@ -2791,7 +2800,7 @@ namespace Plataforma.pages
                 adp.SelectCommand.Parameters.AddWithValue("id_cliente", customerId);
                 adp.SelectCommand.Transaction = transaction;
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
@@ -2860,7 +2869,7 @@ namespace Plataforma.pages
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.SelectCommand.Parameters.AddWithValue("@id_prestamo", idPrestamo);
@@ -2933,7 +2942,7 @@ namespace Plataforma.pages
                                 WHERE a.id_empleado =  @id_empleado 
                                 ";
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_empleado =  " + id);
 
@@ -3017,7 +3026,7 @@ namespace Plataforma.pages
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
-                Utils.Log("\nMÃ©todo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.SelectCommand.Parameters.AddWithValue("@id_prestamo", idPrestamo);
@@ -3071,3 +3080,4 @@ namespace Plataforma.pages
 
 
 }
+

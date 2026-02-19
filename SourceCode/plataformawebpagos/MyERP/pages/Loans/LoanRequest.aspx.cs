@@ -113,7 +113,8 @@ namespace Plataforma.pages
                                 p.activo
 	                    FROM prestamo p
 	                    INNER JOIN cliente  c on c.id_cliente  = p.id_cliente
-	                    INNER JOIN cliente  av on av.id_cliente  = p.id_aval
+	                    LEFT JOIN cliente  av on av.id_cliente  = p.id_aval
+	                    LEFT JOIN cliente  av2 on av2.id_cliente  = p.id_aval2
 	                    INNER JOIN status_prestamo sp on sp.id_status_prestamo = p.id_status_prestamo 
                         WHERE ISNULL(c.eliminado,0) = 0 AND ISNULL(c.activo,1) = 1 AND ISNULL(p.activo,1) = 1
                           AND EXISTS (SELECT 1 FROM cliente cx WHERE cx.id_cliente = p.id_cliente AND ISNULL(cx.eliminado,0)=0 AND ISNULL(cx.activo,1)=1)

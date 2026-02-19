@@ -29,5 +29,9 @@ namespace Plataforma.Clases
         { get; set; }
         public int IdCliente
         { get; set; }
+
+        // Mensaje informativo (p.ej. sin promotores asignados)
+        public string Mensaje
+        { get; set; }
     }
 }

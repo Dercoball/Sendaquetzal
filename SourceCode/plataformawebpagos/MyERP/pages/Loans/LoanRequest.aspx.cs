@@ -87,9 +87,16 @@ namespace Plataforma.pages
                 // Otros roles (director/superadmin) ven todo por defecto
 
                 var promotoresIds = promotoresAutorizados.Select(p => p.IdEmpleado).Distinct().ToList();
-                var filtroPromotoresSql = promotoresIds.Count == 0
-                    ? " AND 1 = 0 "
-                    : " AND p.id_empleado IN (" + string.Join(",", promotoresIds) + ") ";
+                // Si no hay promotores asignados, avisar claramente y no aplicar filtro bloqueante
+                if (promotoresIds.Count == 0)
+                {
+                    return new List<ResponseGridPrestamos>
+                    {
+                        new ResponseGridPrestamos { Mensaje = "No tiene promotores asignados" }
+                    };
+                }
+
+                var filtroPromotoresSql = " AND p.id_empleado IN (" + string.Join(",", promotoresIds) + ") ";
 
                 var sql = @"SELECT *  FROM (SELECT p.id_prestamo , 
                             c.id_cliente AS IdCliente,

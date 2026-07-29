@@ -3,13 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
+using System.Globalization;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
 
 namespace Plataforma.pages
 {
@@ -25,7 +21,6 @@ namespace Plataforma.pages
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
-            string idEmpleado = (string)Session["id_empleado"] ?? "";
             string idPlaza = "";
 
             // Asegura nombre de conexión
@@ -38,65 +33,21 @@ namespace Plataforma.pages
             txtIdTipoUsuario.Value = idTipoUsuario;//5
             txtIdUsuario.Value = idUsuario;//69
 
-            // Obtener plaza del supervisor para fijarla en el filtro
-            if (idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString())
+            if ((idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString()
+                || idTipoUsuario == Employees.POSICION_DIRECTOR.ToString())
+                && !string.IsNullOrWhiteSpace(idUsuario))
             {
-                // Si la sesión no trae id_empleado, obténlo del usuario
-                if (string.IsNullOrWhiteSpace(idEmpleado) && !string.IsNullOrWhiteSpace(idUsuario))
+                try
                 {
-                    var usuarioObj = Usuarios.GetUsuario(path, idUsuario);
-                    if (usuarioObj != null && usuarioObj.IdEmpleado > 0)
-                        idEmpleado = usuarioObj.IdEmpleado.ToString();
-                }
-
-                if (int.TryParse(idEmpleado, out var idEmpInt))
-                {
-                    try
+                    var scope = UserVisibilityScope.GetByUser(path, idUsuario);
+                    if (scope != null && scope.IdPlaza > 0)
                     {
-                        string strConexion = ConfigurationManager.ConnectionStrings[path].ConnectionString;
-                        using (var conn = new SqlConnection(strConexion))
-                        {
-                            conn.Open();
-                            using (var cmd = new SqlCommand("SELECT ISNULL(id_plaza,0) FROM empleado WHERE id_empleado = @id", conn))
-                            {
-                                cmd.Parameters.AddWithValue("@id", idEmpInt);
-                                var plaza = cmd.ExecuteScalar();
-                                if (plaza != null)
-                                    idPlaza = plaza.ToString();
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Utils.Log("Error al obtener plaza del supervisor: " + ex.Message);
+                        idPlaza = scope.IdPlaza.ToString();
                     }
                 }
-
-                // Fallback: si no se obtuvo plaza con id_empleado, probar por id_usuario
-                if (string.IsNullOrEmpty(idPlaza) && int.TryParse(idUsuario, out var idUserInt))
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        string strConexion = ConfigurationManager.ConnectionStrings[path].ConnectionString;
-                        using (var conn = new SqlConnection(strConexion))
-                        {
-                            conn.Open();
-                            using (var cmd = new SqlCommand(@"SELECT ISNULL(e.id_plaza,0)
-                                                              FROM usuario u
-                                                              INNER JOIN empleado e ON e.id_empleado = u.id_empleado
-                                                              WHERE u.id_usuario = @id", conn))
-                            {
-                                cmd.Parameters.AddWithValue("@id", idUserInt);
-                                var plaza = cmd.ExecuteScalar();
-                                if (plaza != null)
-                                    idPlaza = plaza.ToString();
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Utils.Log("Error fallback plaza supervisor: " + ex.Message);
-                    }
+                    Utils.Log("Error al obtener plaza fija del reporte: " + ex.Message);
                 }
             }
 
@@ -163,6 +114,99 @@ namespace Plataforma.pages
 
         }
 
+        private static bool TienePermisoReporte(string path, string idUsuario)
+        {
+            return !string.IsNullOrWhiteSpace(idUsuario)
+                && Index.TienePermisoPagina(pagina, path, idUsuario);
+        }
+
+        private static int GetPlazaFijaReporte(UserVisibilityContext scope, string idPlaza)
+        {
+            int.TryParse(idPlaza, out var plazaSolicitada);
+
+            if (scope != null && (scope.IsDirector || scope.IsSupervisor))
+            {
+                return scope.IdPlaza > 0 ? scope.IdPlaza : 0;
+            }
+
+            return plazaSolicitada > 0 ? plazaSolicitada : 0;
+        }
+
+        private static bool TryGetEmpleadoEnAlcance(UserVisibilityContext scope, SqlConnection conn, string idEmpleado, int posicionEsperada, out int idEmpleadoInt)
+        {
+            idEmpleadoInt = 0;
+
+            if (!int.TryParse(idEmpleado, out idEmpleadoInt) || idEmpleadoInt <= 0)
+            {
+                return false;
+            }
+
+            return UserVisibilityScope.CanAccessEmployee(scope, conn, idEmpleadoInt, posicionEsperada);
+        }
+
+        private static Total CreateZeroTotal()
+        {
+            return new Total
+            {
+                total = 0,
+                totalStr = 0f.ToString("C2")
+            };
+        }
+
+        private static List<Total> CreateZeroTotals(int totalItems)
+        {
+            var items = new List<Total>();
+
+            for (var i = 0; i < totalItems; i++)
+            {
+                items.Add(CreateZeroTotal());
+            }
+
+            return items;
+        }
+
+        private static bool TryGetReportDateRange(string fechaInicial, string fechaFinal, out DateTime fechaInicialDate, out DateTime fechaFinalExclusive)
+        {
+            fechaInicialDate = DateTime.MinValue;
+            fechaFinalExclusive = DateTime.MinValue;
+
+            if (!DateTime.TryParseExact(fechaInicial, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaInicialParsed))
+            {
+                return false;
+            }
+
+            if (!DateTime.TryParseExact(fechaFinal, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaFinalParsed))
+            {
+                return false;
+            }
+
+            fechaInicialDate = fechaInicialParsed.Date;
+            fechaFinalExclusive = fechaFinalParsed.Date.AddDays(1);
+
+            return true;
+        }
+
+        private static void AddDateRangeParameters(SqlDataAdapter adapter, DateTime fechaInicialDate, DateTime fechaFinalExclusive)
+        {
+            adapter.SelectCommand.Parameters.Add("@fechaInicial", SqlDbType.DateTime).Value = fechaInicialDate;
+            adapter.SelectCommand.Parameters.Add("@fechaFinalExclusive", SqlDbType.DateTime).Value = fechaFinalExclusive;
+        }
+
+        private static string BuildDateRangeSql(string columnName)
+        {
+            return $"{columnName} >= @fechaInicial AND {columnName} < @fechaFinalExclusive";
+        }
+
+        private static string BuildClienteReporteSql(string alias)
+        {
+            return $"IsNull({alias}.eliminado, 0) = 0 AND IsNull({alias}.activo, 1) = 1 AND IsNull({alias}.id_status_cliente, {Cliente.STATUS_ACTIVO}) <> {Cliente.STATUS_CONDONADO}";
+        }
+
+        private static string BuildEmpleadoReporteSql(string alias)
+        {
+            return $"IsNull({alias}.activo, 1) = 1 AND IsNull({alias}.eliminado, 0) = 0";
+        }
+
         /// <summary>
         /// Debe entregar y falla
         /// </summary>
@@ -182,7 +226,7 @@ namespace Plataforma.pages
 
 
             // verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            bool tienePermiso = TienePermisoReporte(path, idUsuario);
             if (!tienePermiso)
             {
                 return null;//No tiene permisos
@@ -194,20 +238,31 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return CreateZeroTotals(2);
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return CreateZeroTotals(2);
+                }
+
                 DataSet ds = new DataSet();
 
                 //debe entregar
-                string query = @"   SELECT IsNull(SUM(p.monto) , 0)  total
+                string query = $@"SELECT IsNull(SUM(p.monto), 0) total
                                     FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)       
-                                    JOIN cliente cc ON (cc.id_cliente = pre.id_cliente AND IsNull(cc.id_status_cliente, 2) <>" + Cliente.STATUS_CONDONADO + @" )                                                                                       
-                                    WHERE "
-                                    + @"(p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')
-                                        AND pre.id_empleado = " + idPromotor + @" 
-                                        AND p.id_status_pago = " + 1 + "";
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)
+                                    JOIN cliente cc ON (cc.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("cc")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_PENDIENTE}";
 
                 using (SqlDataAdapter adp = new SqlDataAdapter(query, conn))
                 {
+                    AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                     Utils.Log("\nMétodo-> " +
                     System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -227,19 +282,21 @@ namespace Plataforma.pages
 
 
                 //falla
-                query = @"   SELECT IsNull(SUM(p.monto) , 0)  total
+                query = $@"SELECT IsNull(SUM(p.monto), 0) total
                                     FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                                                                       
-                                    WHERE "
-                                    + @"(p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')
-                                        AND pre.id_empleado = " + idPromotor + @" 
-                                        AND p.id_status_pago = " + 2 + "";
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)
+                                    JOIN cliente cc ON (cc.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("cc")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_FALLA}
+                                      AND IsNull(p.semana_extra, 0) = 0";
 
 
 
                 using (SqlDataAdapter adapterFalla = new SqlDataAdapter(query, conn))
                 {
                     DataSet dataseFalla = new DataSet();
+                    AddDateRangeParameters(adapterFalla, fechaInicialDate, fechaFinalExclusive);
 
                     Utils.Log("\n" + query + "\n");
 
@@ -263,7 +320,7 @@ namespace Plataforma.pages
             {
                 Utils.Log("Error ... " + ex.Message);
                 Utils.Log(ex.StackTrace);
-                return items;
+                return items.Count > 0 ? items : CreateZeroTotals(2);
             }
 
             finally
@@ -282,31 +339,48 @@ namespace Plataforma.pages
 
 
             // verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            bool tienePermiso = TienePermisoReporte(path, idUsuario);
             if (!tienePermiso)
             {
                 return null;//No tiene permisos
             }
 
 
-            Total item = new Total();
+            Total item = CreateZeroTotal();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return item;
+                }
+
+                if (!int.TryParse(idStatusPago, out var idStatusPagoInt) || idStatusPagoInt <= 0)
+                {
+                    return item;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return item;
+                }
+
                 DataSet ds = new DataSet();
 
-                string query = @"   SELECT IsNull(SUM(p.monto) , 0)  total
+                string query = $@"SELECT IsNull(SUM(p.monto), 0) total
                                     FROM pago p
-                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                                                                       
-                                    WHERE "
-                                    + @"(p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')
-                                        AND pre.id_empleado = " + idPromotor + @" 
-                                        AND p.id_status_pago = " + idStatusPago + "";
+                                    JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND p.id_status_pago = {idStatusPagoInt}";
 
                 using (SqlDataAdapter adp = new SqlDataAdapter(query, conn))
                 {
+                    AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                     Utils.Log("\nMétodo-> " +
                     System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -348,26 +422,41 @@ namespace Plataforma.pages
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-            Total item = new Total();
+            if (!TienePermisoReporte(path, idUsuario))
+            {
+                return null;
+            }
+
+            Total item = CreateZeroTotal();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return item;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return item;
+                }
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                string query = $@"SELECT IsNull(SUM(p.monto), 0) total
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha_registro_pago >= '" + fechaInicial + @"' AND p.fecha_registro_pago <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
-                                    + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
-                                    + "  ";
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha_registro_pago")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND IsNull(p.pagado_con_adelanto, 0) = 1
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_PAGADO}";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -376,14 +465,8 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-
-                    adp.Fill(ds);
-
-                    if (ds.Tables[0].Rows.Count > 0)
-                    {
-                        item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
-                        item.totalStr = item.total.ToString("C2");
-                    }
+                    item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
+                    item.totalStr = item.total.ToString("C2");
 
                 }
 
@@ -412,26 +495,41 @@ namespace Plataforma.pages
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
-            Total item = new Total();
+            if (!TienePermisoReporte(path, idUsuario))
+            {
+                return null;
+            }
+
+            Total item = CreateZeroTotal();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return item;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return item;
+                }
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                string query = $@"SELECT IsNull(SUM(p.monto), 0) total
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
-                                    + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
-                                    + "  ";
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND IsNull(p.pagado_con_adelanto, 0) = 1
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_PAGADO}";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -440,14 +538,8 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-
-                    adp.Fill(ds);
-
-                    if (ds.Tables[0].Rows.Count > 0)
-                    {
-                        item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
-                        item.totalStr = item.total.ToString("C2");
-                    }
+                    item.total = float.Parse(ds.Tables[0].Rows[0]["total"].ToString());
+                    item.totalStr = item.total.ToString("C2");
 
                 }
 
@@ -472,7 +564,7 @@ namespace Plataforma.pages
 
         [WebMethod]
         public static List<Empleado> GetListaEjecutivosByPlaza(string path,
-        string idPlaza)
+        string idUsuario, string idPlaza)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -480,19 +572,27 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
             List<Empleado> items = new List<Empleado>();
 
-            var sqlPlaza = "";
-            if (idPlaza != "" && idPlaza != "-1")
-            {
-                sqlPlaza = " AND id_plaza = '" + idPlaza + "'";
-            }
-
-
-
-
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return items;
+                }
+
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                var idPlazaInt = GetPlazaFijaReporte(scope, idPlaza);
+
+                if ((scope.IsDirector || scope.IsSupervisor) && idPlazaInt <= 0)
+                {
+                    return items;
+                }
+
+                var sqlPlaza = idPlazaInt > 0
+                    ? " AND e.id_plaza = " + idPlazaInt
+                    : string.Empty;
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT e.id_empleado,
                                     concat( e.nombre ,  ' ' , e.primer_apellido , ' ' ,  e.segundo_apellido) AS nombre_completo
@@ -500,6 +600,7 @@ namespace Plataforma.pages
                                     WHERE ISNull(e.activo, 1) = 1  
                                     AND ISNull(e.eliminado, 0) = 0
                                     AND e.id_posicion =  " + Employees.POSICION_EJECUTIVO +
+                                    UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado") +
                                     sqlPlaza
                                     ;
 
@@ -546,7 +647,7 @@ namespace Plataforma.pages
 
         [WebMethod]
         public static List<Empleado> GetListaSupervisoresByEjecutivo(string path,
-            string idEjecutivo)
+            string idUsuario, string idEjecutivo)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -554,16 +655,27 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
             List<Empleado> items = new List<Empleado>();
 
-            var sqlEjecutivo = "";
-            if (idEjecutivo != "" && idEjecutivo != "-1")
-            {
-                sqlEjecutivo = " AND e.id_ejecutivo = '" + idEjecutivo + "'";
-            }
-
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return items;
+                }
+
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                var sqlEjecutivo = string.Empty;
+                if (idEjecutivo != "" && idEjecutivo != "-1")
+                {
+                    if (!TryGetEmpleadoEnAlcance(scope, conn, idEjecutivo, Employees.POSICION_EJECUTIVO, out var idEjecutivoInt))
+                    {
+                        return items;
+                    }
+
+                    sqlEjecutivo = " AND e.id_ejecutivo = " + idEjecutivoInt;
+                }
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT e.id_empleado,
                                     concat( e.nombre ,  ' ' , e.primer_apellido , ' ' ,  e.segundo_apellido) AS nombre_completo
@@ -571,6 +683,7 @@ namespace Plataforma.pages
                                     WHERE ISNull(e.activo, 1) = 1  
                                     AND ISNull(e.eliminado, 0) = 0
                                     AND e.id_posicion =  " + Employees.POSICION_SUPERVISOR +
+                                    UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado") +
                                     sqlEjecutivo
                                     ;
 
@@ -632,27 +745,37 @@ namespace Plataforma.pages
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             // verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            bool tienePermiso = TienePermisoReporte(path, idUsuario);
             if (!tienePermiso)
             {
                 return null;//No tiene permisos
             }
 
             //  Lista de datos a devolver
-            Total item = new Total();
+            Total item = CreateZeroTotal();
             SqlConnection conn = new SqlConnection(strConexion);
 
             try
             {
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return item;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return item;
+                }
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT IsNull(SUM(p.monto), 0) total
+                string query = $@"SELECT IsNull(SUM(p.monto), 0) total
                      FROM prestamo p
-                     WHERE  "
-                    + @" (p.fecha_aprobacion >= '" + fechaInicial + @"' AND p.fecha_aprobacion <= '" + fechaFinal + @"') "
-                    + " AND p.id_status_prestamo = '" + Prestamo.STATUS_APROBADO + "'"
-                    + " AND p.id_empleado = '" + idPromotor + "'";
+                     JOIN cliente c ON (c.id_cliente = p.id_cliente AND {BuildClienteReporteSql("c")})
+                     WHERE {BuildDateRangeSql("p.fecha_aprobacion")}
+                       AND p.id_status_prestamo = {Prestamo.STATUS_APROBADO}
+                       AND p.id_empleado = {idPromotorInt}";
 
 
                 Utils.Log("\nMétodo-> " +
@@ -660,6 +783,7 @@ namespace Plataforma.pages
 
                 using (SqlDataAdapter adp = new SqlDataAdapter(query, conn))
                 {
+                    AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
 
                     adp.Fill(ds);
@@ -694,7 +818,7 @@ namespace Plataforma.pages
 
         [WebMethod]
         public static List<Empleado> GetListaPromotoresBySupervisor(string path,
-            string idSupervisor)
+            string idUsuario, string idSupervisor)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -703,16 +827,26 @@ namespace Plataforma.pages
             List<Empleado> items = new List<Empleado>();
 
 
-            var sqlSupervisor = "";
-            if (idSupervisor != "" && idSupervisor != "-1")
-            {
-                sqlSupervisor = " AND e.id_supervisor = '" + idSupervisor + "'";
-            }
-
-
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return items;
+                }
+
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                var sqlSupervisor = string.Empty;
+                if (idSupervisor != "" && idSupervisor != "-1")
+                {
+                    if (!TryGetEmpleadoEnAlcance(scope, conn, idSupervisor, Employees.POSICION_SUPERVISOR, out var idSupervisorInt))
+                    {
+                        return items;
+                    }
+
+                    sqlSupervisor = " AND e.id_supervisor = " + idSupervisorInt;
+                }
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT e.id_empleado, e.id_comision_inicial,
                                     concat( e.nombre ,  ' ' , e.primer_apellido , ' ' ,  e.segundo_apellido) AS nombre_completo
@@ -720,6 +854,7 @@ namespace Plataforma.pages
                                     WHERE ISNull(e.activo, 1) = 1  
                                     AND ISNull(e.eliminado, 0) = 0
                                     AND e.id_posicion =  " + Employees.POSICION_PROMOTOR +
+                                    UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado") +
                                     sqlSupervisor
                                     ;
 
@@ -766,7 +901,7 @@ namespace Plataforma.pages
 
         [WebMethod]
         public static Empleado GetPromotorDataById(string path,
-            string id)
+            string idUsuario, string id)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -776,7 +911,18 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return item;
+                }
+
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, id, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return item;
+                }
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT e.id_empleado, e.id_comision_inicial, IsNull(c.porcentaje, 0) porcentaje,
                                     concat( e.nombre ,  ' ' , e.primer_apellido , ' ' ,  e.segundo_apellido)
@@ -785,7 +931,7 @@ namespace Plataforma.pages
                                     JOIN comision c ON (e.id_comision_inicial = c.id_comision)
                                     WHERE ISNull(e.activo, 1) = 1  
                                     AND ISNull(e.eliminado, 0) = 0
-                                    AND e.id_empleado =  " + id;
+                                    AND e.id_empleado =  " + idPromotorInt;
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -842,8 +988,17 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return items;
+                }
 
                 //  Filtro status del pago
                 var sqlStatus = "";
@@ -860,7 +1015,7 @@ namespace Plataforma.pages
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
                                     JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
                                     + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
+                                        AND pre.id_empleado = " + idPromotorInt + "  "
                                     + sqlStatus
                                     + " ORDER BY p.id_pago ";
 
@@ -940,30 +1095,50 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
 
                 //  Filtro status del pago
                 var sqlStatus = "";
                 if (idStatus != "0")    //  todos
                 {
-                    sqlStatus = " AND p.id_status_pago = '" + idStatus + "'";
+                    if (!int.TryParse(idStatus, out var idStatusInt) || idStatusInt <= 0)
+                    {
+                        return items;
+                    }
+
+                    sqlStatus = " AND p.id_status_pago = " + idStatusInt;
                 }
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                string query = $@"SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                    + sqlStatus
-                                    + " AND IsNull(p.semana_extra, 0) = 1 " +
-                                    "ORDER BY p.id_pago ";
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      {sqlStatus}
+                                      AND IsNull(p.semana_extra, 0) = 1
+                                    ORDER BY p.id_pago";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -1009,7 +1184,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Pago> GetPaymentsByStatusFallaAndPromotor(string path,
+        public static List<Pago> GetPaymentsByStatusFallaAndPromotor(string path, string idUsuario,
               string fechaInicial, string fechaFinal, string idPromotor)
         {
 
@@ -1023,24 +1198,39 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
 
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                string query = $@"SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND p.id_status_pago  =  " + Pago.STATUS_PAGO_FALLA + "  "
-                                    + " AND IsNull(p.semana_extra, 0) = 0 " +
-                                    " ORDER BY p.id_pago ";
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_FALLA}
+                                      AND IsNull(p.semana_extra, 0) = 0
+                                    ORDER BY p.id_pago";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -1085,7 +1275,7 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static List<Pago> GetPaymentsByStatusFallaRecuperado(string path,
+        public static List<Pago> GetPaymentsByStatusFallaRecuperado(string path, string idUsuario,
              string fechaInicial, string fechaFinal, string idPromotor)
         {
 
@@ -1099,25 +1289,40 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
 
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                string query = $@"SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND p.id_status_pago  =  " + Pago.STATUS_PAGO_ABONADO + "  "
-                                    + " AND IsNull(p.semana_extra, 0) = 0 "
-                                    + " AND IsNull(p.es_recuperado, 0) = 1 "
-                                    + " ORDER BY p.id_pago ";
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_ABONADO}
+                                      AND IsNull(p.semana_extra, 0) = 0
+                                      AND IsNull(p.es_recuperado, 0) = 1
+                                    ORDER BY p.id_pago";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -1163,7 +1368,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Pago> GetPaymentsByStatusAdelantoEntrante(string path,
+        public static List<Pago> GetPaymentsByStatusAdelantoEntrante(string path, string idUsuario,
            string fechaInicial, string fechaFinal, string idPromotor)
         {
 
@@ -1177,24 +1382,39 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
 
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                string query = $@"SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                     FORMAT(p.fecha_registro_pago, 'dd/MM/yyyy') fechastr
                                     FROM pago p
                                     JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                  + @" WHERE (p.fecha_registro_pago >= '" + fechaInicial + @"' AND p.fecha_registro_pago <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                  + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
-                                  + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO;
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha_registro_pago")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND IsNull(p.pagado_con_adelanto, 0) = 1
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_PAGADO}";
 
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -1242,7 +1462,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Pago> GetPaymentsByStatusAdelantoSaliente(string path,
+        public static List<Pago> GetPaymentsByStatusAdelantoSaliente(string path, string idUsuario,
            string fechaInicial, string fechaFinal, string idPromotor)
         {
 
@@ -1256,25 +1476,39 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idPromotor, Employees.POSICION_PROMOTOR, out var idPromotorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
 
 
                 DataSet ds = new DataSet();
-                string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
+                string query = $@"SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                                     FORMAT(p.fecha, 'dd/MM/yyyy') fechastr
                                     FROM pago p
                                      JOIN prestamo pre ON (p.id_prestamo = pre.id_prestamo)                                            
-                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente) "
-                                    + @" WHERE (p.fecha >= '" + fechaInicial + @"' AND p.fecha <= '" + fechaFinal + @"')                                 
-                                        AND pre.id_empleado = " + idPromotor + "  "
-                                    + " AND IsNull(p.pagado_con_adelanto, 0) = 1 "
-                                    + " AND p.id_status_pago = " + Pago.STATUS_PAGO_PAGADO
-                                    + "  ";
+                                    JOIN cliente c ON (c.id_cliente = pre.id_cliente AND {BuildClienteReporteSql("c")})
+                                    WHERE {BuildDateRangeSql("p.fecha")}
+                                      AND pre.id_empleado = {idPromotorInt}
+                                      AND IsNull(p.pagado_con_adelanto, 0) = 1
+                                      AND p.id_status_pago = {Pago.STATUS_PAGO_PAGADO}";
 
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -1330,7 +1564,7 @@ namespace Plataforma.pages
             Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");
 
             // verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            bool tienePermiso = TienePermisoReporte(path, idUsuario);
             if (!tienePermiso)
             {
                 return null;//No tiene permisos
@@ -1416,7 +1650,7 @@ namespace Plataforma.pages
 
 
             // verificar que tenga permisos para usar esta pagina
-            bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
+            bool tienePermiso = TienePermisoReporte(path, idUsuario);
             if (!tienePermiso)
             {
                 return null;//No tiene permisos
@@ -1428,10 +1662,21 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idSupervisor, Employees.POSICION_SUPERVISOR, out var idSupervisorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
+
                 DataSet ds = new DataSet();
 
                 //debe entregar
-                string query = @" 
+                string query = $@" 
                     SELECT concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido) AS promotor,
                         (SELECT TOP 1 concat(s.nombre,' ',s.primer_apellido,' ',s.segundo_apellido)
                          FROM empleado s WHERE s.id_empleado = e.id_supervisor) AS supervisor,
@@ -1440,74 +1685,87 @@ namespace Plataforma.pages
                          (SELECT IsNull(SUM(pp.monto) , 0)  total
                                     FROM pago pp
                                     JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)                                                                                       
-                                    JOIN cliente cc ON (cc.id_cliente = pre2.id_cliente AND IsNull(cc.id_status_cliente, 2) <>" + Cliente.STATUS_CONDONADO + @" )                                                                                       
+                                    JOIN cliente cc ON (cc.id_cliente = pre2.id_cliente AND {BuildClienteReporteSql("cc")})                                                                                       
                                     WHERE 
-                                        (pp.fecha >= '" + fechaInicial + @"' AND pp.fecha <= '" + fechaFinal + @"')                                            
+                                        {BuildDateRangeSql("pp.fecha")}                                            
                                         AND pre2.id_empleado = e.id_empleado
-                                        AND pp.id_status_pago = " + Pago.STATUS_PAGO_PENDIENTE + @")                total_debe_entregar,
+                                        AND pp.id_status_pago = {Pago.STATUS_PAGO_PENDIENTE})                total_debe_entregar,
 
                             (SELECT IsNull(SUM(nuevosPrestamos.monto), 0)  total                                    
-                                    FROM prestamo nuevosPrestamos                                                                                       
+                                    FROM prestamo nuevosPrestamos
+                                    JOIN cliente clienteVenta ON (clienteVenta.id_cliente = nuevosPrestamos.id_cliente AND {BuildClienteReporteSql("clienteVenta")})
                                     WHERE 
-                                        (nuevosPrestamos.fecha_aprobacion >= '" + fechaInicial +
-                                        @"' AND nuevosPrestamos.fecha_aprobacion <= '" + fechaFinal + @"')                                            
+                                        {BuildDateRangeSql("nuevosPrestamos.fecha_aprobacion")}                                            
                                         AND nuevosPrestamos.id_empleado = e.id_empleado
-                                        AND nuevosPrestamos.id_status_prestamo = " + Prestamo.STATUS_APROBADO + @")                    
+                                        AND nuevosPrestamos.id_status_prestamo = {Prestamo.STATUS_APROBADO})                    
                                                                                                                     total_venta,
                      
                          (SELECT IsNull(SUM(pp.monto) , 0)  total
                                     FROM pago pp
-                                    JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)                                                                                       
+                                    JOIN prestamo pre2 ON (pp.id_prestamo = pre2.id_prestamo)
+                                    JOIN cliente clienteFalla ON (clienteFalla.id_cliente = pre2.id_cliente AND {BuildClienteReporteSql("clienteFalla")})                                                                                       
                                     WHERE 
-                                        (pp.fecha >= '" + fechaInicial + @"' AND pp.fecha <= '" + fechaFinal + @"')                                            
+                                        {BuildDateRangeSql("pp.fecha")}                                            
                                         AND pre2.id_empleado = e.id_empleado
-                                        AND pp.id_status_pago = " + Pago.STATUS_PAGO_FALLA + @")                    total_falla,
+                                        AND pp.id_status_pago = {Pago.STATUS_PAGO_FALLA}
+                                        AND IsNull(pp.semana_extra, 0) = 0)                    total_falla,
                                                                                 
                          (SELECT IsNull(SUM(p3.monto) , 0)  total
                                     FROM pago p3
-                                    JOIN prestamo pre3 ON (p3.id_prestamo = pre3.id_prestamo)                                                                                       
+                                    JOIN prestamo pre3 ON (p3.id_prestamo = pre3.id_prestamo)
+                                    JOIN cliente clienteRecuperado ON (clienteRecuperado.id_cliente = pre3.id_cliente AND {BuildClienteReporteSql("clienteRecuperado")})                                                                                       
                                     WHERE 
-                                        (p3.fecha >= '" + fechaInicial + @"' AND p3.fecha <= '" + fechaFinal + @"')
+                                        {BuildDateRangeSql("p3.fecha")}
                                         AND pre3.id_empleado = e.id_empleado
-                                        AND p3.id_status_pago = " + Pago.STATUS_PAGO_ABONADO + @")                  total_recuperado,
+                                        AND p3.id_status_pago = {Pago.STATUS_PAGO_ABONADO}
+                                        AND IsNull(p3.semana_extra, 0) = 0
+                                        AND IsNull(p3.es_recuperado, 0) = 1)                  total_recuperado,
                                         
                          (SELECT IsNull(SUM(pagoEntrante.monto) , 0)  total
                                     FROM pago pagoEntrante
-                                    JOIN prestamo preEntrante ON (pagoEntrante.id_prestamo = preEntrante.id_prestamo)                                                                                       
+                                    JOIN prestamo preEntrante ON (pagoEntrante.id_prestamo = preEntrante.id_prestamo)
+                                    JOIN cliente clienteEntrante ON (clienteEntrante.id_cliente = preEntrante.id_cliente AND {BuildClienteReporteSql("clienteEntrante")})                                                                                       
                                     WHERE
-                                        (pagoEntrante.fecha_registro_pago >= '" + fechaInicial + @"' AND pagoEntrante.fecha_registro_pago <= '" + fechaFinal + @"')
+                                        {BuildDateRangeSql("pagoEntrante.fecha_registro_pago")}
                                         AND preEntrante.id_empleado = e.id_empleado
                                         AND IsNull(pagoEntrante.pagado_con_adelanto, 0) = 1
-                         				AND pagoEntrante.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_abono_entrante,
+                         				AND pagoEntrante.id_status_pago = {Pago.STATUS_PAGO_PAGADO})         total_abono_entrante,
                                         
                          (SELECT IsNull(SUM(p4.monto) , 0)  total
                                     FROM pago p4
-                                    JOIN prestamo pre4 ON (p4.id_prestamo = pre4.id_prestamo)                                                                                       
+                                    JOIN prestamo pre4 ON (p4.id_prestamo = pre4.id_prestamo)
+                                    JOIN cliente clienteSemanaExtra ON (clienteSemanaExtra.id_cliente = pre4.id_cliente AND {BuildClienteReporteSql("clienteSemanaExtra")})                                                                                       
                                     WHERE 
-                                        (p4.fecha >= '" + fechaInicial + @"' AND p4.fecha <= '" + fechaFinal + @"')
+                                        {BuildDateRangeSql("p4.fecha")}
                                         AND pre4.id_empleado = e.id_empleado
                                         AND IsNull(p4.semana_extra, 0) = 1
-                         				AND p4.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_semana_extra,
+                         				AND p4.id_status_pago = {Pago.STATUS_PAGO_PAGADO})         total_semana_extra,
                                                                                 
                          (SELECT IsNull(SUM(pagoSaliente.monto) , 0)  total
                                     FROM pago pagoSaliente
-                                    JOIN prestamo preSaliente ON (pagoSaliente.id_prestamo = preSaliente.id_prestamo)                                                                                       
+                                    JOIN prestamo preSaliente ON (pagoSaliente.id_prestamo = preSaliente.id_prestamo)
+                                    JOIN cliente clienteSaliente ON (clienteSaliente.id_cliente = preSaliente.id_cliente AND {BuildClienteReporteSql("clienteSaliente")})                                                                                       
                                     WHERE 
-                                        (pagoSaliente.fecha >= '" + fechaInicial + @"' AND pagoSaliente.fecha <= '" + fechaFinal + @"')
+                                        {BuildDateRangeSql("pagoSaliente.fecha")}
                                         AND preSaliente.id_empleado = e.id_empleado
                                         AND IsNull(pagoSaliente.pagado_con_adelanto, 0) = 1
-                         				AND pagoSaliente.id_status_pago = " + Pago.STATUS_PAGO_PAGADO + @")         total_abono_saliente
+                         				AND pagoSaliente.id_status_pago = {Pago.STATUS_PAGO_PAGADO})         total_abono_saliente
                                         
                                     FROM empleado e 
                                     JOIN comision c ON (c.id_comision = e.id_comision_inicial)  
-                                    WHERE e.id_supervisor = " + idSupervisor + @" 
+                                    WHERE e.id_supervisor = {idSupervisorInt}
+                                      AND {BuildEmpleadoReporteSql("e")}
+                                      AND e.id_posicion = {Employees.POSICION_PROMOTOR}
+                                      {UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado")}
                                   	GROUP BY 
                                     e.id_empleado,
+                                    e.id_supervisor,
                                     concat(e.nombre ,  ' ' , e.primer_apellido , ' ' , e.segundo_apellido), 
                                     c.porcentaje ";
 
                 using (SqlDataAdapter adp = new SqlDataAdapter(query, conn))
                 {
+                    AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                     Utils.Log("\nMétodo-> " +
                     System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
@@ -1565,7 +1823,9 @@ namespace Plataforma.pages
 
                             if (item.Falla > 0)
                             {
-                                item.PorcentajeFalla = item.DebeEntregar / item.Falla;
+                                item.PorcentajeFalla = item.DebeEntregar > 0
+                                    ? (item.Falla / item.DebeEntregar) * 100
+                                    : 0;
                                 item.PorcentajeFallaFormateadoMx = item.PorcentajeFalla.ToString("#.##") + "%";
                             }
                             else
@@ -1605,7 +1865,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static List<Gasto> GetItemsGastos(string path, string idSupervisor, string fechaInicial, string fechaFinal)
+        public static List<Gasto> GetItemsGastos(string path, string idUsuario, string idSupervisor, string fechaInicial, string fechaFinal)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
@@ -1616,16 +1876,33 @@ namespace Plataforma.pages
 
             try
             {
+                if (!TienePermisoReporte(path, idUsuario))
+                {
+                    return null;
+                }
+
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!TryGetEmpleadoEnAlcance(scope, conn, idSupervisor, Employees.POSICION_SUPERVISOR, out var idSupervisorInt))
+                {
+                    return items;
+                }
+
+                if (!TryGetReportDateRange(fechaInicial, fechaFinal, out var fechaInicialDate, out var fechaFinalExclusive))
+                {
+                    return items;
+                }
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT id, concepto, monto, id_usuario, id_empleado,
                                 FORMAT(fecha, 'dd/MM/yyyy') fecha 
-                                FROM gasto " +
-                                 @" WHERE (fecha >= '" + fechaInicial + @"' AND fecha <= '" + fechaFinal + @"')   
-                                AND id_empleado = " + idSupervisor + @"
+                                FROM gasto
+                                WHERE " + BuildDateRangeSql("fecha") + @"
+                                AND id_empleado = " + idSupervisorInt + @"
                                 ORDER BY id ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
+                AddDateRangeParameters(adp, fechaInicialDate, fechaFinalExclusive);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");

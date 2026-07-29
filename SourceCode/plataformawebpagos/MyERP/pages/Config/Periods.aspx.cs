@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
-using Plataforma.Clases;
+﻿using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -71,7 +66,7 @@ namespace Plataforma.pages
                         item = new Periodo();
 
                         item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
-                        
+
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
                         item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
 
@@ -140,7 +135,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@valor_periodo", item.ValorPeriodo);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
-   
+
                 cmd.Parameters.AddWithValue("@id", item.IdPeriodo);
 
 
@@ -210,7 +205,7 @@ namespace Plataforma.pages
                         Periodo item = new Periodo();
                         item.IdPeriodo = int.Parse(ds.Tables[0].Rows[i]["id_periodo"].ToString());
                         item.ValorPeriodo = int.Parse(ds.Tables[0].Rows[i]["valor_periodo"].ToString());
-                       
+
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";

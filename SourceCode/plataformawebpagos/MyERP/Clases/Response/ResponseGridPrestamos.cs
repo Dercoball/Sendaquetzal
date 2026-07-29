@@ -19,7 +19,11 @@ namespace Plataforma.Clases
         { get; set; }
         public DateTime? fecha_ultima_solicitud
         { get; set; }
-        public int NoRechazados 
+        public string PromotorAsignado
+        { get; set; }
+
+        // Compat: conteo de rechazos (ya no se muestra en UI, pero evita errores si hay JS cacheado)
+        public int NoRechazados
         { get; set; }
         public string Aval
         { get; set; }

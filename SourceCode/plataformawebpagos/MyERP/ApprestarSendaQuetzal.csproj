@@ -156,6 +156,13 @@
     <Content Include="flyway\migrations\V5__InversioneseInversio.sql" />
     <Content Include="flyway\migrations\V7__AlterTableActivo.sql" />
     <Content Include="flyway\migrations\V6__AlterTableParoeFestivo.sql" />
+    <Content Include="flyway\migrations\V8__Cobranza.sql" />
+    <Content Include="flyway\migrations\V9__CobranzaFase2.sql" />
+    <Content Include="flyway\migrations\V10__CobranzaReglasConfirmadas.sql" />
+    <Content Include="flyway\migrations\V11__CobranzaRolGerente.sql" />
+    <Content Include="flyway\migrations\V12__CobranzaGerenteSoloCobranza.sql" />
+    <Content Include="flyway\migrations\V13__PuestoRecursosHumanos.sql" />
+    <Content Include="flyway\migrations\V14__CobranzaMultaSemanaExtra.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />
@@ -286,6 +293,9 @@
     <Content Include="js\app\loans\loanlist.js" />
     <Content Include="js\app\loans\loans.js" />
     <Content Include="js\app\loans\paymentsOverdue.js" />
+    <Content Include="js\app\cobranza\cartera.js" />
+    <Content Include="js\app\cobranza\folios.js" />
+    <Content Include="js\app\cobranza\reporte.js" />
     <Content Include="js\app\tutorials.js" />
     <Content Include="js\app\investors\dashboard.js" />
     <Content Include="js\app\investors\investments.js" />
@@ -376,6 +386,9 @@
     <Content Include="pages\Controles\UcDocumentacion.ascx" />
     <Content Include="pages\Controles\UcCliente.ascx" />
     <Content Include="pages\Loans\PaymentsOverdue.aspx" />
+    <Content Include="pages\Cobranza\Cartera.aspx" />
+    <Content Include="pages\Cobranza\Folios.aspx" />
+    <Content Include="pages\Cobranza\Reporte.aspx" />
     <Content Include="pages\Tutorials.aspx" />
     <Content Include="pages\Assets\Calendar.aspx" />
     <Content Include="pages\Assets\DeliveryMaterials.aspx" />
@@ -1365,6 +1378,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clases\CategoriaMateriales.cs" />
+    <Compile Include="Clases\CobranzaCuenta.cs" />
+    <Compile Include="Clases\CobranzaAsignacion.cs" />
+    <Compile Include="Clases\CobranzaReglaComision.cs" />
+    <Compile Include="Clases\CobranzaCobro.cs" />
+    <Compile Include="Clases\CobranzaFolio.cs" />
+    <Compile Include="Clases\CobranzaCanalPago.cs" />
+    <Compile Include="Clases\CobranzaResumen.cs" />
     <Compile Include="Clases\Enums\EStatusInversion.cs" />
     <Compile Include="Clases\MaterialEntrega.cs" />
     <Compile Include="Clases\Activo.cs" />
@@ -1461,6 +1481,27 @@
     </Compile>
     <Compile Include="pages\Loans\PaymentsOverdue.aspx.designer.cs">
       <DependentUpon>PaymentsOverdue.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Cobranza\Cartera.aspx.cs">
+      <DependentUpon>Cartera.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Cobranza\Cartera.aspx.designer.cs">
+      <DependentUpon>Cartera.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Cobranza\Folios.aspx.cs">
+      <DependentUpon>Folios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Cobranza\Folios.aspx.designer.cs">
+      <DependentUpon>Folios.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="pages\Cobranza\Reporte.aspx.cs">
+      <DependentUpon>Reporte.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="pages\Cobranza\Reporte.aspx.designer.cs">
+      <DependentUpon>Reporte.aspx</DependentUpon>
     </Compile>
     <Compile Include="pages\Tutorials.aspx.cs">
       <DependentUpon>Tutorials.aspx</DependentUpon>

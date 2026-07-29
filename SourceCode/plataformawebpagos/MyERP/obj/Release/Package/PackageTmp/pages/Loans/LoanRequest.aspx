@@ -136,8 +136,7 @@
                                                     <input id="dtpFechaUltimaPrestamoMinimoBusqueda" type="date" class="form-control w-100 mt-2" />
                                                 </td>
                                                 <td>
-                                                    <input id="txtRechazosPrestamoMaximaBusqueda" type="number" class="form-control w-100" placeholder="Rechazos max." />
-                                                    <input id="txtRechazosPrestamoMinimoBusqueda" type="number" class="form-control w-100 mt-2" placeholder="Rechazo min." />
+                                                    <input id="txtPromotorBusqueda" type="text" class="form-control w-100" placeholder="Promotor asignado" />
                                                 </td>
                                                  <td>
                                                     <input id="txtAvalPrestamoMaximaBusqueda" type="number" class="form-control w-100" placeholder="Aval max." />
@@ -156,7 +155,7 @@
                                                 <th>Monto</th>
                                                 <th>Primera solicitud</th>
                                                 <th>Ultima solicitud</th>
-                                                <th>Rechazo</th>
+                                                <th>Promotor asignado</th>
                                                 <th>Aval</th>
                                                 <th>Status</th>
                                                 <th>Acciones</th>

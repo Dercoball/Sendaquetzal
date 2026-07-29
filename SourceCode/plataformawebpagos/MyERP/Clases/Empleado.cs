@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
-    public class Empleado{ 
+    public class Empleado
+    {
 
         public int IdEmpleado;
         public String CURP;
@@ -22,7 +20,7 @@ namespace Plataforma.Clases
 
         public String AMaterno;
         public String Login;
-        
+
         public String APaterno;
         public String NombreCompleto;
         public String NombreCompletoSupervisor;
@@ -30,7 +28,7 @@ namespace Plataforma.Clases
         public String NombreCompletoAval;
         public DateTime FechaIngreso;
         public String FechaNacimiento;
-        
+
         //  fechas dd/mm/aaaa
         public String FechaIngresoMx;
         public String FechaNacimientoMx;

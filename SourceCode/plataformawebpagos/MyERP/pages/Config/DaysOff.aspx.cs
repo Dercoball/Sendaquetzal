@@ -1,14 +1,11 @@
 ﻿using Dapper;
-using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
@@ -64,7 +61,7 @@ namespace Plataforma.pages
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_puesto =  " + id);
 
-                item = conn.QueryFirstOrDefault<DiaDeParo>(query, new {id = id});
+                item = conn.QueryFirstOrDefault<DiaDeParo>(query, new { id = id });
 
                 return item;
             }
@@ -132,7 +129,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@fecha_inicio", item.FechaInicio);
                 cmd.Parameters.AddWithValue("@fecha_fin", item.FechaFin);
                 cmd.Parameters.AddWithValue("@id_tipo_paro", item.IdTipoParo);
-				cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza == 0 ? (object)DBNull.Value : item.Plaza);
+                cmd.Parameters.AddWithValue("@id_plaza", item.IdPlaza == 0 ? (object)DBNull.Value : item.Plaza);
 
                 cmd.Parameters.AddWithValue("@id", item.IdDiasParo);
 
@@ -180,7 +177,7 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
-				string query = @"SELECT 
+                string query = @"SELECT 
 	                            dp.id_dias_paro IdDiasParo,
 	                            dp.nota Nota,
 	                            dp.fecha_inicio FechaInicio,

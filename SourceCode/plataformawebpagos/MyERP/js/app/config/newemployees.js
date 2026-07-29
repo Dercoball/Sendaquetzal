@@ -16,6 +16,21 @@ const POSICION_COORDINADOR = 2;
 const POSICION_EJECUTIVO = 3;
 const POSICION_SUPERVISOR = 4;
 const POSICION_PROMOTOR = 5;
+const POSICION_CAPTURISTA = 9;
+const POSICION_GERENTE_COBRANZA = 10;
+const POSICION_RECURSOS_HUMANOS = 11;
+
+/* Puestos administrativos: no cuelgan de la jerarquía de ventas, por lo que
+   Plaza, Supervisor y Ejecutivo son opcionales al darlos de alta. */
+const PUESTOS_ADMINISTRATIVOS = [
+    POSICION_DIRECTOR,
+    POSICION_CAPTURISTA,
+    POSICION_GERENTE_COBRANZA,
+    POSICION_RECURSOS_HUMANOS
+];
+
+const esPuestoAdministrativo = (idPosicion) =>
+    PUESTOS_ADMINISTRATIVOS.indexOf(Number(idPosicion) || 0) >= 0;
 
 const employee = {
     idSeleccionado: -1,
@@ -40,7 +55,42 @@ const employee = {
             } else {
                 $('#dtpFechaIngreso').val(moment().format('YYYY-MM-DD'));
             }
+            employee.aplicarReglasPorPuesto();
         });
+
+        //  Al cambiar el puesto se ajusta qué campos son obligatorios.
+        $('#cboPuesto').off('change.puesto').on('change.puesto', () => employee.aplicarReglasPorPuesto());
+    },
+
+    /* ========== Reglas por puesto ==========
+       Los puestos administrativos (Director, Capturista, Gerente de Cobranza,
+       Recursos Humanos) no requieren Plaza, Supervisor ni Ejecutivo. */
+    aplicarReglasPorPuesto: () => {
+        const idPuesto = Number($('#cboPuesto').val() || 0);
+        const esAdmin = esPuestoAdministrativo(idPuesto);
+        const campos = ['#cboPlaza', '#cboSupervisor', '#cboEjecutivo'];
+
+        campos.forEach((sel) => {
+            const $el = $(sel);
+            if (!$el.length) return;
+
+            if (esAdmin) {
+                $el.removeAttr('required').removeAttr('data-required-error');
+                //  limpia el mensaje de validación que hubiera quedado
+                $el.closest('.form-group, .col-lg-4').find('.help-block').empty();
+                $el.closest('.form-group, .col-lg-4').removeClass('has-error has-danger');
+            } else {
+                $el.attr('required', 'required').attr('data-required-error', 'Requerido');
+            }
+        });
+
+        //  Etiqueta de ayuda para que el usuario sepa por qué no se piden
+        let $nota = $('#notaPuestoAdmin');
+        if (!$nota.length) {
+            $nota = $('<small id="notaPuestoAdmin" class="text-muted d-block mt-1"></small>');
+            $('#cboPuesto').closest('.col-lg-4').append($nota);
+        }
+        $nota.text(esAdmin ? 'Puesto administrativo: Plaza, Supervisor y Ejecutivo son opcionales.' : '');
     },
 
     /* ========== Utils ========== */
@@ -446,7 +496,8 @@ const employee = {
                 $('#cboPuesto').focus();
                 return;
             }
-            if (vPlaza <= 0) {
+            //  La plaza sólo es obligatoria para puestos operativos.
+            if (vPlaza <= 0 && !esPuestoAdministrativo(vPuesto)) {
                 window.utils?.toast?.('Selecciona una Plaza válida.', 'warning');
                 $('#cboPlaza').focus();
                 return;

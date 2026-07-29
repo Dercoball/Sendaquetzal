@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -88,10 +85,10 @@ namespace Plataforma.pages
 
 
                         string botones = "";
-                        
+
                         //botones += "<button  onclick='tiposUsuario.editar(" + item.IdPosicion + ")'  class='btn btn-outline-primary'> <span class='fa fa-edit mr-1'></span>Editar</button>";
                         //botones += "&nbsp; <button  onclick='tiposUsuario.eliminar(" + item.IdPosicion + ")'   class='btn btn-outline-primary'> <span class='fa fa-remove mr-1'></span>Eliminar</button>";
-                        
+
                         botones += "&nbsp; <button  onclick='tiposUsuario.permisos(" + item.IdPosicion + ", \"" + item.Nombre + "\")'   class='btn btn-outline-primary mr-1'> <span class='fa fa-key'></span> Permisos</button>";
 
                         item.Accion = botones;

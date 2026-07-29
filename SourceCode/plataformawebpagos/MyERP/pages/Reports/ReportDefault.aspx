@@ -34,7 +34,7 @@
 <body>
 
 
-    <form class="form-signin" id="form1" runat="server" action="EmployeeEvaluation.aspx">
+    <form class="form-signin" id="form1" runat="server">
         <asp:HiddenField ID="txtUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
@@ -755,12 +755,10 @@
 
 
     <script src="../../js/validator.js"></script>
+    <script src="../../js/jspdf.min.js"></script>
+    <script src="../../js/html2canvas.min.js"></script>
     <script src="../../js/app/reports/fault_report.js"></script>
     <script src="../../js/app/general.js"></script>
-
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
     <!-- Toastr style -->
     <link href="../../css/toastr.min.css" rel="stylesheet" />

@@ -3,14 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
@@ -546,7 +540,7 @@ namespace Plataforma.pages
 
                 celular = "whatsapp:+521" + celular;
 
-                msg = msg.Replace("\n","");
+                msg = msg.Replace("\n", "");
                 msg = msg.Trim();
                 msg = msg.Replace("{{1}}", nombre);
 

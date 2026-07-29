@@ -1,14 +1,11 @@
 ﻿using Dapper;
-using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
@@ -99,9 +96,10 @@ namespace Plataforma.pages
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 //adp.SelectCommand.Parameters.AddWithValue("@id_usuario", idUsuario);
 
-                items.ForEach(item => {
+                items.ForEach(item =>
+                {
                     item.Estatus = item.FechaBaja.HasValue ? "Inactivo" : "Activo";
-                
+
                 });
 
 
@@ -253,7 +251,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_empleado", item.IdEmpleado);
                 cmd.Parameters.AddWithValue("@id_categoria", item.IdCategoria);
                 cmd.Parameters.AddWithValue("@fecha_ingreso", item.FechaIngreso);
-                cmd.Parameters.AddWithValue("@fecha_baja", !item.FechaBaja.HasValue ?  (object)DBNull.Value : item.FechaBaja);
+                cmd.Parameters.AddWithValue("@fecha_baja", !item.FechaBaja.HasValue ? (object)DBNull.Value : item.FechaBaja);
 
                 cmd.Parameters.AddWithValue("@id", item.IdActivo);
 

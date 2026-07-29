@@ -6,16 +6,16 @@
     public class StatusInversion
     {
         public int id_status_inversion
-        { 
+        {
             get; set;
         }
         public string nombre
-        { 
-            get; set; 
+        {
+            get; set;
         }
         public string color
         {
-            get; set; 
+            get; set;
         }
     }
 }

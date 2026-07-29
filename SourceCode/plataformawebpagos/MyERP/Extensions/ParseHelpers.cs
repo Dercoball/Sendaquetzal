@@ -22,7 +22,7 @@ namespace Plataforma.Extensions
         /// </summary>
         /// <param name="ps_valor"></param>
         /// <returns></returns>
-        public static float  ParseStringToFloat(this string ps_valor) 
+        public static float ParseStringToFloat(this string ps_valor)
         {
             var lf_valor = 0f;
             return !float.TryParse(ps_valor, out lf_valor)

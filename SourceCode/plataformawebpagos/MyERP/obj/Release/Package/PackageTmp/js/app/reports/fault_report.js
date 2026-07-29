@@ -37,9 +37,9 @@ const report = {
         $('#txtFechaSemana').val(report.fechaHoy());
 
         const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
-        const isSupervisor = userType === utils.POSICION_SUPERVISOR;
+        const hasFixedPlaza = userType === utils.POSICION_SUPERVISOR || userType === utils.POSICION_DIRECTOR;
 
-        report.loadComboPlaza(isSupervisor).then(() => {
+        report.loadComboPlaza(hasFixedPlaza).then(() => {
             const plazaSeleccionada = document.getElementById('comboPlaza').value || "-1";
             report.loadComboEjecutivosByPlaza(plazaSeleccionada, '#comboEjecutivo');
         });
@@ -65,50 +65,33 @@ const report = {
     },
 
     fechasHoy(yearSelected, monthSelected, daySelected) {
-        //console.log('fechasHoy');
-        monthSelected--;
+        const pad = (value) => value.toString().padStart(2, '0');
+        const formatDate = (value) => `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`;
+        const getIsoDay = (value) => {
+            const day = value.getDay();
+            return day === 0 ? 7 : day;
+        };
 
-        //  fecha (final)
+        const selectedDate = new Date(Number(yearSelected), Number(monthSelected) - 1, Number(daySelected), 12);
+        const isoDay = getIsoDay(selectedDate);
 
-        let endWeekDay = new Date(yearSelected, monthSelected, daySelected);
-        let end_ = endWeekDay.getDay() + 1
+        let startWeekDay = new Date(selectedDate);
+        startWeekDay.setDate(selectedDate.getDate() - isoDay + 1);
 
-        endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
+        let endWeekDay = new Date(startWeekDay);
+        endWeekDay.setDate(startWeekDay.getDate() + 6);
 
-        let dayMonth = endWeekDay.getDate();
-        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
+        // Semana ISO: la semana pertenece al año del jueves de esa semana.
+        const isoReferenceDate = new Date(startWeekDay);
+        isoReferenceDate.setDate(startWeekDay.getDate() + 3);
 
-        let month = (endWeekDay.getMonth() + 1);
-        month = month.toString().length === 1 ? `0${month}` : month;
+        const firstThursday = new Date(isoReferenceDate.getFullYear(), 0, 4, 12);
+        firstThursday.setDate(firstThursday.getDate() - getIsoDay(firstThursday) + 4);
 
-        report.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
-
-        //  fecha inicial
-        let startWeekDay = new Date(yearSelected, monthSelected, daySelected);
-        startWeekDay.setDate(startWeekDay.getDate() - startWeekDay.getDay() + 1);
-
-        let startDayMonth = startWeekDay.getDate();
-        startDayMonth = startDayMonth.toString().length === 1 ? `0${startDayMonth}` : startDayMonth;
-
-        let startMonth = (startWeekDay.getMonth() + 1);
-        startMonth = startMonth.toString().length === 1 ? `0${startMonth}` : startMonth;
-
-        let startYear = (startWeekDay.getFullYear());
-
-
-        //  Week number
-        let startDate = new Date(startWeekDay.getFullYear(), 0, 1);
-        let days = Math.floor((startWeekDay - startDate) / (24 * 60 * 60 * 1000));
-
-        let weekNumber = Math.ceil(days / 7);
-        //console.log(`weekNumber = ${weekNumber}`);
-        //
-        report.numeroSemana = weekNumber;
-        report.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
-
-
-        //console.log(`fechaInicial ${report.fechaInicial}`);
-        //console.log(`fechaFinal ${report.fechaFinal}`);
+        const diffDays = Math.round((isoReferenceDate - firstThursday) / (24 * 60 * 60 * 1000));
+        report.numeroSemana = 1 + Math.floor(diffDays / 7);
+        report.fechaInicial = formatDate(startWeekDay);
+        report.fechaFinal = formatDate(endWeekDay);
 
     },
 
@@ -116,6 +99,7 @@ const report = {
 
         var params = {};
         params.path = "connbd";
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPlaza = idPlaza;
         params = JSON.stringify(params);
 
@@ -152,6 +136,7 @@ const report = {
 
         var params = {};
         params.path = "connbd";
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idEjecutivo = idEjecutivo;
         params = JSON.stringify(params);
 
@@ -188,6 +173,7 @@ const report = {
 
         var params = {};
         params.path = "connbd";
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idSupervisor = idSupervisor;
         params = JSON.stringify(params);
 
@@ -219,7 +205,7 @@ const report = {
         });
     },
 
-    loadComboPlaza: (isSupervisor) => {
+    loadComboPlaza: (hasFixedPlaza) => {
 
         return new Promise((resolve) => {
             var params = {};
@@ -247,8 +233,8 @@ const report = {
 
                     $('#comboPlaza').html(opcion);
 
-                    // Si es supervisor, fijar y bloquear su plaza actual
-                    if (isSupervisor) {
+                    // Director y supervisor quedan limitados a su plaza
+                    if (hasFixedPlaza) {
                         const plazaHiddenEl = document.getElementById('txtIdPlaza');
                         const plazaHidden = plazaHiddenEl ? plazaHiddenEl.value : "";
                         if (plazaHidden && plazaHidden !== "-1" && plazaHidden !== "0") {
@@ -294,6 +280,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 //console.log(data);
@@ -349,6 +336,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 //console.log(data);
@@ -398,6 +386,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
 
@@ -424,6 +413,7 @@ const report = {
 
         let params = {};
         params.path = "connbd";
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.id = id;
         params = JSON.stringify(params);
 
@@ -437,6 +427,11 @@ const report = {
             success: function (msg) {
 
                 let item = msg.d;
+
+                if (!item || Number(item.IdEmpleado || 0) <= 0) {
+                    $('#divLoading').hide();
+                    return;
+                }
 
                 //console.log(`Promotor data = ${item}`);
 
@@ -465,43 +460,6 @@ const report = {
 
     },
 
-    getSubtotal(totalEntregar, totalFalla, htmlControl) {
-
-
-        let params = {};
-        params.path = "connbd";
-        params.totalEntregar = totalEntregar;
-        params.totalFalla = totalFalla;
-        params = JSON.stringify(params);
-
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Reports/ReportDefault.aspx/GetSubtotal",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
-
-                let data = msg.d;
-
-                $(`${htmlControl}`).text(data.totalStr);
-
-                return data.total;
-
-
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-
-
-            }
-
-        });
-
-
-    },
-
-
     getTableSemanaExtra(idPromotor, idStatus, fechaInicial, fechaFinal) {
 
 
@@ -528,6 +486,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 console.log(data);
@@ -590,6 +549,11 @@ const report = {
 
                 let data = msg.d;
 
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                    return;
+                }
+
 
                 console.log(data);
 
@@ -651,6 +615,11 @@ const report = {
 
                 let data = msg.d;
 
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                    return;
+                }
+
 
                 console.log(data);
 
@@ -709,6 +678,11 @@ const report = {
             success: function (msg) {
 
                 let data = msg.d;
+
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                    return;
+                }
 
 
                 console.log(data);
@@ -769,6 +743,11 @@ const report = {
             success: function (msg) {
 
                 let data = msg.d;
+
+                if (data == null) {
+                    window.location = "../../pages/Index.aspx";
+                    return;
+                }
 
 
                 console.log(data);
@@ -833,6 +812,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 console.log(data);
@@ -885,6 +865,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 console.log(data);
@@ -934,6 +915,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
 
@@ -965,6 +947,7 @@ const report = {
 
                 html = '';
                 let total = 0;
+                let totalDebeEntregar = 0;
                 data.forEach((item, i) => {
                     html += `<tr>`;
                     html += `<td>${item.Promotor}</td>`;
@@ -972,10 +955,12 @@ const report = {
                     html += `</tr>`;
 
                     total += item.Total2;
+                    totalDebeEntregar += item.Total;
                 });
                 $('#tablePromotoraTotal tbody').empty().append(html);
 
                 $('#cell_ConcentradoFondo').html(number_format(total, 2, '$'));
+                $('#cell_ConcentradoDebeEntregar').html(number_format(totalDebeEntregar, 2, '$'));
 
                 report.totalPromotor = total;
 
@@ -1018,6 +1003,7 @@ const report = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
 
@@ -1155,6 +1141,7 @@ const report = {
                     //  si no tiene permisos
                     if (valores == null) {
                         window.location = "../../pages/Index.aspx";
+                        return;
                     }
 
                     if (parseInt(valores.CodigoError) === 0) {
@@ -1225,6 +1212,7 @@ const report = {
                     //  si no tiene permisos
                     if (valores == null) {
                         window.location = "../../pages/Index.aspx";
+                        return;
                     }
 
                     if (parseInt(valores.CodigoError) === 0) {

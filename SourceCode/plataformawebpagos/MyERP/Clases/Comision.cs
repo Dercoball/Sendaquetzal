@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Plataforma.Clases
+﻿namespace Plataforma.Clases
 {
     public class Comision
     {
@@ -18,8 +13,8 @@ namespace Plataforma.Clases
         public int Activo;
         public string ActivoStr;
         public int Eliminado;
-        
-        
+
+
 
         public string Accion;
 

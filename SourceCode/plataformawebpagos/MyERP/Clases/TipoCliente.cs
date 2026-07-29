@@ -2,47 +2,47 @@
 {
     public class TipoCliente
     {
-        public int IdTipoCliente 
-        { 
+        public int IdTipoCliente
+        {
             get; set;
         }
-        public string NombreTipoCliente 
+        public string NombreTipoCliente
         {
-            get; set; 
+            get; set;
         }
-        public float PrestamoInicialMaximo 
-        { 
-            get; set; 
-        }
-        public float PorcentajeSemanal 
+        public float PrestamoInicialMaximo
         {
-            get; set; 
+            get; set;
+        }
+        public float PorcentajeSemanal
+        {
+            get; set;
         }
         public int SemanasAPrestar
         {
             get; set;
         }
-        public float GarantiasPorMonto 
-        {
-            get; set; 
-        }
-        public string FechasDePago 
-        {
-            get; set; 
-        }
-        public int FechaPagoLunes 
+        public float GarantiasPorMonto
         {
             get; set;
         }
-        public int FechaPagoMartes 
+        public string FechasDePago
         {
             get; set;
         }
-        public int FechaPagoMiercoles 
-        { 
+        public int FechaPagoLunes
+        {
             get; set;
         }
-        public int FechaPagoJueves 
+        public int FechaPagoMartes
+        {
+            get; set;
+        }
+        public int FechaPagoMiercoles
+        {
+            get; set;
+        }
+        public int FechaPagoJueves
         {
             get; set;
         }
@@ -50,27 +50,27 @@
         {
             get; set;
         }
-        public int FechaPagoSabado 
+        public int FechaPagoSabado
         {
             get; set;
         }
-        public int FechaPagoDomingo 
+        public int FechaPagoDomingo
         {
             get; set;
         }
-        public float CantidadParaRenovar 
-        {
-            get; set; 
-        }
-        public int SemanasExtra 
-        {
-            get; set;
-        }  
-        public string ActivoSemanaExtra 
+        public float CantidadParaRenovar
         {
             get; set;
         }
-        public string Accion 
+        public int SemanasExtra
+        {
+            get; set;
+        }
+        public string ActivoSemanaExtra
+        {
+            get; set;
+        }
+        public string Accion
         {
             get; set;
         }

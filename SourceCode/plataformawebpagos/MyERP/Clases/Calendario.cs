@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
@@ -15,10 +12,10 @@ namespace Plataforma.Clases
         public DateTime FechaFinal;
 
         public bool EsLaboral;
-		public string Estatus;
+        public string Estatus;
         public string FechaMx;
         public string FechaLarga;
-        
+
         //public string FechaFinal;
         public string Tipo;
 

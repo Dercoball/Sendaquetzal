@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
-using Plataforma.Clases;
+﻿using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -141,7 +136,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@activo", item.Activo);
-   
+
                 cmd.Parameters.AddWithValue("@id", item.IdPlaza);
 
 
@@ -211,7 +206,7 @@ namespace Plataforma.pages
                         Plaza item = new Plaza();
                         item.IdPlaza = int.Parse(ds.Tables[0].Rows[i]["id_plaza"].ToString());
                         item.Nombre = (ds.Tables[0].Rows[i]["nombre"].ToString());
-                       
+
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
                         item.ActivoStr = (item.Activo == 1) ? "<span class='fa fa-check' aria-hidden='true'></span>" : "";

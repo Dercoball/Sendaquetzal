@@ -7,7 +7,7 @@ namespace Plataforma.Clases
     /// </summary>
     public class PrestamoRequest
     {
-        public List<Documento> DocumentosAval 
+        public List<Documento> DocumentosAval
         { get; set; }
         public List<Documento> DocumentosAval2 { get; set; }
         public List<Documento> DocumentosCliente

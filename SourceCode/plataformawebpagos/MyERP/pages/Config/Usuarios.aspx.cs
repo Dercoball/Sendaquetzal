@@ -7,10 +7,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -37,7 +34,7 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
             List<Usuario> items = new List<Usuario>();
 
-          
+
 
             try
             {
@@ -105,7 +102,7 @@ namespace Plataforma.pages
             }
 
         }
-       [WebMethod]
+        [WebMethod]
         public static string GetListaEmpleados(string path, string idUsuario, string like)
         {
 
@@ -262,7 +259,7 @@ namespace Plataforma.pages
                     {
                         item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
-                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());                        
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         item.NombreTipoUsuario = ds.Tables[0].Rows[i]["nombre_tipo_usuario"].ToString();
                         item.Login = ds.Tables[0].Rows[i]["login"].ToString();
 
@@ -320,7 +317,7 @@ namespace Plataforma.pages
                     {
                         item.IdUsuario = int.Parse(ds.Tables[0].Rows[i]["id_usuario"].ToString());
                         item.IdTipoUsuario = int.Parse(ds.Tables[0].Rows[i]["id_tipo_usuario"].ToString());
-                        item.IdEmpleado= int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
+                        item.IdEmpleado = int.Parse(ds.Tables[0].Rows[i]["id_empleado"].ToString());
                         item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
                         item.Login = ds.Tables[0].Rows[i]["login"].ToString();
                         item.Password = ds.Tables[0].Rows[i]["password"].ToString();
@@ -405,23 +402,23 @@ namespace Plataforma.pages
 
                     sql = " UPDATE usuario " +
                           " SET id_tipo_usuario = @id_tipo_usuario, nombre = @nombre, login = @login, " +
-                          "email = @email, telefono = @telefono  " + proveedorSql + 
+                          "email = @email, telefono = @telefono  " + proveedorSql +
                           " WHERE id_usuario = @id ";
 
                 }
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id_tipo_usuario",  usuario.IdTipoUsuario);
-                cmd.Parameters.AddWithValue("@nombre",  usuario.Nombre);
-                cmd.Parameters.AddWithValue("@login",  usuario.Login);
-                cmd.Parameters.AddWithValue("@email",  usuario.Email);
-                cmd.Parameters.AddWithValue("@telefono",  usuario.Telefono);
-                cmd.Parameters.AddWithValue("@id",  usuario.IdUsuario);
+                cmd.Parameters.AddWithValue("@id_tipo_usuario", usuario.IdTipoUsuario);
+                cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
+                cmd.Parameters.AddWithValue("@login", usuario.Login);
+                cmd.Parameters.AddWithValue("@email", usuario.Email);
+                cmd.Parameters.AddWithValue("@telefono", usuario.Telefono);
+                cmd.Parameters.AddWithValue("@id", usuario.IdUsuario);
 
-          
-                cmd.Parameters.AddWithValue("@id_empleado",usuario.IdEmpleado);
-                
+
+                cmd.Parameters.AddWithValue("@id_empleado", usuario.IdEmpleado);
+
 
 
 
@@ -531,7 +528,7 @@ namespace Plataforma.pages
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
                 adp.SelectCommand.Parameters.AddWithValue("@usuarioSuperAdmin", Usuario.TIPO_USUARIO_SUPER_ADMIN);
-            
+
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 

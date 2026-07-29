@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Plataforma.Clases
+﻿namespace Plataforma.Clases
 {
     public class Usuario
     {
         public int IdUsuario;
         public int IdTipoUsuario;
-        public int IdProveedor;        
+        public int IdProveedor;
         public int IdEmpleado;
         public string Nombre;
         public string NombreTipoUsuario;
@@ -27,6 +22,9 @@ namespace Plataforma.Clases
 
         public const int TIPO_USUARIO_SUPER_ADMIN = 6;
         public const int TIPO_USUARIO_DIRECTOR = 1;
+        public const int TIPO_USUARIO_CAPTURISTA = 9;
+        public const int TIPO_USUARIO_GESTOR = 7;               //  Gestor de cobranza
+        public const int TIPO_USUARIO_GERENTE_COBRANZA = 10;    //  Gerente de cobranza
 
 
     }

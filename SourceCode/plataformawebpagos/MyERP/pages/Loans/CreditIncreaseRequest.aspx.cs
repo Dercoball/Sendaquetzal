@@ -3,12 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -69,7 +64,13 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (scope.IsDirector && scope.IdPlaza <= 0)
+                {
+                    return items;
+                }
 
+                var scopeSql = UserVisibilityScope.BuildLoanEmployeeScopeSql(scope, "pre.id_empleado");
 
                 DataSet ds = new DataSet();
                 string query = @" 
@@ -82,7 +83,9 @@ namespace Plataforma.pages
 		                    JOIN empleado promotor ON (promotor.id_empleado = pre.id_empleado)
 		                    JOIN empleado supervisor ON (supervisor.id_empleado = promotor.id_supervisor)
                             JOIN plaza p ON (p.id_plaza = promotor.id_plaza)
-		                    WHERE s.id_status_solicitud_aumento_credito = 1 ORDER BY s.id_solicitud_aumento_credito ";
+		                    WHERE s.id_status_solicitud_aumento_credito = 1 "
+                            + scopeSql +
+                            " ORDER BY s.id_solicitud_aumento_credito ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 

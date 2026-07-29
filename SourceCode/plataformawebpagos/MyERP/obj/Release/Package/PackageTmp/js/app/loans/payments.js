@@ -9,6 +9,21 @@ let dataTable;
 
 const payments = {
 
+    parseDecimalInputValue: (value) => {
+        const normalized = String(value ?? '').trim().replace(',', '.');
+        if (normalized === '') return NaN;
+
+        const parsed = Number(normalized);
+        if (!Number.isFinite(parsed)) return NaN;
+
+        return Math.round(parsed * 100) / 100;
+    },
+
+    formatDecimalInputValue: (value) => {
+        const parsed = payments.parseDecimalInputValue(value);
+        return Number.isNaN(parsed) ? '' : parsed.toFixed(2);
+    },
+
 
     init: () => {
 
@@ -30,6 +45,7 @@ const payments = {
 
         // Forzar y bloquear filtros si es promotor
         const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        const hasFixedPlaza = userType === utils.POSICION_SUPERVISOR || userType === utils.POSICION_DIRECTOR;
         payments.loadComboPlaza()
             .then(() => {
                 if (userType === utils.POSICION_PROMOTOR) {
@@ -39,12 +55,31 @@ const payments = {
                     $('#cmbPromotor').val(0).prop('disabled', true);
                     $('#btnFiltrar').prop('disabled', true);
                 }
+                if (hasFixedPlaza) {
+                    const hiddenPlazaEl = document.getElementById('txtIdPlaza');
+                    const plazaActual = hiddenPlazaEl ? parseInt(hiddenPlazaEl.value || '0', 10) : 0;
+                    if (plazaActual > 0) {
+                        $('#cmbPlaza').val(plazaActual);
+                        payments.loadComboEjecutivo();
+                    }
+                    $('#cmbPlaza').prop('disabled', true);
+                }
                 payments.cargarItems();
             })
             .catch(() => {
                 // Si la carga de combos falla, aún así intentamos cargar la tabla
                 payments.cargarItems();
             });
+
+        $('#txtAbono, #txtRecuperado').on('blur', function () {
+            const currentValue = $(this).val();
+            if (currentValue === '') return;
+
+            const formatted = payments.formatDecimalInputValue(currentValue);
+            if (formatted !== '') {
+                $(this).val(formatted);
+            }
+        });
 
         //Filtros personalizados en datatable
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
@@ -99,17 +134,17 @@ const payments = {
                 var createdAt = data[3] || 0; // Our date column in the table
 
                 if (min != "" && max == "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                    min = moment(min, 'YYYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYYY').isSameOrAfter(min)
                 }
                 else if (min != "" && max != "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    max = moment(max, 'YYY-MM-DD');
-                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                    min = moment(min, 'YYYY-MM-DD');
+                    max = moment(max, 'YYYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYYY').isSameOrBefore(max))
                 }
                 else if (min == "" && max != "") {
-                    max = moment(max, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                    max = moment(max, 'YYYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYYY').isSameOrBefore(max)
                 }
                 else
                     return true;
@@ -123,17 +158,17 @@ const payments = {
                 var createdAt = data[4] || 0; // Our date column in the table
 
                 if (min != "" && max == "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                    min = moment(min, 'YYYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYYY').isSameOrAfter(min)
                 }
                 else if (min != "" && max != "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    max = moment(max, 'YYY-MM-DD');
-                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                    min = moment(min, 'YYYY-MM-DD');
+                    max = moment(max, 'YYYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYYY').isSameOrBefore(max))
                 }
                 else if (min == "" && max != "") {
-                    max = moment(max, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                    max = moment(max, 'YYYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYYY').isSameOrBefore(max)
                 }
                 else
                     return true;
@@ -195,6 +230,7 @@ const payments = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 dataTable = $('#table').DataTable({
@@ -392,9 +428,13 @@ const payments = {
 
     },
 
-    view(idPago) {
+    view(idPago, idPrestamo, idCliente) {
 
-        console.log(idPago);
+        if (!idPago || Number(idPago) <= 0) {
+            $('#spnMensajes').html('No se pudo identificar el pago seleccionado.');
+            $('#panelMensajes').modal('show');
+            return;
+        }
 
         $('#frmPago')[0].reset();
 
@@ -403,6 +443,7 @@ const payments = {
         params.path = "connbd";
         params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPago = idPago;
+        params.idPrestamo = idPrestamo;
         params = JSON.stringify(params);
 
         $.ajax({
@@ -415,7 +456,12 @@ const payments = {
             success: function (msg) {
 
                 let data = msg.d;
-                console.log(data);
+
+                if (!data || !data.IdPago) {
+                    $('#spnMensajes').html('No se pudo cargar el pago seleccionado.');
+                    $('#panelMensajes').modal('show');
+                    return;
+                }
 
                 $('#txtCliente').val(data.NombreCliente);
                 $('#txtCliente').attr('data-idcliente', data.IdCliente);
@@ -423,7 +469,7 @@ const payments = {
 
                 $('#txtMontoPrestamo').val(data.MontoPrestamoFormateadoMx);
                 $('#txtSaldo').val(data.SaldoFormateadoMx);
-                $('#txtAbono').val(data.Saldo);
+                $('#txtAbono').val(payments.formatDecimalInputValue(data.Saldo));
 
                 $('#panelTabla').hide();
                 $('#panelForm').show();
@@ -452,8 +498,6 @@ const payments = {
     },
 
     historial: (idPrestamo, numeroSemanaActual) => {
-
-        console.log(`Historial  idPrestamo ${idPrestamo}`);
 
         let params = {};
         params.path = "connbd";
@@ -675,7 +719,9 @@ const payments = {
         endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
 
         let dayMonth = endWeekDay.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
         month = (endWeekDay.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
 
         payments.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
 
@@ -693,16 +739,13 @@ const payments = {
 
         payments.fechaInicial = `${startYear}-${startMonth}-${startDayMonth}`;
 
-
-        console.log(`fechaInicial ${payments.fechaInicial}`);
-        console.log(`fechaFinal ${payments.fechaFinal}`);
-
     },
 
     updatePayment(idPago, idStatus) {
 
         let params = {};
         params.path = "connbd";
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPago = idPago;
         params.idStatus = idStatus;
         params = JSON.stringify(params);
@@ -716,10 +759,12 @@ const payments = {
             dataType: "json",
             async: true,
             success: function (msg) {
-                let valores = msg.d;
-
-                console.log(valores);
-                payments.historial(payments.idPrestamo, payments.numeroSemana);
+                if (Number(msg.d) > 0) {
+                    payments.historial(payments.idPrestamo, payments.numeroSemana);
+                } else {
+                    $('#spnMensajes').html('No se pudo actualizar el estatus del pago.');
+                    $('#panelMensajes').modal('show');
+                }
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
 
@@ -730,26 +775,18 @@ const payments = {
     },
 
     updatePendiente(idPago) {
-        console.log(`updatePendiente`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_PENDIENTE);
     },
 
     updateFalla(idPago) {
-        console.log(`updateFalla`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_FALLA);
     },
 
     updateAbonado(idPago) {
-        console.log(`updateAbonado`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_ABONADO);
     },
 
     updatePagado(idPago) {
-        console.log(`updatePagado`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_PAGADO);
     },
 
@@ -798,13 +835,31 @@ const payments = {
 
             $('.deshabilitable').prop('disabled', true);
 
+            const rawAbono = $('#txtAbono').val();
+            const rawRecuperado = $('#txtRecuperado').val();
+            const parsedAbono = payments.parseDecimalInputValue(rawAbono);
+            const parsedRecuperado = rawRecuperado === '' ? 0 : payments.parseDecimalInputValue(rawRecuperado);
+
+            if (Number.isNaN(parsedAbono) || Number.isNaN(parsedRecuperado)) {
+                $('.deshabilitable').prop('disabled', false);
+                $('#spnMensajes').html('El importe capturado no es válido.');
+                $('#panelMensajes').modal('show');
+                return;
+            }
+
+            $('#txtAbono').val(parsedAbono.toFixed(2));
+
+            if (rawRecuperado !== '') {
+                $('#txtRecuperado').val(parsedRecuperado.toFixed(2));
+            }
+
             let params = {};
             params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPago = payments.idPago;
-            params.abono = Number($('#txtAbono').val());
-            params.recuperado = $('#txtRecuperado').val() === '' ? 0 : Number($('#txtRecuperado').val());
+            params.abono = parsedAbono;
+            params.recuperado = parsedRecuperado;
             params = JSON.stringify(params);
 
 
@@ -819,6 +874,11 @@ const payments = {
                     let valores = msg.d;
 
                     $('.deshabilitable').prop('disabled', false);
+
+                    if (valores == null) {
+                        window.location = "../../pages/Index.aspx";
+                        return;
+                    }
 
                     if (parseInt(valores.CodigoError) === 0) {
 

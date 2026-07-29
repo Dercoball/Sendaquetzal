@@ -3,11 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -20,7 +16,7 @@ namespace Plataforma.pages
 
         }
 
- 
+
 
 
 
@@ -51,9 +47,9 @@ namespace Plataforma.pages
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         Puesto item = new Puesto();
-                        item.IdPuesto = int.Parse(ds.Tables[0].Rows[i]["id_puesto"].ToString());                        
-                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();                        
-                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();                        
+                        item.IdPuesto = int.Parse(ds.Tables[0].Rows[i]["id_puesto"].ToString());
+                        item.Nombre = ds.Tables[0].Rows[i]["nombre"].ToString();
+                        item.Clave = ds.Tables[0].Rows[i]["clave"].ToString();
 
                         item.Activo = int.Parse(ds.Tables[0].Rows[i]["activo"].ToString());
 
@@ -88,7 +84,7 @@ namespace Plataforma.pages
 
         }
 
-      
+
 
         [WebMethod]
         public static DatosSalida Guardar(string path, Puesto item, string accion)
@@ -142,7 +138,7 @@ namespace Plataforma.pages
 
                 salida.MensajeError = "Guardado correctamente";
                 salida.CodigoError = 0;
-                
+
 
             }
             catch (Exception ex)
@@ -164,10 +160,10 @@ namespace Plataforma.pages
 
         }
 
-        
 
 
-       
+
+
 
         [WebMethod]
         public static DatosSalida Eliminar(string path, string id)
@@ -181,7 +177,7 @@ namespace Plataforma.pages
             SqlConnection conn = new SqlConnection(strConexion);
 
 
-            
+
             try
             {
 
@@ -199,12 +195,12 @@ namespace Plataforma.pages
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id_puesto", id);
-                
+
 
 
                 int r = cmd.ExecuteNonQuery();
 
-                
+
 
                 Utils.Log("r = " + r);
                 Utils.Log("Eliminado -> OK ");

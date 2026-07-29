@@ -140,9 +140,7 @@
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label">Plaza</label>
-                                <select class="form-control campo-combo" id="cboPlaza"
-                                    required="required"
-                                    data-required-error='Requerido'>
+                                <select class="form-control campo-combo" id="cboPlaza">
                                 </select>
                                 <div class="help-block with-errors"></div>
                             </div>
@@ -155,17 +153,13 @@
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label">Supervisor</label>
-                                <select class="form-control campo-combo" id="cboSupervisor"
-                                    required="required"
-                                    data-required-error='Requerido'>
+                                <select class="form-control campo-combo" id="cboSupervisor">
                                 </select>
                                 <div class="help-block with-errors"></div>
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label">Ejecutivo</label>
-                                <select class="form-control campo-combo" id="cboEjecutivo"
-                                    required="required"
-                                    data-required-error='Requerido'>
+                                <select class="form-control campo-combo" id="cboEjecutivo">
                                 </select>
                                 <div class="help-block with-errors"></div>
                             </div>

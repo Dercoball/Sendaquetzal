@@ -8,7 +8,8 @@ namespace Plataforma.Clases
     /// Se cambio nombre porcentaje_interes_anual por UtilidadSugerida 
     /// Se anexa la fecha de registro
     /// </summary>
-    public class Inversionista{
+    public class Inversionista
+    {
 
         #region Atributos
         public int IdInversionista

@@ -53,13 +53,7 @@ namespace Plataforma.pages
                 Filtro = Filtro ?? new RequestGridPrestamos();
 
                 var scope = UserVisibilityScope.GetCurrent(path, conn);
-                if (scope.IsDirector && scope.IdPlaza <= 0)
-                {
-                    return new List<ResponseGridPrestamos>
-                    {
-                        new ResponseGridPrestamos { Mensaje = "El director no tiene plaza vinculada para consultar préstamos." }
-                    };
-                }
+                //  Director sin plaza (administrativo de oficina): ve todas las plazas.
 
                 var filtroPromotoresSql = UserVisibilityScope.BuildLoanEmployeeScopeSql(scope, "p.id_empleado");
 
@@ -189,10 +183,7 @@ namespace Plataforma.pages
             {
                 conn.Open();
                 var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
-                if (scope.IsDirector && scope.IdPlaza <= 0)
-                {
-                    return new List<Cliente>();
-                }
+                //  Director sin plaza (administrativo de oficina): ve todas las plazas.
 
                 var ds = new DataSet();
                 var scopeSql = UserVisibilityScope.BuildLoanEmployeeScopeSql(scope, "p.id_empleado");

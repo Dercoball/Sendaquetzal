@@ -67,10 +67,7 @@ namespace Plataforma.pages
                 conn.Open();
 
                 var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
-                if (scope.IsDirector && scope.IdPlaza <= 0)
-                {
-                    return items;
-                }
+                //  Director sin plaza (administrativo de oficina): ve todas las plazas.
 
 
                 //  Filtro status del préstamo

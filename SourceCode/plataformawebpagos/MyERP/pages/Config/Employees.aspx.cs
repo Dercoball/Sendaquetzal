@@ -59,9 +59,9 @@ namespace Plataforma.pages
 	                    u.login Usuario,
 	                    e.fecha_ingreso FechaIngreso,
                         e.id_posicion,
-	                    m.nombre Modulo,  
+	                    ISNULL(m.nombre, 'Sin módulo') Modulo,
 	                    pos.nombre Tipo,
-	                    p.nombre Plaza , 
+	                    ISNULL(p.nombre, 'Sin plaza') Plaza ,
 	                    IsNull(concat(sup.nombre ,  ' ' , sup.primer_apellido , ' ' , sup.segundo_apellido),'No asignado') NombreSupervisor,
 	                    IsNull(concat(eje.nombre ,  ' ' , eje.primer_apellido , ' ' , eje.segundo_apellido),'No asignado') NombreEjecutivo,
                         m.id_comision,
@@ -69,8 +69,8 @@ namespace Plataforma.pages
 	                    pos.id_posicion
                     FROM empleado e 
                     JOIN usuario u ON (u.id_empleado = e.id_empleado) 
-                    JOIN comision m ON (m.id_comision = e.id_comision_inicial) 
-                    JOIN plaza p ON (p.id_plaza = e.id_plaza) 
+                    LEFT JOIN comision m ON (m.id_comision = e.id_comision_inicial)
+                    LEFT JOIN plaza p ON (p.id_plaza = e.id_plaza)
                     JOIN posicion pos ON (pos.id_posicion = e.id_posicion)
                     LEFT JOIN empleado sup ON (sup.id_empleado = e.id_supervisor)
                     LEFT JOIN empleado eje ON (eje.id_empleado  = e.id_ejecutivo)
@@ -184,13 +184,10 @@ namespace Plataforma.pages
                     }
 
                     var scope = UserVisibilityScope.GetByUser(path, currentUserId, conn);
-                    if (scope.IsDirector || scope.IsSupervisor)
+                    //  Sólo se acota cuando el usuario tiene plaza asignada.
+                    //  Un administrativo sin plaza ve el catálogo completo.
+                    if ((scope.IsDirector || scope.IsSupervisor) && scope.IdPlaza > 0)
                     {
-                        if (scope.IdPlaza <= 0)
-                        {
-                            return items;
-                        }
-
                         query += " AND id_plaza = " + scope.IdPlaza;
                     }
 

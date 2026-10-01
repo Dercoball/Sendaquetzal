@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="connbd-Web.config Connection String" description="connbd Cadena de conexión que usa la aplicación en web.config para obtener acceso a la base de datos." defaultValue="Server=tcp:sendaquetzalserver.database.windows.net,1433;Initial Catalog=SendaQuetzalBd;Persist Security Info=False;User ID=sisadmin;Password=Quetzal123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\Users\\derco\\Downloads\\OneDrive_2_22-7-2025\\SendaQuetzal\\SendaQuetzal\\SourceCode\\plataformawebpagos\\MyERP\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='connbd']/@connectionString" />
-  </parameter>
-</parameters>

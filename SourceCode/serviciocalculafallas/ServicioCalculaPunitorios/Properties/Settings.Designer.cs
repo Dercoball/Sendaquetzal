@@ -25,8 +25,7 @@ namespace VerifyStatusPaymentsService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("server=den1.mssql8.gear.host;database=sendaquetzalv1;uid=sendaquetzalv1;pwd=Ev3Q_" +
-            "?6rQN14")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string connection {
             get {
                 return ((string)(this["connection"]));
@@ -35,7 +34,7 @@ namespace VerifyStatusPaymentsService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ACb26cb3c953576c6010f10abfdb1eb760")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TWILIO_ACCOUNT_SID {
             get {
                 return ((string)(this["TWILIO_ACCOUNT_SID"]));
@@ -44,7 +43,7 @@ namespace VerifyStatusPaymentsService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("773ea1d00672c9ee6b6d7d538beb66e5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TWILIO_AUTH_TOKEN {
             get {
                 return ((string)(this["TWILIO_AUTH_TOKEN"]));
@@ -53,7 +52,7 @@ namespace VerifyStatusPaymentsService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("whatsapp:+12054305280")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string CEL_FROM_WP {
             get {
                 return ((string)(this["CEL_FROM_WP"]));

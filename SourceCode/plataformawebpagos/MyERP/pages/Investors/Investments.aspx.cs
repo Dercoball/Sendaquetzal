@@ -73,7 +73,7 @@ namespace Plataforma.pages
             };
 
             lo_Inversion.fechaRetiro = lo_Inversion.fecha.AddDays(lo_Inversion.plazo);
-            lo_Inversion.Accion =  "<button  onclick='asset.edit(" + lo_Inversion.id_inversion + ")'  class='rounded btn btn-primary mr-1'><i class='fa fa-edit'></i></button>";
+            lo_Inversion.Accion = "<button  onclick='asset.edit(" + lo_Inversion.id_inversion + ")'  class='rounded btn btn-primary mr-1'><i class='fa fa-edit'></i></button>";
             if (lo_Inversion.id_status_inversion == (int)EStatusInversion.Vigente)
             {
                 lo_Inversion.Accion += "<button  onclick='asset.delete(" + lo_Inversion.id_inversion + ")'  class=' rounded btn btn-danger mr-1'><i class='fa fa-trash'></i></button>";
@@ -243,8 +243,8 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        var lo_Inversionista  = MapInversion(ds.Tables[0].Rows[i]);
-                      
+                        var lo_Inversionista = MapInversion(ds.Tables[0].Rows[i]);
+
                         llst_Inversiones.Add(lo_Inversionista);
                         #region Codigo anterior
                         //Inversion item = new Inversion();
@@ -361,7 +361,7 @@ namespace Plataforma.pages
         /// <param name="idUsuario"></param>
         /// <returns></returns>
         [WebMethod]
-        public static DatosSalida Save(string path, Inversion item,string idUsuario)
+        public static DatosSalida Save(string path, Inversion item, string idUsuario)
         {
             // verificar que tenga permisos para usar esta pagina
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
@@ -386,7 +386,7 @@ namespace Plataforma.pages
                 string sql = string.Empty;
 
                 //if (accion == "nuevo")
-                if(item.id_inversion <= 0)
+                if (item.id_inversion <= 0)
                 {
                     sql = @" INSERT INTO inversion
                     OUTPUT INSERTED.id_inversion
@@ -706,16 +706,16 @@ namespace Plataforma.pages
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-                        item = MapInversion(ds.Tables[0].Rows[0]);
+                    item = MapInversion(ds.Tables[0].Rows[0]);
 
                     //Verificamos la utilidad acumuada
-                    var li_DiasTranscurridos =DateTime.Now.Subtract(item.fecha).Days;
+                    var li_DiasTranscurridos = DateTime.Now.Subtract(item.fecha).Days;
                     var lf_UtilidadDiaria = item.monto / item.plazo;
                     item.utilidad_acumulada = (float)Math.Round(li_DiasTranscurridos * lf_UtilidadDiaria, 2);
-                    item.montoRetiro = item.monto + item.utilidad_acumulada;                   
+                    item.montoRetiro = item.monto + item.utilidad_acumulada;
                 }
 
-               return item;
+                return item;
             }
             catch (Exception ex)
             {
@@ -759,10 +759,11 @@ namespace Plataforma.pages
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        llst_Status.Add(new StatusInversion {
-                             color = ds.Tables[0].Rows[i]["color"].ToString(),
-                             id_status_inversion = ds.Tables[0].Rows[i]["id_status_inversion"].ToString().ParseStringToInt(),
-                             nombre = ds.Tables[0].Rows[i]["nombre"].ToString(),
+                        llst_Status.Add(new StatusInversion
+                        {
+                            color = ds.Tables[0].Rows[i]["color"].ToString(),
+                            id_status_inversion = ds.Tables[0].Rows[i]["id_status_inversion"].ToString().ParseStringToInt(),
+                            nombre = ds.Tables[0].Rows[i]["nombre"].ToString(),
                         });
                     }
                 }

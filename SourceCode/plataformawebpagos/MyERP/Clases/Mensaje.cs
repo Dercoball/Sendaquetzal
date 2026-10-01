@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
     public class Mensaje
-    { 
+    {
 
         public int IdMensaje;
         public int IdTipoPlantilla;
@@ -21,7 +18,7 @@ namespace Plataforma.Clases
 
 
         public string Accion;
-       
+
 
 
     }

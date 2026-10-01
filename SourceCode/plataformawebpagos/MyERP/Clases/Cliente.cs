@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
-    public class Cliente{ 
+    public class Cliente
+    {
 
         //public int Id_Cliente;
-        public int IdCliente 
+        public int IdCliente
         { get; set; }
         public String Nombre
         { get; set; }
@@ -68,7 +66,7 @@ namespace Plataforma.Clases
         public string NotaFotografiaCliente
         { get; set; }
         public string NotaFotografiaAval
-            { get; set; }
+        { get; set; }
 
         //aval
 
@@ -88,7 +86,7 @@ namespace Plataforma.Clases
         public const int STATUS_ACTIVO = 2;
         public const int STATUS_VENCIDO = 3;
         public const int STATUS_CONDONADO = 4;
-        public const int STATUS_DEMANDA= 5;
+        public const int STATUS_DEMANDA = 5;
 
     }
 }

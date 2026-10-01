@@ -1,20 +1,17 @@
-﻿using Plataforma.Clases;
+﻿using Dapper;
+using Plataforma.Clases;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.DocToPDFConverter;
+using Syncfusion.Pdf;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using Syncfusion.DocIO;
-using Syncfusion.DocIO.DLS;
-using System.IO;
-using System.Drawing;
-using Syncfusion.DocToPDFConverter;
-using Syncfusion.Pdf;
-using Dapper;
 
 namespace Plataforma.pages.Loans
 {
@@ -28,12 +25,17 @@ namespace Plataforma.pages.Loans
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
+            var scope = UserVisibilityScope.GetByUser(path, idUsuario);
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NRAiBiAaIQQuGjN/V0Z+WE9EaFtGVmJLYVB3WmpQdldgdVRMZVVbQX9PIiBoS35RdUViW39fc3RTQmFVWUR2");
 
 
             txtUsuario.Value = usuario;//"promotor.colorado
             txtIdTipoUsuario.Value = idTipoUsuario;//5
             txtIdUsuario.Value = idUsuario;//69
+            txtIdEmpleado.Value = scope.IdEmpleado > 0 ? scope.IdEmpleado.ToString() : string.Empty;
+            txtIdPlaza.Value = (scope.IsSupervisor || scope.IsDirector) && scope.IdPlaza > 0
+                ? scope.IdPlaza.ToString()
+                : string.Empty;
 
 
             //  FASE DE PRUEBAS, QUITAR AL FINAL
@@ -79,9 +81,11 @@ namespace Plataforma.pages.Loans
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                //  Director sin plaza (administrativo de oficina): ve todas las plazas.
 
-                //  Traer datos del usuario para saber su id_empleado
-                Usuario user = Usuarios.GetUsuario(path, idUsuario);
+                idPlaza = UserVisibilityScope.GetFixedPlaza(scope, idPlaza);
+                var sqlUser = UserVisibilityScope.BuildLoanEmployeeScopeSql(scope, "pre.id_empleado");
 
                 //  Filtro status 
                 var sqlPlaza = "";
@@ -132,7 +136,11 @@ namespace Plataforma.pages.Loans
                         sqlEmpleado = string.Join<int>(",", empleados.Select(s => s.IdEmpleado).ToList());
                     }
 
-                    sqlPlaza = " AND p.id_empleado IN (" + sqlEmpleado + ") ";
+                    //  El empleado que colocó el crédito vive en prestamo (pre), no en pago (p).
+                    //  Si la plaza no tiene empleados, no se debe traer nada (evita un IN () inválido).
+                    sqlPlaza = string.IsNullOrEmpty(sqlEmpleado)
+                        ? " AND 1 = 0 "
+                        : " AND pre.id_empleado IN (" + sqlEmpleado + ") ";
                 }
 
 
@@ -181,7 +189,7 @@ namespace Plataforma.pages.Loans
 										AND p.numero_semana = (SELECT MIN(numero_semana) FROM pago p2 WHERE p2.id_prestamo = pre.id_prestamo AND p2.id_status_pago = 2)
 									)
 								WHERE
-									pre.id_status_prestamo = 4" + sqlPlaza;
+									pre.id_status_prestamo = 4" + sqlPlaza + sqlUser;
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -274,6 +282,11 @@ namespace Plataforma.pages.Loans
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!int.TryParse(idPrestamo, out var loanId) || !UserVisibilityScope.CanAccessPrestamo(scope, conn, loanId))
+                {
+                    return item;
+                }
                 DataSet ds = new DataSet();
                 string query = @"SELECT 
 									pre.id_prestamo,
@@ -386,6 +399,12 @@ namespace Plataforma.pages.Loans
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario.ToString(), conn);
+                if (!UserVisibilityScope.CanAccessPrestamo(scope, conn, idPrestamo))
+                {
+                    return string.Empty;
+                }
+
                 DataSet ds = new DataSet();
                 string query = @"SELECT 
 						pre.fecha_solicitud,
@@ -465,6 +484,16 @@ namespace Plataforma.pages.Loans
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!UserVisibilityScope.CanAccessPrestamo(scope, conn, idPrestamo))
+                {
+                    return new DatosSalida
+                    {
+                        CodigoError = 1,
+                        MensajeError = "No tienes permiso para registrar pagos fuera de tu plaza."
+                    };
+                }
+
                 transaccion = conn.BeginTransaction();
 
                 #region Abono de saldo recuperado
@@ -553,7 +582,10 @@ namespace Plataforma.pages.Loans
             {
                 try
                 {
-                    transaccion.Rollback();
+                    if (transaccion != null)
+                    {
+                        transaccion.Rollback();
+                    }
                 }
                 catch (Exception ex_)
                 {
@@ -748,6 +780,59 @@ namespace Plataforma.pages.Loans
 
             return r;
 
+        }
+
+        [WebMethod]
+        public static int UpdateStatusPagoByPagoAndStatus(string path, string idUsuario, int idPago, int idStatus)
+        {
+            string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
+
+            using (var conn = new SqlConnection(strConexion))
+            {
+                try
+                {
+                    conn.Open();
+
+                    var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                    if (!UserVisibilityScope.CanAccessPago(scope, conn, idPago))
+                    {
+                        return 0;
+                    }
+
+                    string sqlSet;
+                    switch (idStatus)
+                    {
+                        case Pago.STATUS_PAGO_PENDIENTE:
+                            sqlSet = "id_status_pago = 1, saldo = monto, pagado = 0";
+                            break;
+                        case Pago.STATUS_PAGO_FALLA:
+                            sqlSet = "id_status_pago = 2, saldo = monto, pagado = 0";
+                            break;
+                        case Pago.STATUS_PAGO_ABONADO:
+                            sqlSet = "id_status_pago = 3, saldo = 100, pagado = monto - 100";
+                            break;
+                        case Pago.STATUS_PAGO_PAGADO:
+                            sqlSet = "id_status_pago = 4, saldo = 0, pagado = monto";
+                            break;
+                        default:
+                            return 0;
+                    }
+
+                    string sql = "UPDATE pago SET " + sqlSet + " WHERE id_pago = @id_pago";
+                    using (var cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@id_pago", idPago);
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Utils.Log("Error ... " + ex.Message);
+                    Utils.Log(ex.StackTrace);
+                    return 0;
+                }
+            }
         }
 
         public static int UpdateStatusPrestamo(string idPrestamo, string idUsuario, string nota,

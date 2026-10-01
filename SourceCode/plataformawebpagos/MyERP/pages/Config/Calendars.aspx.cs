@@ -1,14 +1,11 @@
 ﻿using Dapper;
-using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
@@ -54,13 +51,13 @@ namespace Plataforma.pages
                      FROM calendario
                      WHERE  id =  @id ";
 
-				Utils.Log("\nMétodo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
                 Utils.Log("id_puesto =  " + id);
 
-				item = conn.QueryFirstOrDefault<Calendario>(query, new { id });
+                item = conn.QueryFirstOrDefault<Calendario>(query, new { id });
 
-				return item;
+                return item;
             }
             catch (Exception ex)
             {
@@ -122,8 +119,8 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@nombre", item.Nombre);
                 cmd.Parameters.AddWithValue("@fecha", item.Fecha);
-				cmd.Parameters.AddWithValue("@es_laboral", item.EsLaboral);
-   
+                cmd.Parameters.AddWithValue("@es_laboral", item.EsLaboral);
+
                 cmd.Parameters.AddWithValue("@id", item.Id);
 
 
@@ -178,14 +175,14 @@ namespace Plataforma.pages
                      ISNull(eliminado, 0) = 0
                      ORDER BY id ";
 
-				items = conn.Query<Calendario>(query).ToList();
+                items = conn.Query<Calendario>(query).ToList();
 
-				items.ForEach(item =>
-				{
-					item.Estatus = item.Fecha.Date > DateTime.Now.Date ? "Programado" : "Realizado";
-				});
+                items.ForEach(item =>
+                {
+                    item.Estatus = item.Fecha.Date > DateTime.Now.Date ? "Programado" : "Realizado";
+                });
 
-				Utils.Log("\nMétodo-> " +
+                Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 return items;

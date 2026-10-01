@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
     public class RelPrestamoAprobacion
-    { 
+    {
 
         public int IdRelPrestamoAprobacion;
         public int IdCliente;
@@ -18,7 +15,7 @@ namespace Plataforma.Clases
         public String NotasGenerales;
         public String NotaCliente;
         public String StatusAprobacion;
-        public String NombrePosicion;   
+        public String NombrePosicion;
         public int IdPosicion;
         public int IdSupervisor;
         public int IdEjecutivo;

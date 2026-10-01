@@ -30,6 +30,7 @@ const loans = {
         loans.idAval = -1;
         loans.idAval2 = -1;
         loans.idCliente = -1;
+        loans.promotoresMap = {};
         loans.arrDocumentosCliente = {};
         loans.arrDocumentosAval = {};
         loans.arrGarantias = {};
@@ -43,15 +44,23 @@ const loans = {
         const today = moment().format('YYYY-MM-DD');
         $("#txtFechaSolicitud").val(today);
 
-        loans.loadTipoClientes(function (result) {
-            loans.cargaComboClientes(result);
-            if (loans.idPrestamo > 0) {
-                loans.detail(loans.idPrestamo);
-            }
+        loans.loadPromotores(function () {
+            loans.loadTipoClientes(function (result) {
+                loans.cargaComboClientes(result);
+                if (loans.idPrestamo > 0) {
+                    loans.detail(loans.idPrestamo);
+                }
+            });
         });
     },
 
     getFechaSolicitud: () => $("#txtFechaSolicitud").val(),
+
+    canManageGarantias: (userType) => {
+        const currentUserType = Number(userType ?? document.getElementById('txtIdTipoUsuario').value || -1);
+        return currentUserType === utils.POSICION_SUPERVISOR ||
+            currentUserType === utils.POSICION_CAPTURISTA;
+    },
 
     obtenerContadores: (IdCliente) => {
         var params = { path: "connbd", IdCliente: IdCliente };
@@ -101,6 +110,113 @@ const loans = {
                 console.log(textStatus + ": " + XMLHttpRequest.responseText);
             }
         });
+    },
+
+    loadPromotores: (funcion) => {
+        const params = { path: "connbd", idUsuario: document.getElementById('txtIdUsuario').value };
+        loans.promotoresMap = {};
+
+        $.ajax({
+            type: "POST",
+            url: "/pages/Loans/LoanApprove.aspx/GetPromotoresPorPlaza",
+            data: JSON.stringify(params),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (msg) {
+                console.log('GetPromotoresPorPlaza raw msg:', msg);
+                console.log('GetPromotoresPorPlaza msg.d:', msg && msg.d);
+
+                const data = msg.d;
+                let lista = [];
+
+                if (Array.isArray(data)) {
+                    lista = data;
+                } else if (data && typeof data === 'object' && Array.isArray(data.Promotores)) {
+                    lista = data.Promotores;
+                } else if (data && typeof data === 'object') {
+                    lista = [data];
+                } else if (typeof data === 'string') {
+                    // intentar parsear JSON embebido
+                    try {
+                        const parsed = JSON.parse(data);
+                        if (Array.isArray(parsed)) lista = parsed;
+                        else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.Promotores)) lista = parsed.Promotores;
+                    } catch (_e) {
+                        // parseo sencillo de líneas "IdEmpleado,113"
+                        const lines = data.split(/[\r\n]+/).filter(Boolean);
+                        const obj = {};
+                        lines.forEach(line => {
+                            const parts = line.replace(/^\[|\]$/g, '').split(',');
+                            if (parts.length >= 2) {
+                                const k = parts[0].replace(/["\s]/g, '');
+                                const v = parts.slice(1).join(',').replace(/"/g, '').trim();
+                                obj[k] = isNaN(Number(v)) ? v : Number(v);
+                            }
+                        });
+                        if (Object.keys(obj).length > 0) lista = [obj];
+                    }
+                }
+
+                // Si viene como array de pares {Key, Value}, convertir a objetos planos
+                lista = lista.map(item => {
+                    if (Array.isArray(item)) {
+                        const obj = {};
+                        item.forEach(par => {
+                            const k = par.Key ?? par.key ?? '';
+                            const v = par.Value ?? par.value ?? null;
+                            if (k) obj[k] = v;
+                        });
+                        return obj;
+                    }
+                    return item;
+                });
+
+                let opciones = '<option value=\"\">Seleccione...</option>';
+                lista.forEach(p => {
+                    const idEmpleado = p.IdEmpleado ?? p.id_empleado ?? p.ID_EMPLEADO ?? p.idempleado ?? 0;
+                    const idUsuario = p.IdUsuario ?? p.id_usuario ?? p.ID_USUARIO ?? p.idusuario ?? 0;
+                    const nombre = p.Nombre ?? p.nombre ?? p.NombreCompleto ?? p.NOMBRE ?? 'Sin nombre';
+                    if (!idEmpleado) return;
+                    opciones += `<option value='${idEmpleado}' data-idusuario='${idUsuario}'>${nombre}</option>`;
+                    loans.promotoresMap[idEmpleado] = idUsuario;
+                });
+
+                $('#cboPromotor').html(opciones);
+
+                const selectedEmpleado = data.SelectedIdEmpleado ?? data.selectedIdEmpleado ?? 0;
+                if (selectedEmpleado > 0) {
+                    $('#cboPromotor').val(String(selectedEmpleado));
+                } else if (lista.length === 1) {
+                    const first = lista[0];
+                    const firstId = first.IdEmpleado ?? first.id_empleado ?? first.idempleado ?? '';
+                    $('#cboPromotor').val(String(firstId));
+                }
+
+                if (data.Bloquear === true) {
+                    $('#cboPromotor').prop('disabled', true);
+                } else {
+                    $('#cboPromotor').prop('disabled', false);
+                }
+
+                if (typeof funcion === 'function') funcion();
+            },
+            error: function (XMLHttpRequest, textStatus) {
+                console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                if (typeof funcion === 'function') funcion();
+            }
+        });
+    },
+
+    getPromotorSeleccionado: () => {
+        const idEmpleado = parseInt($('#cboPromotor').val() || 0, 10);
+        const idUsuario = loans.promotoresMap[idEmpleado] || 0;
+        return { idEmpleado, idUsuario };
+    },
+
+    setPromotor: (idEmpleado) => {
+        if (!idEmpleado) return;
+        $('#cboPromotor').val(String(idEmpleado));
     },
 
     loadPreviewImg: (upload, funcion) => {
@@ -182,6 +298,7 @@ const loans = {
                 {
                     data: '', className: 'text-center',
                     render: function (_d, _t, row) {
+                        if (!loans.canManageGarantias()) return '';
                         return "<a class='rounded btn btn-danger text-white eliminarGarantia' data-id='" +
                             row.id_garantia_prestamo + "'><i class='fa fa-trash'></i></a>";
                     }
@@ -228,16 +345,20 @@ const loans = {
         $("#txtNotaAprobacion").val(oPrestamo.NotasGenerales);
         $("#txtUbicacionReconfirmar").val(oPrestamo.IdTipoCliente);
         $("#txtNotaAprobacionEjecutivo").val(oPrestamo.NotasEjecutivo);
+        loans.setPromotor(oPrestamo.IdEmpleado);
     },
 
     getPrestamo: () => {
         const idTipoCliente = parseInt($("#cboTipoCliente").val(), 10);
+        const promotor = loans.getPromotorSeleccionado();
         return {
             IdPrestamo: loans.idPrestamo,
             FechaSolicitud: moment($("#lblFechaSolicitud").html()).format('YYYY-MM-DD'),
             IdTipoCliente: isNaN(idTipoCliente) ? 0 : idTipoCliente,
             Monto: parseFloat($("#txtCantidadPrestamo").val() || 0),
-            MontoPorRenovacion: parseFloat($("#txMaximoPorRenovacion").val() || 0)
+            MontoPorRenovacion: parseFloat($("#txMaximoPorRenovacion").val() || 0),
+            IdEmpleado: promotor.idEmpleado || null,
+            idUsuario: promotor.idUsuario || null
         };
     },
 
@@ -413,11 +534,12 @@ const loans = {
                     /* ===== Fin ruteo documentos ===== */
 
                     const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+                    const canManageGarantias = loans.canManageGarantias(userType);
 
                     if (lo_Prestamo.Prestamo.IdStatusPrestamo === 1) {
                         $("#frmAval input").prop("disabled", true);
                         $("#frmCustomer input").prop("disabled", true);
-                        if (userType === utils.POSICION_SUPERVISOR || userType === 9) {
+                        if (canManageGarantias) {
                             $("#nav-aprobacion-supervisor-tab").show();
                             $("#dvBotonAgregarGarantia").show();
                             $("#btnRechazar").show();
@@ -588,6 +710,12 @@ const loans = {
     },
 
     guardarClienteAval: () => {
+        const promotor = loans.getPromotorSeleccionado();
+        if (!promotor.idEmpleado) {
+            utils.toast('Debe seleccionar un promotor.', 'info');
+            return;
+        }
+
         var params = { Request: {} };
         params.Request.Prestamo = loans.getPrestamo();
         params.Request.DocumentosAval = loans.getDocumentos('UcDocumentacionAval');
@@ -637,7 +765,11 @@ const loans = {
         });
 
         $(document).on('click', '.eliminarGarantia', function () {
-            var params = { path: "connbd", Id: $(this).attr('data-id') };
+            var params = {
+                path: "connbd",
+                Id: $(this).attr('data-id'),
+                idUsuario: document.getElementById('txtIdUsuario').value
+            };
 
             $.ajax({
                 type: "POST",
@@ -648,6 +780,11 @@ const loans = {
                 async: true,
                 success: function (msg) {
                     var lo_Salida = msg.d;
+                    if (!lo_Salida) {
+                        utils.toast(mensajesAlertas.errorEliminar, 'error');
+                        return;
+                    }
+
                     if (lo_Salida.CodigoError <= 0) {
                         loans.obtenerGarantias(function (msg) {
                             var listaGarantias = msg.d;
@@ -656,6 +793,8 @@ const loans = {
                             loans.arrGarantias = listaGarantias;
                             loans.loadTableGarantias(listaGarantias);
                         });
+                    } else {
+                        utils.toast(lo_Salida.MensajeError || mensajesAlertas.errorEliminar, 'error');
                     }
                 },
                 error: function (XMLHttpRequest, textStatus) {
@@ -686,19 +825,26 @@ const loans = {
                     data: JSON.stringify(params),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    async: true,
-                    success: function (msg) {
-                        var lo_Salida = msg.d;
-                        if (lo_Salida.CodigoError <= 0) {
-                            loans.obtenerGarantias(function (msg) {
+                async: true,
+                success: function (msg) {
+                    var lo_Salida = msg.d;
+                    if (!lo_Salida) {
+                        utils.toast(mensajesAlertas.errorGuardar, 'error');
+                        return;
+                    }
+
+                    if (lo_Salida.CodigoError <= 0) {
+                        loans.obtenerGarantias(function (msg) {
                                 var listaGarantias = msg.d;
                                 $("#frmGarantias")[0].reset();
                                 $("#imgImagenGarantia").attr('src', '');
                                 loans.arrGarantias = listaGarantias;
-                                loans.loadTableGarantias(listaGarantias);
-                            });
-                        }
-                    },
+                            loans.loadTableGarantias(listaGarantias);
+                        });
+                    } else {
+                        utils.toast(lo_Salida.MensajeError || mensajesAlertas.errorGuardar, 'error');
+                    }
+                },
                     error: function (XMLHttpRequest, textStatus) {
                         console.log(textStatus + ": " + XMLHttpRequest.responseText);
                     }

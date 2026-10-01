@@ -25,9 +25,7 @@ namespace Plataforma.Clases
         { get; set; }
         public DateTime? FechaUltimaSolicitudMaximo
         { get; set; }
-        public int? RechazoMinimo
-        { get; set; }
-        public int? RechazosMaximo
+        public string Promotor
         { get; set; }
         public int? AvalMinimo
         { get; set; }

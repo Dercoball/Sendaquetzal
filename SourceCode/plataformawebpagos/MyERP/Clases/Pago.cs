@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
@@ -21,6 +18,7 @@ namespace Plataforma.Clases
         public double Monto;
         public float Pagado; // Lo actual abonado
         public double Saldo;
+        public double SaldoPendiente;
         public string MontoPrestamoFormateadoMx;
         public string MontoFormateadoMx;
         public string SaldoFormateadoMx;

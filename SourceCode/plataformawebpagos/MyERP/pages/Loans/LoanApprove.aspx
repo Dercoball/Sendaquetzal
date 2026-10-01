@@ -137,7 +137,11 @@
                             </div>
 
                             <div class="row mb-4">
-                                <div class="col-3"></div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">Promotor</label>
+                                    <select class="form-control campo-combo" id="cboPromotor" required data-required-error="Seleccione un promotor"></select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
                                 <div class="col-lg-3">
                                     <label class="form-label">Veces como aval</label>
                                     <input class="form-control campo-input" id="txtVecesComoAval" readonly="true" />

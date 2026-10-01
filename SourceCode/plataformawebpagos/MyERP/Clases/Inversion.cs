@@ -36,19 +36,19 @@ namespace Plataforma.Clases
         }
         public float? montoRetiro
         {
-            get;set;
+            get; set;
         }
         public float porcentaje_utilidad
-        { 
-            get; set; 
+        {
+            get; set;
         }
         public float utilidad_pesos
         {
-            get; set; 
+            get; set;
         }
         public int plazo
-        { 
-            get; set; 
+        {
+            get; set;
         }
         public float inversion_utilidad
         {
@@ -56,15 +56,15 @@ namespace Plataforma.Clases
         }
         public string comprobante_desposito
         {
-            get; set; 
+            get; set;
         }
         public string comprobante_retiro
         {
             get; set;
         }
         public int eliminado
-        { 
-            get; set; 
+        {
+            get; set;
         }
         public string Accion
         {
@@ -74,9 +74,9 @@ namespace Plataforma.Clases
         public float utilidad_acumulada
         { get; set; }
 
-        public Inversionista Inversionista 
+        public Inversionista Inversionista
         {
-            get;set;
+            get; set;
         }
         public StatusInversion Estatus
         {

@@ -17,7 +17,7 @@ namespace Plataforma.Clases
         { get; set; }
         public int? IdEmpleado
         { get; set; }
-        public string FechaSolicitud 
+        public string FechaSolicitud
         { get; set; }
         public DateTime FechaSolicitudDate
         { get; set; }

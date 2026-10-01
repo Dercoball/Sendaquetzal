@@ -1,14 +1,10 @@
 ﻿using Dapper;
-using Newtonsoft.Json;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
@@ -71,9 +67,9 @@ namespace Plataforma.pages
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
-				items = conn.Query<Calendario>(query).ToList();
+                items = conn.Query<Calendario>(query).ToList();
 
-				return items;
+                return items;
             }
             catch (Exception ex)
             {
@@ -105,7 +101,7 @@ namespace Plataforma.pages
             try
             {
                 string conditionPlaza = "";
-                if(plaza > 0)
+                if (plaza > 0)
                 {
                     conditionPlaza = " AND c.id_plaza = @plaza ";
                 }
@@ -138,9 +134,9 @@ namespace Plataforma.pages
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
-				items = conn.Query<Calendario>(query, new { month = (month + 1), year, plaza}).ToList();
+                items = conn.Query<Calendario>(query, new { month = (month + 1), year, plaza }).ToList();
 
-				return items;
+                return items;
             }
             catch (Exception ex)
             {

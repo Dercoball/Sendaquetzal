@@ -21,7 +21,7 @@ const customers = {
 
         const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
         const isPromotor = userType === utils.POSICION_PROMOTOR;
-        const isSupervisor = userType === utils.POSICION_SUPERVISOR;
+        const hasFixedPlaza = userType === utils.POSICION_SUPERVISOR || userType === utils.POSICION_DIRECTOR;
 
         customers.loadComboPlaza().then(() => {
             customers.selectedCustomerId = '';
@@ -49,8 +49,8 @@ const customers = {
             $('#btnFiltrar').prop('disabled', true);
         }
 
-        // Bloquear solo plaza para supervisor (se fija a su plaza actual)
-        if (isSupervisor) {
+        // Bloquear plaza para supervisor/director (se fija a su plaza actual)
+        if (hasFixedPlaza) {
             const hiddenPlazaEl = document.getElementById('txtIdPlaza');
             const plazaActual = hiddenPlazaEl ? parseInt(hiddenPlazaEl.value || '0') : 0;
             if (plazaActual > 0) {
@@ -409,26 +409,35 @@ const customers = {
                 success: function (msg) {
 
                     let selectEl = document.getElementById('cmbPlaza');
-                    //remueve las opciones del combo
-                    document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+                    const idTipoUsuario = parseInt(document.getElementById('txtIdTipoUsuario').value || '0');
+                    const hasFixedPlaza = idTipoUsuario === utils.POSICION_SUPERVISOR || idTipoUsuario === utils.POSICION_DIRECTOR;
 
-                    selectEl.add(new Option("Todos", "0", true, true));
+                    selectEl.options.length = 0;
+
+                    if (!hasFixedPlaza) {
+                        selectEl.add(new Option("Todos", "0", true, true));
+                    }
+
                     msg.d.forEach(item => {
                         const option = new Option(item.Nombre, item.IdPlaza, false, false);
                         selectEl.add(option);
                     });
 
-                    // Si es supervisor, seleccionar y bloquear su plaza actual
-                    const idTipoUsuario = parseInt(document.getElementById('txtIdTipoUsuario').value);
-                    if (idTipoUsuario === utils.POSICION_SUPERVISOR) {
+                    // Si el usuario tiene plaza fija, seleccionar y bloquear su plaza actual
+                    if (hasFixedPlaza) {
                         const hiddenPlazaEl = document.getElementById('txtIdPlaza');
                         const plazaSes = hiddenPlazaEl ? parseInt(hiddenPlazaEl.value || '0') : 0;
                         const aplicarPlaza = (plazaFija) => {
                             if (plazaFija > 0) {
+                                if (![...selectEl.options].some(option => parseInt(option.value || '0') === plazaFija)) {
+                                    selectEl.add(new Option(`Plaza ${plazaFija}`, plazaFija, false, false));
+                                }
                                 selectEl.value = plazaFija.toString();
                                 $('#cmbPlaza').trigger('change');
                             }
-                            $('#cmbPlaza').prop('disabled', true);
+                            selectEl.disabled = true;
+                            selectEl.setAttribute('disabled', 'disabled');
+                            $('#cmbPlaza').prop('disabled', true).attr('disabled', 'disabled');
                             resolve();
                         };
 

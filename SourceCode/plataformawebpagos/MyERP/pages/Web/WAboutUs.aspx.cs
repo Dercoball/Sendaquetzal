@@ -1,14 +1,8 @@
-﻿using Newtonsoft.Json;
-using Plataforma.Clases;
+﻿using Plataforma.Clases;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -78,7 +72,7 @@ namespace Plataforma.pages
                 conn.Open();
                 string sql = "";
 
-                sql = @" UPDATE " +  tableName + @" 
+                sql = @" UPDATE " + tableName + @" 
                            SET info = @info 
                            WHERE id = 1 ";
 
@@ -184,7 +178,7 @@ namespace Plataforma.pages
             PreguntaFrecuente item = new PreguntaFrecuente();
             SqlConnection conn = new SqlConnection(strConexion);
             string content = "";
-                 
+
 
             string tableName = GetTableName(idTabla);
 

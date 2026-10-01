@@ -10,6 +10,21 @@ let dataTable;
 
 const payments = {
 
+    parseDecimalInputValue: (value) => {
+        const normalized = String(value ?? '').trim().replace(',', '.');
+        if (normalized === '') return NaN;
+
+        const parsed = Number(normalized);
+        if (!Number.isFinite(parsed)) return NaN;
+
+        return Math.round(parsed * 100) / 100;
+    },
+
+    formatDecimalInputValue: (value) => {
+        const parsed = payments.parseDecimalInputValue(value);
+        return Number.isNaN(parsed) ? '' : parsed.toFixed(2);
+    },
+
 
     init: () => {
 
@@ -29,9 +44,42 @@ const payments = {
         payments.fechaFinal = '';
 
         payments.fechasHoy();
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        const hasFixedPlaza = userType === utils.POSICION_SUPERVISOR || userType === utils.POSICION_DIRECTOR;
 
-        payments.loadComboPlaza();
-        payments.cargarItems();
+        payments.loadComboPlaza()
+            .then(() => {
+                if (userType === utils.POSICION_PROMOTOR) {
+                    $('#cmbPlaza').val(0).prop('disabled', true);
+                    $('#cmbEjecutivo').val(0).prop('disabled', true);
+                    $('#cmbSupervisor').val(0).prop('disabled', true);
+                    $('#cmbPromotor').val(0).prop('disabled', true);
+                    $('#btnFiltrar').prop('disabled', true);
+                }
+                if (hasFixedPlaza) {
+                    const hiddenPlazaEl = document.getElementById('txtIdPlaza');
+                    const plazaActual = hiddenPlazaEl ? parseInt(hiddenPlazaEl.value || '0', 10) : 0;
+                    if (plazaActual > 0) {
+                        $('#cmbPlaza').val(plazaActual);
+                        payments.loadComboEjecutivo();
+                    }
+                    $('#cmbPlaza').prop('disabled', true);
+                }
+                payments.cargarItems();
+            })
+            .catch(() => {
+                payments.cargarItems();
+            });
+
+        $('#txtMontoPago').on('blur', function () {
+            const currentValue = $(this).val();
+            if (currentValue === '') return;
+
+            const formatted = payments.formatDecimalInputValue(currentValue);
+            if (formatted !== '') {
+                $(this).val(formatted);
+            }
+        });
 
         //Filtros personalizados en datatable
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
@@ -56,17 +104,17 @@ const payments = {
                 var createdAt = data[3] || 0; // Our date column in the table
 
                 if (min != "" && max == "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min)
+                    min = moment(min, 'YYYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYYY').isSameOrAfter(min)
                 }
                 else if (min != "" && max != "") {
-                    min = moment(min, 'YYY-MM-DD');
-                    max = moment(max, 'YYY-MM-DD');
-                    return (moment(createdAt, 'DD/MM/YYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max))
+                    min = moment(min, 'YYYY-MM-DD');
+                    max = moment(max, 'YYYY-MM-DD');
+                    return (moment(createdAt, 'DD/MM/YYYY').isSameOrAfter(min) && moment(createdAt, 'DD/MM/YYYY').isSameOrBefore(max))
                 }
                 else if (min == "" && max != "") {
-                    max = moment(max, 'YYY-MM-DD');
-                    return moment(createdAt, 'DD/MM/YYY').isSameOrBefore(max)
+                    max = moment(max, 'YYYY-MM-DD');
+                    return moment(createdAt, 'DD/MM/YYYY').isSameOrBefore(max)
                 }
                 else
                     return true;
@@ -160,9 +208,21 @@ const payments = {
         params.idPromotor = parseInt(document.getElementById("cmbPromotor").value);
         params = JSON.stringify(params);
 
+        const userType = Number(document.getElementById('txtIdTipoUsuario').value || -1);
+        if (userType === utils.POSICION_PROMOTOR) {
+            const idEmpleado = document.getElementById('txtIdEmpleado') ? parseInt(document.getElementById('txtIdEmpleado').value || '0', 10) : 0;
+            params = JSON.parse(params);
+            params.typeFilter = "promotor";
+            params.idPromotor = idEmpleado;
+            params.idPlaza = 0;
+            params.idEjecutivo = 0;
+            params.idSupervisor = 0;
+            params = JSON.stringify(params);
+        }
+
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/PaymentOverdue.aspx/GetListaItems",
+            url: "../../pages/Loans/PaymentsOverdue.aspx/GetListaItems",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -174,6 +234,7 @@ const payments = {
                 //  si no tiene permisos
                 if (data == null) {
                     window.location = "../../pages/Index.aspx";
+                    return;
                 }
 
                 dataTable = $('#table').DataTable({
@@ -252,7 +313,7 @@ const payments = {
                             title: descargas,
                             text: '&nbsp; Descargar Excel', className: 'csvbtn',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6, 8, 9],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                 rows: function (idx, data, node) {
                                     var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
                                     return checkbox.checked;
@@ -270,7 +331,7 @@ const payments = {
                             pageSize: 'LEGAL',
                             className: 'csvbtn ml-2',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6, 8, 9],
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                 rows: function (idx, data, node) {
                                     var checkbox = node.querySelector('td.select-checkbox > input[type="checkbox"]');
                                     return checkbox.checked;
@@ -299,7 +360,7 @@ const payments = {
                         ;
 
                         totalFallas = api
-                            .column(6, { page: 'current' })
+                            .column(7, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -307,7 +368,7 @@ const payments = {
                         ;
 
                         totalAbonado = api
-                            .column(7, { page: 'current' })
+                            .column(8, { page: 'current' })
                             .data()
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
@@ -315,8 +376,8 @@ const payments = {
                         ;
                         // Update footer
                         $(api.column(2).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalPrestamo));
-                        $(api.column(6).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
-                        $(api.column(7).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalAbonado));
+                        $(api.column(7).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalFallas));
+                        $(api.column(8).footer()).html('$' + $.fn.dataTable.render.number(',', '.', 2, '').display(totalAbonado));
                     },
                     initComplete: function () {
                         let columnsSettings = this.api().settings().init().columns;
@@ -377,8 +438,6 @@ const payments = {
 
     view(id) {
 
-        console.log(id);
-
         $('#frmPago')[0].reset();
 
         //  traer datos del pago e historial del préstamo
@@ -390,7 +449,7 @@ const payments = {
 
         $.ajax({
             type: "POST",
-            url: "../../pages/Loans/PaymentOverdue.aspx/GetPaymentByIdPrestamo",
+            url: "../../pages/Loans/PaymentsOverdue.aspx/GetPaymentByIdPrestamo",
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -434,32 +493,36 @@ const payments = {
 
 
     loadComboPlaza: () => {
-        var params = {};
-        params.path = "connbd";
-        params = JSON.stringify(params);
+        return new Promise((resolve, reject) => {
+            var params = {};
+            params.path = "connbd";
+            params = JSON.stringify(params);
 
-        $.ajax({
-            type: "POST",
-            url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
-            data: params,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            success: function (msg) {
+            $.ajax({
+                type: "POST",
+                url: "../../pages/Customers/Customers.aspx/GetListaPlazas",
+                data: params,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (msg) {
 
-                let selectEl = document.getElementById('cmbPlaza');
-                //remueve las opciones del combo
-                document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
+                    let selectEl = document.getElementById('cmbPlaza');
+                    //remueve las opciones del combo
+                    document.querySelectorAll('select[name="cmbPlaza"] option').forEach(option => option.remove());
 
-                selectEl.add(new Option("Todos", "0", true, true));
-                msg.d.forEach(item => {
-                    const option = new Option(item.Nombre, item.IdPlaza, false, false);
-                    selectEl.add(option);
-                });
+                    selectEl.add(new Option("Todos", "0", true, true));
+                    msg.d.forEach(item => {
+                        const option = new Option(item.Nombre, item.IdPlaza, false, false);
+                        selectEl.add(option);
+                    });
 
-            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(textStatus + ": " + XMLHttpRequest.responseText);
-            }
+                    resolve();
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus + ": " + XMLHttpRequest.responseText);
+                    reject(errorThrown || textStatus);
+                }
+            });
         });
     },
 
@@ -585,7 +648,9 @@ const payments = {
         endWeekDay.setDate(endWeekDay.getDate() + 7 - end_ + 1);
 
         let dayMonth = endWeekDay.getDate();
+        dayMonth = dayMonth.toString().length === 1 ? `0${dayMonth}` : dayMonth;
         month = (endWeekDay.getMonth() + 1);
+        month = month.toString().length === 1 ? `0${month}` : month;
 
         payments.fechaFinal = `${endWeekDay.getFullYear()}-${month}-${dayMonth}`;
 
@@ -609,6 +674,7 @@ const payments = {
 
         let params = {};
         params.path = "connbd";
+        params.idUsuario = document.getElementById('txtIdUsuario').value;
         params.idPago = idPago;
         params.idStatus = idStatus;
         params = JSON.stringify(params);
@@ -616,14 +682,14 @@ const payments = {
 
         $.ajax({
             type: "POST",
-            url: `../../pages/Loans/PaymentOverdue.aspx/UpdateStatusPagoByPagoAndStatus`,
+            url: `../../pages/Loans/PaymentsOverdue.aspx/UpdateStatusPagoByPagoAndStatus`,
             data: params,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: true,
             success: function (msg) {
                 let valores = msg.d;
-                payments.historial(payments.idPrestamo, payments.numeroSemana);
+                payments.cargarItems();
 
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
 
@@ -634,26 +700,18 @@ const payments = {
     },
 
     updatePendiente(idPago) {
-        console.log(`updatePendiente`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_PENDIENTE);
     },
 
     updateFalla(idPago) {
-        console.log(`updateFalla`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_FALLA);
     },
 
     updateAbonado(idPago) {
-        console.log(`updateAbonado`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_ABONADO);
     },
 
     updatePagado(idPago) {
-        console.log(`updatePagado`);
-
         payments.updatePayment(idPago, utils.STATUS_PAGO_PAGADO);
     },
 
@@ -681,7 +739,7 @@ const payments = {
             e.preventDefault();
 
             var pago = parseFloat($('#btnRecibo').data('pago'));
-            $('#btnRecibo').attr('data-pago', 0);
+            $('#btnRecibo').attr('data-pago', 0).data('pago', 0);
             $('#btnRecibo').removeClass("deshabilitable");
             $('#btnRecibo').prop('disabled', true);
 
@@ -689,7 +747,6 @@ const payments = {
             $('#panelTabla').show();
             
             if (pago > 0) {
-                console.log('cargaitems');
                 payments.cargarItems();
             }
 
@@ -709,13 +766,22 @@ const payments = {
 
             $('.deshabilitable').prop('disabled', true);
 
+            const parsedAbono = payments.parseDecimalInputValue($('#txtMontoPago').val());
+            if (Number.isNaN(parsedAbono)) {
+                $('.deshabilitable').prop('disabled', false);
+                $('#spnMensajes').html('El importe capturado no es válido.');
+                $('#panelMensajes').modal('show');
+                return;
+            }
+            $('#txtMontoPago').val(parsedAbono.toFixed(2));
+
             let params = {};
             params.path = "connbd";
             params.idUsuario = document.getElementById('txtIdUsuario').value;
             params.idPosicion = document.getElementById('txtIdTipoUsuario').value
             params.idPrestamo = payments.idPrestamo;
             params.idCliente = payments.idCliente;
-            params.abono = Number($('#txtMontoPago').val());
+            params.abono = parsedAbono;
             params.notaCliente = $('#txtNotasCliente').val();
             params.notaAval = $('#txtNotasAval').val();
             params = JSON.stringify(params);
@@ -723,7 +789,7 @@ const payments = {
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/PaymentOverdue.aspx/SavePayment`,
+                url: `../../pages/Loans/PaymentsOverdue.aspx/SavePayment`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -733,12 +799,17 @@ const payments = {
 
                     $('.deshabilitable').prop('disabled', false);
 
+                    if (valores == null) {
+                        window.location = "../../pages/Index.aspx";
+                        return;
+                    }
+
                     if (parseInt(valores.CodigoError) === 0) {
 
                         $('#spnMensajeControlado').html(mensajesAlertas.pagoRegistradoExito);
                         $('#panelMensajeControlado').modal('show');
 
-                        $('#btnRecibo').attr('data-pago', valores.IdItem);
+                        $('#btnRecibo').attr('data-pago', valores.IdItem).data('pago', valores.IdItem);
                         $('#btnRecibo').addClass("deshabilitable");
                         $('#btnRecibo').prop('disabled', false);
                         payments.cargarItems();
@@ -780,12 +851,20 @@ const payments = {
             params.idPosicion = Number(document.getElementById('txtIdTipoUsuario').value);
             params.idPrestamo = payments.idPrestamo;
             params.idCliente = payments.idCliente;
-            params.abono = Number($('#btnRecibo').data('pago'));
+            params.abono = payments.parseDecimalInputValue($('#btnRecibo').data('pago'));
             params.abonoPactado = Number($('#txtMonto').data('monto'));
             params.semanas = $('#txtSemanasFallas').val();
+
+            if (Number.isNaN(params.abono)) {
+                $('.deshabilitable').prop('disabled', false);
+                $('#spnMensajes').html('No se pudo identificar el importe del recibo.');
+                $('#panelMensajes').modal('show');
+                return;
+            }
+
             params = JSON.stringify(params);
 
-            //fetch(`../../pages/Loans/PaymentOverdue.aspx/GenerateReport`, {
+            //fetch(`../../pages/Loans/PaymentsOverdue.aspx/GenerateReport`, {
             //    body: params,
             //    method: 'POST',
             //    headers: {
@@ -815,13 +894,20 @@ const payments = {
 
             $.ajax({
                 type: "POST",
-                url: `../../pages/Loans/PaymentOverdue.aspx/GenerateReport`,
+                url: `../../pages/Loans/PaymentsOverdue.aspx/GenerateReport`,
                 data: params,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
                 success: function (msg) {
                     let valores = msg.d;
+                    if (!valores) {
+                        $('.deshabilitable').prop('disabled', false);
+                        $('#spnMensajes').html('No se pudo generar el recibo.');
+                        $('#panelMensajes').modal('show');
+                        return;
+                    }
+
                     const a = document.createElement("a");
                     a.href = valores;
                     a.download = "reporte.pdf";

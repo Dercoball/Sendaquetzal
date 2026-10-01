@@ -5,11 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
@@ -26,9 +22,7 @@ namespace Plataforma.pages
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
-            string idEmpleado = (string)Session["id_empleado"] ?? "";
-
-
+            var scope = UserVisibilityScope.GetByUser(path, idUsuario);
 
             txtUsuario.Value = usuario;//"promotor.colorado
             txtIdTipoUsuario.Value = idTipoUsuario;//5
@@ -40,7 +34,16 @@ namespace Plataforma.pages
                 txtIdEmpleado = new HiddenField { ID = "txtIdEmpleado" };
                 form1.Controls.Add(txtIdEmpleado);
             }
-            txtIdEmpleado.Value = idEmpleado;
+            txtIdEmpleado.Value = scope.IdEmpleado > 0 ? scope.IdEmpleado.ToString() : string.Empty;
+
+            if (txtIdPlaza == null)
+            {
+                txtIdPlaza = new HiddenField { ID = "txtIdPlaza" };
+                form1.Controls.Add(txtIdPlaza);
+            }
+            txtIdPlaza.Value = (scope.IsSupervisor || scope.IsDirector) && scope.IdPlaza > 0
+                ? scope.IdPlaza.ToString()
+                : string.Empty;
 
 
             //  FASE DE PRUEBAS, QUITAR AL FINAL
@@ -77,7 +80,6 @@ namespace Plataforma.pages
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
             SqlConnection conn = new SqlConnection(strConexion);
             List<StatusPrestamo> items = new List<StatusPrestamo>();
             DatosSalida response = new DatosSalida();
@@ -90,6 +92,17 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!int.TryParse(idPago, out var pagoId) || !UserVisibilityScope.CanAccessPago(scope, conn, pagoId))
+                {
+                    transaccion?.Rollback();
+                    return new DatosSalida
+                    {
+                        CodigoError = 1,
+                        MensajeError = "No tienes permiso para registrar pagos fuera de tu plaza."
+                    };
+                }
+
                 transaccion = conn.BeginTransaction();
 
                 //1.  Traer datos del pago
@@ -134,14 +147,12 @@ namespace Plataforma.pages
                     }
                 }
 
-
                 //2.  Actualizar saldo y status del pago
                 string sqlUstatus = " id_status_pago =  " + Pago.STATUS_PAGO_ABONADO + ", saldo = saldo - @abono, pagado = pagado + @abono ";
                 if (itemPago.Saldo <= abono)
                 {
                     sqlUstatus = " id_status_pago =  " + Pago.STATUS_PAGO_PAGADO + ", pagado = monto, saldo = 0 ";
                 }
-
                 string sql = @"  UPDATE pago
                                  SET fecha_registro_pago = @fecha_registro_pago, " +
                                         sqlUstatus +
@@ -157,8 +168,6 @@ namespace Plataforma.pages
                 cmd.Transaction = transaccion;
 
                 r += cmd.ExecuteNonQuery();
-
-
                 #region Abono de saldo recuperado
                 if (recuperado > 0)
                 {
@@ -180,12 +189,12 @@ namespace Plataforma.pages
                             Utils.Log("Saldo ... " + pago.Saldo);
 
                             double montoAAbonar = recuperado;
-							bool completo = false;
-							if (recuperado >= pago.Saldo)
+                            bool completo = false;
+                            if (recuperado >= pago.Saldo)
                             {
                                 montoAAbonar = pago.Saldo;
-								completo = true;
-							}
+                                completo = true;
+                            }
                             Utils.Log("montoAAbonar ... " + montoAAbonar);
 
                             int rowsUpdateds = UpdatePago(pago.IdPago, montoAAbonar, true, completo, conn, transaccion);
@@ -212,7 +221,7 @@ namespace Plataforma.pages
 
                     }
 
-                } 
+                }
                 #endregion
 
                 //  Revisar que si todos los pagos  han sido realizados, abonado o pagado normal pasar el status del prestamo a pagado.                    
@@ -238,10 +247,7 @@ namespace Plataforma.pages
 
                 //
                 transaccion.Commit();
-
-
-
-
+                response.CodigoError = 0;
                 return response;
             }
             catch (Exception ex)
@@ -290,16 +296,16 @@ namespace Plataforma.pages
                 {
                     sqlEsRecuperacion += " ,fecha_registro_pago = @fecha_registro_pago,es_recuperado = 1 ";
                 }
-				if (esCompleto)
-				{
-					sql = @" UPDATE pago SET pagado = monto, saldo = 0 " + sqlEsRecuperacion +
-							 @" WHERE id_pago = @id_pago ";
-				}
-				else
-				{
-					sql = @" UPDATE pago SET pagado = pagado+@abono, saldo = saldo-@abono " + sqlEsRecuperacion +
-							 @" WHERE id_pago = @id_pago ";
-				}
+                if (esCompleto)
+                {
+                    sql = @" UPDATE pago SET pagado = monto, saldo = 0 " + sqlEsRecuperacion +
+                             @" WHERE id_pago = @id_pago ";
+                }
+                else
+                {
+                    sql = @" UPDATE pago SET pagado = pagado+@abono, saldo = saldo-@abono " + sqlEsRecuperacion +
+                             @" WHERE id_pago = @id_pago ";
+                }
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
@@ -309,7 +315,7 @@ namespace Plataforma.pages
 
                 cmd.Parameters.AddWithValue("@abono", abono);
                 cmd.Parameters.AddWithValue("@id_pago", idPago);
-				cmd.Parameters.AddWithValue("@fecha_registro_pago", DateTime.Now);
+                cmd.Parameters.AddWithValue("@fecha_registro_pago", DateTime.Now);
                 cmd.Transaction = transaction;
 
                 r = cmd.ExecuteNonQuery();
@@ -381,7 +387,7 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static int UpdateStatusPagoByPagoAndStatus(string path, int idPago, int idStatus)
+        public static int UpdateStatusPagoByPagoAndStatus(string path, string idUsuario, int idPago, int idStatus)
         {
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             SqlConnection conn = new SqlConnection(strConexion);
@@ -392,37 +398,32 @@ namespace Plataforma.pages
             {
                 conn.Open();
 
-                string sqlPendiente = "";
-                string sqlFalla = "";
-                string sqlAbonado= "";
-                string sqlPagado = "";
-
-                if (idStatus == Pago.STATUS_PAGO_PENDIENTE)
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!UserVisibilityScope.CanAccessPago(scope, conn, idPago))
                 {
-                    sqlPendiente = " id_status_pago = 1, saldo = monto, pagado = 0 ";
+                    return 0;
                 }
 
-                if (idStatus == Pago.STATUS_PAGO_FALLA)
+                string sqlSet;
+                switch (idStatus)
                 {
-                    sqlFalla = " id_status_pago = 2, saldo = monto, pagado = 0 ";
+                    case Pago.STATUS_PAGO_PENDIENTE:
+                        sqlSet = " id_status_pago = 1, saldo = monto, pagado = 0 ";
+                        break;
+                    case Pago.STATUS_PAGO_FALLA:
+                        sqlSet = " id_status_pago = 2, saldo = monto, pagado = 0 ";
+                        break;
+                    case Pago.STATUS_PAGO_ABONADO:
+                        sqlSet = " id_status_pago = 3, saldo = 100, pagado = monto - 100 ";
+                        break;
+                    case Pago.STATUS_PAGO_PAGADO:
+                        sqlSet = " id_status_pago = 4, saldo = 0, pagado = monto ";
+                        break;
+                    default:
+                        return 0;
                 }
 
-                if (idStatus == Pago.STATUS_PAGO_ABONADO)
-                {
-                    sqlAbonado = " id_status_pago = 3, saldo = 100, pagado = monto - 100 ";
-                }
-
-                if (idStatus == Pago.STATUS_PAGO_PAGADO)
-                {
-                    sqlPagado = " id_status_pago = 4, saldo = 0, pagado = monto ";
-                }
-
-                string sql = @" UPDATE pago SET " 
-                                + sqlPendiente
-                                + sqlFalla
-                                + sqlAbonado
-                                + sqlPagado
-                            + @" WHERE id_pago = @id_pago ";
+                string sql = @" UPDATE pago SET " + sqlSet + @" WHERE id_pago = @id_pago ";
 
 
                 Utils.Log("\nMétodo-> " +
@@ -433,7 +434,7 @@ namespace Plataforma.pages
                 cmd.Parameters.AddWithValue("@id_pago", idPago);
                 r = cmd.ExecuteNonQuery();
 
-                Utils.Log("Status Pago actualizado  "  + idPago + " ... " +  (r > 0).ToString());
+                Utils.Log("Status Pago actualizado  " + idPago + " ... " + (r > 0).ToString());
 
             }
             catch (Exception ex)
@@ -520,6 +521,45 @@ namespace Plataforma.pages
 
         }
 
+        private static int ResolvePaymentIdByPrestamo(string idPrestamo, SqlConnection conn)
+        {
+            try
+            {
+                const string query = @"
+                    SELECT TOP (1) p.id_pago
+                    FROM pago p
+                    WHERE p.id_prestamo = @id_prestamo
+                    ORDER BY
+                        CASE
+                            WHEN p.id_status_pago IN (2, 3) THEN 0
+                            WHEN p.id_status_pago = 1 THEN 1
+                            WHEN p.id_status_pago = 4 THEN 2
+                            ELSE 3
+                        END,
+                        p.numero_semana ASC,
+                        p.id_pago ASC";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@id_prestamo", idPrestamo);
+
+                    var result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.Log("Error ResolvePaymentIdByPrestamo ... " + ex.Message);
+                Utils.Log(ex.StackTrace);
+            }
+
+            return 0;
+        }
+
 
 
         [WebMethod]
@@ -541,20 +581,11 @@ namespace Plataforma.pages
                 {
                     conn.Open();
 
-                    // Datos del usuario
-                    Usuario user = Usuarios.GetUsuario(path, idUsuario);
-                    string sqlUser = "";
+                    var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                    //  Director sin plaza (administrativo de oficina): ve todas las plazas.
 
-                    //  Filtrado base por empleado (solo para roles operativos)
-                    if (idTipoUsuario != Usuario.TIPO_USUARIO_SUPER_ADMIN.ToString() &&
-                        idTipoUsuario != Usuario.TIPO_USUARIO_DIRECTOR.ToString())
-                    {
-                        //  Para promotor limitamos a sus propios préstamos
-                        if (idTipoUsuario == Employees.POSICION_PROMOTOR.ToString())
-                        {
-                            sqlUser = "  AND pre.id_empleado = " + user.IdEmpleado + "  ";
-                        }
-                    }
+                    idPlaza = UserVisibilityScope.GetFixedPlaza(scope, idPlaza);
+                    string sqlUser = UserVisibilityScope.BuildLoanEmployeeScopeSql(scope, "pre.id_empleado");
 
                     // ---- Filtro por Plaza / Árbol de empleados (para aplicar sobre los pagos en el APPLY) ----
                     string sqlPlazaApply = "";
@@ -563,7 +594,6 @@ namespace Plataforma.pages
                         var empleados = conn.Query<Empleado>(
                             "SELECT e.id_empleado IdEmpleado, id_plaza IdPlaza, id_posicion IdPosicion, id_supervisor IdSupervisor, id_ejecutivo IdEjecutivo FROM empleado e inner join usuario u on u.id_empleado = e.id_empleado WHERE id_plaza = @plz",
                             new { plz = idPlaza }).ToList();
-                        sqlUser = "";
                         List<Empleado> empleadosFiltrados = new List<Empleado>();
                         switch ((typeFilter ?? "").ToLowerInvariant())
                         {
@@ -585,10 +615,12 @@ namespace Plataforma.pages
                         List<int> lista = (empleadosFiltrados.Count > 0 ? empleadosFiltrados : empleados)
                                           .Select(s => s.IdEmpleado).Distinct().ToList();
 
-                        if (lista.Count > 0)
-                        {
-                            sqlPlazaApply = " AND p.id_usuario IN (" + string.Join(",", lista) + ") ";
-                        }
+                        //  El árbol de plaza se resuelve por el empleado que colocó el crédito
+                        //  (prestamo.id_empleado). NO por pago.id_usuario, que es el usuario
+                        //  que capturó el pago y pertenece a otro catálogo de ids.
+                        sqlPlazaApply = lista.Count > 0
+                            ? " AND pre.id_empleado IN (" + string.Join(",", lista) + ") "
+                            : " AND 1 = 0 ";
                     }
 
                     // ---- Rango de fechas (parametrizado) ----
@@ -621,9 +653,9 @@ namespace Plataforma.pages
                             up.fecha_ultimo_pago,
 
                             -- Pago representativo en rango: último por fecha
-                            pago_ult.id_pago,
-                            pago_ult.numero_semana,
-                            pago_ult.montopago
+                            ISNULL(pago_ult.id_pago, pago_ref.id_pago) AS id_pago,
+                            ISNULL(pago_ult.numero_semana, pago_ref.numero_semana) AS numero_semana,
+                            ISNULL(pago_ult.montopago, pago_ref.montopago) AS montopago
                         FROM prestamo pre
                         INNER JOIN cliente c           ON c.id_cliente = pre.id_cliente
                         INNER JOIN status_prestamo st  ON st.id_status_prestamo = pre.id_status_prestamo
@@ -638,10 +670,27 @@ namespace Plataforma.pages
                             WHERE p.id_prestamo = pre.id_prestamo
                               AND p.fecha >= @desde
                               AND p.fecha <  DATEADD(DAY, 1, @hasta)
-                              /*** filtro por plaza/arbol (si aplica) ***/
-                              " + sqlPlazaApply + @"
                             ORDER BY p.fecha DESC, p.id_pago DESC
                         ) AS pago_ult
+
+                        -- PAGO DE RESPALDO PARA ABRIR EL FORMULARIO
+                        OUTER APPLY (
+                            SELECT TOP (1)
+                                p.id_pago,
+                                p.numero_semana,
+                                ISNULL(NULLIF(p.saldo, 0), p.monto) AS montopago
+                            FROM pago p
+                            WHERE p.id_prestamo = pre.id_prestamo
+                            ORDER BY
+                                CASE
+                                    WHEN p.id_status_pago IN (2, 3) THEN 0
+                                    WHEN p.id_status_pago = 1 THEN 1
+                                    WHEN p.id_status_pago = 4 THEN 2
+                                    ELSE 3
+                                END,
+                                p.numero_semana ASC,
+                                p.id_pago ASC
+                        ) AS pago_ref
 
                         -- FECHA DEL ÚLTIMO PAGO REGISTRADO (global al préstamo)
                         OUTER APPLY (
@@ -671,7 +720,7 @@ namespace Plataforma.pages
                         ) AS sem
 
                         WHERE pre.id_status_prestamo = 4
-                        " + sqlUser + @"
+                        " + sqlPlazaApply + sqlUser + @"
                         ";
 
                     var adp = new SqlDataAdapter(query, conn);
@@ -725,8 +774,9 @@ namespace Plataforma.pages
 
                             // Botón
                             string botones = "<button data-idcliente='" + item.IdCliente + "' " +
+                                             "data-idpago='" + item.IdPago + "' " +
                                              "data-idprestamo='" + item.IdPrestamo + "' " +
-                                             "onclick='payments.view(" + item.IdPago + ")' " +
+                                             "onclick='payments.view(" + item.IdPago + ", " + item.IdPrestamo + ", " + item.IdCliente + ")' " +
                                              "class='btn btn-outline-primary'>" +
                                              "<span class='fa fa-folder-open mr-1'></span>Abrir</button>";
                             item.Accion = botones;
@@ -751,12 +801,10 @@ namespace Plataforma.pages
 
 
         [WebMethod]
-        public static Pago GetPayment(string path, string idPago, string idUsuario)
+        public static Pago GetPayment(string path, string idPago, string idUsuario, string idPrestamo)
         {
 
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
-
-
             // verificar que tenga permisos para usar esta pagina
             bool tienePermiso = Index.TienePermisoPagina(pagina, path, idUsuario);
             if (!tienePermiso)
@@ -774,6 +822,25 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                int idPagoResolved = 0;
+                int.TryParse(idPago, out idPagoResolved);
+
+                if (idPagoResolved <= 0 && !string.IsNullOrWhiteSpace(idPrestamo))
+                {
+                    idPagoResolved = ResolvePaymentIdByPrestamo(idPrestamo, conn);
+                }
+
+                if (idPagoResolved <= 0)
+                {
+                    return item;
+                }
+
+                if (!UserVisibilityScope.CanAccessPago(scope, conn, idPagoResolved))
+                {
+                    return item;
+                }
+
                 DataSet ds = new DataSet();
                 string query = @" SELECT p.id_pago, p.id_prestamo, p.monto, p.saldo, p.fecha, p.id_status_pago, p.id_usuario, p.numero_semana,
                                     concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
@@ -785,15 +852,16 @@ namespace Plataforma.pages
                                     JOIN status_pago st ON (st.id_status_pago = p.id_status_pago)                                            
                                     JOIN cliente c ON (c.id_cliente = prestamo.id_cliente) 
                                     JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) "
-									+ @" WHERE p.id_pago = @id_pago ";
+                                    + @" WHERE p.id_pago = @id_pago ";
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
-                adp.SelectCommand.Parameters.AddWithValue("id_pago", idPago);
+                adp.SelectCommand.Parameters.AddWithValue("id_pago", idPagoResolved);
 
                 Utils.Log("\nMétodo-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
+                var rows = ds.Tables.Count > 0 ? ds.Tables[0].Rows.Count : 0;
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
@@ -807,15 +875,14 @@ namespace Plataforma.pages
                         item.NumeroSemanas = int.Parse(ds.Tables[0].Rows[i]["semanas_a_prestar"].ToString());
                         item.NombreCliente = ds.Tables[0].Rows[i]["nombre_completo"].ToString();
                         item.MontoPrestamo = Math.Round(float.Parse(ds.Tables[0].Rows[i]["montoprestamo"].ToString()), 2);
-						item.MontoPrestamoFormateadoMx = item.MontoPrestamo.ToString("C2");
-						item.Monto = Math.Round(float.Parse(ds.Tables[0].Rows[i]["monto"].ToString()), 2);
+                        item.MontoPrestamoFormateadoMx = item.MontoPrestamo.ToString("C2");
+                        item.Monto = Math.Round(float.Parse(ds.Tables[0].Rows[i]["monto"].ToString()), 2);
                         item.MontoFormateadoMx = item.Monto.ToString("C2"); //moneda Mx -> $ 2,233.00
-						item.Saldo = float.Parse(ds.Tables[0].Rows[i]["saldo"].ToString());
+                        item.Saldo = float.Parse(ds.Tables[0].Rows[i]["saldo"].ToString());
+                        item.SaldoPendiente = double.Parse(ds.Tables[0].Rows[i]["saldopendiente"].ToString());
                         item.SaldoFormateadoMx = item.Saldo.ToString("C2");
-						item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
+                        item.FechaStr = ds.Tables[0].Rows[i]["fechastr"].ToString();
                         item.Status = ds.Tables[0].Rows[i]["nombre_status_pago"].ToString();
-
-
 
                     }
                 }
@@ -862,6 +929,11 @@ namespace Plataforma.pages
             {
 
                 conn.Open();
+                var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                if (!int.TryParse(idPrestamo, out var loanId) || !UserVisibilityScope.CanAccessPrestamo(scope, conn, loanId))
+                {
+                    return items;
+                }
 
 
                 DataSet ds = new DataSet();
@@ -884,6 +956,7 @@ namespace Plataforma.pages
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");
 
                 adp.Fill(ds);
+                var rows = ds.Tables.Count > 0 ? ds.Tables[0].Rows.Count : 0;
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
@@ -894,7 +967,7 @@ namespace Plataforma.pages
                         item.IdPago = int.Parse(ds.Tables[0].Rows[i]["id_pago"].ToString());
                         item.IdPrestamo = int.Parse(ds.Tables[0].Rows[i]["id_prestamo"].ToString());
                         item.IdStatusPago = int.Parse(ds.Tables[0].Rows[i]["id_status_pago"].ToString());
-                        
+
                         item.Monto = float.Parse(ds.Tables[0].Rows[i]["monto"].ToString());
                         item.Saldo = float.Parse(ds.Tables[0].Rows[i]["saldo"].ToString());
                         item.Pagado = float.Parse(ds.Tables[0].Rows[i]["pagado"].ToString());
@@ -902,8 +975,8 @@ namespace Plataforma.pages
 
                         if (item.IdStatusPago == Pago.STATUS_PAGO_PENDIENTE)//Este aun no se muestra en historial
                         {
-							item.SaldoFormateadoMx = "-";
-							item.Color = "transparent";         //   tono gris
+                            item.SaldoFormateadoMx = "-";
+                            item.Color = "transparent";         //   tono gris
 
                         }
 
@@ -915,8 +988,7 @@ namespace Plataforma.pages
 
                         if (item.IdStatusPago == Pago.STATUS_PAGO_ABONADO)//status Abonado esta todo pagado, por tanto se muestra el monto total del pago
                         {
-                            item.Saldo = item.Monto;
-                            item.SaldoFormateadoMx = item.Saldo.ToString("C2");
+                            item.SaldoFormateadoMx = item.Pagado.ToString("C2");
                             item.Color = "#00A2FF";         //   tono azul
                         }
 

@@ -1,21 +1,6 @@
 ﻿using EASendMail;
-using Plataforma.Clases;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Web;
-using System.Web.Services;
-using System.Web.Services.Description;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Windows;
-using Twilio.TwiML.Voice;
-using static QRCoder.PayloadGenerator;
 
 namespace Plataforma.pages
 {
@@ -184,9 +169,9 @@ namespace Plataforma.pages
                             //"<a href=\"https://www.youtube.com/watch?v=92AtK9cveEo\">www.youtube.com/nanofactura</a> <br>" +
                             //"<b><font color=\"#2B66A6\">Telefonos: (33) 1258-0618 y (33) 3607-8422</font></b></H4>" +
                             //"<HR width=65% align=\"center\"> <br>" +
-                            
+
                             "<H5 align=\"center\">Este es un servicio de envio de correo automático <b><font color=\"#2B66A6\">NanoCode</font></b> favor de no responder a esta dirección</H5>"
-                            +"El mensaje que ha escrito :"+ NomComp+ " es : " + txtContenidoEmail.Value+ "" + " y su dirección de correo es : " + txtDireccionEmail.Value;
+                            + "El mensaje que ha escrito :" + NomComp + " es : " + txtContenidoEmail.Value + "" + " y su dirección de correo es : " + txtDireccionEmail.Value;
 
             //string MailEmisor = NumeroIntento == 1 ? "CFDI@nanocode.mx" : "nanocode@outlook.com";
             string MailEmisor = "cfdi@nanocode.mx";

@@ -5,6 +5,12 @@ let pagina = '13';
 
 
 const loans = {
+    normalizeStatusLabel: (status) => {
+        const label = (status || '').toString().trim();
+        return label.toLowerCase() === 'pendiente supervisor'
+            ? 'Pendiente Capturista'
+            : label;
+    },
     init: () => {
         loans.loadPrestamos();
         loans.loadStatus();
@@ -16,8 +22,7 @@ const loans = {
             Nombre: $("#txtNombreClienteBusqueda").val(),
             NoPrestamoMinimo: $("#txtNoPrestamoMinimoBusqueda").val(),
             NoPrestamoMaximo: $("#txtNoPrestamoMaximaBusqueda").val(),
-            RechazoMinimo: $("#txtRechazosPrestamoMinimoBusqueda").val(),
-            RechazosMaximo: $("#txtRechazosPrestamoMaximaBusqueda").val(),
+            Promotor: $("#txtPromotorBusqueda").val(),
             AvalMinimo: $("#txtAvalPrestamoMinimoBusqueda").val(),
             AvalMaximo: $("#txtAvalPrestamoMaximaBusqueda").val(),
             FechaPrimerSolicitudMinimo: moment($("#dtpFechaPrestamoMinimoBusqueda").val()).isValid()
@@ -56,7 +61,8 @@ const loans = {
 
                 for (let i = 0; i < llst_Status.length; i++) {
                     let oStatus = llst_Status[i];
-                    opcion += `<option value = '${oStatus.IdStatusPrestamo}' > ${oStatus.Nombre}</option > `;
+                    const statusLabel = loans.normalizeStatusLabel(oStatus.Nombre);
+                    opcion += `<option value = '${oStatus.IdStatusPrestamo}' > ${statusLabel}</option > `;
                 }
 
                 $('#cboStatus').html(opcion);
@@ -135,11 +141,12 @@ const loans = {
                         return moment(row.fecha_ultima_solicitud).format('DD-MM-YYYY');
                     }
                 },
-                { data: 'NoRechazados', className: 'text-center' },
+                { data: 'PromotorAsignado', className: 'text-center', render: function(d){ return d && d.trim() ? d : 'Sin promotor'; } },
                 { data: 'Aval', className: 'text-center' },
                 {
                     data: 'Status', className: 'text-center', render: function (datam, type, row) {
-                        return "<span class='" + row.ColorStatus +" rounded text-white p-2'>" + row.Status + "</span>";
+                        const statusLabel = loans.normalizeStatusLabel(row.Status);
+                        return "<span class='" + row.ColorStatus +" rounded text-white p-2'>" + statusLabel + "</span>";
                     }
                 },
                 {

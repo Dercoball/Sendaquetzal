@@ -65,6 +65,7 @@
         <asp:HiddenField ID="txtIdTipoUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdUsuario" runat="server"></asp:HiddenField>
         <asp:HiddenField ID="txtIdEmpleado" runat="server"></asp:HiddenField>
+        <asp:HiddenField ID="txtIdPlaza" runat="server"></asp:HiddenField>
     </form>
 
 
@@ -321,7 +322,7 @@
                                             <label for="txtAbono">
                                                 Abono
                                             </label>
-                                            <input type="number" class="form-control campo-input" id="txtAbono" step="0.001"
+                                            <input type="number" class="form-control campo-input" id="txtAbono" step="0.01" min="0"
                                                 required="required" data-required-error='Requerido' />
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -333,7 +334,7 @@
                                             <label for="txtRecuperado">
                                                 Recuperado
                                             </label>
-                                            <input type="number" class="form-control campo-input" id="txtRecuperado" step="0.001" />
+                                            <input type="number" class="form-control campo-input" id="txtRecuperado" step="0.01" min="0" />
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>

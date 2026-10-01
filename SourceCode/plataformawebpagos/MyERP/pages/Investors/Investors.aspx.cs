@@ -58,7 +58,7 @@ namespace Plataforma.pages
         {
             var strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
             var llst_Inversionistas = new List<Inversionista>();
-            
+
             try
             {
                 using (var conn = new SqlConnection(strConexion))
@@ -70,7 +70,8 @@ namespace Plataforma.pages
                          WHERE 
                          ISNull(i.eliminado, 0) = 0";
 
-                    if (!string.IsNullOrWhiteSpace(oRequest.NombreBusqueda)) {
+                    if (!string.IsNullOrWhiteSpace(oRequest.NombreBusqueda))
+                    {
                         query += $@" AND nombre like '%{oRequest.NombreBusqueda}%'";
                     }
 
@@ -79,7 +80,8 @@ namespace Plataforma.pages
                         query += $@" AND rfc = '{oRequest.RFCBusqueda}'";
                     }
 
-                    if (oRequest.UtilidadMinimaBusqueda.HasValue) {
+                    if (oRequest.UtilidadMinimaBusqueda.HasValue)
+                    {
                         query += $@" AND porcentaje_utilidad_sugerida >= '{oRequest.UtilidadMinimaBusqueda.Value}'";
                     }
 
@@ -403,9 +405,9 @@ namespace Plataforma.pages
         }
 
         [WebMethod]
-        public static DatosSalida Suspender(string path, 
-            string id, 
-            string idUsuario, 
+        public static DatosSalida Suspender(string path,
+            string id,
+            string idUsuario,
             bool status)
         {
             DatosSalida salida = new DatosSalida();
@@ -438,7 +440,7 @@ namespace Plataforma.pages
                     cmd.CommandType = CommandType.Text;
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.Parameters.AddWithValue("@status", status);
-                    
+
                     int r = cmd.ExecuteNonQuery();
                     Utils.Log("r = " + r);
                     Utils.Log("Suspendido -> OK ");

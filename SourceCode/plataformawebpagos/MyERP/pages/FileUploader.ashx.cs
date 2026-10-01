@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Web;
 
 namespace Plataforma
@@ -444,7 +442,7 @@ namespace Plataforma
 
         }
 
-        public int InsertarComprobanteRetiro (string path, string id, string b64, string descripcionArchivo, string tipo, string urlThumbnail)
+        public int InsertarComprobanteRetiro(string path, string id, string b64, string descripcionArchivo, string tipo, string urlThumbnail)
         {
 
             Log("\n==>INICIANDO Método-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n");

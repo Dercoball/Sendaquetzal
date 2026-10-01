@@ -417,6 +417,44 @@
     <script src="../../js/app/customers/customers.js"></script>
 
     <script src="../../js/app/general.js"></script>
+    <script>
+        (function () {
+            function lockCustomerPlaza() {
+                var userTypeEl = document.getElementById('txtIdTipoUsuario');
+                var plazaEl = document.getElementById('txtIdPlaza');
+                var combo = document.getElementById('cmbPlaza');
+
+                if (!userTypeEl || !combo) return;
+
+                var userType = parseInt(userTypeEl.value || '0', 10);
+                var hasFixedPlaza = userType === 1 || userType === 4;
+                if (!hasFixedPlaza) return;
+
+                var plazaActual = parseInt((plazaEl && plazaEl.value) || '0', 10);
+                if (plazaActual > 0) {
+                    var optionExists = Array.prototype.some.call(combo.options, function (option) {
+                        return parseInt(option.value || '0', 10) === plazaActual;
+                    });
+
+                    if (!optionExists) {
+                        combo.add(new Option('Plaza actual', plazaActual, false, false));
+                    }
+
+                    combo.value = plazaActual.toString();
+                }
+
+                combo.disabled = true;
+                combo.setAttribute('disabled', 'disabled');
+            }
+
+            document.addEventListener('DOMContentLoaded', lockCustomerPlaza);
+            window.addEventListener('load', function () {
+                lockCustomerPlaza();
+                window.setTimeout(lockCustomerPlaza, 250);
+                window.setTimeout(lockCustomerPlaza, 1000);
+            });
+        })();
+    </script>
 
 
     <!-- Toastr style -->

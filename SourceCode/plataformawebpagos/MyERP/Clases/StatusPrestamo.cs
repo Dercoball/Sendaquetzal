@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Plataforma.Clases
 {
@@ -11,7 +8,7 @@ namespace Plataforma.Clases
 
         public int IdStatusPrestamo;
         public String Nombre;
-        
+
 
         public string Accion;
 

@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Newtonsoft.Json.Linq;
 using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
@@ -60,9 +59,9 @@ namespace Plataforma.pages
 	                    u.login Usuario,
 	                    e.fecha_ingreso FechaIngreso,
                         e.id_posicion,
-	                    m.nombre Modulo,  
+	                    ISNULL(m.nombre, 'Sin módulo') Modulo,
 	                    pos.nombre Tipo,
-	                    p.nombre Plaza , 
+	                    ISNULL(p.nombre, 'Sin plaza') Plaza ,
 	                    IsNull(concat(sup.nombre ,  ' ' , sup.primer_apellido , ' ' , sup.segundo_apellido),'No asignado') NombreSupervisor,
 	                    IsNull(concat(eje.nombre ,  ' ' , eje.primer_apellido , ' ' , eje.segundo_apellido),'No asignado') NombreEjecutivo,
                         m.id_comision,
@@ -70,14 +69,14 @@ namespace Plataforma.pages
 	                    pos.id_posicion
                     FROM empleado e 
                     JOIN usuario u ON (u.id_empleado = e.id_empleado) 
-                    JOIN comision m ON (m.id_comision = e.id_comision_inicial) 
-                    JOIN plaza p ON (p.id_plaza = e.id_plaza) 
+                    LEFT JOIN comision m ON (m.id_comision = e.id_comision_inicial)
+                    LEFT JOIN plaza p ON (p.id_plaza = e.id_plaza)
                     JOIN posicion pos ON (pos.id_posicion = e.id_posicion)
                     LEFT JOIN empleado sup ON (sup.id_empleado = e.id_supervisor)
                     LEFT JOIN empleado eje ON (eje.id_empleado  = e.id_ejecutivo)
                     ";
 
-                    query += "WHERE ISNULL(e.eliminado, 1) = 1 ";
+                    query += "WHERE ISNULL(e.eliminado, 0) = 0 ";
                     if (!Filtro.Activo.HasValue)
                         query += " AND ISNULL(e.activo,1) = 1 ";
 
@@ -175,7 +174,23 @@ namespace Plataforma.pages
                 {
                     conn.Open();
                     var ds = new DataSet();
-                    string query = @" SELECT id_plaza, nombre FROM  plaza WHERE IsNull(activo, 1) = 1  AND ISNull(eliminado, 0) = 0   ";
+                    string query = @" SELECT id_plaza, nombre FROM plaza WHERE IsNull(activo, 1) = 1 AND ISNull(eliminado, 0) = 0 ";
+                    var session = System.Web.HttpContext.Current != null ? System.Web.HttpContext.Current.Session : null;
+                    var currentUserId = Convert.ToString(session != null ? session["id_usuario"] : string.Empty);
+
+                    if (string.IsNullOrWhiteSpace(currentUserId))
+                    {
+                        return items;
+                    }
+
+                    var scope = UserVisibilityScope.GetByUser(path, currentUserId, conn);
+                    //  Sólo se acota cuando el usuario tiene plaza asignada.
+                    //  Un administrativo sin plaza ve el catálogo completo.
+                    if ((scope.IsDirector || scope.IsSupervisor) && scope.IdPlaza > 0)
+                    {
+                        query += " AND id_plaza = " + scope.IdPlaza;
+                    }
+
                     var adp = new SqlDataAdapter(query, conn);
 
                     Utils.Log("\nMétodo-> " + System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + query + "\n");

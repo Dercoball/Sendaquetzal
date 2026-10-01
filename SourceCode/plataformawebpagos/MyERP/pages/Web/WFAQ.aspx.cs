@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
-using Plataforma.Clases;
+﻿using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -123,7 +118,7 @@ namespace Plataforma.pages
         [WebMethod]
         public static List<PreguntaFrecuente> GetListaItemsPublic(string path)
         {
-            
+
             string strConexion = System.Configuration.ConfigurationManager.ConnectionStrings[path].ConnectionString;
 
             SqlConnection conn = new SqlConnection(strConexion);

@@ -1,16 +1,10 @@
-﻿using Newtonsoft.Json;
-using Plataforma.Clases;
+﻿using Plataforma.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
 using System.Web;
-using System.Web.Configuration;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Plataforma.pages
 {
@@ -72,7 +66,7 @@ namespace Plataforma.pages
                     Utils.Log("Error " + ex.Message);
 
                 }
-                if (idPermiso == 7 && (usuario.IdTipoUsuario == 5 || usuario.IdTipoUsuario == 3 || usuario.IdTipoUsuario == 4 || usuario.IdTipoUsuario == 9))
+                if (idPermiso == 7 && (usuario.IdTipoUsuario == 5 || usuario.IdTipoUsuario == 3 || usuario.IdTipoUsuario == 4 || usuario.IdTipoUsuario == Usuario.TIPO_USUARIO_CAPTURISTA))
                 {
                     permisoPaginaActual = listaPermisos.Find(x => x.IdPermiso2 == idPermiso);
 
@@ -301,7 +295,7 @@ namespace Plataforma.pages
             nav += AgregarItemRootMenu("15", pagina, listaPermisos, "fa fa-credit-card");
 
 
-            
+
 
             //  clientes
             nav += AgregarItemRootMenu("21", pagina, listaPermisos, "fa fa-user");
@@ -313,13 +307,17 @@ namespace Plataforma.pages
             nav += GenerateMenu(new List<string> { "51", "52", "53" }, pagina, listaPermisos, "fa fa-percent", "Inversionistas",
                PermisoUsuario.TIPO_PERMISO_INVERSIONISTAS, "Inversionistas");
 
+            //  cobranza
+            nav += GenerateMenu(new List<string> { "90", "91", "92", "93", "94" }, pagina, listaPermisos, "fa fa-money", "Cobranza",
+               PermisoUsuario.TIPO_PERMISO_COBRANZA, "Cobranza");
+
             //  reporte
             nav += AgregarItemRootMenu("19", pagina, listaPermisos, "fa fa-file-pdf-o");
 
             nav += GenerateMenu(new List<string> { "54", "57", "58" }, pagina, listaPermisos, "fa fa-th-list", "Otros",
                PermisoUsuario.TIPO_PERMISO_ACTIVOS, "Otros");
 
-            nav += GenerateMenu(new List<string> { "47","8", "10", "11", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración",
+            nav += GenerateMenu(new List<string> { "47", "8", "10", "11", "45", "46", "47", "48", "49", }, pagina, listaPermisos, "fa fa-cogs", "Configuración",
                 PermisoUsuario.TIPO_PERMISO_CONFIGURACION, "Configuracion");
 
 

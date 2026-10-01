@@ -5,12 +5,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
 using System.Web.Services;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
 
 namespace Plataforma.pages
 {
@@ -28,6 +24,23 @@ namespace Plataforma.pages
             public int IdEjecutivo { get; set; }
         }
 
+        private static UserVisibilityContext GetCurrentScope(string path, SqlConnection conn)
+        {
+            return UserVisibilityScope.GetCurrent(path, conn) ?? new UserVisibilityContext();
+        }
+
+        private static int GetScopedPlaza(UserVisibilityContext scope, int requestedPlaza)
+        {
+            //  Sólo se fuerza la plaza cuando el usuario realmente tiene una asignada.
+            //  Un administrativo sin plaza (director de oficina) ve todas.
+            if (scope != null && (scope.IsDirector || scope.IsSupervisor) && scope.IdPlaza > 0)
+            {
+                return scope.IdPlaza;
+            }
+
+            return requestedPlaza;
+        }
+
 
 
         protected void Page_Load(object sender, EventArgs e)
@@ -36,7 +49,6 @@ namespace Plataforma.pages
             string idTipoUsuario = (string)Session["id_tipo_usuario"];
             string idUsuario = (string)Session["id_usuario"];
             string path = (string)Session["path"];
-            string idEmpleado = (string)Session["id_empleado"] ?? "";
             string idPlaza = "";
 
 
@@ -44,30 +56,13 @@ namespace Plataforma.pages
             txtUsuario.Value = usuario;
             txtIdTipoUsuario.Value = idTipoUsuario;
             txtIdUsuario.Value = idUsuario;
-            txtIdEmpleado.Value = idEmpleado;
+            var scope = UserVisibilityScope.GetByUser(path, idUsuario);
+            txtIdEmpleado.Value = scope.IdEmpleado > 0 ? scope.IdEmpleado.ToString() : string.Empty;
 
-            // Plaza del supervisor (para bloquear combo de plaza con su plaza actual)
-            if (!string.IsNullOrEmpty(idEmpleado) && idTipoUsuario == Employees.POSICION_SUPERVISOR.ToString())
+            // Plaza fija para roles con visibilidad acotada por plaza.
+            if ((scope.IsSupervisor || scope.IsDirector) && scope.IdPlaza > 0)
             {
-                if (int.TryParse(idEmpleado, out var idEmpInt))
-                {
-                    try
-                    {
-                        string strConexion = ConfigurationManager.ConnectionStrings[path].ConnectionString;
-                        using (var conn = new SqlConnection(strConexion))
-                        {
-                            conn.Open();
-                            var plazaQuery = conn.QueryFirstOrDefault<int>(
-                                "SELECT ISNULL(id_plaza,0) FROM empleado WHERE id_empleado = @id",
-                                new { id = idEmpInt });
-                            idPlaza = plazaQuery.ToString();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Utils.Log("Error al obtener plaza del supervisor: " + ex.Message);
-                    }
-                }
+                idPlaza = scope.IdPlaza.ToString();
             }
             // Asegurar el hidden de plaza siempre exista y asigne valor (puede ser vacío)
             if (txtIdPlaza == null)
@@ -102,6 +97,17 @@ namespace Plataforma.pages
                 var tx = conn.BeginTransaction();
                 try
                 {
+                    var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                    if (!UserVisibilityScope.CanAccessCliente(scope, conn, idCliente))
+                    {
+                        tx.Rollback();
+                        return new DatosSalida
+                        {
+                            CodigoError = 1,
+                            MensajeError = "No tienes permiso para eliminar un cliente fuera de tu plaza."
+                        };
+                    }
+
                     // Prestamos del cliente -> inactivos/rechazados
                     var sqlPrestamo = @"UPDATE prestamo
                                         SET activo = 0, id_status_prestamo = @status
@@ -154,10 +160,17 @@ namespace Plataforma.pages
                 {
                     conn.Open();
 
-                    // Enforce scope based on the logged-in user to avoid cross-supervisor leakage
-                    var usuarioActual = Usuarios.GetUsuario(path, idUsuario);
-                    var tipoActual = int.TryParse(idTipoUsuario, out var t) ? t : 0;
-                    var idEmpleadoActual = usuarioActual?.IdEmpleado ?? 0;
+                    // Enforce scope based on the logged-in user to avoid cross-plaza leakage.
+                    var scope = UserVisibilityScope.GetByUser(path, idUsuario, conn);
+                    var tipoActual = scope.IdTipoUsuario;
+                    var idEmpleadoActual = scope.IdEmpleado;
+
+                    if (scope.IsDirector)
+                    {
+                        //  Con plaza asignada se acota a ella; sin plaza (administrativo
+                        //  de oficina) idPlaza queda en 0 = todas las plazas.
+                        idPlaza = UserVisibilityScope.GetFixedPlaza(scope, idPlaza);
+                    }
 
                     if (tipoActual == Employees.POSICION_PROMOTOR)
                     {
@@ -200,9 +213,9 @@ namespace Plataforma.pages
 
                     // 2) Aplica tu typeFilter sobre esa lista depurada
                     IEnumerable<Empleado> empleadosFiltrados = empleados;
-                    switch(typeFilter?.ToLowerInvariant())
+                    switch (typeFilter?.ToLowerInvariant())
                     {
-                    case "promotor":
+                        case "promotor":
                             // Solo ese promotor
                             if (idPromotor > 0)
                                 empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5 && w.IdEmpleado == idPromotor);
@@ -210,27 +223,42 @@ namespace Plataforma.pages
                                 empleadosFiltrados = empleados.Where(w => w.IdPosicion == 5);
                             break;
 
-                    case "supervisor":
-                        // Promotores directamente asignados a ese supervisor
-                        empleadosFiltrados = empleados.Where(w =>
-                            w.IdPosicion == 5 && w.IdSupervisor == idSupervisor);
-                        break;
+                        case "supervisor":
+                            // Promotores directamente asignados a ese supervisor
+                            empleadosFiltrados = empleados.Where(w =>
+                                w.IdPosicion == 5 && w.IdSupervisor == idSupervisor);
+                            break;
 
-                    case "ejecutivo":
-                        // Supervisores asignados a ese ejecutivo
-                        empleadosFiltrados = empleados.Where(w =>
-                            w.IdPosicion == 4 && w.IdEjecutivo == idEjecutivo);
-                        break;
+                        case "ejecutivo":
+                            // Supervisores asignados a ese ejecutivo
+                            empleadosFiltrados = empleados.Where(w =>
+                                w.IdPosicion == 4 && w.IdEjecutivo == idEjecutivo);
+                            break;
                     }
 
 
-                        // 3) Construye el filtro IN de forma segura:
+                    // 3) Construye el filtro IN de forma segura:
                     var idsEmpleados = empleadosFiltrados.Select(e => e.IdEmpleado).Distinct().ToList();
 
                     // Si no hay empleados válidos en plazas activas, no traigas nada
                     string filtroEmpleadosSql = (idsEmpleados.Count == 0)
                         ? " AND 1 = 0 "
                         : " AND e.id_empleado IN (" + string.Join(",", idsEmpleados) + ") ";
+
+                    // Gestor de cobranza: sólo los clientes de la cartera que le asignaron.
+                    if (scope.IsGestor)
+                    {
+                        filtroEmpleadosSql = scope.IdEmpleado > 0
+                            ? @" AND EXISTS (
+                                    SELECT 1
+                                    FROM cobranza_asignacion ca_scope
+                                    WHERE ca_scope.id_prestamo = p.id_prestamo
+                                      AND ca_scope.id_gestor = " + scope.IdEmpleado + @"
+                                      AND ISNULL(ca_scope.activo, 0) = 1
+                                      AND ISNULL(ca_scope.eliminado, 0) = 0
+                                ) "
+                            : " AND 1 = 0 ";
+                    }
 
                     // 4) Query: último préstamo por cliente + plaza activa SIEMPRE
                     string query = @"
@@ -379,8 +407,8 @@ namespace Plataforma.pages
                 Utils.Log("\n-> " +
                 System.Reflection.MethodBase.GetCurrentMethod().Name + "\n" + sql + "\n");
 
-                Utils.Log("customerId "+ customerId + "\n");
-                Utils.Log("statusId"+ statusId + "\n");
+                Utils.Log("customerId " + customerId + "\n");
+                Utils.Log("statusId" + statusId + "\n");
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.CommandType = CommandType.Text;
@@ -545,7 +573,7 @@ namespace Plataforma.pages
 
         }
 
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public static List<Plaza> GetListaPlazas(string path)
         {
 
@@ -557,8 +585,24 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
+                var scope = GetCurrentScope(path, conn);
+                var idPlaza = GetScopedPlaza(scope, 0);
+
+                if (scope.IsSupervisor && idPlaza <= 0)
+                {
+                    return items;
+                }
+
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_plaza, nombre FROM  plaza WHERE activo = 1 and eliminado <> 1";
+                string query = @" SELECT id_plaza, nombre
+                                  FROM plaza
+                                  WHERE activo = 1
+                                    AND eliminado <> 1";
+
+                if (idPlaza > 0)
+                {
+                    query += " AND id_plaza = " + idPlaza;
+                }
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -594,7 +638,7 @@ namespace Plataforma.pages
 
         }
 
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public static List<Empleado> GetListaEjecutivo(string path, int idplaza)
         {
 
@@ -606,8 +650,20 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
+                var scope = GetCurrentScope(path, conn);
+                idplaza = GetScopedPlaza(scope, idplaza);
+
+                if (scope.IsSupervisor && idplaza <= 0)
+                {
+                    return items;
+                }
+
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_plaza = " +  idplaza +" AND id_posicion = 3";
+                string query = @" SELECT e.id_empleado, e.nombre, e.primer_apellido, e.segundo_apellido
+                                  FROM empleado e
+                                  WHERE e.id_plaza = " + idplaza + @"
+                                    AND e.id_posicion = 3"
+                                  + UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado");
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -645,7 +701,7 @@ namespace Plataforma.pages
 
         }
 
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public static List<Empleado> GetListaSupervisor(string path, int idejecutivo, int idplaza)
         {
 
@@ -657,8 +713,26 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
+                var scope = GetCurrentScope(path, conn);
+                idplaza = GetScopedPlaza(scope, idplaza);
+
+                if (scope.IsSupervisor && idplaza <= 0)
+                {
+                    return items;
+                }
+
+                if (idejecutivo > 0 && !UserVisibilityScope.CanAccessEmployee(scope, conn, idejecutivo, Employees.POSICION_EJECUTIVO))
+                {
+                    return items;
+                }
+
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_ejecutivo = " + idejecutivo + " AND id_posicion = 4 AND id_plaza = " + idplaza;
+                string query = @" SELECT e.id_empleado, e.nombre, e.primer_apellido, e.segundo_apellido
+                                  FROM empleado e
+                                  WHERE e.id_ejecutivo = " + idejecutivo + @"
+                                    AND e.id_posicion = 4
+                                    AND e.id_plaza = " + idplaza
+                                  + UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado");
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 
@@ -696,7 +770,7 @@ namespace Plataforma.pages
 
         }
 
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public static List<Empleado> GetListaPromotor(string path, int idsupervisor, int idplaza)
         {
 
@@ -708,8 +782,26 @@ namespace Plataforma.pages
             try
             {
                 conn.Open();
+                var scope = GetCurrentScope(path, conn);
+                idplaza = GetScopedPlaza(scope, idplaza);
+
+                if (scope.IsSupervisor && idplaza <= 0)
+                {
+                    return items;
+                }
+
+                if (idsupervisor > 0 && !UserVisibilityScope.CanAccessEmployee(scope, conn, idsupervisor, Employees.POSICION_SUPERVISOR))
+                {
+                    return items;
+                }
+
                 DataSet ds = new DataSet();
-                string query = @" SELECT id_empleado, nombre, primer_apellido, segundo_apellido FROM  empleado WHERE id_supervisor = " + idsupervisor + " AND id_posicion = 5 AND id_plaza = " + idplaza;
+                string query = @" SELECT e.id_empleado, e.nombre, e.primer_apellido, e.segundo_apellido
+                                  FROM empleado e
+                                  WHERE e.id_supervisor = " + idsupervisor + @"
+                                    AND e.id_posicion = 5
+                                    AND e.id_plaza = " + idplaza
+                                  + UserVisibilityScope.BuildEmployeeScopeSql(scope, "e.id_empleado");
 
                 SqlDataAdapter adp = new SqlDataAdapter(query, conn);
 

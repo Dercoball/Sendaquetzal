@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Plataforma.Clases
+﻿namespace Plataforma.Clases
 {
-   public class CategoriaMateriales
-   {
+    public class CategoriaMateriales
+    {
 
-       public int Id;
-       public string Nombre;
-       public int Activo;
-       public int EsMaterialEntrega;
-       public string EsMaterialEntregaStr;
-       public string ActivoStr;
-       public int Eliminado;
-       public string UltimaModificacionStr;
-        
-
-       public string Accion;
+        public int Id;
+        public string Nombre;
+        public int Activo;
+        public int EsMaterialEntrega;
+        public string EsMaterialEntregaStr;
+        public string ActivoStr;
+        public int Eliminado;
+        public string UltimaModificacionStr;
 
 
+        public string Accion;
 
-   }
+
+
+    }
 }

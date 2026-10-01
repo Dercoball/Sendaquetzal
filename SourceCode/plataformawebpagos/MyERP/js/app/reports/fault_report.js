@@ -941,12 +941,14 @@ const report = {
                 data.forEach((item, i) => {
                     html += `<tr>`;
                     html += `<td>${item.Promotor}</td>`;
+                    html += `<td>${item.Supervisor}</td>`;
                     html += `<td class='text-right'>${item.ComisionFormateado}</td>`;
                     html += `<td class='text-right'>${item.DebeEntregarFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.FallaFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.EfectivoFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.RecuperadoFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.AbonoEntranteFormateadoMx}</td>`;
+                    html += `<td class='text-right'>${item.SemanaExtraFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.AbonoSalienteFormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.Total2FormateadoMx}</td>`;
                     html += `<td class='text-right'>${item.PorcentajeFallaFormateadoMx}</td>`;

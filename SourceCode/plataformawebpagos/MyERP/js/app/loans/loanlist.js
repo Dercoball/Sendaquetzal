@@ -86,6 +86,11 @@ const loans = {
                 if (data == null) {
                     window.location = "/pages/Index.aspx";
                 }
+                // Si backend envía mensaje de advertencia (sin promotores)
+                if (Array.isArray(data) && data.length === 1 && data[0].Mensaje) {
+                    utils.toast(data[0].Mensaje, "warning");
+                    data = [];
+                }
                 console.log('GridPrestamos data:', data);
                 loans.createTableLoans(data);
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -223,6 +228,10 @@ const loans = {
                     let data = resultado.d;
                     if (data == null) {
                         window.location = "/pages/Index.aspx";
+                    }
+                    if (Array.isArray(data) && data.length === 1 && data[0].Mensaje) {
+                        utils.toast(data[0].Mensaje, "warning");
+                        data = [];
                     }
                     loans.createTableLoans(data);
                 }, error: function (XMLHttpRequest, textStatus, errorThrown) {

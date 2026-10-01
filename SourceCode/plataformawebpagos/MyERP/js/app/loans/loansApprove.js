@@ -511,7 +511,7 @@ const loansEdit = {
                     let valores = msg.d;
 
                     $('.deshabilitable').prop('disabled', false);
-                    $('#btnAprobar').html(`<i class="fa fa-save mr-1"></i>Aprobar`);
+                    $('#btnAprobar').html(`<i class="fa fa-save mr-1"></i>Aprobar Crédito`);
 
                     if (parseInt(valores.CodigoError) === 0) {
 

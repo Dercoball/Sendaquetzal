@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Web;
 using System.Web.Services;
 using System.Web.UI.WebControls;
 
@@ -41,6 +42,62 @@ namespace Plataforma.pages
 
             try
             {
+                // Determinar alcance según rol
+                var idUsuario = Convert.ToString(HttpContext.Current?.Session["id_usuario"] ?? "0");
+                var idTipoUsuario = Convert.ToString(HttpContext.Current?.Session["id_tipo_usuario"] ?? "0");
+
+                var usuarioActual = Usuarios.GetUsuario(path, idUsuario);
+                var tipoActual = int.TryParse(idTipoUsuario, out var t) ? t : 0;
+                var idEmpleadoActual = usuarioActual?.IdEmpleado ?? 0;
+
+                // Empleados activos por plaza
+                var empleados = conn.Query<Empleado>(@"
+                    SELECT e.id_empleado   AS IdEmpleado,
+                           e.id_posicion   AS IdPosicion,
+                           e.id_supervisor AS IdSupervisor,
+                           e.id_ejecutivo  AS IdEjecutivo,
+                           e.id_plaza      AS IdPlaza
+                    FROM empleado e
+                    INNER JOIN plaza pl ON pl.id_plaza = e.id_plaza
+                    WHERE pl.activo = 1 AND ISNULL(pl.eliminado,0) = 0
+                          AND ISNULL(e.eliminado,1) = 1
+                          AND ISNULL(e.activo,1) = 1
+                ").ToList();
+
+                IEnumerable<Empleado> promotoresAutorizados = empleados.Where(e => e.IdPosicion == Employees.POSICION_PROMOTOR);
+
+                if (tipoActual == Employees.POSICION_PROMOTOR)
+                {
+                    promotoresAutorizados = promotoresAutorizados.Where(p => p.IdEmpleado == idEmpleadoActual);
+                }
+                else if (tipoActual == Employees.POSICION_SUPERVISOR)
+                {
+                    promotoresAutorizados = promotoresAutorizados.Where(p => p.IdSupervisor == idEmpleadoActual);
+                }
+                else if (tipoActual == Employees.POSICION_EJECUTIVO)
+                {
+                    var supervisores = empleados.Where(s => s.IdPosicion == Employees.POSICION_SUPERVISOR &&
+                                                            s.IdEjecutivo == idEmpleadoActual)
+                                                .Select(s => s.IdEmpleado)
+                                                .ToHashSet();
+
+                    promotoresAutorizados = promotoresAutorizados.Where(p =>
+                        p.IdEjecutivo == idEmpleadoActual || supervisores.Contains(p.IdSupervisor));
+                }
+                // Otros roles (director/superadmin) ven todo por defecto
+
+                var promotoresIds = promotoresAutorizados.Select(p => p.IdEmpleado).Distinct().ToList();
+                // Si no hay promotores asignados, avisar claramente y no aplicar filtro bloqueante
+                if (promotoresIds.Count == 0)
+                {
+                    return new List<ResponseGridPrestamos>
+                    {
+                        new ResponseGridPrestamos { Mensaje = "No tiene promotores asignados" }
+                    };
+                }
+
+                var filtroPromotoresSql = " AND p.id_empleado IN (" + string.Join(",", promotoresIds) + ") ";
+
                 var sql = @"SELECT *  FROM (SELECT p.id_prestamo , 
                             c.id_cliente AS IdCliente,
                             c.nombre nombreCliente,
@@ -56,10 +113,12 @@ namespace Plataforma.pages
                                 p.activo
 	                    FROM prestamo p
 	                    INNER JOIN cliente  c on c.id_cliente  = p.id_cliente
-	                    INNER JOIN cliente  av on av.id_cliente  = p.id_aval
+	                    LEFT JOIN cliente  av on av.id_cliente  = p.id_aval
+	                    LEFT JOIN cliente  av2 on av2.id_cliente  = p.id_aval2
 	                    INNER JOIN status_prestamo sp on sp.id_status_prestamo = p.id_status_prestamo 
                         WHERE ISNULL(c.eliminado,0) = 0 AND ISNULL(c.activo,1) = 1 AND ISNULL(p.activo,1) = 1
                           AND EXISTS (SELECT 1 FROM cliente cx WHERE cx.id_cliente = p.id_cliente AND ISNULL(cx.eliminado,0)=0 AND ISNULL(cx.activo,1)=1)
+                          " + filtroPromotoresSql + @"
                         ) gp
                         WHERE gp.activo = 1
                         ";
@@ -167,12 +226,17 @@ namespace Plataforma.pages
                      SELECT c.id_cliente , c.nombre, c.primer_apellido, c.segundo_apellido, 
                             concat(c.nombre ,  ' ' , c.primer_apellido , ' ' , c.segundo_apellido) AS nombre_completo,
                             c.telefono , c.curp, c.ocupacion, c.activo, tc.id_tipo_cliente, tc.tipo_cliente,
-                            p.id_prestamo, p.monto, FORMAT(p.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud
+                            p1.id_prestamo, p1.monto, FORMAT(p1.fecha_solicitud, 'dd/MM/yyyy') fecha_solicitud
                      FROM cliente c 
                      JOIN tipo_cliente tc ON (tc.id_tipo_cliente = c.id_tipo_cliente) 
-                     JOIN prestamo p ON (p.id_cliente = c.id_cliente) 
+                     CROSS APPLY (
+                        SELECT TOP 1 p.id_prestamo, p.monto, p.fecha_solicitud
+                        FROM prestamo p
+                        WHERE p.id_cliente = c.id_cliente
+                        ORDER BY p.fecha_solicitud DESC, p.id_prestamo DESC
+                     ) p1
                      WHERE isnull(c.eliminado, 0) != 1 
-                     ORDER BY id_cliente";
+                     ORDER BY c.id_cliente";
 
                 var adp = new SqlDataAdapter(query, conn);
                 adp.Fill(ds);
@@ -221,6 +285,14 @@ namespace Plataforma.pages
             if (!tienePermiso) return null;
 
             var user = Usuarios.GetUsuario(path, idUsuario);
+            if (user == null || user.IdEmpleado <= 0)
+            {
+                return new DatosSalida
+                {
+                    CodigoError = 1,
+                    MensajeError = "El usuario no tiene un empleado vinculado. No se puede registrar el préstamo."
+                };
+            }
             var validations = new LoanValidation();
             var salida = new DatosSalida();
 

@@ -1,0 +1,96 @@
+{
+  "tech": {
+    "framework": ".NET Framework 4.8 WebForms",
+    "data": "SQL Server (Azure prod connbd, local ADCCOM_DB) via Dapper/ADO.NET",
+    "frontend": "jQuery, DataTables, jqWidgets, Bootstrap, TinyMCE, Toastr, html2canvas/jspdf",
+    "pdf_doc": "Syncfusion DocIO/DocToPDF, iTextSharp, QRCoder",
+    "messaging": "Twilio SMS/WhatsApp, EASendMail SMTP",
+    "build_ci": "CircleCI, Flyway, WebDeploy/FTP publish profiles"
+  },
+  "layers": {
+    "presentation": "pages/*.aspx + js/app/* + vendor assets",
+    "domain_models": "Clases POCOs, Enums, Request/Response DTO",
+    "data_access": "SQL inline + stored procedures via Dapper/SqlClient; no DAL/ORM",
+    "files": "FileUploader.ashx writing to Uploads and DB blobs"
+  },
+  "modules": [
+    {
+      "name": "Config",
+      "scope": "catalogos y parametros base (usuarios, plazas, puestos, categorias, calendarios/days_off, comisiones, mensajes Twilio, customer types, employees)",
+      "key_dependencies": ["Dapper", "SqlClient", "PermisoUsuario", "Twilio"]
+    },
+    {
+      "name": "Customers",
+      "scope": "alta/edicion de clientes y historico con documentos",
+      "key_dependencies": ["SqlClient", "FileUploader", "Cliente", "Direccion", "Documento"]
+    },
+    {
+      "name": "Loans",
+      "scope": "solicitud, aprobacion, pagos, mora, creditos extra",
+      "key_dependencies": ["Dapper", "SqlClient", "Prestamo", "Pago", "Cliente", "FileUploader", "LoanValidation"]
+    },
+    {
+      "name": "Investors",
+      "scope": "inversionistas, inversiones, retiros, dashboard",
+      "key_dependencies": ["Inversion", "Inversionista", "StatusInversion", "FileUploader"]
+    },
+    {
+      "name": "Assets",
+      "scope": "activos y materiales, calendario de entregas",
+      "key_dependencies": ["Dapper", "SqlClient", "MaterialEntrega", "Calendario"]
+    },
+    {
+      "name": "Commissions",
+      "scope": "reglas y evaluacion de comisiones para empleados",
+      "key_dependencies": ["ReglaEvaluacionModulo", "ValorReglaEvaluacionModulo", "Empleado"]
+    },
+    {
+      "name": "Reports",
+      "scope": "reportes agregados de cartera/comisiones (ReportDefault)",
+      "key_dependencies": ["Index.TienePermisoPagina", "SqlClient"]
+    },
+    {
+      "name": "Web",
+      "scope": "sitio publico FAQ/terminos/tutoriales/about/privacy",
+      "key_dependencies": ["SqlClient", "TinyMCE content"]
+    },
+    {
+      "name": "Shared",
+      "scope": "Utils logging, ParseHelpers, user controls, plantillas, Uploads storage",
+      "key_dependencies": ["Utils", "ParseHelpers", "FileUploader"]
+    }
+  ],
+  "relations": [
+    {"from": "Loans", "to": "Customers", "type": "usa clientes y avales"},
+    {"from": "Loans", "to": "Config", "type": "usa catalogos (plazas, calendarios, mensajes, comisiones)"},
+    {"from": "Loans", "to": "Investors", "type": "flujo financiero asociado via reportes"},
+    {"from": "Investors", "to": "Config", "type": "usa catalogos y mensajes"},
+    {"from": "Commissions", "to": "Loans", "type": "calcula comisiones por cobranza y ventas"},
+    {"from": "Reports", "to": ["Loans", "Customers", "Commissions"], "type": "agrega datos"},
+    {"from": "Assets", "to": "Config", "type": "usa catalogos de materiales/plazas"}
+  ],
+  "data_entities": [
+    "Usuario/PermisoUsuario/Posicion",
+    "Cliente/Aval/Direccion/Documento",
+    "Prestamo/Pago/RelPrestamoAprobacion/SolicitudAumentoCredito/Garantia",
+    "Inversion/Inversionista/StatusInversion/InversionMovimiento/InversionRetiro",
+    "Empleado/Plaza/Puesto/Periodo/Calendario/DiaDeParo/Configuracion",
+    "Comision/EvaluacionModulo/ValorReglaEvaluacionModulo/Modulo",
+    "MaterialEntrega/Categoria/CategoriaMateriales/Unidad",
+    "Mensaje/PreguntaFrecuente/Tutorial/Plantilla"
+  ],
+  "integrations": [
+    "Twilio SMS/WhatsApp (Messages.aspx)",
+    "EASendMail SMTP (Home.aspx)",
+    "Syncfusion DocIO/PDF + iTextSharp + QRCoder",
+    "File uploads via FileUploader.ashx -> Uploads + DB",
+    "CircleCI deploy via ssh + Flyway migrations",
+    "Azure SQL connection connbd; local dev ADCCOM_DB"
+  ],
+  "infrastructure": {
+    "ci_cd": ".circleci/config.yml deploy_on_server + flyway-migrate on develop/main",
+    "db_migrations": "flyway/migrations V1..V7; configs main.conf/develop.conf",
+    "deployment": "PublishProfiles for WebDeploy/FTP (sendaquetzal*)",
+    "hosting_defaults": "IIS default document pages/Home.aspx; static Uploads open; max upload 1GB"
+  }
+}

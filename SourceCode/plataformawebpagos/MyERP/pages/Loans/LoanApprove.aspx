@@ -172,7 +172,7 @@
 
                             <a class="nav-item nav-link" id="nav-aprobacion-supervisor-tab"
                                data-toggle="tab" data-id="3" href="#nav-aprobacion-supervisor" role="tab"
-                               aria-controls="nav-aprovacion" aria-selected="false">Aprobación supervisor</a>
+                               aria-controls="nav-aprovacion" aria-selected="false">Aprobación crédito</a>
                             <a class="nav-item nav-link" id="nav-aprobacion-ejecutivo-tab"
                                data-toggle="tab" data-id="4" href="#nav-aprobacion-ejecutivo" role="tab"
                                aria-controls="nav-aprovacion" aria-selected="false">Aprobación ejecutivo</a>
@@ -342,8 +342,8 @@
                               <a id="btnRechazar" runat="server" class="text-white btn btn-danger rounded">
                                   <i class="fa fa-times mr-1"></i>RECHAZAR
                                 </a>
-                                <a id="btnAprobar" runat="server" class="text-white btn btn-success rounded">
-                                  <i class="fa fa-save mr-1"></i>APROBAR
+                              <a id="btnAprobar" runat="server" class="text-white btn btn-success rounded">
+                                  <i class="fa fa-save mr-1"></i>APROBAR CRÉDITO
                                 </a>
                             </div>
                         </div>

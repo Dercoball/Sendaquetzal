@@ -417,7 +417,7 @@ const loans = {
                     if (lo_Prestamo.Prestamo.IdStatusPrestamo === 1) {
                         $("#frmAval input").prop("disabled", true);
                         $("#frmCustomer input").prop("disabled", true);
-                        if (userType === utils.POSICION_SUPERVISOR) {
+                        if (userType === utils.POSICION_SUPERVISOR || userType === 9) {
                             $("#nav-aprobacion-supervisor-tab").show();
                             $("#dvBotonAgregarGarantia").show();
                             $("#btnRechazar").show();

@@ -19,6 +19,7 @@ const POSICION_PROMOTOR = 5;
 const POSICION_CAPTURISTA = 9;
 const POSICION_GERENTE_COBRANZA = 10;
 const POSICION_RECURSOS_HUMANOS = 11;
+const POSICION_ADMINISTRATIVO = 12;
 
 /* Puestos administrativos: no cuelgan de la jerarquía de ventas, por lo que
    Plaza, Supervisor y Ejecutivo son opcionales al darlos de alta. */
@@ -26,7 +27,8 @@ const PUESTOS_ADMINISTRATIVOS = [
     POSICION_DIRECTOR,
     POSICION_CAPTURISTA,
     POSICION_GERENTE_COBRANZA,
-    POSICION_RECURSOS_HUMANOS
+    POSICION_RECURSOS_HUMANOS,
+    POSICION_ADMINISTRATIVO
 ];
 
 const esPuestoAdministrativo = (idPosicion) =>
@@ -64,7 +66,7 @@ const employee = {
 
     /* ========== Reglas por puesto ==========
        Los puestos administrativos (Director, Capturista, Gerente de Cobranza,
-       Recursos Humanos) no requieren Plaza, Supervisor ni Ejecutivo. */
+       Recursos Humanos, Administrativo) no requieren Plaza, Supervisor ni Ejecutivo. */
     aplicarReglasPorPuesto: () => {
         const idPuesto = Number($('#cboPuesto').val() || 0);
         const esAdmin = esPuestoAdministrativo(idPuesto);

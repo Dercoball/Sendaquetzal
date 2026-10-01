@@ -163,6 +163,7 @@
     <Content Include="flyway\migrations\V12__CobranzaGerenteSoloCobranza.sql" />
     <Content Include="flyway\migrations\V13__PuestoRecursosHumanos.sql" />
     <Content Include="flyway\migrations\V14__CobranzaMultaSemanaExtra.sql" />
+    <Content Include="flyway\migrations\V15__PuestoAdministrativo.sql" />
     <Content Include="fonts\dashboard.svg" />
     <Content Include="icons-reference\fonts\dashboard.svg" />
     <Content Include="icons-reference\icons-reference.html" />

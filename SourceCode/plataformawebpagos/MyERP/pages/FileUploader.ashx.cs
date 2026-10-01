@@ -4,17 +4,27 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Web;
+using System.Web.SessionState;
 
 namespace Plataforma
 {
 
-    public class FileUploader : IHttpHandler
+    public class FileUploader : IHttpHandler, IReadOnlySessionState
     {
 
         public void ProcessRequest(HttpContext context)
         {
             System.Diagnostics.Debug.Print("Respuesta desde FileUploader ");
             context.Response.ContentType = "text/plain";
+
+            // Solo usuarios con sesión iniciada pueden subir archivos.
+            if (context.Session == null || string.IsNullOrEmpty(context.Session["id_usuario"] as string))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.Write("error");
+                return;
+            }
+
             try
             {
 
@@ -34,6 +44,17 @@ namespace Plataforma
                     string nombreArchivo = context.Request.Form[7];
                     string idCliente = context.Request.Form[8];
 
+                    // idItem y tipo forman el nombre del archivo en disco: solo se aceptan números,
+                    // así nadie puede escribir fuera de Uploads ("..\") ni subir un .aspx ejecutable.
+                    int numeroItem, numeroTipo;
+                    if (!int.TryParse(idItem, out numeroItem) || !int.TryParse(tipo, out numeroTipo))
+                    {
+                        context.Response.StatusCode = 400;
+                        context.Response.Write("error");
+                        return;
+                    }
+                    idItem = numeroItem.ToString();
+                    tipo = numeroTipo.ToString();
 
                     System.IO.Stream fs = file.InputStream;
                     System.IO.BinaryReader br = new System.IO.BinaryReader(fs);

@@ -1405,6 +1405,7 @@
     <Compile Include="Clases\StatusInversion.cs" />
     <Compile Include="Clases\ValorReglaEvaluacionModulo.cs" />
     <Compile Include="Clases\ReglaEvaluacionModulo.cs" />
+    <Compile Include="Clases\SesionRequeridaModule.cs" />
     <Compile Include="Clases\SolicitudAumentoCredito.cs" />
     <Compile Include="Clases\Pago.cs" />
     <Compile Include="Clases\TipoDocumento.cs" />

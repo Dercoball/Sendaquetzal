@@ -586,3 +586,23 @@ var utils = {
 
 
 }
+
+
+// Si la sesión expiró, el servidor responde 401 (Clases/SesionRequeridaModule.cs)
+// y se manda al usuario a la página de login.
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.jQuery) {
+        return;
+    }
+    jQuery(document).ajaxError(function (event, xhr) {
+        if (xhr.status !== 401) {
+            return;
+        }
+        var login = '../../pages/Login.aspx';
+        try {
+            login = JSON.parse(xhr.responseText).Login || login;
+        } catch (e) {
+        }
+        window.location.href = login;
+    });
+});

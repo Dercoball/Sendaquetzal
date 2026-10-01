@@ -32,12 +32,12 @@ namespace Plataforma.pages
         //{
         //    SmtpServer mySmtp;
         //    string MailEmisor, pwd;
-        //    pwd = "i3Q7nSUwwfk-0w";
+        //    pwd = "";
         //    if (Intento == 1)
         //    {
         //        MailEmisor = "cfdi2020@nanocode.mx";
         //        var Domain = "nanocode.mx";
-        //        var User = "bpgkvdnqrvke";
+        //        var User = "";
         //        mySmtp = new SmtpServer("smtp1.s.ipzmarketing.com", 10587);
         //        mySmtp.User = User;
         //        mySmtp.Password = pwd;
@@ -47,7 +47,7 @@ namespace Plataforma.pages
         //    }
         //    else
         //    {
-        //        var User = "cfdi2020@nanocode.mx";
+        //        var User = "";
         //        mySmtp = new SmtpServer("mail.smtp2go.com", 2525);
         //        mySmtp.User = User;
         //        mySmtp.Password = pwd;
@@ -109,12 +109,12 @@ namespace Plataforma.pages
         {
             SmtpServer mySmtp;
             string MailEmisor, pwd;
-            pwd = "i3Q7nSUwwfk-0w";
+            pwd = System.Configuration.ConfigurationManager.AppSettings["SMTP_PASSWORD"];
             if (Intento == 1)
             {
                 MailEmisor = "cfdi2020@nanocode.mx";
                 var Domain = "nanocode.mx";
-                var User = "bpgkvdnqrvke";
+                var User = System.Configuration.ConfigurationManager.AppSettings["SMTP_USER"];
                 mySmtp = new SmtpServer("smtp1.s.ipzmarketing.com", 10587);
                 mySmtp.User = User;
                 mySmtp.Password = pwd;
@@ -124,7 +124,7 @@ namespace Plataforma.pages
             }
             else
             {
-                var User = "cfdi2020@nanocode.mx";
+                var User = System.Configuration.ConfigurationManager.AppSettings["SMTP_USER_RESPALDO"];
                 mySmtp = new SmtpServer("mail.smtp2go.com", 2525);
                 mySmtp.User = User;
                 mySmtp.Password = pwd;
